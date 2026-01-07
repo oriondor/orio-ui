@@ -1,0 +1,142 @@
+/* 1) Role-based tokens (don’t change these names in CSS) */
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f7f8fa;
+  --color-text: #0e1116;
+  --color-muted: #626a78;
+  --color-border: #bfbfc2;
+
+  /* Accent family */
+  --color-accent: #1f3a8a;
+  --color-accent-ink: #ffffff;
+  --color-accent-soft: #eef2ff;
+  --color-accent-border: #c7d2fe;
+  --color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, black 15%);
+  --color-accent-active: color-mix(in srgb, var(--color-accent) 75%, black 25%);
+}
+
+/* 2) Category themes (light vs dark) */
+
+/* Light (default, already matches your root) */
+:root[data-mode="light"] {
+  --color-bg: #ffffff;
+  --color-surface: #f7f8fa;
+  --color-text: #0e1116;
+  --color-muted: #626a78;
+  --color-border: #bfbfc2;
+}
+
+/* Dark */
+:root[data-mode="dark"] {
+  --color-bg: #0e1116;
+  --color-surface: #1a1d23;
+  --color-text: #ffffff;
+  --color-muted: #a0a7b5;
+  --color-border: #2e333d;
+
+  --color-accent-ink: #ffffff;
+  --color-accent-soft: color-mix(in srgb, var(--color-accent) 12%, #0e1116);
+  --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, #0e1116);
+
+  --color-accent-hover: color-mix(in srgb, var(--color-accent) 30%, white 70%);
+  --color-accent-active: color-mix(in srgb, var(--color-accent) 80%, white 25%);
+}
+
+/* 3) Accent themes (just accents, independent of light/dark) */
+
+:root[data-theme="navy"] {
+  --color-accent: hsl(219 20% 25%);
+  --color-accent-soft: hsl(221 100% 97%);
+  --color-accent-border: hsl(221 61% 84%);
+}
+
+:root[data-theme="teal"] {
+  --color-accent: hsl(174 72% 28%);
+  --color-accent-soft: hsl(174 55% 94%);
+  --color-accent-border: hsl(174 40% 75%);
+}
+
+:root[data-theme="forest"] {
+  --color-accent: hsl(152 45% 25%);
+  --color-accent-soft: hsl(152 45% 94%);
+  --color-accent-border: hsl(152 30% 72%);
+}
+
+:root[data-theme="wine"] {
+  --color-accent: hsl(350 55% 34%);
+  --color-accent-soft: hsl(350 60% 96%);
+  --color-accent-border: hsl(350 35% 78%);
+}
+
+:root[data-theme="royal"] {
+  --color-accent: hsl(230 60% 40%);
+  --color-accent-soft: hsl(230 65% 96%);
+  --color-accent-border: hsl(230 35% 78%);
+}
+
+/* Extra colors */
+:root {
+  /* 🔴 Red */
+  --color-red: #dc2626;
+  --color-red-ink: #ffffff;
+  --color-red-soft: #fef2f2;
+  --color-red-border: #fecaca;
+  --color-red-hover: color-mix(in srgb, var(--color-red) 85%, black 15%);
+  --color-red-active: color-mix(in srgb, var(--color-red) 75%, black 25%);
+
+  /* 🟠 Orange */
+  --color-orange: #ea580c;
+  --color-orange-ink: #ffffff;
+  --color-orange-soft: #fff7ed;
+  --color-orange-border: #fed7aa;
+  --color-orange-hover: color-mix(in srgb, var(--color-orange) 85%, black 15%);
+  --color-orange-active: color-mix(in srgb, var(--color-orange) 75%, black 25%);
+
+  /* 🟡 Yellow */
+  --color-yellow: #ca8a04;
+  --color-yellow-ink: #ffffff;
+  --color-yellow-soft: #fefce8;
+  --color-yellow-border: #fef08a;
+  --color-yellow-hover: color-mix(in srgb, var(--color-yellow) 85%, black 15%);
+  --color-yellow-active: color-mix(in srgb, var(--color-yellow) 75%, black 25%);
+
+  /* 🟢 Green */
+  --color-green: #15803d;
+  --color-green-ink: #ffffff;
+  --color-green-soft: #f0fdf4;
+  --color-green-border: #bbf7d0;
+  --color-green-hover: color-mix(in srgb, var(--color-green) 85%, black 15%);
+  --color-green-active: color-mix(in srgb, var(--color-green) 75%, black 25%);
+
+  /* 🩵 Teal / Cyan */
+  --color-teal: #0d9488;
+  --color-teal-ink: #ffffff;
+  --color-teal-soft: #f0fdfa;
+  --color-teal-border: #99f6e4;
+  --color-teal-hover: color-mix(in srgb, var(--color-teal) 85%, black 15%);
+  --color-teal-active: color-mix(in srgb, var(--color-teal) 75%, black 25%);
+
+  /* 🔵 Blue */
+  --color-blue: #2563eb;
+  --color-blue-ink: #ffffff;
+  --color-blue-soft: #eff6ff;
+  --color-blue-border: #bfdbfe;
+  --color-blue-hover: color-mix(in srgb, var(--color-blue) 85%, black 15%);
+  --color-blue-active: color-mix(in srgb, var(--color-blue) 75%, black 25%);
+
+  /* 🟣 Purple */
+  --color-purple: #7e22ce;
+  --color-purple-ink: #ffffff;
+  --color-purple-soft: #faf5ff;
+  --color-purple-border: #e9d5ff;
+  --color-purple-hover: color-mix(in srgb, var(--color-purple) 85%, black 15%);
+  --color-purple-active: color-mix(in srgb, var(--color-purple) 75%, black 25%);
+
+  /* 💗 Pink */
+  --color-pink: #db2777;
+  --color-pink-ink: #ffffff;
+  --color-pink-soft: #fdf2f8;
+  --color-pink-border: #fbcfe8;
+  --color-pink-hover: color-mix(in srgb, var(--color-pink) 85%, black 15%);
+  --color-pink-active: color-mix(in srgb, var(--color-pink) 75%, black 25%);
+}

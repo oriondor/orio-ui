@@ -1,0 +1,11 @@
+/* Main entry point for i UI styles */
+@import "./colors.css";
+@import "./animation.css";
+@import "./scroll.css";
+
+/* Base reset for Orio components */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

@@ -1,0 +1,33 @@
+.gradient-hover {
+  --gh-color: #fff;
+  --gh-angle: 120deg;
+  --gh-peek-x: 95%;
+  --gh-mix-base: black;
+
+  background-image: linear-gradient(
+    var(--gh-angle),
+    color-mix(in srgb, var(--gh-color) 90%, var(--gh-mix-base)) 0%,
+    var(--gh-color) 40%,
+    color-mix(in srgb, var(--gh-color) 90%, var(--gh-mix-base)) 80%
+  );
+  background-repeat: no-repeat;
+
+  background-size: 0% 0%;
+  background-position: 0% 0%;
+
+  transition:
+    background-position 0.8s ease,
+    border-color 0.2s ease;
+  will-change: background-size, background-position;
+}
+
+.gradient-hover:hover {
+  background-size: 200% 100%;
+  background-position: var(--gh-peek-x) 0;
+}
+
+/* Dark mode: now theme-aware */
+:root[data-mode="dark"] .gradient-hover {
+  --gh-color: var(--color-accent); /* switch from static white to theme accent */
+  --gh-mix-base: var(--color-bg); /* blend into dark background */
+}

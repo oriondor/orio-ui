@@ -1,0 +1,41 @@
+# Development files
+tests/
+docs/
+.github/
+*.spec.ts
+*.test.ts
+
+# Config files
+.editorconfig
+.gitignore
+renovate.json
+vitest.config.ts
+tsconfig.json
+eslint.config.mjs
+
+# Docs and examples
+README.md
+CHANGELOG.md
+LICENSE
+
+# IDE
+.vscode
+.idea
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# CI
+.github/
+
+# Source (we only publish dist/)
+src/
+!src/runtime/
+
+# Misc
+node_modules/
+.nuxt/
+.output/
+.cache/

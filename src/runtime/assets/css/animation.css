@@ -1,0 +1,88 @@
+:root {
+  /* --- motion tokens --- */
+  --motion-duration-short: 0.05s;
+  --motion-duration-medium: 0.15s;
+  --motion-distance-small: 0.15rem;
+  --motion-distance-medium: 2rem;
+  --motion-distance-large: 1rem;
+  --motion-ease-default: ease-in;
+  --motion-ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* fade */
+.animate-fade-enter-active,
+.animate-fade-leave-active {
+  transition:
+    opacity var(--motion-duration-short) var(--motion-ease-default),
+    transform var(--motion-duration-short) var(--motion-ease-default);
+}
+
+.animate-fade-enter-from,
+.animate-fade-leave-to {
+  opacity: 0;
+  transform: translateY(calc(-1 * var(--motion-distance-small)));
+}
+
+/* fade-slide */
+.animate-fade-slide-enter-active,
+.animate-fade-slide-leave-active,
+.animate-fade-slide-appear-active {
+  transition:
+    opacity var(--motion-duration-medium) var(--motion-ease-smooth),
+    transform var(--motion-duration-medium) var(--motion-ease-smooth);
+  transition-delay: calc(var(--index, 0) * 0.08s);
+}
+
+.animate-fade-slide-enter-from,
+.animate-fade-slide-appear-from {
+  opacity: 0;
+  transform: translateY(var(--motion-distance-medium));
+}
+
+.animate-fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(calc(-1 * var(--motion-distance-large)));
+}
+
+.animate-fade-slide-move {
+  transition: transform var(--motion-duration-medium) ease;
+}
+
+/* fade-reverse */
+.animate-fade-reverse-enter-active,
+.animate-fade-reverse-leave-active {
+  transition:
+    opacity var(--motion-duration-short) var(--motion-ease-default),
+    transform var(--motion-duration-short) var(--motion-ease-default);
+}
+
+.animate-fade-reverse-enter-from,
+.animate-fade-reverse-leave-to {
+  opacity: 0;
+  transform: translateY(var(--motion-distance-small));
+}
+
+/* fade-slide-reverse */
+.animate-fade-slide-reverse-enter-active,
+.animate-fade-slide-reverse-leave-active,
+.animate-fade-slide-reverse-appear-active {
+  transition:
+    opacity var(--motion-duration-medium) var(--motion-ease-smooth),
+    transform var(--motion-duration-medium) var(--motion-ease-smooth);
+  transition-delay: calc(var(--index, 0) * 0.08s);
+}
+
+.animate-fade-slide-reverse-enter-from,
+.animate-fade-slide-reverse-appear-from {
+  opacity: 0;
+  transform: translateY(calc(-1 * var(--motion-distance-medium)));
+}
+
+.animate-fade-slide-reverse-leave-to {
+  opacity: 0;
+  transform: translateY(var(--motion-distance-large));
+}
+
+.animate-fade-slide-reverse-move {
+  transition: transform var(--motion-duration-medium) ease;
+}

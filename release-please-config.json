@@ -1,0 +1,14 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "orio-ui",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        "package.json",
+        "package-lock.json"
+      ]
+    }
+  },
+  "bootstrap-sha": "HEAD"
+}
