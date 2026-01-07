@@ -3,28 +3,24 @@
   "version": "1.0.1",
   "description": "Modern Nuxt component library with theme support",
   "type": "module",
-  "main": "./src/runtime/index.ts",
-  "types": "./src/runtime/index.ts",
+  "main": "./dist/module.mjs",
+  "types": "./dist/types.d.ts",
   "exports": {
     ".": {
-      "types": "./src/runtime/index.ts",
-      "import": "./src/runtime/index.ts"
+      "types": "./dist/types.d.ts",
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
     },
-    "./composables": {
-      "types": "./src/runtime/composables/index.ts",
-      "import": "./src/runtime/composables/index.ts"
-    },
-    "./styles": "./src/runtime/assets/css/main.css",
-    "./theme": "./src/runtime/assets/css/colors.css"
+    "./styles": "./dist/runtime/assets/css/main.css",
+    "./theme": "./dist/runtime/assets/css/colors.css"
   },
   "files": [
-    "nuxt.config.ts",
-    "src"
+    "dist"
   ],
   "scripts": {
     "dev": "vitepress dev docs",
-    "build": "echo 'Build not needed for Nuxt layer'",
-    "prepack": "echo 'Using source files directly'",
+    "build": "nuxt-module-build build",
+    "prepack": "npm run build",
     "test": "vitest",
     "test:unit": "vitest run",
     "test:watch": "vitest watch",

@@ -30,7 +30,7 @@ Add Orio UI to your `nuxt.config.ts`:
 
 ```typescript
 export default defineNuxtConfig({
-  extends: ["orio-ui"],
+  modules: ["orio-ui"],
 });
 ```
 
@@ -164,14 +164,16 @@ npm run docs:dev
 
 ```
 orio-ui/
-├── src/runtime/
-│   ├── components/       # 18 Vue components
-│   ├── composables/      # 4 composables
-│   ├── assets/css/       # Theme CSS files
-│   └── utils/            # Icon registry
+├── src/
+│   ├── runtime/
+│   │   ├── components/   # 18 Vue components
+│   │   ├── composables/  # 4 composables
+│   │   ├── assets/css/   # Theme CSS files
+│   │   └── utils/        # Icon registry
+│   └── module.ts         # Nuxt Module definition
 ├── tests/                # Vitest unit tests
 ├── docs/                 # VitePress documentation
-└── nuxt.config.ts        # Nuxt Layer configuration
+└── build.config.ts       # Module build configuration
 ```
 
 ### Running Tests
