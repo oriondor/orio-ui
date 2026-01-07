@@ -82,7 +82,9 @@ describe('DateRangePicker', () => {
     });
 
     expect(wrapper.find('.error-message').exists()).toBe(true);
-    expect(wrapper.find('.error-message').text()).toContain('Start date must be before end date');
+    expect(wrapper.find('.error-message').text()).toContain(
+      'Start date must be before end date',
+    );
   });
 
   it('does not show error when end date is null (present)', () => {

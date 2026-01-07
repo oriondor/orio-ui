@@ -14,9 +14,15 @@ export interface ApiOptions {
 export async function useApi<T = unknown>(url: string): Promise<T>;
 
 // Overload 2: URL + options
-export async function useApi<T = unknown>(url: string, options: ApiOptions): Promise<T>;
+export async function useApi<T = unknown>(
+  url: string,
+  options: ApiOptions,
+): Promise<T>;
 
-export async function useApi<T = unknown>(url: string, options?: ApiOptions): Promise<T> {
+export async function useApi<T = unknown>(
+  url: string,
+  options?: ApiOptions,
+): Promise<T> {
   return (await $fetch(url, {
     method: options?.method || 'GET',
     body: options?.body,

@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { iconRegistry, type IconName } from '../utils/icon-registry'
+import { computed } from 'vue';
+import { iconRegistry, type IconName } from '../utils/icon-registry';
 
 export interface IconProps {
-  name: IconName | string
-  size?: string | number
-  color?: string
+  name: IconName | string;
+  size?: string | number;
+  color?: string;
 }
 
 const props = withDefaults(defineProps<IconProps>(), {
   size: '1em',
-  color: 'currentColor'
-})
+  color: 'currentColor',
+});
 
-const iconSvg = computed(() => iconRegistry[props.name] || '')
+const iconSvg = computed(() => iconRegistry[props.name] || '');
 const sizeValue = computed(() =>
-  typeof props.size === 'number' ? `${props.size}px` : props.size
-)
+  typeof props.size === 'number' ? `${props.size}px` : props.size,
+);
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const sizeValue = computed(() =>
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
-      flexShrink: 0
+      flexShrink: 0,
     }"
     v-html="iconSvg"
   />

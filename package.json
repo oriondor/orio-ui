@@ -32,7 +32,7 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "lint": "eslint .",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@nuxt/kit": "^3.15.3",

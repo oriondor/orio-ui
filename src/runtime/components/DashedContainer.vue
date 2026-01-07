@@ -24,12 +24,7 @@ const iconSize = computed(() => {
 </script>
 <template>
   <div class="dashed-container gradient-hover" @click="$emit('click')">
-    <orio-icon
-      v-if="icon"
-      :name="icon"
-      class="icon-class"
-      :size="iconSize"
-    />
+    <orio-icon v-if="icon" :name="icon" class="icon-class" :size="iconSize" />
     <span v-if="text" class="text-class" :size>{{ text }}</span>
   </div>
 </template>

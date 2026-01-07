@@ -1,6 +1,6 @@
-import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import { defineConfig } from 'vitest/config';
+import vue from '@vitejs/plugin-vue';
+import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [vue()],
@@ -10,13 +10,13 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json'],
-      exclude: ['docs/**', 'playground/**', 'dist/**', 'node_modules/**']
-    }
+      exclude: ['docs/**', 'playground/**', 'dist/**', 'node_modules/**'],
+    },
   },
   resolve: {
     alias: {
       '~': resolve(__dirname, './src'),
-      '@': resolve(__dirname, './src')
-    }
-  }
-})
+      '@': resolve(__dirname, './src'),
+    },
+  },
+});
