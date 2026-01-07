@@ -14,7 +14,7 @@ Add Orio UI to your `nuxt.config.ts`:
 
 ```typescript
 export default defineNuxtConfig({
-  extends: ['orio-ui']
+  modules: ['orio-ui']
 })
 ```
 

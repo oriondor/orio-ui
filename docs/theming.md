@@ -105,7 +105,7 @@ Import in `nuxt.config.ts`:
 
 ```typescript
 export default defineNuxtConfig({
-  extends: ['orio-ui'],
+  modules: ['orio-ui'],
   css: ['~/assets/css/custom-theme.css']
 })
 ```

@@ -1,4 +1,9 @@
-import { defineNuxtModule } from '@nuxt/kit';
+import {
+  defineNuxtModule,
+  createResolver,
+  addComponentsDir,
+  addImportsDir,
+} from '@nuxt/kit';
 
 export default defineNuxtModule({
   meta: {
@@ -9,8 +14,20 @@ export default defineNuxtModule({
     },
   },
   defaults: {},
-  setup() {
-    // Module setup is handled by the layer (nuxt.config.ts)
-    // This module entry is required for the build process
+  setup(_options, nuxt) {
+    const resolver = createResolver(import.meta.url);
+
+    // Add CSS
+    nuxt.options.css.push(resolver.resolve('./runtime/assets/css/main.css'));
+
+    // Register components with Orio prefix
+    addComponentsDir({
+      path: resolver.resolve('./runtime/components'),
+      prefix: 'Orio',
+      pathPrefix: false,
+    });
+
+    // Register composables
+    addImportsDir(resolver.resolve('./runtime/composables'));
   },
 });
