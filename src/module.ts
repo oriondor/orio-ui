@@ -24,7 +24,7 @@ export default defineNuxtModule({
     addComponentsDir({
       path: resolver.resolve('./runtime/components'),
       prefix: 'Orio',
-      pathPrefix: false,
+      pathPrefix: true,
     });
 
     // Register composables
