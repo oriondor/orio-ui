@@ -38,6 +38,7 @@ jobs:
         run: npm i --no-audit --no-fund
 
       - name: Prepare Nuxt
+        if: ${{ steps.release.outputs.release_created }}
         run: npx nuxi prepare
 
       - name: Run tests
