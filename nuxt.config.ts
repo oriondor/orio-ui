@@ -11,28 +11,28 @@ export default defineNuxtConfig({
       {
         path: './src/runtime/components',
         prefix: 'Orio',
-        pathPrefix: false
-      }
-    ]
+        pathPrefix: false,
+      },
+    ],
   },
 
   // Auto-import composables
   imports: {
-    dirs: ['./src/runtime/composables']
+    dirs: ['./src/runtime/composables'],
   },
 
   typescript: {
     strict: true,
-    typeCheck: true
+    typeCheck: true,
   },
 
   vite: {
     css: {
       preprocessorOptions: {
-        scss: {}
-      }
-    }
+        scss: {},
+      },
+    },
   },
 
-  compatibilityDate: '2025-01-15'
-})
+  compatibilityDate: '2025-01-15',
+});

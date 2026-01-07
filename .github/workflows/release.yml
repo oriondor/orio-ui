@@ -35,15 +35,11 @@ jobs:
 
       - name: Install dependencies
         if: ${{ steps.release.outputs.release_created }}
-        run: npm ci
+        run: npm ci --prefer-offline --no-audit
 
       - name: Run tests
         if: ${{ steps.release.outputs.release_created }}
         run: npm run test:unit
-
-      - name: Build
-        if: ${{ steps.release.outputs.release_created }}
-        run: npm run build
 
       - name: Publish to npm
         if: ${{ steps.release.outputs.release_created }}

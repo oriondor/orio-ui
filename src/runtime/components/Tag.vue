@@ -32,7 +32,11 @@ withDefaults(defineProps<Props>(), {
 /* Neutral (gray chip) */
 .tag--neutral {
   background-color: var(--color-surface);
-  border-color: color-mix(in srgb, var(--color-border) 80%, var(--color-accent) 20%);
+  border-color: color-mix(
+    in srgb,
+    var(--color-border) 80%,
+    var(--color-accent) 20%
+  );
   color: var(--color-muted);
 }
 

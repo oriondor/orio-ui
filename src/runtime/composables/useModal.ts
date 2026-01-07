@@ -8,7 +8,7 @@ export interface OriginRect {
 }
 
 export interface ModalProps {
-  show: Boolean;
+  show: boolean;
   origin: OriginRect | null;
   'onUpdate:show': (state: boolean) => void;
 }
@@ -17,10 +17,10 @@ export function useModal() {
   const modalProps = ref<ModalProps>({
     show: false,
     origin: null,
-    'onUpdate:show': (state: Boolean) => updateShow(state),
+    'onUpdate:show': (state: boolean) => updateShow(state),
   });
 
-  function updateShow(state: Boolean) {
+  function updateShow(state: boolean) {
     modalProps.value.show = state;
   }
 

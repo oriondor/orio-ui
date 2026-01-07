@@ -1,10 +1,10 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import pluginVue from "eslint-plugin-vue";
-import prettier from "eslint-plugin-prettier/recommended";
-import vueConfigTypescript from "@vue/eslint-config-typescript";
-import vueConfigPrettier from "@vue/eslint-config-prettier";
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import pluginVue from 'eslint-plugin-vue';
+import prettier from 'eslint-plugin-prettier/recommended';
+import vueConfigTypescript from '@vue/eslint-config-typescript';
+import vueConfigPrettier from '@vue/eslint-config-prettier';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -20,22 +20,22 @@ export default [
   pluginJs.configs.recommended,
   {
     rules: {
-      "no-unused-vars": "off",
-      "no-undef": "off",
+      'no-unused-vars': 'off',
+      'no-undef': 'off',
     },
   },
   // ts
   ...tseslint.configs.recommended,
   {
     rules: {
-      "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/no-explicit-any": "warn",
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
   // vue
-  ...pluginVue.configs["flat/recommended"],
+  ...pluginVue.configs['flat/recommended'],
   {
-    files: ["*.vue", "**/*.vue"],
+    files: ['*.vue', '**/*.vue'],
     languageOptions: {
       parserOptions: {
         parser: tseslint.parser,
@@ -46,29 +46,45 @@ export default [
     rules: {
       ...vueConfigTypescript.rules,
       ...vueConfigPrettier.rules,
-      "prettier/prettier": [
-        "warn",
+      'prettier/prettier': [
+        'warn',
         {
           singleQuote: true,
         },
       ],
-      "vue/multi-word-component-names": "off",
-      "vue/attribute-hyphenation": "off",
-      "vue/no-v-html": "off",
-      "vue/v-on-event-hyphenation": "off",
-      "@typescript-eslint/ban-ts-comment": "off",
-      "@typescript-eslint/no-require-imports": "off",
-      "@typescript-eslint/no-explicit-any": "off",
+      'vue/multi-word-component-names': 'off',
+      'vue/attribute-hyphenation': 'off',
+      'vue/no-v-html': 'off',
+      'vue/v-on-event-hyphenation': 'off',
+      'vue/require-default-prop': 'off',
+      'vue/one-component-per-file': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_|^props$|^sub$|^vi$|^T$',
+        },
+      ],
     },
   },
   {
-    ignores: ["node_modules", ".nuxt", ".output", "dist", "docs/.vitepress/cache", "docs/.vitepress/dist"],
+    ignores: [
+      'node_modules',
+      '.nuxt',
+      '.output',
+      'dist',
+      'docs/.vitepress/cache',
+      'docs/.vitepress/dist',
+    ],
   },
   // prettier
   prettier,
   {
     rules: {
-      "prettier/prettier": ["warn", { singleQuote: true }],
+      'prettier/prettier': ['warn', { singleQuote: true }],
     },
   },
 ];

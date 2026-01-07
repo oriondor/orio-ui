@@ -9,19 +9,19 @@ import { useFuse, type FuseOptions } from '@vueuse/integrations/useFuse';
  */
 export function useFuzzySearch(
   dataSource: MaybeRef<string[]>,
-  search: MaybeRef<string>
+  search: MaybeRef<string>,
 ): ReturnType<typeof useFuse>;
 
 export function useFuzzySearch<T extends object>(
   dataSource: MaybeRef<T[]>,
   search: MaybeRef<string>,
-  options: FuseOptions<T>
+  options: FuseOptions<T>,
 ): ReturnType<typeof useFuse>;
 
 export function useFuzzySearch<T extends object>(
   dataSource: MaybeRef<string[] | T[]>,
   search: MaybeRef<string>,
-  options?: FuseOptions<T>
+  options?: FuseOptions<T>,
 ) {
   // If options are provided, treat as object array; otherwise string array
   const isObjectArray = !!options;

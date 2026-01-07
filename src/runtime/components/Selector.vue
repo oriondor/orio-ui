@@ -18,7 +18,9 @@ const props = withDefaults(defineProps<SelectProps>(), {
 
 const { field, optionName, placeholder } = toRefs(props);
 
-const modelValue = defineModel<SelectableOption | SelectableOption[] | null | undefined>({
+const modelValue = defineModel<
+  SelectableOption | SelectableOption[] | null | undefined
+>({
   required: true,
 });
 
@@ -33,7 +35,7 @@ const flatModalValue = computed(() => {
       ? modelValue.value
       : (modelValue.value as T)[key.value];
   return modelValue.value.map((option) =>
-    typeof option === 'string' ? option : (option as T)[key.value]
+    typeof option === 'string' ? option : (option as T)[key.value],
   );
 });
 
@@ -41,7 +43,9 @@ function toggleOption(option: SelectableOption, toggle: () => void) {
   if (props.multiple) {
     if (Array.isArray(modelValue.value)) {
       const index = modelValue.value.findIndex((opt) =>
-        typeof option === 'string' ? option === opt : opt[key.value] === (option as T)[key.value]
+        typeof option === 'string'
+          ? option === opt
+          : opt[key.value] === (option as T)[key.value],
       );
       if (index > -1) {
         modelValue.value.splice(index, 1);
@@ -63,7 +67,9 @@ function isOptionSelected(option: SelectableOption): boolean {
   return !!(
     flatModalValue.value &&
     (flatModalValue.value === (option as T)[key.value] ||
-      (flatModalValue.value as string[]).includes((option as T)[key.value] as string))
+      (flatModalValue.value as string[]).includes(
+        (option as T)[key.value] as string,
+      ))
   );
 }
 
@@ -88,9 +94,19 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
       <template #default="{ toggle }">
         <slot name="trigger" :toggle>
           <div class="selector-trigger">
-            <slot name="trigger-content" :toggle v-bind="selectorAttrs" :attrs="$attrs">
+            <slot
+              name="trigger-content"
+              :toggle
+              v-bind="selectorAttrs"
+              :attrs="$attrs"
+            >
               <div class="trigger-content">
-                <slot name="trigger-label" :toggle v-bind="selectorAttrs" :attrs="$attrs">
+                <slot
+                  name="trigger-label"
+                  :toggle
+                  v-bind="selectorAttrs"
+                  :attrs="$attrs"
+                >
                   <template v-if="!props.multiple">
                     {{ getOptionLabel(modelValue as T) }}
                   </template>

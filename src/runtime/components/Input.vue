@@ -8,12 +8,7 @@ const text = defineModel<string>({ default: '' });
 
 <template>
   <orio-control-element v-bind="$attrs">
-    <input
-      v-bind="$attrs"
-      v-model="text"
-      type="text"
-      class="text-input"
-    >
+    <input v-bind="$attrs" v-model="text" type="text" class="text-input" />
   </orio-control-element>
 </template>
 

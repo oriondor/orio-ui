@@ -1,35 +1,30 @@
 {
   "name": "orio-ui",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Modern Nuxt component library with theme support",
   "type": "module",
-  "main": "./dist/runtime/index.js",
-  "types": "./dist/runtime/index.d.ts",
+  "main": "./src/runtime/index.ts",
+  "types": "./src/runtime/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/runtime/index.d.ts",
-      "import": "./dist/runtime/index.js"
-    },
-    "./nuxt": {
-      "types": "./dist/module.d.ts",
-      "import": "./dist/module.mjs"
+      "types": "./src/runtime/index.ts",
+      "import": "./src/runtime/index.ts"
     },
     "./composables": {
-      "types": "./dist/runtime/composables/index.d.ts",
-      "import": "./dist/runtime/composables/index.js"
+      "types": "./src/runtime/composables/index.ts",
+      "import": "./src/runtime/composables/index.ts"
     },
-    "./styles": "./dist/runtime/assets/css/main.css",
-    "./theme": "./dist/runtime/assets/css/colors.css"
+    "./styles": "./src/runtime/assets/css/main.css",
+    "./theme": "./src/runtime/assets/css/colors.css"
   },
   "files": [
-    "dist",
     "nuxt.config.ts",
     "src"
   ],
   "scripts": {
     "dev": "vitepress dev docs",
-    "build": "nuxt-module-build build",
-    "prepack": "npm run build",
+    "build": "echo 'Build not needed for Nuxt layer'",
+    "prepack": "echo 'Using source files directly'",
     "test": "vitest",
     "test:unit": "vitest run",
     "test:watch": "vitest watch",
@@ -37,7 +32,7 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "lint": "eslint .",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@nuxt/kit": "^3.15.3",

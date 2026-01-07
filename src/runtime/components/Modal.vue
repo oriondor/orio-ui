@@ -13,7 +13,7 @@ const props = defineProps<{
   origin: OriginRect | null;
 }>();
 
-const show = defineModel<Boolean>('show');
+const show = defineModel<boolean>('show');
 
 const wrapper = ref<HTMLDivElement | null>(null);
 
