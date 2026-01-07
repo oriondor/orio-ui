@@ -30,8 +30,8 @@ Add Orio UI to your `nuxt.config.ts`:
 
 ```typescript
 export default defineNuxtConfig({
-  extends: ['orio-ui']
-})
+  extends: ["orio-ui"],
+});
 ```
 
 That's it! All components and composables are now auto-imported.
@@ -41,15 +41,9 @@ That's it! All components and composables are now auto-imported.
 ```vue
 <template>
   <div>
-    <orio-button type="primary" @click="handleClick">
-      Click Me
-    </orio-button>
+    <orio-button type="primary" @click="handleClick"> Click Me </orio-button>
 
-    <orio-input
-      v-model="email"
-      label="Email"
-      placeholder="you@example.com"
-    />
+    <orio-input v-model="email" label="Email" placeholder="you@example.com" />
 
     <orio-view-text type="title" size="large">
       Welcome to Orio UI
@@ -58,13 +52,13 @@ That's it! All components and composables are now auto-imported.
 </template>
 
 <script setup>
-const email = ref('')
+const email = ref("");
 
 // Composables are auto-imported too!
-const { theme, setTheme } = useTheme()
+const { theme, setTheme } = useTheme();
 
 function handleClick() {
-  setTheme('ocean')
+  setTheme("ocean");
 }
 </script>
 ```
@@ -74,6 +68,7 @@ function handleClick() {
 ### Components (18)
 
 #### Form Controls
+
 - **Input** - Text input with label support
 - **Textarea** - Multi-line text input
 - **CheckBox** - Custom checkbox with icon states
@@ -83,11 +78,13 @@ function handleClick() {
 - **Tag** - Styled tag/badge component
 
 #### Interactive
+
 - **Button** - Primary, secondary, subdued variants with loading/icon support
 - **Modal** - Animated modal with origin morphing
 - **Popover** - Positioned popover with smart placement
 
 #### Display
+
 - **Icon** - SVG icon system with 12 bundled icons
 - **LoadingSpinner** - Animated loading indicator
 - **EmptyState** - Empty state placeholder
@@ -95,6 +92,7 @@ function handleClick() {
 - **ControlElement** - Form control wrapper
 
 #### View
+
 - **Text** - Typography component with variants
 - **Dates** - Date range display formatter
 - **Separator** - Visual divider
@@ -109,6 +107,7 @@ function handleClick() {
 ### Theming
 
 Built-in themes:
+
 - **Navy** (default) - Professional blue
 - **Ocean** - Fresh cyan
 - **Sunset** - Warm orange
@@ -119,10 +118,10 @@ All themes support light and dark modes. Fully customizable via CSS variables.
 
 ```vue
 <script setup>
-const { setTheme, setMode } = useTheme()
+const { setTheme, setMode } = useTheme();
 
-setTheme('ocean')
-setMode('dark')
+setTheme("ocean");
+setMode("dark");
 </script>
 ```
 
@@ -142,7 +141,7 @@ Full documentation:
 
 ```bash
 # Clone the repository
-git clone https://github.com/vladooo/orio-ui.git
+git clone https://github.com/oriondor/orio-ui.git
 cd orio-ui
 
 # Install dependencies
@@ -193,9 +192,9 @@ npm run test:watch
 Orio UI is written in TypeScript and provides full type definitions:
 
 ```typescript
-import type { TextTypes, TagStyle } from 'orio-ui/composables'
-import type { OriginRect, ModalProps } from 'orio-ui/composables'
-import type { IconName } from 'orio-ui/composables'
+import type { TextTypes, TagStyle } from "orio-ui/composables";
+import type { OriginRect, ModalProps } from "orio-ui/composables";
+import type { IconName } from "orio-ui/composables";
 ```
 
 ## Browser Support
@@ -217,7 +216,7 @@ Contributions are welcome! Please read our contributing guidelines before submit
 
 ## License
 
-MIT © [vladooo](https://github.com/vladooo)
+MIT © [oriondor](https://github.com/oriondor)
 
 ## Changelog
 
@@ -226,6 +225,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for version history.
 ## Credits
 
 Built with:
+
 - [Nuxt 3](https://nuxt.com/) - Vue framework
 - [VueUse](https://vueuse.org/) - Vue composables collection
 - [Fuse.js](https://fusejs.io/) - Fuzzy search library

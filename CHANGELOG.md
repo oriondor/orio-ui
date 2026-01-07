@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Components (18 total)
+
 - **Button** - Primary, secondary, subdued variants with loading states
 - **Input** - Text input with label support
 - **Textarea** - Multi-line text input
@@ -30,30 +31,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Separator** (View) - Visual divider component
 
 #### Composables (4 total)
+
 - **useTheme** - Theme and color mode management with localStorage persistence
 - **useModal** - Modal state management with animation origin tracking
 - **useFuzzySearch** - Fuzzy search powered by Fuse.js
 - **useApi** - Type-safe API request wrapper using ofetch
 
 #### Theming System
+
 - 5 built-in accent themes: Navy, Ocean, Sunset, Forest, Purple
 - Light and dark mode support
 - 3-layer CSS variable system for easy customization
 - Automatic theme persistence to localStorage
 
 #### Icon System
+
 - Custom icon registry with 12 bundled SVG icons
 - Tree-shakeable icon loading
 - Support for custom icon sizes and colors
 - Icons included: loading-loop, chevron-down, chevron-up, edit, check, plus, calendar, close, search, upload, download, delete
 
 #### Testing
+
 - 71 unit tests with Vitest
 - Component tests for all 18 components
 - Composable tests for all 4 composables
 - Full test coverage for core functionality
 
 #### Documentation
+
 - VitePress documentation site
 - Getting Started guide
 - Theming guide
@@ -62,6 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Interactive playground app
 
 #### Developer Experience
+
 - Full TypeScript support with exported types
 - Nuxt Layer architecture for seamless integration
 - Auto-import for all components and composables
@@ -69,6 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Development playground for testing
 
 ### Technical Details
+
 - Built with Vue 3 Composition API
 - Nuxt 3/4 compatible
 - SSR-ready with proper client-side checks
@@ -77,10 +85,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Accessibility-focused components
 
 ### Dependencies
+
 - @vueuse/core ^11.0.0
 - @vueuse/integrations ^11.0.0
 - fuse.js ^7.0.0
 - nanoid ^5.0.0
 - ofetch ^1.5.1
 
-[0.1.0]: https://github.com/vladooo/orio-ui/releases/tag/v0.1.0
+[0.1.0]: https://github.com/oriondor/orio-ui/releases/tag/v0.1.0
