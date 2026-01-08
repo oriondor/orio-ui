@@ -256,7 +256,7 @@ async function handleSubmit() {
 
     <div v-if="error" class="error">{{ error }}</div>
 
-    <orio-button type="primary" :loading="submitting">
+    <orio-button variant="primary" :loading="submitting">
       Register
     </orio-button>
   </form>

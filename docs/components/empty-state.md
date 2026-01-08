@@ -36,7 +36,7 @@ import { ref } from 'vue'
       description="Upload or create a new document"
       size="large"
     >
-      <orio-button type="primary" icon="plus">
+      <orio-button variant="primary" icon="plus">
         Create Document
       </orio-button>
     </orio-empty-state>
@@ -65,7 +65,7 @@ import { ref } from 'vue'
     description="Upload or create a new document"
     size="large"
   >
-    <orio-button type="primary" icon="plus"> Create Document </orio-button>
+    <orio-button variant="primary" icon="plus"> Create Document </orio-button>
   </orio-empty-state>
 </template>
 ```

@@ -26,7 +26,7 @@ const { modalProps, openModal } = useModal()
 
 <div class="demo-container">
   <div class="demo-row">
-    <orio-button type="secondary" @click="openModal">
+    <orio-button variant="secondary" @click="openModal">
       Open (With Animation)
     </orio-button>
   </div>
@@ -155,7 +155,7 @@ interface OriginRect {
 
 ```vue
 <template>
-  <orio-button type="primary" @click="confirmDelete($event)">
+  <orio-button variant="primary" @click="confirmDelete($event)">
     Delete Item
   </orio-button>
 
@@ -164,10 +164,10 @@ interface OriginRect {
     <p>Are you sure you want to delete this item?</p>
 
     <div style="display: flex; gap: 0.5rem; margin-top: 1rem">
-      <orio-button type="secondary" @click="deleteModal.show = false">
+      <orio-button variant="secondary" @click="deleteModal.show = false">
         Cancel
       </orio-button>
-      <orio-button type="primary" @click="handleDelete"> Delete </orio-button>
+      <orio-button variant="primary" @click="handleDelete"> Delete </orio-button>
     </div>
   </orio-modal>
 </template>
@@ -226,10 +226,10 @@ const { modalProps: deleteModal, openModal: openDeleteModal } = useModal();
       <orio-input v-model="form.email" type="email" label="Email" required />
 
       <div style="display: flex; gap: 0.5rem; margin-top: 1rem">
-        <orio-button type="secondary" @click="formModal.show = false">
+        <orio-button variant="secondary" @click="formModal.show = false">
           Cancel
         </orio-button>
-        <orio-button type="primary" :loading="submitting"> Save </orio-button>
+        <orio-button variant="primary" :loading="submitting"> Save </orio-button>
       </div>
     </form>
   </orio-modal>
@@ -360,7 +360,7 @@ async function proceedWithAction() {
 </script>
 
 <template>
-  <orio-button type="primary" @click="handleDangerousAction">
+  <orio-button variant="primary" @click="handleDangerousAction">
     Delete
   </orio-button>
 
@@ -368,10 +368,10 @@ async function proceedWithAction() {
     <h3>Are you sure?</h3>
     <p>This action cannot be undone.</p>
     <div class="demo-row">
-      <orio-button type="secondary" @click="confirmModal.show = false">
+      <orio-button variant="secondary" @click="confirmModal.show = false">
         Cancel
       </orio-button>
-      <orio-button type="primary" @click="proceedWithAction">
+      <orio-button variant="primary" @click="proceedWithAction">
         Confirm
       </orio-button>
     </div>

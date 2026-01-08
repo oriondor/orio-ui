@@ -31,7 +31,7 @@ function openModal(event) {
     <h2>Modal Title</h2>
     <p>This modal morphs from the button you clicked!</p>
     <p>Click outside or press the button below to close.</p>
-    <orio-button type="primary" @click="showModal = false">
+    <orio-button variant="primary" @click="showModal = false">
       Close Modal
     </orio-button>
   </orio-modal>
