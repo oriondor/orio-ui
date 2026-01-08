@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5](https://github.com/oriondor/orio-ui/compare/v1.0.4...v1.0.5) (2026-01-08)
+
+
+### Bug Fixes
+
+* changed scss for gradient style to css ([90e5297](https://github.com/oriondor/orio-ui/commit/90e529721d8847666df46cac051d6db325ad8fe5))
+
 ## [1.0.4](https://github.com/oriondor/orio-ui/compare/v1.0.3...v1.0.4) (2026-01-08)
 
 
