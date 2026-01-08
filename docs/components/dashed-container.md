@@ -17,21 +17,29 @@ function handleClick() {
     <orio-dashed-container
       icon="plus"
       text="Add Item"
-      size="medium"
+      size="small"
       @click="handleClick"
     />
+  </div>
+</div>
 
+<div class="demo-container">
+  <div class="demo-grid">
     <orio-dashed-container
       icon="upload"
       text="Upload File"
-      size="large"
+      size="medium"
       @click="handleClick"
     />
+  </div>
+</div>
 
+<div class="demo-container">
+  <div class="demo-grid">
     <orio-dashed-container
       icon="calendar"
       text="Schedule Event"
-      size="small"
+      size="large"
       @click="handleClick"
     />
   </div>
@@ -43,31 +51,44 @@ function handleClick() {
 <template>
   <orio-dashed-container
     icon="plus"
-    text="Add New"
-    @click="handleAdd"
+    text="Add Item"
+    size="medium"
+    @click="handleClick"
+  />
+  <orio-dashed-container
+    icon="upload"
+    text="Upload File"
+    size="large"
+    @click="handleClick"
+  />
+  <orio-dashed-container
+    icon="calendar"
+    text="Schedule Event"
+    size="small"
+    @click="handleClick"
   />
 </template>
 
 <script setup>
-function handleAdd() {
-  console.log('Add clicked!')
+function handleClick() {
+  alert("Container clicked!");
 }
 </script>
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `icon` | `string` | `undefined` | Icon name |
-| `text` | `string` | `undefined` | Text label |
-| `size` | `'small' \| 'medium' \| 'large'` | `'medium'` | Container size |
+| Prop   | Type                             | Default     | Description    |
+| ------ | -------------------------------- | ----------- | -------------- |
+| `icon` | `string`                         | `undefined` | Icon name      |
+| `text` | `string`                         | `undefined` | Text label     |
+| `size` | `'small' \| 'medium' \| 'large'` | `'medium'`  | Container size |
 
 ## Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `click` | - | Emitted on container click |
+| Event   | Payload | Description                |
+| ------- | ------- | -------------------------- |
+| `click` | -       | Emitted on container click |
 
 ## Features
 

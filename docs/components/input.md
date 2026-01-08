@@ -33,7 +33,7 @@ const password = ref('')
     />
   </div>
 
-  <div style="margin-top: 1rem; padding: 1rem; background: var(--vp-c-bg-mute); border-radius: 4px;">
+  <div class="demo-output">
     <strong>Current values:</strong><br>
     Name: {{ name || '(empty)' }}<br>
     Email: {{ email || '(empty)' }}<br>

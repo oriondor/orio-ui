@@ -163,7 +163,7 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--border-radius-md);
   padding: 0.5rem 0.75rem;
   font-size: 0.95rem;
   color: var(--color-text);
@@ -199,7 +199,7 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--border-radius-md);
   margin-top: 0.25rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 

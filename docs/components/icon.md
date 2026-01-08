@@ -27,10 +27,10 @@ import { ref } from 'vue'
 
   <h3>Custom Sizes</h3>
   <div class="demo-row">
-    <orio-icon name="edit" size="16" />
-    <orio-icon name="edit" size="24" />
-    <orio-icon name="edit" size="32" />
-    <orio-icon name="edit" size="48" />
+    <orio-icon name="edit" :size="16" />
+    <orio-icon name="edit" :size="24" />
+    <orio-icon name="edit" :size="32" />
+    <orio-icon name="edit" :size="48" />
   </div>
 
   <h3>Custom Colors</h3>
@@ -46,20 +46,23 @@ import { ref } from 'vue'
 ```vue
 <template>
   <orio-icon name="edit" />
-  <orio-icon name="check" size="32" color="green" />
+  <orio-icon name="check" :size="32" color="green" />
 </template>
 ```
 
 ## Available Icons
 
 ### Loading & Status
+
 - `loading-loop` - Animated loading spinner
 
 ### Navigation
+
 - `chevron-down` - Dropdown chevron pointing down
 - `chevron-up` - Dropdown chevron pointing up
 
 ### Actions
+
 - `edit` - Edit/pencil icon
 - `check` - Checkmark
 - `plus` - Plus/add icon
@@ -70,14 +73,15 @@ import { ref } from 'vue'
 - `delete` - Delete/trash icon
 
 ### Other
+
 - `calendar` - Calendar icon
 
 See the [Icon Registry](/utils/icon-registry) for more details on adding custom icons.
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `name` | `IconName \| string` | - | Icon name from registry |
-| `size` | `string \| number` | `'1em'` | Icon size (px or em) |
-| `color` | `string` | `'currentColor'` | Icon color (CSS color) |
+| Prop    | Type                 | Default          | Description             |
+| ------- | -------------------- | ---------------- | ----------------------- |
+| `name`  | `IconName \| string` | -                | Icon name from registry |
+| `size`  | `string \| number`   | `'1em'`          | Icon size (px or em)    |
+| `color` | `string`             | `'currentColor'` | Icon color (CSS color)  |

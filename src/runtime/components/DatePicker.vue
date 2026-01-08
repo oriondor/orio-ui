@@ -45,7 +45,7 @@ const randomName = computed(() => `date-${nanoid(8)}`);
   appearance: none;
   background-color: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--border-radius-md);
   padding: 0.4rem 0.6rem;
   color: var(--color-text);
   font-size: 0.95rem;

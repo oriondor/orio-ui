@@ -76,17 +76,19 @@ watch(show, (open) => {
   align-items: center;
 
   transition: opacity 0.25s ease;
+  z-index: 99;
 }
 
 .modal {
   position: absolute;
+  z-index: 100;
 
   width: 380px;
   max-width: 90vw;
   max-height: 90vh;
 
   background: white;
-  border-radius: 1rem;
+  border-radius: var(--border-radius-lg);
   padding: 24px;
 
   transform-origin: top left;

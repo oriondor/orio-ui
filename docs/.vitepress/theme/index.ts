@@ -1,4 +1,3 @@
-import { h } from 'vue';
 import DefaultTheme from 'vitepress/theme';
 import './custom.css';
 
@@ -22,14 +21,15 @@ import ViewText from '../../../src/runtime/components/view/Text.vue';
 import ViewDates from '../../../src/runtime/components/view/Dates.vue';
 import ViewSeparator from '../../../src/runtime/components/view/Separator.vue';
 
+// Import Layout wrapper
+import Layout from './Layout.vue';
+
 // Import CSS
 import '../../../src/runtime/assets/css/main.css';
 
 export default {
   extends: DefaultTheme,
-  Layout: () => {
-    return h(DefaultTheme.Layout, null, {});
-  },
+  Layout,
   enhanceApp({ app }) {
     // Register all components globally
     app.component('OrioButton', Button);

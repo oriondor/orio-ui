@@ -33,12 +33,13 @@ const iconSize = computed(() => {
 .dashed-container {
   cursor: pointer;
   border: 3px dashed var(--color-border);
-  border-radius: 4px;
-  padding: 0.5rem;
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 0.5rem;
 
   &:hover {
     .text-class {
@@ -51,5 +52,6 @@ const iconSize = computed(() => {
 }
 .text-class {
   color: var(--color-accent);
+  font-weight: 500;
 }
 </style>

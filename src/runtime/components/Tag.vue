@@ -21,7 +21,7 @@ withDefaults(defineProps<Props>(), {
   max-height: 1rem;
   display: inline-block;
   padding: 0.25rem 0.6rem;
-  border-radius: 1rem;
+  border-radius: var(--border-radius-lg);
   font-size: 0.8rem;
   font-weight: 500;
   line-height: 1;

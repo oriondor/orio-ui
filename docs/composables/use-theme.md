@@ -17,10 +17,10 @@ const { theme, mode, setTheme, setMode } = useTheme()
   <div>
     <h2>Choose Theme</h2>
     <button @click="setTheme('navy')">Navy</button>
-    <button @click="setTheme('ocean')">Ocean</button>
-    <button @click="setTheme('sunset')">Sunset</button>
+    <button @click="setTheme('teal')">Teal</button>
     <button @click="setTheme('forest')">Forest</button>
-    <button @click="setTheme('purple')">Purple</button>
+    <button @click="setTheme('wine')">Wine</button>
+    <button @click="setTheme('royal')">Royal</button>
 
     <p>Current theme: {{ theme }}</p>
   </div>
@@ -60,20 +60,22 @@ function toggleMode() {
 
 ## Built-in Themes
 
-### Navy (Default)
-Professional blue theme
+The library includes five built-in themes that you can use out of the box:
 
-### Ocean
-Fresh cyan theme
+### Navy
+Deep blue professional theme
 
-### Sunset
-Warm orange theme
+### Teal
+Fresh cyan/turquoise theme
 
 ### Forest
 Natural green theme
 
-### Purple
-Creative purple theme
+### Wine
+Rich burgundy/red theme
+
+### Royal
+Vibrant blue theme
 
 ## Persistence
 
@@ -99,10 +101,10 @@ The composable handles SSR gracefully:
   <div class="theme-switcher">
     <select v-model="currentTheme" @change="handleThemeChange">
       <option value="navy">Navy</option>
-      <option value="ocean">Ocean</option>
-      <option value="sunset">Sunset</option>
+      <option value="teal">Teal</option>
       <option value="forest">Forest</option>
-      <option value="purple">Purple</option>
+      <option value="wine">Wine</option>
+      <option value="royal">Royal</option>
     </select>
 
     <button @click="toggleDarkMode">
@@ -178,33 +180,138 @@ const { theme, mode, setTheme, setMode } = useTheme()
 
 const themes = [
   { label: 'Navy', value: 'navy' },
-  { label: 'Ocean', value: 'ocean' },
-  { label: 'Sunset', value: 'sunset' },
+  { label: 'Teal', value: 'teal' },
   { label: 'Forest', value: 'forest' },
-  { label: 'Purple', value: 'purple' },
+  { label: 'Wine', value: 'wine' },
+  { label: 'Royal', value: 'royal' },
 ]
 </script>
 ```
 
 ## Custom Themes
 
-To add custom themes, define CSS variables:
+The theming system is fully customizable. You can override existing themes or create entirely new ones by defining CSS variables in your own stylesheets.
+
+### Understanding Theme Variables
+
+Themes control the accent colors used throughout the UI. The main variables you can customize are:
 
 ```css
-[data-theme="my-custom"] {
-  --accent-base: #ff6b6b;
-  --accent-hover: #ff5252;
-  --accent-soft: #ffe5e5;
+:root[data-theme="your-theme"] {
+  --color-accent: /* Main accent color */
+  --color-accent-soft: /* Light background tint */
+  --color-accent-border: /* Border color */
 }
 ```
 
-Then use it:
+The `--color-accent-ink`, `--color-accent-hover`, and `--color-accent-active` are automatically derived using `color-mix()`.
+
+### Creating a New Theme
+
+Define your theme in your app's CSS:
+
+```css
+/* In your main CSS file or a separate theme file */
+:root[data-theme="sunset"] {
+  --color-accent: hsl(16 90% 48%);
+  --color-accent-soft: hsl(16 100% 96%);
+  --color-accent-border: hsl(16 85% 80%);
+}
+
+:root[data-theme="ocean"] {
+  --color-accent: hsl(199 89% 48%);
+  --color-accent-soft: hsl(199 100% 96%);
+  --color-accent-border: hsl(199 75% 80%);
+}
+
+:root[data-theme="lavender"] {
+  --color-accent: hsl(267 65% 58%);
+  --color-accent-soft: hsl(267 100% 97%);
+  --color-accent-border: hsl(267 50% 85%);
+}
+```
+
+Then use them in your app:
 
 ```vue
 <script setup>
 const { setTheme } = useTheme()
-setTheme('my-custom')
+
+// Use your custom theme
+setTheme('sunset')
 </script>
 ```
 
-See the [Theming Guide](/theming) for more details.
+### Overriding Built-in Themes
+
+You can completely override any built-in theme by redefining its variables:
+
+```css
+/* Override the "navy" theme with your brand colors */
+:root[data-theme="navy"] {
+  --color-accent: #0066cc; /* Your brand blue */
+  --color-accent-soft: #e6f2ff;
+  --color-accent-border: #99ccff;
+}
+```
+
+### Complete Custom Theme Example
+
+Here's a full example with multiple custom themes:
+
+```css
+/* bright-pink.css */
+:root[data-theme="bright-pink"] {
+  --color-accent: hsl(328 100% 54%);
+  --color-accent-soft: hsl(328 100% 97%);
+  --color-accent-border: hsl(328 73% 84%);
+}
+
+:root[data-theme="mint"] {
+  --color-accent: hsl(162 63% 41%);
+  --color-accent-soft: hsl(162 60% 96%);
+  --color-accent-border: hsl(162 40% 80%);
+}
+
+:root[data-theme="amber"] {
+  --color-accent: hsl(38 92% 50%);
+  --color-accent-soft: hsl(38 100% 96%);
+  --color-accent-border: hsl(38 100% 82%);
+}
+```
+
+```vue
+<template>
+  <div>
+    <button @click="setTheme('bright-pink')">Bright Pink</button>
+    <button @click="setTheme('mint')">Mint</button>
+    <button @click="setTheme('amber')">Amber</button>
+  </div>
+</template>
+
+<script setup>
+const { setTheme } = useTheme()
+</script>
+```
+
+### Dark Mode Considerations
+
+Custom themes automatically work with dark mode. The library handles dark mode adjustments using the `data-mode` attribute. You only need to define the base accent colors.
+
+If you want to customize how your theme looks in dark mode specifically:
+
+```css
+:root[data-mode="dark"][data-theme="sunset"] {
+  /* Optional: override specific values for dark mode */
+  --color-accent-soft: hsl(16 30% 15%);
+  --color-accent-border: hsl(16 40% 25%);
+}
+```
+
+### Tips for Creating Themes
+
+1. **Use HSL values** for easier color manipulation
+2. **Keep sufficient contrast** between accent and soft/border variants
+3. **Test in both light and dark modes** to ensure readability
+4. **Soft variants** should be very light (90-97% lightness in HSL for light mode)
+5. **Border variants** should be between soft and accent in intensity (75-85% lightness)

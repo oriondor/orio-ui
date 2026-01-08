@@ -54,7 +54,7 @@ button {
   background-color: var(--color-accent);
   color: var(--color-accent-ink);
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: var(--border-radius-md);
   padding: 8px 16px;
   cursor: pointer;
   display: inline-flex;

@@ -17,7 +17,7 @@ import { ref } from 'vue'
         </orio-button>
       </template>
       <template #content="{ toggle }">
-        <div style="padding: 1rem; background: var(--vp-c-bg); border: 1px solid var(--vp-c-divider); border-radius: 4px; min-width: 200px;">
+        <div class="demo-output" style="min-width: 200px;">
           <p>Popover content here!</p>
           <orio-button type="subdued" @click="toggle(false)">Close</orio-button>
         </div>
@@ -31,7 +31,7 @@ import { ref } from 'vue'
         </orio-button>
       </template>
       <template #content="{ toggle }">
-        <div style="padding: 1rem; background: var(--vp-c-bg); border: 1px solid var(--vp-c-divider); border-radius: 4px; min-width: 200px;">
+        <div class="demo-output" style="min-width: 200px;">
           <p>Different position!</p>
           <orio-button type="subdued" @click="toggle(false)">Close</orio-button>
         </div>

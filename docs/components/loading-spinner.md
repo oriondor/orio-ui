@@ -12,23 +12,17 @@ import { ref } from 'vue'
   <div class="demo-row">
     <orio-loading-spinner />
   </div>
-
-  <p style="text-align: center; color: var(--vp-c-text-2);">
-    Animated loading spinner
-  </p>
 </div>
 
 ## Usage
 
 ```vue
 <template>
-  <div v-if="isLoading">
-    <orio-loading-spinner />
-  </div>
+  <orio-loading-spinner v-if="isLoading" />
 </template>
 
 <script setup>
-const isLoading = ref(true)
+const isLoading = ref(true);
 </script>
 ```
 
