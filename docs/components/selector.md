@@ -34,7 +34,7 @@ const users = [
     placeholder="Select a country"
   />
 
-  <div style="margin-top: 1rem; padding: 1rem; background: var(--vp-c-bg-mute); border-radius: 4px;">
+  <div class="demo-output">
     <strong>Selected:</strong> {{ selectedCountry || 'None' }}
   </div>
 </div>
@@ -49,7 +49,7 @@ const users = [
     :multiple="true"
   />
 
-  <div style="margin-top: 1rem; padding: 1rem; background: var(--vp-c-bg-mute); border-radius: 4px;">
+  <div class="demo-output">
     <strong>Selected:</strong> {{ selectedColors.length > 0 ? selectedColors.join(', ') : 'None' }}
   </div>
 </div>
@@ -65,7 +65,7 @@ const users = [
     placeholder="Select a user"
   />
 
-  <div style="margin-top: 1rem; padding: 1rem; background: var(--vp-c-bg-mute); border-radius: 4px;">
+  <div class="demo-output">
     <strong>Selected User:</strong>
     <template v-if="selectedUser">
       {{ selectedUser.name }} ({{ selectedUser.role }})

@@ -17,7 +17,7 @@ const text = defineModel<string>({ default: '' });
   width: 100%;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--border-radius-md);
   font-size: 1rem;
   color: var(--color-text);
   background-color: var(--color-bg);
@@ -36,7 +36,6 @@ const text = defineModel<string>({ default: '' });
 
   &:focus {
     border-color: var(--color-accent);
-    box-shadow: 0 0 0 2px var(--color-accent-soft);
     outline: none;
   }
 

@@ -26,7 +26,7 @@ const message = ref('This is a default message.\nYou can edit me!')
     />
   </div>
 
-  <div style="margin-top: 1rem; padding: 1rem; background: var(--vp-c-bg-mute); border-radius: 4px;">
+  <div class="demo-output">
     <strong>Bio length:</strong> {{ bio.length }} characters<br>
     <strong>Message preview:</strong> {{ message.substring(0, 50) }}{{ message.length > 50 ? '...' : '' }}
   </div>

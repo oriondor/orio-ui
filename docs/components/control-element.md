@@ -1,6 +1,8 @@
 # ControlElement
 
-Form control wrapper component with label support.
+This is basically a wrapper that removes border, shadow, margin from the inside element and gives it a label.
+
+It gives an inner element a freedom to be whatever it wants.
 
 ## Live Demo
 
@@ -9,15 +11,8 @@ import { ref } from 'vue'
 </script>
 
 <div class="demo-container">
-  <orio-control-element>
-    <input type="text" placeholder="Input wrapped in ControlElement" style="width: 100%; padding: 0.5rem; border: 1px solid var(--vp-c-divider); border-radius: 4px;" />
-  </orio-control-element>
-
-  <orio-control-element>
-    <select style="width: 100%; padding: 0.5rem; border: 1px solid var(--vp-c-divider); border-radius: 4px;">
-      <option>Option 1</option>
-      <option>Option 2</option>
-    </select>
+  <orio-control-element label="You can add label here">
+    <input type="text" placeholder="Notice standard styling is not a case here" style="width: stretch" />
   </orio-control-element>
 </div>
 
@@ -25,8 +20,12 @@ import { ref } from 'vue'
 
 ```vue
 <template>
-  <orio-control-element>
-    <input type="text" />
+  <orio-control-element label="You can add label here">
+    <input
+      type="text"
+      placeholder="Notice standard styling is not a case here"
+      style="width: stretch"
+    />
   </orio-control-element>
 </template>
 ```
@@ -37,8 +36,8 @@ None - this is a simple wrapper component.
 
 ## Slots
 
-| Slot | Description |
-|------|-------------|
+| Slot      | Description          |
+| --------- | -------------------- |
 | `default` | Form control element |
 
 ## Notes

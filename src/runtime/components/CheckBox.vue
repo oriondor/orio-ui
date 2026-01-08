@@ -64,7 +64,7 @@ defineProps<{
     width: var(--box-size);
     height: var(--box-size);
     border: 2px solid var(--color-border);
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     background-color: var(--color-bg);
     display: inline-flex;
     align-items: center;

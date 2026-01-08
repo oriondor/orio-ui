@@ -32,6 +32,7 @@ withDefaults(defineProps<ControlProps>(), {
     margin: 0;
 
     .slot-wrapper :first-child {
+      line-height: 1.5;
       border: 0;
       &:focus {
         box-shadow: none;

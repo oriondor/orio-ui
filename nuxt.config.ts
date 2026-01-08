@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  // Makes this a Nuxt Layer
   extends: [],
 
   css: ['./src/runtime/assets/css/main.css'],

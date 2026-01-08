@@ -33,7 +33,7 @@ defineExpose({ dateIsCorrect });
 
 <template>
   <div>
-    <orio-control-element>
+    <orio-control-element v-bind="$attrs">
       <div class="date-range-picker">
         <orio-date-picker v-model:date="dates.startDate" :month />
         <orio-date-picker v-model:date="dates.endDate" :month />

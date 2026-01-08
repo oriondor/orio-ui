@@ -40,11 +40,11 @@ const props = withDefaults(defineProps<Props>(), {
   justify-content: center;
   text-align: center;
   gap: 0.5rem;
-  padding: 2rem;
+  padding: 1rem;
   color: var(--color-text-secondary);
 
   &.small {
-    padding: 1rem;
+    padding: 0.5rem;
     gap: 0.25rem;
 
     .empty-state-icon {
@@ -53,7 +53,6 @@ const props = withDefaults(defineProps<Props>(), {
   }
 
   &.medium {
-    padding: 2rem;
     gap: 0.5rem;
 
     .empty-state-icon {
@@ -62,7 +61,6 @@ const props = withDefaults(defineProps<Props>(), {
   }
 
   &.large {
-    padding: 3rem;
     gap: 1rem;
 
     .empty-state-icon {

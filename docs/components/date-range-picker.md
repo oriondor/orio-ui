@@ -20,67 +20,74 @@ const educationDates = ref({
 
 <div class="demo-container">
   <div class="demo-grid">
-    <div>
-      <strong>Employment Period:</strong>
-      <orio-date-range-picker v-model:dates="employmentDates" />
-    </div>
-
-    <div>
-      <strong>Education (with Present):</strong>
-      <orio-date-range-picker v-model:dates="educationDates" />
-    </div>
+    <orio-date-range-picker v-model:dates="employmentDates" label="Employment Period" />
   </div>
+</div>
 
-  <div style="margin-top: 1rem; padding: 1rem; background: var(--vp-c-bg-mute); border-radius: 4px;">
-    <strong>Employment:</strong> {{ employmentDates.startDate }} → {{ employmentDates.endDate }}<br>
-    <strong>Education:</strong> {{ educationDates.startDate }} → {{ educationDates.endDate === null ? 'Present' : educationDates.endDate }}
+<div class="demo-container">
+  <div class="demo-grid">
+    <orio-date-range-picker v-model:dates="educationDates" label="Education (with Present)" />
   </div>
+</div>
+
+<div class="demo-output">
+  <strong>Employment:</strong> {{ employmentDates.startDate }} → {{ employmentDates.endDate }}<br>
+  <strong>Education:</strong> {{ educationDates.startDate }} → {{ educationDates.endDate === null ? 'Present' : educationDates.endDate }}
 </div>
 
 ## Usage
 
 ```vue
 <template>
-  <orio-date-range-picker v-model:dates="dateRange" />
+  <orio-date-range-picker
+    v-model:dates="employmentDates"
+    label="Employment Period"
+  />
+  <orio-date-range-picker
+    v-model:dates="educationDates"
+    label="Education (with Present)"
+  />
 </template>
 
 <script setup>
-const dateRange = ref({
-  startDate: '',
-  endDate: ''
-})
+const employmentDates = ref({
+  startDate: "2020-01-01",
+  endDate: "2024-12-31",
+});
+
+const educationDates = ref({
+  startDate: "2018-09-01",
+  endDate: null,
+});
 </script>
 ```
 
 ### With Month Picker
 
 ```vue
-<orio-date-range-picker
-  v-model:dates="monthRange"
-  :month="true"
-/>
+<orio-date-range-picker v-model:dates="monthRange" :month="true" />
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `dates` | `ResumeDate` | - | Date range object (v-model:dates) |
-| `month` | `boolean` | `false` | Month/year picker mode |
+| Prop    | Type         | Default | Description                       |
+| ------- | ------------ | ------- | --------------------------------- |
+| `dates` | `ResumeDate` | -       | Date range object (v-model:dates) |
+| `month` | `boolean`    | `false` | Month/year picker mode            |
 
 ### ResumeDate Type
 
 ```typescript
 interface ResumeDate {
-  startDate: string
-  endDate: string | null
+  startDate: string;
+  endDate: string | null;
 }
 ```
 
 ## Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
+| Event          | Payload      | Description               |
+| -------------- | ------------ | ------------------------- |
 | `update:dates` | `ResumeDate` | Emitted when dates change |
 
 ## Features

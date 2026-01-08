@@ -1,7 +1,9 @@
-/* Main entry point for i UI styles */
+/* Main entry point for Orio UI styles */
 @import "./colors.css";
+@import "./variables.css";
 @import "./animation.css";
 @import "./scroll.css";
+@import "./cool-gradient-hover.scss";
 
 /* Base reset for Orio components */
 *,

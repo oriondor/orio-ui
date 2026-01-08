@@ -2,6 +2,8 @@
 
 Date selection component with month/year picker support.
 
+<i>A lot of work should be done regarding this component, for now it's just standard browser's calendar wrapped in a component</i>
+
 ## Live Demo
 
 <script setup>
@@ -18,26 +20,32 @@ const monthOnly = ref('')
       v-model:date="birthDate"
       label="Birth Date"
     />
-
+  </div>
+</div>
+<div class="demo-container">
+  <div class="demo-grid">
     <orio-date-picker
       v-model:date="startDate"
       label="Start Date"
     />
-
+  </div>
+</div>
+<div class="demo-container">
+  <div class="demo-grid">
     <orio-date-picker
       v-model:date="monthOnly"
       label="Month & Year Only"
-      :month="true"
+      month
     />
   </div>
+</div>
 
-  <div style="margin-top: 1rem; padding: 1rem; background: var(--vp-c-bg-mute); border-radius: 4px;">
+  <div class="demo-output">
     <strong>Selected dates:</strong><br>
     Birth: {{ birthDate || '(not selected)' }}<br>
     Start: {{ startDate }}<br>
     Month: {{ monthOnly || '(not selected)' }}
   </div>
-</div>
 
 ## Usage
 
@@ -45,14 +53,15 @@ const monthOnly = ref('')
 
 ```vue
 <template>
-  <orio-date-picker
-    v-model:date="selectedDate"
-    label="Select Date"
-  />
+  <orio-date-picker v-model:date="birthDate" label="Birth Date" />
+  <orio-date-picker v-model:date="startDate" label="Start Date" />
+  <orio-date-picker v-model:date="monthOnly" label="Month & Year Only" month />
 </template>
 
 <script setup>
-const selectedDate = ref('')
+const birthDate = ref("");
+const startDate = ref("2024-01-15");
+const monthOnly = ref("");
 </script>
 ```
 
@@ -68,14 +77,14 @@ const selectedDate = ref('')
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `date` | `string` | - | Selected date (v-model:date) |
-| `label` | `string` | `undefined` | Label text |
-| `month` | `boolean` | `false` | Month/year picker mode |
+| Prop    | Type      | Default     | Description                  |
+| ------- | --------- | ----------- | ---------------------------- |
+| `date`  | `string`  | -           | Selected date (v-model:date) |
+| `label` | `string`  | `undefined` | Label text                   |
+| `month` | `boolean` | `false`     | Month/year picker mode       |
 
 ## Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
+| Event         | Payload  | Description               |
+| ------------- | -------- | ------------------------- |
 | `update:date` | `string` | Emitted when date changes |
