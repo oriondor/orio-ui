@@ -12,28 +12,28 @@ import { ref } from 'vue'
   <div class="demo-row">
     <orio-popover position="bottom-left">
       <template #default="{ toggle }">
-        <orio-button type="secondary" @click="toggle()">
+        <orio-button variant="secondary" @click="toggle()">
           Bottom Left
         </orio-button>
       </template>
       <template #content="{ toggle }">
         <div class="demo-output" style="min-width: 200px;">
           <p>Popover content here!</p>
-          <orio-button type="subdued" @click="toggle(false)">Close</orio-button>
+          <orio-button variant="subdued" @click="toggle(false)">Close</orio-button>
         </div>
       </template>
     </orio-popover>
 
     <orio-popover position="top-right">
       <template #default="{ toggle }">
-        <orio-button type="secondary" @click="toggle()">
+        <orio-button variant="secondary" @click="toggle()">
           Top Right
         </orio-button>
       </template>
       <template #content="{ toggle }">
         <div class="demo-output" style="min-width: 200px;">
           <p>Different position!</p>
-          <orio-button type="subdued" @click="toggle(false)">Close</orio-button>
+          <orio-button variant="subdued" @click="toggle(false)">Close</orio-button>
         </div>
       </template>
     </orio-popover>

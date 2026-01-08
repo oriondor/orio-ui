@@ -2,14 +2,14 @@
 import { computed, toRefs, useAttrs, useSlots } from 'vue';
 
 interface Props {
-  type?: 'primary' | 'secondary' | 'subdued';
+  variant?: 'primary' | 'secondary' | 'subdued';
   icon?: string;
   loading?: boolean;
   disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  type: 'primary',
+  variant: 'primary',
 });
 
 const { loading, disabled } = toRefs(props);
@@ -37,7 +37,7 @@ function click(event: PointerEvent) {
   <orio-control-element>
     <button
       v-bind="attrs"
-      :class="[type, 'gradient-hover', { 'icon-only': isIconOnly }]"
+      :class="[variant, 'gradient-hover', { 'icon-only': isIconOnly }]"
       @click="click"
     >
       <orio-loading-spinner v-if="loading" />

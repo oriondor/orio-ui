@@ -29,7 +29,7 @@ Components are auto-imported with the `orio-` prefix:
 ```vue
 <template>
   <div>
-    <orio-button type="primary" @click="save">
+    <orio-button variant="primary" @click="save">
       Save Changes
     </orio-button>
 

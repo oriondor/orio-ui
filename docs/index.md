@@ -29,7 +29,7 @@ Start using components:
 
 ```vue
 <template>
-  <orio-button type="primary" @click="handleClick">
+  <orio-button variant="primary" @click="handleClick">
     Click Me
   </orio-button>
 </template>

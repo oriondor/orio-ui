@@ -41,7 +41,7 @@ That's it! All components and composables are now auto-imported.
 ```vue
 <template>
   <div>
-    <orio-button type="primary" @click="handleClick"> Click Me </orio-button>
+    <orio-button variant="primary" @click="handleClick"> Click Me </orio-button>
 
     <orio-input v-model="email" label="Email" placeholder="you@example.com" />
 

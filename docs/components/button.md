@@ -23,9 +23,9 @@ function handleClick() {
 
 <div class="demo-container">
   <div class="demo-row">
-    <orio-button type="primary" @click="handleClick">Primary</orio-button>
-    <orio-button type="secondary" @click="handleClick">Secondary</orio-button>
-    <orio-button type="subdued" @click="handleClick">Subdued</orio-button>
+    <orio-button variant="primary" @click="handleClick">Primary</orio-button>
+    <orio-button variant="secondary" @click="handleClick">Secondary</orio-button>
+    <orio-button variant="subdued" @click="handleClick">Subdued</orio-button>
   </div>
 </div>
 
@@ -35,8 +35,8 @@ function handleClick() {
   <div class="demo-row">
     <orio-button icon="edit" @click="handleClick">Edit</orio-button>
     <orio-button icon="plus" @click="handleClick">Add</orio-button>
-    <orio-button icon="check" type="secondary">Done</orio-button>
-    <orio-button icon="calendar" type="subdued" />
+    <orio-button icon="check" variant="secondary">Done</orio-button>
+    <orio-button icon="calendar" variant="subdued" />
   </div>
 </div>
 
@@ -69,12 +69,12 @@ function handleClick() {
 </script>
 ```
 
-### Button Types
+### Button Variants
 
 ```vue
-<orio-button type="primary">Primary</orio-button>
-<orio-button type="secondary">Secondary</orio-button>
-<orio-button type="subdued">Subdued</orio-button>
+<orio-button variant="primary">Primary</orio-button>
+<orio-button variant="secondary">Secondary</orio-button>
+<orio-button variant="subdued">Subdued</orio-button>
 ```
 
 ### With Icons
@@ -111,10 +111,12 @@ async function save() {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `type` | `'primary' \| 'secondary' \| 'subdued'` | `'primary'` | Button visual style |
+| `variant` | `'primary' \| 'secondary' \| 'subdued'` | `'primary'` | Button visual style |
 | `icon` | `string` | `undefined` | Icon name from icon registry |
 | `loading` | `boolean` | `false` | Shows loading spinner, prevents clicks |
 | `disabled` | `boolean` | `false` | Disables button interaction |
+
+**Note:** The native HTML `type` attribute (e.g., `type="submit"`) can be used normally via `v-bind` and will be passed through to the underlying `<button>` element.
 
 ## Events
 
