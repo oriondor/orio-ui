@@ -166,6 +166,7 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
   border-radius: var(--border-radius-md);
   padding: 0.5rem 0.75rem;
   font-size: 0.95rem;
+  line-height: 1.5;
   color: var(--color-text);
   transition:
     border-color 0.2s ease,
