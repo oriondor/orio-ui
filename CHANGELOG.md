@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0](https://github.com/oriondor/orio-ui/compare/v1.0.6...v1.1.0) (2026-01-08)
+
+
+### Features
+
+* Added switch button ([b0b0820](https://github.com/oriondor/orio-ui/commit/b0b08203382f65224f39c9746ff1a16edc3c1f09))
+
 ## [1.0.6](https://github.com/oriondor/orio-ui/compare/v1.0.5...v1.0.6) (2026-01-08)
 
 
