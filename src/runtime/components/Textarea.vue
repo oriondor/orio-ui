@@ -22,6 +22,7 @@ const modelValue = defineModel<string>({ default: '' });
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
   font-size: 1rem;
+  line-height: 1.5;
   color: var(--color-text);
   background-color: var(--color-bg);
   box-sizing: border-box;
