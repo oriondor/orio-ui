@@ -3,6 +3,7 @@ export { default as Button } from './components/Button.vue';
 export { default as Input } from './components/Input.vue';
 export { default as Textarea } from './components/Textarea.vue';
 export { default as CheckBox } from './components/CheckBox.vue';
+export { default as SwitchButton } from './components/SwitchButton.vue';
 export { default as DatePicker } from './components/DatePicker.vue';
 export { default as DateRangePicker } from './components/DateRangePicker.vue';
 export { default as Selector } from './components/Selector.vue';
