@@ -3,7 +3,7 @@
 @import "./variables.css";
 @import "./animation.css";
 @import "./scroll.css";
-@import "./cool-gradient-hover.scss";
+@import "./cool-gradient-hover.css";
 
 /* Base reset for Orio components */
 *,
