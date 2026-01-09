@@ -1,5 +1,6 @@
 // Export all components
 export { default as Button } from "./components/Button.vue";
+export { default as NavButton } from "./components/NavButton.vue";
 export { default as Input } from "./components/Input.vue";
 export { default as Textarea } from "./components/Textarea.vue";
 export { default as CheckBox } from "./components/CheckBox.vue";
