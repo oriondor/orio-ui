@@ -55,7 +55,7 @@ function toggle() {
     border-color 0.2s ease;
 
   &:hover:not(.disabled) {
-    border-color: var(--color-accent);
+    border-color: var(--color-border);
   }
 
   &:focus-visible {
@@ -64,8 +64,8 @@ function toggle() {
   }
 
   &.active {
-    background-color: var(--color-accent-soft);
-    color: var(--color-accent);
+    background-color: var(--color-accent-active);
+    color: var(--color-accent-soft);
     border-color: var(--color-accent);
   }
 

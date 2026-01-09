@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, toRefs, useAttrs, useSlots } from 'vue';
+import { computed, toRefs, useAttrs, useSlots } from "vue";
 
 interface Props {
-  variant?: 'primary' | 'secondary' | 'subdued';
+  variant?: "primary" | "secondary" | "subdued";
   icon?: string;
   loading?: boolean;
   disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  variant: 'primary',
+  variant: "primary",
 });
 
 const { loading, disabled } = toRefs(props);
@@ -24,12 +24,12 @@ const isIconOnly = computed(() => {
 });
 
 const emit = defineEmits<{
-  (e: 'click', event: PointerEvent): void;
+  (e: "click", event: PointerEvent): void;
 }>();
 
 function click(event: PointerEvent) {
   if (loading.value || disabled.value) return;
-  emit('click', event);
+  emit("click", event);
 }
 </script>
 
@@ -38,6 +38,7 @@ function click(event: PointerEvent) {
     <button
       v-bind="attrs"
       :class="[variant, 'gradient-hover', { 'icon-only': isIconOnly }]"
+      :disabled
       @click="click"
     >
       <orio-loading-spinner v-if="loading" />
@@ -69,11 +70,13 @@ button {
     border-radius: 50%;
   }
 
-  &:disabled {
+  &:disabled,
+  &:disabled:hover {
     background-color: var(--color-accent-soft);
     color: var(--color-muted);
     border-color: var(--color-accent-border);
     cursor: not-allowed;
+    background-image: none;
   }
 
   &:active {

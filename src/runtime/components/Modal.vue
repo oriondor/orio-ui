@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, nextTick, watch } from 'vue';
-import { useWindowSize, useTimeoutFn } from '@vueuse/core';
+import { ref, nextTick, watch } from "vue";
+import { useWindowSize, useTimeoutFn } from "@vueuse/core";
 
 export interface OriginRect {
   x: number;
@@ -13,7 +13,7 @@ const props = defineProps<{
   origin: OriginRect | null;
 }>();
 
-const show = defineModel<boolean>('show');
+const show = defineModel<boolean>("show");
 
 const wrapper = ref<HTMLDivElement | null>(null);
 
@@ -22,8 +22,8 @@ const { width: windowWidth, height: windowHeight } = useWindowSize();
 function animateToCenter(el: HTMLDivElement) {
   useTimeoutFn(() => {
     requestAnimationFrame(() => {
-      el.style.transform = 'translate(0, 0) scale(1)';
-      el.style.opacity = '1';
+      el.style.transform = "translate(0, 0) scale(1)";
+      el.style.opacity = "1";
     });
   }, 100);
 }
@@ -44,7 +44,7 @@ async function animateOpen() {
         translate(${x - windowWidth.value / 2}px, ${y - windowHeight.value / 2}px)
         scale(${width / el.offsetWidth}, ${height / el.offsetHeight})
       `;
-  el.style.opacity = '0.5';
+  el.style.opacity = "0.5";
 
   animateToCenter(el);
 }
@@ -87,7 +87,7 @@ watch(show, (open) => {
   max-width: 90vw;
   max-height: 90vh;
 
-  background: white;
+  background: var(--color-surface);
   border-radius: var(--border-radius-lg);
   padding: 24px;
 
@@ -98,7 +98,7 @@ watch(show, (open) => {
     transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
     opacity 0.3s ease;
 
-  color: var(--color-muted);
+  color: var(--color-text);
   opacity: 0;
 }
 

@@ -9,10 +9,10 @@
   /* Accent family */
   --color-accent: #1f3a8a;
   --color-accent-ink: #ffffff;
-  --color-accent-soft: #eef2ff;
-  --color-accent-border: #c7d2fe;
+  --color-accent-soft: color-mix(in srgb, var(--color-accent) 10%, #e3e3e3);
+  --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, #c7d2fe);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, black 15%);
-  --color-accent-active: color-mix(in srgb, var(--color-accent) 75%, black 25%);
+  --color-accent-active: color-mix(in srgb, var(--color-accent) 35%, black 65%);
 }
 
 /* 2) Category themes (light vs dark) */
@@ -31,7 +31,7 @@
   --color-bg: #0e1116;
   --color-surface: #1a1d23;
   --color-text: #ffffff;
-  --color-muted: #a0a7b5;
+  --color-muted: #a2a9b6;
   --color-border: #2e333d;
 
   --color-accent-ink: #ffffff;
@@ -44,34 +44,28 @@
 
 /* 3) Accent themes (just accents, independent of light/dark) */
 
+:root[data-theme="normal"] {
+  --color-accent: hsl(0, 0%, 48%);
+}
+
 :root[data-theme="navy"] {
-  --color-accent: hsl(219 20% 25%);
-  --color-accent-soft: hsl(221 100% 97%);
-  --color-accent-border: hsl(221 61% 84%);
+  --color-accent: hsl(219, 45%, 56%);
 }
 
 :root[data-theme="teal"] {
-  --color-accent: hsl(174 72% 28%);
-  --color-accent-soft: hsl(174 55% 94%);
-  --color-accent-border: hsl(174 40% 75%);
+  --color-accent: hsl(174, 65%, 44%);
 }
 
 :root[data-theme="forest"] {
-  --color-accent: hsl(152 45% 25%);
-  --color-accent-soft: hsl(152 45% 94%);
-  --color-accent-border: hsl(152 30% 72%);
+  --color-accent: hsl(153, 35%, 53%);
 }
 
 :root[data-theme="wine"] {
   --color-accent: hsl(350 55% 34%);
-  --color-accent-soft: hsl(350 60% 96%);
-  --color-accent-border: hsl(350 35% 78%);
 }
 
 :root[data-theme="royal"] {
   --color-accent: hsl(230 60% 40%);
-  --color-accent-soft: hsl(230 65% 96%);
-  --color-accent-border: hsl(230 35% 78%);
 }
 
 /* Extra colors */
