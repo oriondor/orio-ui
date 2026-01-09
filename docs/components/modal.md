@@ -28,9 +28,9 @@ function openModal(event) {
   </orio-button>
 
   <orio-modal v-model:show="showModal" :origin="modalOrigin">
-    <h2>Modal Title</h2>
     <p>This modal morphs from the button you clicked!</p>
     <p>Click outside or press the button below to close.</p>
+    <p>Style it however you want basically</p>
     <orio-button variant="primary" @click="showModal = false">
       Close Modal
     </orio-button>
@@ -43,9 +43,7 @@ function openModal(event) {
 
 ```vue
 <template>
-  <orio-button @click="showModal = true">
-    Open
-  </orio-button>
+  <orio-button @click="showModal = true"> Open </orio-button>
 
   <orio-modal v-model:show="showModal" :origin="null">
     <h2>Modal Content</h2>
@@ -54,7 +52,7 @@ function openModal(event) {
 </template>
 
 <script setup>
-const showModal = ref(false)
+const showModal = ref(false);
 </script>
 ```
 
@@ -64,9 +62,7 @@ The `useModal()` composable simplifies modal management and automatically handle
 
 ```vue
 <template>
-  <orio-button @click="openModal">
-    Open Modal
-  </orio-button>
+  <orio-button @click="openModal"> Open Modal </orio-button>
 
   <orio-modal v-bind="modalProps">
     <h2>Modal Title</h2>
@@ -76,7 +72,7 @@ The `useModal()` composable simplifies modal management and automatically handle
 </template>
 
 <script setup>
-const { modalProps, openModal } = useModal()
+const { modalProps, openModal } = useModal();
 </script>
 ```
 
@@ -88,14 +84,10 @@ The key difference between `openModal()` and `openModal` is how the click event 
 <template>
   <div class="demo-row">
     <!-- NO Animation - Calling with () without passing event -->
-    <orio-button @click="openModal()">
-      Open Modal (No Animation)
-    </orio-button>
+    <orio-button @click="openModal()"> Open Modal (No Animation) </orio-button>
 
     <!-- WITH Animation - Passing event automatically -->
-    <orio-button @click="openModal">
-      Open Modal (With Animation)
-    </orio-button>
+    <orio-button @click="openModal"> Open Modal (With Animation) </orio-button>
 
     <!-- WITH Animation - Explicitly passing event -->
     <orio-button @click="openModal($event)">
@@ -110,11 +102,12 @@ The key difference between `openModal()` and `openModal` is how the click event 
 </template>
 
 <script setup>
-const { modalProps, openModal } = useModal()
+const { modalProps, openModal } = useModal();
 </script>
 ```
 
 **Explanation:**
+
 - `@click="openModal()"` - Calls the function immediately, no event is passed → **Simple fade-in**
 - `@click="openModal"` - Vue passes the click event automatically → **Morphing animation from button**
 - `@click="openModal($event)"` - Explicitly passes the event → **Morphing animation from button**
@@ -125,9 +118,7 @@ If you need more control, you can manually track the origin:
 
 ```vue
 <template>
-  <orio-button @click="openModal">
-    Open with Animation
-  </orio-button>
+  <orio-button @click="openModal"> Open with Animation </orio-button>
 
   <orio-modal v-model:show="showModal" :origin="origin">
     <p>Morphs from button!</p>
@@ -135,44 +126,44 @@ If you need more control, you can manually track the origin:
 </template>
 
 <script setup>
-const showModal = ref(false)
-const origin = ref(null)
+const showModal = ref(false);
+const origin = ref(null);
 
 function openModal(event) {
-  const rect = event.target.getBoundingClientRect()
+  const rect = event.target.getBoundingClientRect();
   origin.value = {
     x: rect.left,
     y: rect.top,
     width: rect.width,
-    height: rect.height
-  }
-  showModal.value = true
+    height: rect.height,
+  };
+  showModal.value = true;
 }
 </script>
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `show` | `Boolean` | - | Modal visibility (v-model:show) |
-| `origin` | `OriginRect \| null` | `null` | Animation origin point |
+| Prop     | Type                 | Default | Description                     |
+| -------- | -------------------- | ------- | ------------------------------- |
+| `show`   | `Boolean`            | -       | Modal visibility (v-model:show) |
+| `origin` | `OriginRect \| null` | `null`  | Animation origin point          |
 
 ### OriginRect Type
 
 ```typescript
 interface OriginRect {
-  x: number
-  y: number
-  width: number
-  height: number
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 ```
 
 ## Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
+| Event         | Payload   | Description               |
+| ------------- | --------- | ------------------------- |
 | `update:show` | `boolean` | Emitted when modal closes |
 
 ## Features

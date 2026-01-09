@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { useTheme } from '../../../../src/runtime/composables/useTheme';
+import { useTheme } from "../../../../src/runtime/composables/useTheme";
 
 const { theme, setTheme } = useTheme();
 
-const THEME_OPTIONS = ['navy', 'teal', 'forest', 'wine', 'royal'] as const;
+const THEME_OPTIONS = [
+  "normal",
+  "navy",
+  "teal",
+  "forest",
+  "wine",
+  "royal",
+] as const;
 </script>
 
 <template>
