@@ -69,6 +69,17 @@
   );
 }
 
+:root[data-theme="inverse"][data-mode="light"] {
+  --color-accent: #000;
+  --color-accent-soft-darker: #fff;
+}
+
+:root[data-theme="inverse"][data-mode="dark"] {
+  --color-accent: #fff;
+  --color-accent-ink: #000;
+  --color-accent-hover: color-mix(in srgb, var(--color-accent), black 80%);
+}
+
 :root[data-theme="navy"] {
   --color-accent: hsl(219, 45%, 56%);
   --color-accent-soft-darker: var(--color-accent-soft);
