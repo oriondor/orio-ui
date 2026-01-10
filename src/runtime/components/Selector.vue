@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends object">
-import { computed, toRefs } from 'vue';
+import { computed, toRefs } from "vue";
 
 export type SelectableOption<T extends object = object> = string | T;
 
@@ -12,8 +12,8 @@ export interface SelectProps<T extends object = object> {
 }
 
 const props = withDefaults(defineProps<SelectProps>(), {
-  placeholder: 'Select an option',
-  field: 'id',
+  placeholder: "Select an option",
+  field: "id",
 });
 
 const { field, optionName, placeholder } = toRefs(props);
@@ -31,11 +31,11 @@ const label = computed(() => optionName.value as Extract<keyof T, string>);
 const flatModalValue = computed(() => {
   if (!modelValue.value) return null;
   if (!props.multiple || !Array.isArray(modelValue.value))
-    return typeof modelValue.value === 'string'
+    return typeof modelValue.value === "string"
       ? modelValue.value
       : (modelValue.value as T)[key.value];
   return modelValue.value.map((option) =>
-    typeof option === 'string' ? option : (option as T)[key.value],
+    typeof option === "string" ? option : (option as T)[key.value],
   );
 });
 
@@ -43,7 +43,7 @@ function toggleOption(option: SelectableOption, toggle: () => void) {
   if (props.multiple) {
     if (Array.isArray(modelValue.value)) {
       const index = modelValue.value.findIndex((opt) =>
-        typeof option === 'string'
+        typeof option === "string"
           ? option === opt
           : opt[key.value] === (option as T)[key.value],
       );
@@ -63,7 +63,7 @@ function toggleOption(option: SelectableOption, toggle: () => void) {
 }
 
 function isOptionSelected(option: SelectableOption): boolean {
-  if (typeof option === 'string') return modelValue.value === option;
+  if (typeof option === "string") return modelValue.value === option;
   return !!(
     flatModalValue.value &&
     (flatModalValue.value === (option as T)[key.value] ||
@@ -75,13 +75,13 @@ function isOptionSelected(option: SelectableOption): boolean {
 
 function getOptionLabel(option: SelectableOption | undefined): string {
   if (!option) return placeholder.value;
-  if (typeof option === 'string') return option;
+  if (typeof option === "string") return option;
   if (optionName.value) return String((option as T)[label.value]);
   return JSON.stringify(option);
 }
 
 function getOptionKey(option: SelectableOption): string | number {
-  if (typeof option === 'string') return option;
+  if (typeof option === "string") return option;
   return String((option as T)[key.value]);
 }
 
@@ -224,8 +224,8 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 
       &.selected {
         background-color: var(--color-accent);
-        color: var(--color-accent-soft);
-        font-weight: 500;
+        color: var(--color-accent-soft-darker);
+        font-weight: 400;
       }
     }
   }

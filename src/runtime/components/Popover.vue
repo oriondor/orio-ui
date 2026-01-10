@@ -27,8 +27,8 @@ import {
   onMounted,
   onBeforeUnmount,
   watch,
-} from 'vue';
-import { useElementBounding } from '@vueuse/core';
+} from "vue";
+import { useElementBounding } from "@vueuse/core";
 
 const props = defineProps({
   /**
@@ -41,7 +41,7 @@ const props = defineProps({
    */
   position: {
     type: String,
-    default: 'bottom-left',
+    default: "bottom-left",
   },
   /**
    * Distance (in px) between the popover and the trigger element.
@@ -74,7 +74,7 @@ const popoverStyle = computed(() => {
     return;
   }
 
-  const [main, sub = 'center'] = currentPosition.value.split('-');
+  const [main, sub = "center"] = currentPosition.value.split("-");
   const offset = props.offset;
 
   const tRect = triggerRect.value;
@@ -84,9 +84,9 @@ const popoverStyle = computed(() => {
   let leftValue = 0;
 
   // Calculate vertical position (top)
-  if (main === 'top') {
+  if (main === "top") {
     topValue = tRect.top - offset - pRect.height;
-  } else if (main === 'bottom') {
+  } else if (main === "bottom") {
     topValue = tRect.bottom + offset;
   } else {
     // For 'left' or 'right' main, center vertically
@@ -94,9 +94,9 @@ const popoverStyle = computed(() => {
   }
 
   // Calculate horizontal position (left)
-  if (sub === 'left') {
+  if (sub === "left") {
     leftValue = tRect.right - pRect.width;
-  } else if (sub === 'right') {
+  } else if (sub === "right") {
     leftValue = tRect.left;
   } else {
     // 'center' is default horizontally
@@ -104,9 +104,9 @@ const popoverStyle = computed(() => {
   }
 
   // If the main position is 'left' or 'right', override horizontal positioning
-  if (main === 'left') {
+  if (main === "left") {
     leftValue = tRect.left - offset - pRect.width;
-  } else if (main === 'right') {
+  } else if (main === "right") {
     leftValue = tRect.right + offset;
   }
 
@@ -119,13 +119,13 @@ const popoverStyle = computed(() => {
 const currentPosition = ref(props.position);
 
 const getFallbackPositions = (pos: string) => {
-  const [main, sub = 'center'] = pos.split('-');
+  const [main, sub = "center"] = pos.split("-");
 
   const opposites: Record<string, string> = {
-    top: 'bottom',
-    bottom: 'top',
-    left: 'right',
-    right: 'left',
+    top: "bottom",
+    bottom: "top",
+    left: "right",
+    right: "left",
   };
 
   const allPositions = [
@@ -141,7 +141,7 @@ const getFallbackPositions = (pos: string) => {
 };
 
 function checkIfFits(position: string, tRect: any, pRect: any, offset: number) {
-  const [main, sub = 'center'] = position.split('-');
+  const [main, sub = "center"] = position.split("-");
 
   const space = {
     top: tRect.top,
@@ -150,10 +150,10 @@ function checkIfFits(position: string, tRect: any, pRect: any, offset: number) {
     right: window.innerWidth - tRect.right,
   };
 
-  if (main === 'top' && space.top < pRect.height + offset) return false;
-  if (main === 'bottom' && space.bottom < pRect.height + offset) return false;
-  if (main === 'left' && space.left < pRect.width + offset) return false;
-  if (main === 'right' && space.right < pRect.width + offset) return false;
+  if (main === "top" && space.top < pRect.height + offset) return false;
+  if (main === "bottom" && space.bottom < pRect.height + offset) return false;
+  if (main === "left" && space.left < pRect.width + offset) return false;
+  if (main === "right" && space.right < pRect.width + offset) return false;
 
   return true;
 }
@@ -176,8 +176,8 @@ async function updateRects() {
 
   for (const pos of fallbacks) {
     // temporarily apply style to measure it
-    popoverEl.style.visibility = 'hidden';
-    popoverEl.style.display = 'block';
+    popoverEl.style.visibility = "hidden";
+    popoverEl.style.display = "block";
 
     const pRect = popoverEl.getBoundingClientRect();
     const fits = checkIfFits(pos, tRect, pRect, props.offset);
@@ -185,7 +185,7 @@ async function updateRects() {
     if (fits) {
       popoverRect.value = pRect;
       currentPosition.value = pos;
-      popoverEl.style.visibility = '';
+      popoverEl.style.visibility = "";
       return;
     }
   }
@@ -235,15 +235,15 @@ function redrawPopover() {
 watch([popoverWidth, popoverHeight], redrawPopover);
 
 onMounted(() => {
-  document.addEventListener('click', handleDocumentClick);
-  window.addEventListener('scroll', redrawPopover, true);
-  window.addEventListener('resize', redrawPopover, true);
+  document.addEventListener("click", handleDocumentClick);
+  window.addEventListener("scroll", redrawPopover, true);
+  window.addEventListener("resize", redrawPopover, true);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener('click', handleDocumentClick);
-  window.removeEventListener('scroll', redrawPopover, true);
-  window.removeEventListener('resize', redrawPopover, true);
+  document.removeEventListener("click", handleDocumentClick);
+  window.removeEventListener("scroll", redrawPopover, true);
+  window.removeEventListener("resize", redrawPopover, true);
 });
 </script>
 <style lang="scss" scoped>
@@ -251,6 +251,6 @@ onBeforeUnmount(() => {
   border: 0;
   background-color: transparent;
   position: fixed;
-  z-index: 1;
+  z-index: 999999;
 }
 </style>
