@@ -4,6 +4,7 @@ import { useTheme } from "../../../../src/runtime/composables/useTheme";
 const { theme, setTheme } = useTheme();
 
 const THEME_OPTIONS = [
+  "inverse",
   "normal",
   "navy",
   "teal",
