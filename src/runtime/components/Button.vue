@@ -72,7 +72,7 @@ button {
 
   &:disabled,
   &:disabled:hover {
-    background-color: var(--color-accent-soft);
+    background-color: var(--color-accent-soft-base);
     color: var(--color-muted);
     border-color: var(--color-accent-border);
     cursor: not-allowed;
@@ -90,7 +90,7 @@ button {
   &.secondary {
     background-color: transparent;
     border: 1px solid var(--color-accent);
-    color: var(--color-accent);
+    color: var(--color-accent-active);
     &:hover {
       color: var(--color-accent-hover);
     }
@@ -98,7 +98,7 @@ button {
 
   &.subdued {
     background-color: transparent;
-    color: var(--color-accent);
+    color: var(--color-accent-active);
     &:hover {
       color: var(--color-accent-hover);
     }

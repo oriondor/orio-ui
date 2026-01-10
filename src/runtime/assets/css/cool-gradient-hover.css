@@ -1,6 +1,6 @@
 .gradient-hover {
   --gh-color: #fff;
-  --gh-angle: 150deg;
+  --gh-angle: 160deg;
   --gh-peek-x: 95%;
   --gh-mix-base: black;
 
@@ -16,13 +16,13 @@
   background-position: 0% 0%;
 
   transition:
-    background-position 0.8s ease,
+    background-position 0.4s ease,
     border-color 0.2s ease;
   will-change: background-size, background-position;
 }
 
 .gradient-hover:hover {
-  background-size: 200% 100%;
+  background-size: 200% 250%;
   background-position: var(--gh-peek-x) 0;
 }
 
