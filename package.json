@@ -57,6 +57,7 @@
     "nuxt": "^4.2.2",
     "prettier": "^3.7.4",
     "sass": "^1.70.0",
+    "sass-embedded": "^1.92.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.52.0",
     "vitepress": "^1.6.4",

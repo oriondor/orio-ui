@@ -3,14 +3,21 @@ import { mount } from '@vue/test-utils';
 import Text from '../../../src/runtime/components/view/Text.vue';
 
 describe('view/Text', () => {
+  const globalStubs = {
+    stubs: {
+      'orio-icon': true,
+    },
+  };
+
   it('renders without errors', () => {
-    const wrapper = mount(Text);
+    const wrapper = mount(Text, { global: globalStubs });
     expect(wrapper.exists()).toBe(true);
   });
 
   it('renders slot content', () => {
     const wrapper = mount(Text, {
       slots: { default: 'Hello World' },
+      global: globalStubs,
     });
     expect(wrapper.text()).toContain('Hello World');
   });
@@ -18,30 +25,33 @@ describe('view/Text', () => {
   it('renders modelValue when no slot provided', () => {
     const wrapper = mount(Text, {
       props: { modelValue: 'Test Value' },
+      global: globalStubs,
     });
     expect(wrapper.text()).toContain('Test Value');
   });
 
   it('applies text type by default', () => {
-    const wrapper = mount(Text);
+    const wrapper = mount(Text, { global: globalStubs });
     expect(wrapper.find('div').classes()).toContain('text');
   });
 
   it('applies title type when specified', () => {
     const wrapper = mount(Text, {
       props: { type: 'title' },
+      global: globalStubs,
     });
     expect(wrapper.find('div').classes()).toContain('title');
   });
 
   it('applies medium size by default', () => {
-    const wrapper = mount(Text);
+    const wrapper = mount(Text, { global: globalStubs });
     expect(wrapper.find('div').classes()).toContain('medium');
   });
 
   it('applies large size when specified', () => {
     const wrapper = mount(Text, {
       props: { size: 'large' },
+      global: globalStubs,
     });
     expect(wrapper.find('div').classes()).toContain('large');
   });
@@ -49,6 +59,7 @@ describe('view/Text', () => {
   it('applies uppercase class when specified', () => {
     const wrapper = mount(Text, {
       props: { uppercase: true },
+      global: globalStubs,
     });
     expect(wrapper.find('div').classes()).toContain('uppercase');
   });
@@ -71,6 +82,7 @@ describe('view/Text', () => {
   it('applies line clamp class when lineClamp provided', () => {
     const wrapper = mount(Text, {
       props: { lineClamp: 3 },
+      global: globalStubs,
     });
     expect(wrapper.find('div').classes()).toContain('clamp');
   });
@@ -78,6 +90,7 @@ describe('view/Text', () => {
   it('passes attributes to wrapper div', () => {
     const wrapper = mount(Text, {
       attrs: { 'data-test': 'custom' },
+      global: globalStubs,
     });
     expect(wrapper.find('div').attributes('data-test')).toBe('custom');
   });

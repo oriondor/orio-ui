@@ -13,6 +13,13 @@ export default defineConfig({
       exclude: ['docs/**', 'playground/**', 'dist/**', 'node_modules/**'],
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern',
+      },
+    },
+  },
   resolve: {
     alias: {
       '~': resolve(__dirname, './src'),

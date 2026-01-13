@@ -8,44 +8,21 @@ describe('view/Separator', () => {
     expect(wrapper.exists()).toBe(true);
   });
 
-  it('renders a div element', () => {
+  it('uses default props', () => {
     const wrapper = mount(Separator);
-    expect(wrapper.find('div').exists()).toBe(true);
+
+    expect(wrapper.props('style')).toBe('solid');
+    expect(wrapper.props('size')).toBe(1);
+    expect(wrapper.props('margin')).toBe(1);
   });
 
-  it('uses solid style by default', () => {
-    const wrapper = mount(Separator);
-    expect(wrapper.find('div').exists()).toBe(true);
-  });
-
-  it('uses size 1 by default', () => {
-    const wrapper = mount(Separator);
-    expect(wrapper.find('div').exists()).toBe(true);
-  });
-
-  it('uses margin 1 by default', () => {
-    const wrapper = mount(Separator);
-    expect(wrapper.find('div').exists()).toBe(true);
-  });
-
-  it('accepts custom style prop', () => {
+  it('accepts custom props', () => {
     const wrapper = mount(Separator, {
-      props: { style: 'dashed' },
+      props: { style: 'dashed', size: 2, margin: 3 },
     });
-    expect(wrapper.find('div').exists()).toBe(true);
-  });
 
-  it('accepts custom size prop', () => {
-    const wrapper = mount(Separator, {
-      props: { size: 2 },
-    });
-    expect(wrapper.find('div').exists()).toBe(true);
-  });
-
-  it('accepts custom margin prop', () => {
-    const wrapper = mount(Separator, {
-      props: { margin: 2 },
-    });
-    expect(wrapper.find('div').exists()).toBe(true);
+    expect(wrapper.props('style')).toBe('dashed');
+    expect(wrapper.props('size')).toBe(2);
+    expect(wrapper.props('margin')).toBe(3);
   });
 });
