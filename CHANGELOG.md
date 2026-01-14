@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0](https://github.com/oriondor/orio-ui/compare/v1.5.0...v1.6.0) (2026-01-14)
+
+
+### Features
+
+* implemented carousel for images ([0934cb8](https://github.com/oriondor/orio-ui/commit/0934cb83f9b3e58dee8703468fad354a5ee4ac44))
+
+
+### Bug Fixes
+
+* changed all single quotes to double quotes ([b10de3d](https://github.com/oriondor/orio-ui/commit/b10de3dce859cec95f36dbe8ad357b373f811bc8))
+* fixed tests and removed SASS warnings ([e86b4bf](https://github.com/oriondor/orio-ui/commit/e86b4bf991d0a5c080eba8a72323fc0afa14a22c))
+
 ## [1.5.0](https://github.com/oriondor/orio-ui/compare/v1.4.1...v1.5.0) (2026-01-10)
 
 
