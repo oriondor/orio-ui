@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { watch, onMounted } from 'vue';
-import { useData } from 'vitepress';
-import DefaultTheme from 'vitepress/theme';
-import { useTheme } from '../../../src/runtime/composables/useTheme';
-import ThemeSwitcher from './components/ThemeSwitcher.vue';
+import { watch, onMounted } from "vue";
+import { useData } from "vitepress";
+import DefaultTheme from "vitepress/theme";
+import { useTheme } from "../../../src/runtime/composables/useTheme";
+import ThemeSwitcher from "./components/ThemeSwitcher.vue";
 
 const { isDark } = useData();
 const { mode, setMode } = useTheme();
@@ -12,7 +12,7 @@ const { mode, setMode } = useTheme();
 watch(
   isDark,
   (dark) => {
-    const newMode = dark ? 'dark' : 'light';
+    const newMode = dark ? "dark" : "light";
     if (mode.value !== newMode) {
       setMode(newMode);
     }
@@ -22,7 +22,7 @@ watch(
 
 // On mount, sync initial state
 onMounted(() => {
-  setMode(isDark.value ? 'dark' : 'light');
+  setMode(isDark.value ? "dark" : "light");
 });
 </script>
 

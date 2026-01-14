@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref } from "vue";
 
 export interface OriginRect {
   x: number;
@@ -10,14 +10,14 @@ export interface OriginRect {
 export interface ModalProps {
   show: boolean;
   origin: OriginRect | null;
-  'onUpdate:show': (state: boolean) => void;
+  "onUpdate:show": (state: boolean) => void;
 }
 
 export function useModal() {
   const modalProps = ref<ModalProps>({
     show: false,
     origin: null,
-    'onUpdate:show': (state: boolean) => updateShow(state),
+    "onUpdate:show": (state: boolean) => updateShow(state),
   });
 
   function updateShow(state: boolean) {

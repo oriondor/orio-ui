@@ -1,5 +1,5 @@
-import { computed, unref, type MaybeRef } from 'vue';
-import { useFuse, type FuseOptions } from '@vueuse/integrations/useFuse';
+import { computed, unref, type MaybeRef } from "vue";
+import { useFuse, type FuseOptions } from "@vueuse/integrations/useFuse";
 
 /**
  * Search using Fuse.js fuzzy search
@@ -34,7 +34,7 @@ export function useFuzzySearch<T extends object>(
     });
 
     const { results } = useFuse(search, wrappedData, {
-      fuseOptions: { keys: ['value'] },
+      fuseOptions: { keys: ["value"] },
       matchAllWhenSearchEmpty: true,
     });
 

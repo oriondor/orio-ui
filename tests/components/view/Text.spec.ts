@@ -1,97 +1,97 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
-import Text from '../../../src/runtime/components/view/Text.vue';
+import { describe, it, expect } from "vitest";
+import { mount } from "@vue/test-utils";
+import Text from "../../../src/runtime/components/view/Text.vue";
 
-describe('view/Text', () => {
+describe("view/Text", () => {
   const globalStubs = {
     stubs: {
-      'orio-icon': true,
+      "orio-icon": true,
     },
   };
 
-  it('renders without errors', () => {
+  it("renders without errors", () => {
     const wrapper = mount(Text, { global: globalStubs });
     expect(wrapper.exists()).toBe(true);
   });
 
-  it('renders slot content', () => {
+  it("renders slot content", () => {
     const wrapper = mount(Text, {
-      slots: { default: 'Hello World' },
+      slots: { default: "Hello World" },
       global: globalStubs,
     });
-    expect(wrapper.text()).toContain('Hello World');
+    expect(wrapper.text()).toContain("Hello World");
   });
 
-  it('renders modelValue when no slot provided', () => {
+  it("renders modelValue when no slot provided", () => {
     const wrapper = mount(Text, {
-      props: { modelValue: 'Test Value' },
+      props: { modelValue: "Test Value" },
       global: globalStubs,
     });
-    expect(wrapper.text()).toContain('Test Value');
+    expect(wrapper.text()).toContain("Test Value");
   });
 
-  it('applies text type by default', () => {
+  it("applies text type by default", () => {
     const wrapper = mount(Text, { global: globalStubs });
-    expect(wrapper.find('div').classes()).toContain('text');
+    expect(wrapper.find("div").classes()).toContain("text");
   });
 
-  it('applies title type when specified', () => {
+  it("applies title type when specified", () => {
     const wrapper = mount(Text, {
-      props: { type: 'title' },
+      props: { type: "title" },
       global: globalStubs,
     });
-    expect(wrapper.find('div').classes()).toContain('title');
+    expect(wrapper.find("div").classes()).toContain("title");
   });
 
-  it('applies medium size by default', () => {
+  it("applies medium size by default", () => {
     const wrapper = mount(Text, { global: globalStubs });
-    expect(wrapper.find('div').classes()).toContain('medium');
+    expect(wrapper.find("div").classes()).toContain("medium");
   });
 
-  it('applies large size when specified', () => {
+  it("applies large size when specified", () => {
     const wrapper = mount(Text, {
-      props: { size: 'large' },
+      props: { size: "large" },
       global: globalStubs,
     });
-    expect(wrapper.find('div').classes()).toContain('large');
+    expect(wrapper.find("div").classes()).toContain("large");
   });
 
-  it('applies uppercase class when specified', () => {
+  it("applies uppercase class when specified", () => {
     const wrapper = mount(Text, {
       props: { uppercase: true },
       global: globalStubs,
     });
-    expect(wrapper.find('div').classes()).toContain('uppercase');
+    expect(wrapper.find("div").classes()).toContain("uppercase");
   });
 
-  it('renders icon when provided', () => {
+  it("renders icon when provided", () => {
     const wrapper = mount(Text, {
-      props: { icon: 'check' },
+      props: { icon: "check" },
       global: {
         stubs: {
-          'orio-icon': {
+          "orio-icon": {
             template: '<span class="icon">icon</span>',
-            props: ['name'],
+            props: ["name"],
           },
         },
       },
     });
-    expect(wrapper.html()).toContain('icon');
+    expect(wrapper.html()).toContain("icon");
   });
 
-  it('applies line clamp class when lineClamp provided', () => {
+  it("applies line clamp class when lineClamp provided", () => {
     const wrapper = mount(Text, {
       props: { lineClamp: 3 },
       global: globalStubs,
     });
-    expect(wrapper.find('div').classes()).toContain('clamp');
+    expect(wrapper.find("div").classes()).toContain("clamp");
   });
 
-  it('passes attributes to wrapper div', () => {
+  it("passes attributes to wrapper div", () => {
     const wrapper = mount(Text, {
-      attrs: { 'data-test': 'custom' },
+      attrs: { "data-test": "custom" },
       global: globalStubs,
     });
-    expect(wrapper.find('div').attributes('data-test')).toBe('custom');
+    expect(wrapper.find("div").attributes("data-test")).toBe("custom");
   });
 });

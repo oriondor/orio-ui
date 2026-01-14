@@ -1,12 +1,12 @@
 <script setup lang="ts">
-export type TagStyle = 'neutral' | 'accent';
+export type TagStyle = "neutral" | "accent";
 
 interface Props {
   text: string;
   variant?: TagStyle;
 }
 withDefaults(defineProps<Props>(), {
-  variant: 'neutral',
+  variant: "neutral",
 });
 </script>
 

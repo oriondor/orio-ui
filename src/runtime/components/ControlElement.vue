@@ -3,11 +3,11 @@ export interface ControlProps {
   /**
    * Minimal will reset margin and remove border and box shadow from every element inside the slot
    */
-  appearance?: 'normal' | 'minimal';
+  appearance?: "normal" | "minimal";
 }
 
 withDefaults(defineProps<ControlProps>(), {
-  appearance: 'normal',
+  appearance: "normal",
 });
 </script>
 

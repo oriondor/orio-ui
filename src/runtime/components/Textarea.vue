@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue';
+import { useAttrs } from "vue";
 
 const attrs = useAttrs();
 defineEmits<{
-  (e: 'input', value: string): void;
+  (e: "input", value: string): void;
 }>();
 
-const modelValue = defineModel<string>({ default: '' });
+const modelValue = defineModel<string>({ default: "" });
 </script>
 
 <template>

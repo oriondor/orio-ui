@@ -1,9 +1,9 @@
 <script setup lang="ts">
 defineEmits<{
-  (e: 'input', value: string): void;
+  (e: "input", value: string): void;
 }>();
 
-const text = defineModel<string>({ default: '' });
+const text = defineModel<string>({ default: "" });
 </script>
 
 <template>

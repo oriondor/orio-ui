@@ -81,7 +81,7 @@ defineProps<{
 
   .checkbox-input:checked + .checkbox-box.defaultChecked {
     &::after {
-      content: '';
+      content: "";
       width: 0.3rem;
       height: 0.6rem;
       position: relative;

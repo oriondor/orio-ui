@@ -3,11 +3,11 @@ interface Props {
   icon?: string;
   title: string;
   description?: string;
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  size: 'medium',
+  size: "medium",
 });
 </script>
 

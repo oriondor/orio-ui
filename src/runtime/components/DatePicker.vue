@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { nanoid } from 'nanoid';
+import { computed } from "vue";
+import { nanoid } from "nanoid";
 
 interface Props {
   month?: boolean;
 }
 defineProps<Props>();
 
-const date = defineModel<string | null | undefined>('date', {
+const date = defineModel<string | null | undefined>("date", {
   required: true,
 });
 

@@ -1,16 +1,19 @@
-import DefaultTheme from 'vitepress/theme';
-import './custom.css';
+import DefaultTheme from "vitepress/theme";
+import "./custom.css";
 
 // Import Layout wrapper
-import Layout from './Layout.vue';
+import Layout from "./Layout.vue";
 
 // Import CSS
-import '../../../src/runtime/assets/css/main.css';
+import "../../../src/runtime/assets/css/main.css";
 
 // Auto-import all components
-const components = import.meta.glob('../../../src/runtime/components/**/*.vue', {
-  eager: true,
-});
+const components = import.meta.glob(
+  "../../../src/runtime/components/**/*.vue",
+  {
+    eager: true,
+  },
+);
 
 export default {
   extends: DefaultTheme,
@@ -22,19 +25,22 @@ export default {
 
       // Extract component path relative to components directory
       // e.g., "../../../src/runtime/components/gallery/Carousel.vue" -> ["gallery", "Carousel"]
-      const pathParts = path.split('/components/')[1]?.replace('.vue', '').split('/') || [];
+      const pathParts =
+        path.split("/components/")[1]?.replace(".vue", "").split("/") || [];
 
       // Build component name with proper nesting
       // e.g., ["gallery", "Carousel"] -> "GalleryCarousel"
       // e.g., ["gallery", "index"] -> "Gallery"
       // e.g., ["Button"] -> "Button"
-      let componentName = pathParts
-        .map(part => {
+      const componentName = pathParts
+        .map((part) => {
           // Capitalize first letter of each part
-          return part === 'index' ? '' : part.charAt(0).toUpperCase() + part.slice(1);
+          return part === "index"
+            ? ""
+            : part.charAt(0).toUpperCase() + part.slice(1);
         })
         .filter(Boolean)
-        .join('');
+        .join("");
 
       if (componentName && component.default) {
         // Register with Orio prefix (e.g., OrioButton, OrioGalleryCarousel)
