@@ -2,14 +2,14 @@
 export default defineNuxtConfig({
   extends: [],
 
-  css: ['./src/runtime/assets/css/main.css'],
+  css: ["./src/runtime/assets/css/main.css"],
 
   // Auto-import components with Orio prefix
   components: {
     dirs: [
       {
-        path: './src/runtime/components',
-        prefix: 'Orio',
+        path: "./src/runtime/components",
+        prefix: "Orio",
         pathPrefix: false,
       },
     ],
@@ -17,7 +17,7 @@ export default defineNuxtConfig({
 
   // Auto-import composables
   imports: {
-    dirs: ['./src/runtime/composables'],
+    dirs: ["./src/runtime/composables"],
   },
 
   typescript: {
@@ -28,10 +28,12 @@ export default defineNuxtConfig({
   vite: {
     css: {
       preprocessorOptions: {
-        scss: {},
+        scss: {
+          api: "modern",
+        },
       },
     },
   },
 
-  compatibilityDate: '2025-01-15',
+  compatibilityDate: "2025-01-15",
 });

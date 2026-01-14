@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRefs } from 'vue';
+import { computed, toRefs } from "vue";
 
 export interface ResumeDate {
   startDate: string;
@@ -9,28 +9,28 @@ export interface ResumeDate {
 interface Props {
   dates: ResumeDate;
   month?: boolean; // Optional prop to indicate if the date should be displayed as month/year
-  size?: 'small' | 'medium' | 'large';
-  type?: 'text' | 'title' | 'subtitle' | 'italics';
+  size?: "small" | "medium" | "large";
+  type?: "text" | "title" | "subtitle" | "italics";
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  size: 'small',
-  type: 'italics',
+  size: "small",
+  type: "italics",
 });
 
 const { dates } = toRefs(props);
 
 function formatMonthYear(value: string) {
-  if (!value) return '';
+  if (!value) return "";
   if (!props.month)
-    return new Intl.DateTimeFormat('en-US', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
+    return new Intl.DateTimeFormat("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     }).format(new Date(value));
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    year: 'numeric',
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    year: "numeric",
   }).format(new Date(value));
 }
 
@@ -40,7 +40,7 @@ const endDate = computed(() => {
   if (dates.value.endDate === undefined) return null;
   return dates.value.endDate !== null
     ? formatMonthYear(dates.value.endDate)
-    : 'Present';
+    : "Present";
 });
 </script>
 

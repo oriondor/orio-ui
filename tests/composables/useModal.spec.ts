@@ -1,15 +1,15 @@
-import { describe, it, expect, vi } from 'vitest';
-import { useModal } from '../../src/runtime/composables/useModal';
+import { describe, it, expect, vi } from "vitest";
+import { useModal } from "../../src/runtime/composables/useModal";
 
-describe('useModal', () => {
-  it('initializes with show=false and origin=null', () => {
+describe("useModal", () => {
+  it("initializes with show=false and origin=null", () => {
     const { modalProps } = useModal();
 
     expect(modalProps.value.show).toBe(false);
     expect(modalProps.value.origin).toBe(null);
   });
 
-  it('openModal without event sets show=true and origin=null', () => {
+  it("openModal without event sets show=true and origin=null", () => {
     const { modalProps, openModal } = useModal();
 
     openModal();
@@ -18,7 +18,7 @@ describe('useModal', () => {
     expect(modalProps.value.origin).toBe(null);
   });
 
-  it('openModal with event sets show=true and origin with element rect', () => {
+  it("openModal with event sets show=true and origin with element rect", () => {
     const { modalProps, openModal } = useModal();
 
     const mockEvent = {
@@ -43,13 +43,13 @@ describe('useModal', () => {
     });
   });
 
-  it('onUpdate:show callback updates show state', () => {
+  it("onUpdate:show callback updates show state", () => {
     const { modalProps } = useModal();
 
-    modalProps.value['onUpdate:show'](true);
+    modalProps.value["onUpdate:show"](true);
     expect(modalProps.value.show).toBe(true);
 
-    modalProps.value['onUpdate:show'](false);
+    modalProps.value["onUpdate:show"](false);
     expect(modalProps.value.show).toBe(false);
   });
 });

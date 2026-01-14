@@ -1,22 +1,29 @@
-import { defineConfig } from 'vitest/config';
-import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
+import { defineConfig } from "vitest/config";
+import vue from "@vitejs/plugin-vue";
+import { resolve } from "path";
 
 export default defineConfig({
   plugins: [vue()],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: "jsdom",
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'html', 'json'],
-      exclude: ['docs/**', 'playground/**', 'dist/**', 'node_modules/**'],
+      provider: "v8",
+      reporter: ["text", "html", "json"],
+      exclude: ["docs/**", "playground/**", "dist/**", "node_modules/**"],
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern",
+      },
     },
   },
   resolve: {
     alias: {
-      '~': resolve(__dirname, './src'),
-      '@': resolve(__dirname, './src'),
+      "~": resolve(__dirname, "./src"),
+      "@": resolve(__dirname, "./src"),
     },
   },
 });

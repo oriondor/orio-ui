@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { iconRegistry, type IconName } from '../utils/icon-registry';
+import { computed } from "vue";
+import { iconRegistry, type IconName } from "../utils/icon-registry";
 
 export interface IconProps {
   name: IconName | string;
@@ -9,13 +9,13 @@ export interface IconProps {
 }
 
 const props = withDefaults(defineProps<IconProps>(), {
-  size: '1em',
-  color: 'currentColor',
+  size: "1em",
+  color: "currentColor",
 });
 
-const iconSvg = computed(() => iconRegistry[props.name] || '');
+const iconSvg = computed(() => iconRegistry[props.name] || "");
 const sizeValue = computed(() =>
-  typeof props.size === 'number' ? `${props.size}px` : props.size,
+  typeof props.size === "number" ? `${props.size}px` : props.size,
 );
 </script>
 

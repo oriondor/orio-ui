@@ -17,6 +17,8 @@ export { default as Tooltip } from "./components/Tooltip.vue";
 export { default as EmptyState } from "./components/EmptyState.vue";
 export { default as DashedContainer } from "./components/DashedContainer.vue";
 export { default as ControlElement } from "./components/ControlElement.vue";
+export { default as Gallery } from "./components/gallery/index.vue";
+export { default as GalleryCarousel } from "./components/gallery/Carousel.vue";
 export { default as ViewText } from "./components/view/Text.vue";
 export { default as ViewDates } from "./components/view/Dates.vue";
 export { default as ViewSeparator } from "./components/view/Separator.vue";

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 interface Props {
-  style?: 'dotted' | 'dashed' | 'solid' | 'double' | 'groove' | 'ridge';
+  style?: "dotted" | "dashed" | "solid" | "double" | "groove" | "ridge";
   size?: number | string;
   margin?: number | string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  style: 'solid',
+  style: "solid",
   size: 1,
   margin: 1,
 });

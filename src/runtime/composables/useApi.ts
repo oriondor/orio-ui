@@ -1,7 +1,7 @@
-import { $fetch } from 'ofetch';
+import { $fetch } from "ofetch";
 
 export type RequestBody = Record<string, unknown>;
-export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+export type RequestMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 export interface ApiOptions {
   method?: RequestMethod;
@@ -24,7 +24,7 @@ export async function useApi<T = unknown>(
   options?: ApiOptions,
 ): Promise<T> {
   return (await $fetch(url, {
-    method: options?.method || 'GET',
+    method: options?.method || "GET",
     body: options?.body,
     signal: options?.signal,
     query: options?.query,

@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 interface Props {
   icon?: string;
   text?: string;
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
 }
 const props = withDefaults(defineProps<Props>(), {
-  size: 'medium',
+  size: "medium",
 });
-defineEmits(['click']);
+defineEmits(["click"]);
 
 const iconSize = computed(() => {
   switch (props.size) {
-    case 'small':
-      return '2rem';
-    case 'large':
-      return '5rem';
+    case "small":
+      return "2rem";
+    case "large":
+      return "5rem";
     default:
-      return '3rem';
+      return "3rem";
   }
 });
 </script>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import type { ResumeDate } from './view/Dates.vue';
+import { ref, watch, computed } from "vue";
+import type { ResumeDate } from "./view/Dates.vue";
 
 export interface DateRangePickerProps {
   month?: boolean;
@@ -8,15 +8,15 @@ export interface DateRangePickerProps {
 
 defineProps<DateRangePickerProps>();
 
-const dates = defineModel<ResumeDate>('dates', { required: true });
+const dates = defineModel<ResumeDate>("dates", { required: true });
 
-const present = ref(dates.value.endDate !== '' && !dates.value.endDate);
+const present = ref(dates.value.endDate !== "" && !dates.value.endDate);
 
 watch(present, (value) => {
   if (value) {
     dates.value.endDate = null; // Set end date to null when present is checked
   } else {
-    dates.value.endDate = ''; // Reset end date when present is unchecked
+    dates.value.endDate = ""; // Reset end date when present is unchecked
   }
 });
 

@@ -132,4 +132,13 @@ export default defineConfig({
       { icon: "github", link: "https://github.com/oriondor/orio-ui" },
     ],
   },
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern",
+        },
+      },
+    },
+  },
 });

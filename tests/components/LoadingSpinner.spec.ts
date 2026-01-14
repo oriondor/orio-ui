@@ -1,32 +1,35 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
-import LoadingSpinner from '../../src/runtime/components/LoadingSpinner.vue';
+import { describe, it, expect } from "vitest";
+import { mount } from "@vue/test-utils";
+import LoadingSpinner from "../../src/runtime/components/LoadingSpinner.vue";
 
-describe('LoadingSpinner', () => {
-  it('renders without errors', () => {
+const IconStub = {
+  template: '<span class="icon-stub" :data-name="name"></span>',
+  props: ["name"],
+};
+
+describe("LoadingSpinner", () => {
+  it("renders without errors", () => {
     const wrapper = mount(LoadingSpinner, {
       global: {
         stubs: {
-          'orio-icon': {
-            template: '<span class="icon-stub">loading</span>',
-          },
+          "orio-icon": IconStub,
         },
       },
     });
     expect(wrapper.exists()).toBe(true);
   });
 
-  it('renders an icon component', () => {
+  it("renders the loading-loop icon", () => {
     const wrapper = mount(LoadingSpinner, {
       global: {
         stubs: {
-          'orio-icon': {
-            template: '<span class="icon-stub">loading</span>',
-            props: ['name'],
-          },
+          "orio-icon": IconStub,
         },
       },
     });
-    expect(wrapper.html()).toContain('loading');
+
+    expect(wrapper.find(".icon-stub").attributes("data-name")).toBe(
+      "loading-loop",
+    );
   });
 });

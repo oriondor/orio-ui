@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue';
+import { computed, useAttrs } from "vue";
 
-export type TextTypes = 'text' | 'title' | 'subtitle' | 'italics';
+export type TextTypes = "text" | "title" | "subtitle" | "italics";
 
 export interface TextProps {
   type?: TextTypes;
-  size?: 'small' | 'medium' | 'large' | 'extra-large';
+  size?: "small" | "medium" | "large" | "extra-large";
   uppercase?: boolean;
   icon?: string | null;
   lineClamp?: number | string;
 }
 const props = withDefaults(defineProps<TextProps>(), {
-  type: 'text',
-  size: 'medium',
+  type: "text",
+  size: "medium",
   uppercase: false,
   icon: null,
   lineClamp: undefined,
