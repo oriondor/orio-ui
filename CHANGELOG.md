@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0](https://github.com/oriondor/orio-ui/compare/v1.6.0...v1.7.0) (2026-01-15)
+
+
+### Features
+
+* implemented headless upload component ([80cfdc6](https://github.com/oriondor/orio-ui/commit/80cfdc6ad35d7bd3e48ee74c5b5d27c3cca6395a))
+
 ## [1.6.0](https://github.com/oriondor/orio-ui/compare/v1.5.0...v1.6.0) (2026-01-14)
 
 
