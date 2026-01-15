@@ -144,7 +144,6 @@ onMounted(() => {
   height: v-bind("calculatedSize.height");
   max-width: 100%;
   max-height: v-bind(maxHeight);
-  margin: 0 auto;
 }
 
 .carousel__track {
