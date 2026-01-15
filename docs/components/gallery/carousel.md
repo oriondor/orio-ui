@@ -30,7 +30,7 @@ An interactive image carousel component with smooth transitions, swipe support, 
       {{ fit }}
     </orio-switch-button>
   </div>
-  <orio-gallery-carousel :images="images.map((image) => `${basePath}/${image}`)" :fit="currentFitValue" />
+  <orio-gallery-carousel style="margin: auto" :images="images.map((image) => `${basePath}/${image}`)" :fit="currentFitValue" />
 </div>
 
 ## Usage
