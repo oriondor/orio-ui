@@ -32,8 +32,6 @@ function onDrop(files: File[] | null) {
       maxFiles.value ?? -1,
     );
     modelValue.value = finalFiles;
-  } else {
-    modelValue.value = [];
   }
 }
 
