@@ -32,7 +32,10 @@ import { ref } from 'vue'
 
 ## Props
 
-None - this is a simple wrapper component.
+| Prop         | Type                     | Default    | Description                                              |
+| ------------ | ------------------------ | ---------- | -------------------------------------------------------- |
+| `appearance` | `'normal' \| 'minimal'`  | `'normal'` | Minimal removes margin, border, and box-shadow from slot |
+| `label`      | `string` (via `$attrs`)  | -          | Label text displayed above the control                   |
 
 ## Slots
 
@@ -45,3 +48,4 @@ None - this is a simple wrapper component.
 - Used internally by Input, Textarea, DatePicker, etc.
 - Provides consistent spacing and layout
 - Can be used to wrap custom form controls
+- The `label` is passed via attributes and rendered automatically

@@ -52,10 +52,11 @@ function formatFileSize(bytes) {
 
 ## Props
 
-| Prop           | Type       | Default     | Description                                       |
-| -------------- | ---------- | ----------- | ------------------------------------------------- |
-| `multiple`     | `boolean`  | `true`      | Allow multiple file selection                     |
-| `allowedTypes` | `string[]` | `undefined` | Array of allowed MIME types (e.g., `['image/*']`) |
+| Prop           | Type       | Default     | Description                                                       |
+| -------------- | ---------- | ----------- | ----------------------------------------------------------------- |
+| `maxFiles`     | `number`   | `undefined` | Maximum number of files (undefined = unlimited, 1 = single file)  |
+| `allowedTypes` | `string[]` | `undefined` | Array of allowed MIME types (e.g., `['image/*']`)                 |
+| `disabled`     | `boolean`  | `false`     | Disable file uploads                                              |
 
 ## Model
 
@@ -133,7 +134,7 @@ const singleFile = ref(null);
 <template>
   <orio-upload
     v-model="singleFile"
-    :multiple="false"
+    :max-files="1"
     v-slot="{ isOverDropZone, openDialog }"
   >
     <div

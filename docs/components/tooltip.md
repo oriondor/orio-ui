@@ -14,19 +14,15 @@ import { ref } from 'vue'
     <orio-tooltip text="Top tooltip" placement="top">
       <orio-button variant="secondary">Top</orio-button>
     </orio-tooltip>
-
     <orio-tooltip text="Bottom tooltip" placement="bottom">
       <orio-button variant="secondary">Bottom</orio-button>
     </orio-tooltip>
-
     <orio-tooltip text="Left tooltip" placement="left">
       <orio-button variant="secondary">Left</orio-button>
     </orio-tooltip>
-
     <orio-tooltip text="Right tooltip" placement="right">
       <orio-button variant="secondary">Right</orio-button>
     </orio-tooltip>
-
   </div>
 
   <h3>With Icons</h3>
@@ -34,15 +30,12 @@ import { ref } from 'vue'
     <orio-tooltip text="Edit">
       <orio-icon name="edit" :size="24" />
     </orio-tooltip>
-
     <orio-tooltip text="Delete">
       <orio-icon name="delete" :size="24" />
     </orio-tooltip>
-
     <orio-tooltip text="Settings">
       <orio-icon name="settings" :size="24" />
     </orio-tooltip>
-
   </div>
 
   <h3>Custom Content</h3>
@@ -98,7 +91,7 @@ import { ref } from 'vue'
 | ----------- | ---------------------------------------- | ----------- | ------------------------------------------ |
 | `text`      | `string`                                 | `undefined` | Tooltip text (when not using content slot) |
 | `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'`     | Tooltip position relative to trigger       |
-| `delay`     | `number`                                 | `0`         | Delay before showing tooltip (ms)          |
+| `delay`     | `number`                                 | `500`       | Delay before showing tooltip (ms)          |
 | `disabled`  | `boolean`                                | `false`     | Disable tooltip                            |
 | `offset`    | `number`                                 | `8`         | Distance from trigger element (px)         |
 
