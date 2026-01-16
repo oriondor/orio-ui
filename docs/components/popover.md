@@ -23,7 +23,11 @@ import { ref } from 'vue'
         </div>
       </template>
     </orio-popover>
+  </div>
+</div>
 
+<div class="demo-container">
+  <div class="demo-row">
     <orio-popover position="top-right">
       <template #default="{ toggle }">
         <orio-button variant="secondary" @click="toggle()">
@@ -46,9 +50,7 @@ import { ref } from 'vue'
 <template>
   <orio-popover position="bottom-left">
     <template #default="{ toggle }">
-      <orio-button @click="toggle()">
-        Show Popover
-      </orio-button>
+      <orio-button @click="toggle()"> Show Popover </orio-button>
     </template>
 
     <template #content="{ toggle }">
@@ -63,11 +65,11 @@ import { ref } from 'vue'
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `position` | `string` | `'bottom-left'` | Popover position |
-| `offset` | `number` | `10` | Distance from trigger (px) |
-| `disabled` | `boolean` | `false` | Disable popover |
+| Prop       | Type      | Default         | Description                |
+| ---------- | --------- | --------------- | -------------------------- |
+| `position` | `string`  | `'bottom-left'` | Popover position           |
+| `offset`   | `number`  | `10`            | Distance from trigger (px) |
+| `disabled` | `boolean` | `false`         | Disable popover            |
 
 ### Position Values
 
@@ -76,8 +78,8 @@ import { ref } from 'vue'
 
 ## Slots
 
-| Slot | Props | Description |
-|------|-------|-------------|
+| Slot      | Props        | Description     |
+| --------- | ------------ | --------------- |
 | `default` | `{ toggle }` | Trigger element |
 | `content` | `{ toggle }` | Popover content |
 
