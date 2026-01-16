@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.2](https://github.com/oriondor/orio-ui/compare/v1.7.1...v1.7.2) (2026-01-16)
+
+
+### Bug Fixes
+
+* improved upload component, added maxFiles validation and disabled state ([5082e97](https://github.com/oriondor/orio-ui/commit/5082e973302687977532cbef191e5b981f0f5b4a))
+
 ## [1.7.1](https://github.com/oriondor/orio-ui/compare/v1.7.0...v1.7.1) (2026-01-15)
 
 
