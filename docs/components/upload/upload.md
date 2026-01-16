@@ -29,46 +29,46 @@ function formatFileSize(bytes) {
 
 <div class="demo-container">
   <h3>Basic Upload (Any File Type)</h3>
-  <orio-upload v-slot="{ isOverDropZone, open }">
+  <orio-upload v-slot="{ isOverDropZone, openDialog }">
     <orio-dashed-container
       :icon="isOverDropZone ? 'download' : 'upload'"
       :text="isOverDropZone ? 'Drop files here' : 'Drag & drop or click to browse'"
-      @click="open"
+      @click="openDialog"
     />
   </orio-upload>
 
   <h3 style="margin-top: 2rem">Images Only</h3>
   <orio-upload
     :allowed-types="['image/*']"
-    v-slot="{ isOverDropZone, open }"
+    v-slot="{ isOverDropZone, openDialog }"
   >
     <orio-dashed-container
       :icon="isOverDropZone ? 'download' : 'image'"
       :text="isOverDropZone ? 'Drop images here' : 'Upload images (PNG, JPG, GIF)'"
-      @click="open"
+      @click="openDialog"
     />
   </orio-upload>
 </div>
 
 ## Props
 
-| Prop           | Type       | Default     | Description                                          |
-| -------------- | ---------- | ----------- | ---------------------------------------------------- |
-| `multiple`     | `boolean`  | `true`      | Allow multiple file selection                        |
-| `allowedTypes` | `string[]` | `undefined` | Array of allowed MIME types (e.g., `['image/*']`)   |
+| Prop           | Type       | Default     | Description                                       |
+| -------------- | ---------- | ----------- | ------------------------------------------------- |
+| `multiple`     | `boolean`  | `true`      | Allow multiple file selection                     |
+| `allowedTypes` | `string[]` | `undefined` | Array of allowed MIME types (e.g., `['image/*']`) |
 
 ## Model
 
-| Model        | Type               | Description                                    |
-| ------------ | ------------------ | ---------------------------------------------- |
-| `modelValue` | `File[] \| null` | Selected/dropped files (v-model ready)         |
+| Model        | Type             | Description                            |
+| ------------ | ---------------- | -------------------------------------- |
+| `modelValue` | `File[] \| null` | Selected/dropped files (v-model ready) |
 
 ## Slot Props
 
-| Prop             | Type         | Description                                           |
-| ---------------- | ------------ | ----------------------------------------------------- |
-| `isOverDropZone` | `boolean`    | True when user is dragging files over the drop zone  |
-| `open`           | `() => void` | Function to open the native file picker dialog       |
+| Prop             | Type         | Description                                         |
+| ---------------- | ------------ | --------------------------------------------------- |
+| `isOverDropZone` | `boolean`    | True when user is dragging files over the drop zone |
+| `openDialog`     | `() => void` | Function to open the native file picker dialog      |
 
 ## Usage Examples
 
@@ -82,8 +82,8 @@ const files = ref(null);
 </script>
 
 <template>
-  <orio-upload v-model="files" v-slot="{ isOverDropZone, open }">
-    <div @click="open">
+  <orio-upload v-model="files" v-slot="{ isOverDropZone, openDialog }">
+    <div @click="openDialog">
       <p v-if="isOverDropZone">Drop files here</p>
       <p v-else>Click or drag files here</p>
     </div>
@@ -114,9 +114,9 @@ watch(imageFiles, (files) => {
   <orio-upload
     v-model="imageFiles"
     :allowed-types="['image/png', 'image/jpeg', 'image/gif']"
-    v-slot="{ open }"
+    v-slot="{ openDialog }"
   >
-    <orio-button @click="open">Upload Images</orio-button>
+    <orio-button @click="openDialog">Upload Images</orio-button>
   </orio-upload>
 </template>
 ```
@@ -134,14 +134,14 @@ const singleFile = ref(null);
   <orio-upload
     v-model="singleFile"
     :multiple="false"
-    v-slot="{ isOverDropZone, open }"
+    v-slot="{ isOverDropZone, openDialog }"
   >
     <div
       class="upload-zone"
       :class="{ 'is-over': isOverDropZone }"
-      @click="open"
+      @click="openDialog"
     >
-      {{ singleFile ? singleFile[0].name : 'Upload a single file' }}
+      {{ singleFile ? singleFile[0].name : "Upload a single file" }}
     </div>
   </orio-upload>
 </template>
@@ -160,9 +160,9 @@ const pdfFiles = ref(null);
   <orio-upload
     v-model="pdfFiles"
     :allowed-types="['application/pdf']"
-    v-slot="{ open }"
+    v-slot="{ openDialog }"
   >
-    <orio-button icon="pdf" @click="open">
+    <orio-button icon="pdf" @click="openDialog">
       Upload PDF ({{ pdfFiles?.length || 0 }} selected)
     </orio-button>
   </orio-upload>
@@ -179,11 +179,11 @@ const files = ref(null);
 </script>
 
 <template>
-  <orio-upload v-model="files" v-slot="{ isOverDropZone, open }">
+  <orio-upload v-model="files" v-slot="{ isOverDropZone, openDialog }">
     <orio-dashed-container
       :icon="isOverDropZone ? 'download' : 'upload'"
       :text="isOverDropZone ? 'Drop here!' : 'Drag & drop or click'"
-      @click="open"
+      @click="openDialog"
     />
   </orio-upload>
 
@@ -222,7 +222,7 @@ watch(files, (newFiles) => {
     console.log("Files selected:", newFiles);
 
     // Process each file
-    newFiles.forEach(file => {
+    newFiles.forEach((file) => {
       console.log(`File: ${file.name}, Size: ${file.size} bytes`);
     });
   }
@@ -230,8 +230,8 @@ watch(files, (newFiles) => {
 </script>
 
 <template>
-  <orio-upload v-model="files" v-slot="{ open }">
-    <orio-button @click="open">Upload Files</orio-button>
+  <orio-upload v-model="files" v-slot="{ openDialog }">
+    <orio-button @click="openDialog">Upload Files</orio-button>
   </orio-upload>
 
   <!-- Display selected files -->
@@ -260,16 +260,17 @@ watch(files, async (newFiles) => {
 
   // Read file contents
   const contents = await Promise.all(
-    newFiles.map(file => {
+    newFiles.map((file) => {
       return new Promise((resolve) => {
         const reader = new FileReader();
-        reader.onload = (e) => resolve({
-          name: file.name,
-          content: e.target?.result
-        });
+        reader.onload = (e) =>
+          resolve({
+            name: file.name,
+            content: e.target?.result,
+          });
         reader.readAsText(file);
       });
-    })
+    }),
   );
 
   fileContents.value = contents;
@@ -277,8 +278,8 @@ watch(files, async (newFiles) => {
 </script>
 
 <template>
-  <orio-upload v-model="files" v-slot="{ open }">
-    <orio-button @click="open">Upload Text Files</orio-button>
+  <orio-upload v-model="files" v-slot="{ openDialog }">
+    <orio-button @click="openDialog">Upload Text Files</orio-button>
   </orio-upload>
 
   <div v-for="item in fileContents" :key="item.name">
@@ -308,17 +309,17 @@ async function uploadFiles() {
   });
 
   try {
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
     });
 
     if (response.ok) {
-      console.log('Upload successful!');
+      console.log("Upload successful!");
       files.value = null; // Clear files
     }
   } catch (error) {
-    console.error('Upload failed:', error);
+    console.error("Upload failed:", error);
   } finally {
     uploading.value = false;
   }
@@ -333,9 +334,9 @@ watch(files, (newFiles) => {
 </script>
 
 <template>
-  <orio-upload v-model="files" v-slot="{ open }">
-    <orio-button @click="open" :disabled="uploading" :loading="uploading">
-      {{ uploading ? 'Uploading...' : 'Select Files' }}
+  <orio-upload v-model="files" v-slot="{ openDialog }">
+    <orio-button @click="openDialog" :disabled="uploading" :loading="uploading">
+      {{ uploading ? "Uploading..." : "Select Files" }}
     </orio-button>
   </orio-upload>
 </template>
@@ -381,6 +382,7 @@ watch(files, (newFiles) => {
 ## Browser Support
 
 The component uses VueUse's `useDropZone` and `useFileDialog` composables which rely on:
+
 - File API (all modern browsers)
 - Drag and Drop API (all modern browsers)
 - The component gracefully handles browsers without drag-drop by falling back to click-to-upload
