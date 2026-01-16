@@ -55,9 +55,11 @@ const accepted = ref(false);
 
 ## Props
 
-| Prop         | Type      | Default | Description              |
-| ------------ | --------- | ------- | ------------------------ |
-| `modelValue` | `boolean` | -       | Checkbox state (v-model) |
+| Prop            | Type      | Default     | Description                              |
+| --------------- | --------- | ----------- | ---------------------------------------- |
+| `modelValue`    | `boolean` | -           | Checkbox state (v-model)                 |
+| `checkedIcon`   | `string`  | `undefined` | Icon name to display when checked        |
+| `uncheckedIcon` | `string`  | `undefined` | Icon name to display when unchecked      |
 
 ## Events
 
@@ -67,6 +69,7 @@ const accepted = ref(false);
 
 ## Slots
 
-| Slot      | Description        |
-| --------- | ------------------ |
-| `default` | Label text/content |
+| Slot      | Props                 | Description                          |
+| --------- | --------------------- | ------------------------------------ |
+| `default` | -                     | Label text/content                   |
+| `icon`    | `{ checked: boolean }` | Custom icon content for check state |
