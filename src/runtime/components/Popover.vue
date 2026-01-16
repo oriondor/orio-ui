@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div ref="trigger" @click="togglePopover()">
+    <div ref="trigger">
       <slot :toggle="togglePopover" />
     </div>
 
@@ -202,6 +202,7 @@ async function updateRects() {
 async function togglePopover(force: boolean | null = null) {
   if (props.disabled) return;
   showPopover.value = force !== null ? force : !showPopover.value;
+
   if (!showPopover.value) return;
 
   await nextTick();

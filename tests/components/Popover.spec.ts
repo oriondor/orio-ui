@@ -14,7 +14,7 @@ describe("Popover", () => {
   it("opens popover on trigger click", async () => {
     const wrapper = mount(Popover, {
       slots: {
-        default: '<button class="trigger-btn">Open</button>',
+        default: `<template #default="{ toggle }"><button class="trigger-btn" @click="toggle()">Open</button></template>`,
         content: '<div class="popover-content">Hello</div>',
       },
       global: {
@@ -35,7 +35,7 @@ describe("Popover", () => {
     const wrapper = mount(Popover, {
       props: { disabled: true },
       slots: {
-        default: '<button class="trigger-btn">Open</button>',
+        default: `<template #default="{ toggle }"><button class="trigger-btn" @click="toggle()">Open</button></template>`,
         content: '<div class="popover-content">Hello</div>',
       },
       global: {

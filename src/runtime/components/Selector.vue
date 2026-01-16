@@ -95,7 +95,7 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
     <orio-popover position="bottom-right" :offset="5">
       <template #default="{ toggle }">
         <slot name="trigger" :toggle>
-          <div class="selector-trigger">
+          <div class="selector-trigger" @click="toggle()">
             <slot
               name="trigger-content"
               :toggle
