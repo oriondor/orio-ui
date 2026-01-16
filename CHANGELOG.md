@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.5](https://github.com/oriondor/orio-ui/compare/v1.7.4...v1.7.5) (2026-01-16)
+
+
+### Bug Fixes
+
+* inconsistencies between components and docs ([83037e7](https://github.com/oriondor/orio-ui/commit/83037e70ae824329a6c210afa737403e5a12845b))
+* popover – removed default toggle in the popover itself ([f01bea3](https://github.com/oriondor/orio-ui/commit/f01bea355296a13b9d1b6b7b33810162d0a13cd5))
+
 ## [1.7.4](https://github.com/oriondor/orio-ui/compare/v1.7.3...v1.7.4) (2026-01-16)
 
 
