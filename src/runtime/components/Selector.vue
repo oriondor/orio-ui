@@ -63,14 +63,16 @@ function toggleOption(option: SelectableOption, toggle: () => void) {
 }
 
 function isOptionSelected(option: SelectableOption): boolean {
-  if (typeof option === "string") return modelValue.value === option;
-  return !!(
-    flatModalValue.value &&
-    (flatModalValue.value === (option as T)[key.value] ||
-      (flatModalValue.value as string[]).includes(
-        (option as T)[key.value] as string,
-      ))
-  );
+  if (props.multiple) {
+    const flatOption =
+      typeof option === "string" ? option : (option as T)[key.value];
+    return (flatModalValue.value as string[]).includes(flatOption as string);
+  } else {
+    if (typeof option === "string") return modelValue.value === option;
+    return !!(
+      flatModalValue.value && flatModalValue.value === (option as T)[key.value]
+    );
+  }
 }
 
 function getOptionLabel(option: SelectableOption | undefined): string {
