@@ -28,6 +28,12 @@ withDefaults(defineProps<ControlProps>(), {
     user-select: none;
   }
 
+  .slot-wrapper {
+    width: fit-content;
+    height: fit-content;
+    line-height: 0;
+  }
+
   &.minimal {
     margin: 0;
 
