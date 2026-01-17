@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0](https://github.com/oriondor/orio-ui/compare/v1.7.5...v1.8.0) (2026-01-17)
+
+
+### Features
+
+* Implemented number input component ([47da272](https://github.com/oriondor/orio-ui/commit/47da272e8ec8a68bc863a6c6b1fb9a20a1ec6cd1))
+
 ## [1.7.5](https://github.com/oriondor/orio-ui/compare/v1.7.4...v1.7.5) (2026-01-16)
 
 
