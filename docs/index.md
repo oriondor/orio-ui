@@ -4,12 +4,12 @@ A delightful, lightweight component library for Nuxt 3 applications.
 
 ## Features
 
-✨ **23 Components** - Beautiful, accessible components ready to use
+✨ **24 Components** - Beautiful, accessible components ready to use
 🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great DX
-🧪 **Tested** - 71+ unit tests for reliability
+🧪 **Tested** - 113 unit tests for reliability
 
 ## Quick Start
 
@@ -38,7 +38,7 @@ Start using components:
 ## What's Included
 
 ### Components
-- Form controls: Input, Textarea, CheckBox, DatePicker, DateRangePicker, Selector, SwitchButton
+- Form controls: Input, NumberInput, Textarea, CheckBox, DatePicker, DateRangePicker, Selector, SwitchButton
 - Navigation: Button, NavButton, Modal, Popover, Tooltip
 - Display: Icon, LoadingSpinner, EmptyState, Tag, DashedContainer
 - View: Text, Dates, Separator

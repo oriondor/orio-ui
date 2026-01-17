@@ -1,49 +1,22 @@
 <script setup lang="ts">
-defineEmits<{
-  (e: "input", value: string): void;
-}>();
-
-const text = defineModel<string>({ default: "" });
+const modelValue = defineModel<string>({ default: "" });
 </script>
 
 <template>
   <orio-control-element v-bind="$attrs">
-    <input v-bind="$attrs" v-model="text" type="text" class="text-input" />
+    <input
+      v-bind="$attrs"
+      v-model="modelValue"
+      type="text"
+      class="text-input"
+    />
   </orio-control-element>
 </template>
 
 <style lang="scss" scoped>
+@use "../assets/css/mixins" as *;
+
 .text-input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  font-size: 1rem;
-  line-height: 1.5;
-  color: var(--color-text);
-  background-color: var(--color-bg);
-  box-sizing: border-box;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-
-  &::placeholder {
-    color: var(--color-muted);
-  }
-
-  &:hover {
-    border-color: var(--color-accent);
-  }
-
-  &:focus {
-    border-color: var(--color-accent);
-    outline: none;
-  }
-
-  &:disabled {
-    background-color: var(--color-surface);
-    color: var(--color-muted);
-    cursor: not-allowed;
-  }
+  @include base-input;
 }
 </style>

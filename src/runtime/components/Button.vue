@@ -25,11 +25,27 @@ const isIconOnly = computed(() => {
 
 const emit = defineEmits<{
   (e: "click", event: PointerEvent): void;
+  (e: "mousedown", event: MouseEvent): void;
+  (e: "mouseup", event: MouseEvent): void;
+  (e: "mouseleave", event: MouseEvent): void;
 }>();
 
 function click(event: PointerEvent) {
   if (loading.value || disabled.value) return;
   emit("click", event);
+}
+
+function onMousedown(event: MouseEvent) {
+  if (loading.value || disabled.value) return;
+  emit("mousedown", event);
+}
+
+function onMouseup(event: MouseEvent) {
+  emit("mouseup", event);
+}
+
+function onMouseleave(event: MouseEvent) {
+  emit("mouseleave", event);
 }
 </script>
 
@@ -40,6 +56,9 @@ function click(event: PointerEvent) {
       :class="[variant, 'gradient-hover', { 'icon-only': isIconOnly }]"
       :disabled
       @click="click"
+      @mousedown="onMousedown"
+      @mouseup="onMouseup"
+      @mouseleave="onMouseleave"
     >
       <orio-loading-spinner v-if="loading" />
       <slot v-else name="icon">
@@ -68,6 +87,7 @@ button {
   &.icon-only {
     padding: 0;
     border-radius: 50%;
+    line-height: 0;
   }
 
   &:disabled,
