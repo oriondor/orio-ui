@@ -29,7 +29,6 @@ withDefaults(defineProps<ControlProps>(), {
   }
 
   .slot-wrapper {
-    width: fit-content;
     height: fit-content;
     line-height: 0;
   }
