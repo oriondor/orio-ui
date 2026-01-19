@@ -296,6 +296,9 @@ import { ref } from 'vue'
     <orio-tooltip text="plus">
       <orio-icon name="plus" />
     </orio-tooltip>
+    <orio-tooltip text="minus">
+      <orio-icon name="minus" />
+    </orio-tooltip>
     <orio-tooltip text="close">
       <orio-icon name="close" />
     </orio-tooltip>

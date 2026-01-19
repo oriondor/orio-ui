@@ -8,3 +8,4 @@ export { useFuzzySearch } from "./useFuzzySearch";
 export { useModal, type ModalProps, type OriginRect } from "./useModal";
 export { useTheme } from "./useTheme";
 export { useDecimalFormatter } from "./useDecimalFormatter";
+export { usePressAndHold } from "./usePressAndHold";

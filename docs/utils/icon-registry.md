@@ -19,6 +19,7 @@ The icon registry provides a collection of commonly used SVG icons bundled with 
 - **edit** - Edit/pencil icon for modification actions
 - **check** - Checkmark for confirmation and success states
 - **plus** - Plus/add icon for creation actions
+- **minus** - Minus/remove icon for subtraction actions
 - **close** - Close/X icon for dismissing or canceling
 - **search** - Search/magnifying glass icon
 - **upload** - Upload arrow icon

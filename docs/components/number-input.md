@@ -1,43 +1,78 @@
 # NumberInput
 
-Numeric input component with min/max constraints, step controls, and press-and-hold functionality.
+Numeric input components with min/max constraints and optional step controls. Available in three variants.
 
 ## Live Demo
 
 <script setup>
 import { ref } from 'vue'
 
-const quantity = ref(1)
+const basic = ref(10)
+const vertical = ref(5)
+const horizontal = ref(1)
 const price = ref(9.99)
 </script>
 
-<div class="demo-container">
-  <div class="demo-grid">
-    <orio-number-input
-      v-model="quantity"
-      :min="0"
-      :max="100"
-      :step="1"
-      label="Quantity"
-      placeholder="Enter quantity"
-    />
-    <orio-number-input
-      v-model="price"
-      :min="0"
-      :max="1000"
-      :step="0.01"
-      :decimal-places="2"
-      label="Price"
-      placeholder="Enter price"
-    />
-  </div>
+### Basic (No Controls)
 
-  <div class="demo-output">
-    <strong>Current values:</strong><br>
-    Quantity: {{ quantity }}<br>
-    Price: {{ price }}
-  </div>
+<div class="demo-container">
+  <orio-number-input
+    v-model="basic"
+    :min="0"
+    :max="100"
+    label="Quantity"
+    placeholder="Enter quantity"
+  />
+  <div class="demo-output">Value: {{ basic }}</div>
 </div>
+
+### Vertical Controls
+
+<div class="demo-container">
+  <orio-number-input-vertical
+    v-model="vertical"
+    :min="0"
+    :max="100"
+    :step="1"
+    label="Quantity"
+  />
+  <div class="demo-output">Value: {{ vertical }}</div>
+</div>
+
+### Horizontal Controls
+
+<div class="demo-container">
+  <orio-number-input-horizontal
+    v-model="horizontal"
+    :min="0"
+    :max="10"
+    :step="1"
+    label="Items"
+  />
+  <div class="demo-output">Value: {{ horizontal }}</div>
+</div>
+
+### Decimal Values
+
+<div class="demo-container">
+  <orio-number-input-horizontal
+    v-model="price"
+    :min="0"
+    :max="1000"
+    :step="0.01"
+    :decimal-places="2"
+    label="Price"
+  />
+  <div class="demo-output">Value: {{ price }}</div>
+</div>
+
+## Variants
+
+| Component | Description |
+|-----------|-------------|
+| `orio-number-input` | Basic number input without controls |
+| `orio-number-input-vertical` | Controls stacked vertically on the right |
+| `orio-number-input-horizontal` | Minus/plus controls on left and right sides |
 
 ## Usage
 
@@ -53,23 +88,34 @@ const value = ref(0)
 </script>
 ```
 
-### With Label and Step
+### Vertical Controls
 
 ```vue
-<orio-number-input
+<orio-number-input-vertical
   v-model="quantity"
   :min="1"
   :max="99"
   :step="1"
   label="Quantity"
-  placeholder="Enter quantity"
+/>
+```
+
+### Horizontal Controls
+
+```vue
+<orio-number-input-horizontal
+  v-model="count"
+  :min="0"
+  :max="10"
+  :step="1"
+  label="Count"
 />
 ```
 
 ### Decimal Values
 
 ```vue
-<orio-number-input
+<orio-number-input-horizontal
   v-model="price"
   :min="0"
   :max="1000"
@@ -81,9 +127,9 @@ const value = ref(0)
 
 ## Features
 
-- **Increment/Decrement buttons** - Click to adjust value by step amount
-- **Press and hold** - Hold button to continuously adjust after 500ms delay
-- **Boundary validation** - Values are clamped to min/max range
+- **Boundary validation** - Values are clamped to min/max range on blur
+- **Increment/Decrement buttons** - Click to adjust value by step amount (Vertical & Horizontal)
+- **Press and hold** - Hold button to continuously adjust after 500ms delay (Vertical & Horizontal)
 - **Decimal precision** - Control decimal places with `decimalPlaces` prop
 
 ## Props
