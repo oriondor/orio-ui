@@ -4,12 +4,12 @@ A delightful, lightweight component library for Nuxt 3 applications.
 
 ## Features
 
-✨ **26 Components** - Beautiful, accessible components ready to use
+✨ **27 Components** - Beautiful, accessible components ready to use
 🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great DX
-🧪 **Tested** - 125 unit tests for reliability
+🧪 **Tested** - 138 unit tests for reliability
 
 ## Quick Start
 
@@ -21,37 +21,38 @@ Add to your `nuxt.config.ts`:
 
 ```typescript
 export default defineNuxtConfig({
-  modules: ['orio-ui']
-})
+  modules: ["orio-ui"],
+});
 ```
 
 Start using components:
 
 ```vue
 <template>
-  <orio-button variant="primary" @click="handleClick">
-    Click Me
-  </orio-button>
+  <orio-button variant="primary" @click="handleClick"> Click Me </orio-button>
 </template>
 ```
 
 ## What's Included
 
 ### Components
+
 - Form controls: Input, NumberInput, NumberInputVertical, NumberInputHorizontal, Textarea, CheckBox, DatePicker, DateRangePicker, Selector, SwitchButton
 - Navigation: Button, NavButton, Modal, Popover, Tooltip
-- Display: Icon, LoadingSpinner, EmptyState, Tag, DashedContainer
+- Display: Icon, LoadingSpinner, EmptyState, Tag, Badge, DashedContainer
 - View: Text, Dates, Separator
 - Media: Carousel, Upload
 - Utility: ControlElement
 
 ### Composables
+
 - `useTheme` - Theme and color mode management
 - `useModal` - Modal state with animation origin tracking
 - `useFuzzySearch` - Fuzzy search with Fuse.js
 - `useApi` - Type-safe API requests
 
 ### Theming
+
 Built-in themes: Navy (default), Ocean, Sunset, Forest, Purple
 Modes: Light & Dark
 

@@ -12,6 +12,7 @@ export { default as DatePicker } from "./components/DatePicker.vue";
 export { default as DateRangePicker } from "./components/DateRangePicker.vue";
 export { default as Selector } from "./components/Selector.vue";
 export { default as Tag } from "./components/Tag.vue";
+export { default as Badge } from "./components/Badge.vue";
 export { default as Icon } from "./components/Icon.vue";
 export { default as LoadingSpinner } from "./components/LoadingSpinner.vue";
 export { default as Modal } from "./components/Modal.vue";
