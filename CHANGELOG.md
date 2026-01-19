@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0](https://github.com/oriondor/orio-ui/compare/v1.9.2...v1.10.0) (2026-01-19)
+
+
+### Features
+
+* create badge component that can wrap any component and draw badge on top right of it ([705e2af](https://github.com/oriondor/orio-ui/commit/705e2af9262c54defabdc511439b568b372fd81b))
+
 ## [1.9.2](https://github.com/oriondor/orio-ui/compare/v1.9.1...v1.9.2) (2026-01-19)
 
 
