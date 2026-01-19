@@ -1,4 +1,4 @@
-/* 1) Role-based tokens (don’t change these names in CSS) */
+/* 1) Role-based tokens (don't change these names in CSS) */
 :root {
   --color-bg: #ffffff;
   --color-surface: #f7f8fa;
@@ -23,6 +23,18 @@
   --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, #c7d2fe);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, black 15%);
   --color-accent-active: color-mix(in srgb, var(--color-accent), black 60%);
+
+  /* Danger family */
+  --color-danger: hsl(0, 72%, 51%);
+  --color-danger-ink: #ffffff;
+  --color-danger-soft: color-mix(in srgb, var(--color-danger) 15%, #e3e3e3);
+  --color-danger-border: color-mix(in srgb, var(--color-danger) 40%, #fecaca);
+
+  /* Alert family */
+  --color-alert: hsl(38, 92%, 50%);
+  --color-alert-ink: #000000;
+  --color-alert-soft: color-mix(in srgb, var(--color-alert) 15%, #e3e3e3);
+  --color-alert-border: color-mix(in srgb, var(--color-alert) 40%, #fde68a);
 }
 
 /* 2) Category themes (light vs dark) */
@@ -55,6 +67,14 @@
 
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 30%, white 70%);
   --color-accent-active: color-mix(in srgb, var(--color-accent) 80%, white 25%);
+
+  /* Danger family (dark) */
+  --color-danger-soft: color-mix(in srgb, var(--color-danger) 12%, #0e1116);
+  --color-danger-border: color-mix(in srgb, var(--color-danger) 40%, #0e1116);
+
+  /* Alert family (dark) */
+  --color-alert-soft: color-mix(in srgb, var(--color-alert) 12%, #0e1116);
+  --color-alert-border: color-mix(in srgb, var(--color-alert) 40%, #0e1116);
 }
 
 /* 3) Accent themes (just accents, independent of light/dark) */
