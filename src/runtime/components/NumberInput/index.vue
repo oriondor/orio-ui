@@ -83,6 +83,17 @@ const slotExpose = computed(() => ({
 <style scoped lang="scss">
 @use "../../assets/css/mixins" as *;
 
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
 .wrapper {
   position: relative;
 }
