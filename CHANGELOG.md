@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.1](https://github.com/oriondor/orio-ui/compare/v1.9.0...v1.9.1) (2026-01-19)
+
+
+### Bug Fixes
+
+* hide standard controls ([218c6fe](https://github.com/oriondor/orio-ui/commit/218c6fe6b5304dd10505a1791b7c68e231aa2e24))
+
 ## [1.9.0](https://github.com/oriondor/orio-ui/compare/v1.8.0...v1.9.0) (2026-01-19)
 
 
