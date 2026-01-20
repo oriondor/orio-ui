@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.1](https://github.com/oriondor/orio-ui/compare/v1.10.0...v1.10.1) (2026-01-20)
+
+
+### Bug Fixes
+
+* inherit correct line height, but remove it from number input controls ([916b5d1](https://github.com/oriondor/orio-ui/commit/916b5d1e3ee3ca15908d45299eae25806ef0f14d))
+
 ## [1.10.0](https://github.com/oriondor/orio-ui/compare/v1.9.2...v1.10.0) (2026-01-19)
 
 
