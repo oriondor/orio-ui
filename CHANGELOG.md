@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.3](https://github.com/oriondor/orio-ui/compare/v1.10.2...v1.10.3) (2026-01-20)
+
+
+### Bug Fixes
+
+* fixed docs for animated container, added fancy mechanical sound effect (used as composable) ([14499ed](https://github.com/oriondor/orio-ui/commit/14499edf77a3732be2292ce1a470dc77b9041a79))
+
 ## [1.10.2](https://github.com/oriondor/orio-ui/compare/v1.10.1...v1.10.2) (2026-01-20)
 
 
