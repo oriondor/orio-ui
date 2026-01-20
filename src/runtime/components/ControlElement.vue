@@ -23,6 +23,9 @@ withDefaults(defineProps<ControlProps>(), {
 <style lang="scss" scoped>
 .control {
   margin: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
 
   .control-label {
     user-select: none;
