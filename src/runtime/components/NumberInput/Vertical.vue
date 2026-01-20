@@ -55,5 +55,9 @@ const { pressAndHold, stop } = usePressAndHold();
     right: 3px;
     left: auto;
   }
+
+  :deep(.slot-wrapper) {
+    line-height: 0;
+  }
 }
 </style>

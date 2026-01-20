@@ -57,5 +57,9 @@ const { pressAndHold, stop } = usePressAndHold();
     justify-content: space-between;
     padding: 0 3px;
   }
+
+  :deep(.slot-wrapper) {
+    line-height: 0;
+  }
 }
 </style>
