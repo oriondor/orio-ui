@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.2](https://github.com/oriondor/orio-ui/compare/v1.10.1...v1.10.2) (2026-01-20)
+
+
+### Bug Fixes
+
+* added animated container ([5299808](https://github.com/oriondor/orio-ui/commit/52998089eb2a007b64b61356de888964a01bad50))
+* better UI (gap) for control element ([544e896](https://github.com/oriondor/orio-ui/commit/544e896f628b328551a5a8579fcbf164ca20a8f9))
+
 ## [1.10.1](https://github.com/oriondor/orio-ui/compare/v1.10.0...v1.10.1) (2026-01-20)
 
 
