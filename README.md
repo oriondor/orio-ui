@@ -1,18 +1,18 @@
 # Orio UI
 
-A delightful, lightweight component library for Nuxt 3 applications. Built with TypeScript, fully tested, and designed for modern web development.
+A delightful, lightweight component library for Nuxt 3+ applications. Built with TypeScript, fully tested, and designed for modern web development.
 
 [![npm version](https://img.shields.io/npm/v/orio-ui.svg)](https://www.npmjs.com/package/orio-ui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
 
-✨ **18 Components** - Beautiful, accessible components ready to use
+✨ **26 Components** - Beautiful, accessible components ready to use
 🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great developer experience
-🧪 **Tested** - 71+ unit tests for reliability
+🧪 **Tested** - 240+ unit tests for reliability
 📱 **Responsive** - Mobile-first design approach
 ♿ **Accessible** - ARIA-compliant components
 
@@ -65,31 +65,37 @@ function handleClick() {
 
 ## What's Included
 
-### Components (18)
+### Components (26)
 
 #### Form Controls
 
 - **Input** - Text input with label support
 - **Textarea** - Multi-line text input
+- **NumberInput** - Numeric input with increment/decrement (horizontal & vertical variants)
 - **CheckBox** - Custom checkbox with icon states
+- **SwitchButton** - Toggle switch component
 - **DatePicker** - Date selection with month/year options
 - **DateRangePicker** - Start and end date selection
 - **Selector** - Generic dropdown selector (single/multi-select)
 - **Tag** - Styled tag/badge component
+- **Badge** - Status badge with variants
 
 #### Interactive
 
 - **Button** - Primary, secondary, subdued variants with loading/icon support
+- **NavButton** - Navigation button component
 - **Modal** - Animated modal with origin morphing
 - **Popover** - Positioned popover with smart placement
+- **Tooltip** - Hover tooltip component
 
 #### Display
 
-- **Icon** - SVG icon system with 12 bundled icons
+- **Icon** - SVG icon system with 97 bundled icons
 - **LoadingSpinner** - Animated loading indicator
 - **EmptyState** - Empty state placeholder
 - **DashedContainer** - Dashed border container with icon
 - **ControlElement** - Form control wrapper
+- **AnimatedContainer** - Flex container with fade-in animation and optional sound
 
 #### View
 
@@ -97,12 +103,23 @@ function handleClick() {
 - **Dates** - Date range display formatter
 - **Separator** - Visual divider
 
-### Composables (4)
+#### Gallery
+
+- **Carousel** - Image carousel component
+
+#### Upload
+
+- **Upload** - File upload component
+
+### Composables (7)
 
 - **useTheme** - Theme and color mode management
 - **useModal** - Modal state with animation origin tracking
 - **useFuzzySearch** - Fuzzy search powered by Fuse.js
 - **useApi** - Type-safe API request wrapper
+- **useDecimalFormatter** - Number formatting utilities
+- **usePressAndHold** - Press and hold interaction handler
+- **useSound** - Audio playback with CDN-hosted sounds
 
 ### Theming
 
@@ -166,8 +183,8 @@ npm run docs:dev
 orio-ui/
 ├── src/
 │   ├── runtime/
-│   │   ├── components/   # 18 Vue components
-│   │   ├── composables/  # 4 composables
+│   │   ├── components/   # 26 Vue components
+│   │   ├── composables/  # 7 composables
 │   │   ├── assets/css/   # Theme CSS files
 │   │   └── utils/        # Icon registry
 │   └── module.ts         # Nuxt Module definition

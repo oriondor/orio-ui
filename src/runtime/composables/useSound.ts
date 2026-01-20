@@ -4,7 +4,7 @@ export interface SoundOptions {
 }
 
 const DEFAULT_SOUND =
-  "https://cdn.jsdelivr.net/gh/oriondor/0re0-ui@main/docs/public/sounds/mechanical-switch.wav";
+  "https://cdn.jsdelivr.net/gh/oriondor/orio-ui@main/docs/public/sounds/mechanical-switch.wav";
 
 export function useSound(options: SoundOptions = {}) {
   const { src = DEFAULT_SOUND, volume = 0.3 } = options;
