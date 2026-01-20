@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useSound } from "../composables/useSound";
+
 interface Props {
   direction?: "column" | "row";
 }
@@ -6,11 +8,13 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   direction: "row",
 });
+
+const { play } = useSound();
 </script>
 
 <template>
   <div class="animated-container" :class="[direction]">
-    <slot />
+    <slot :play />
   </div>
 </template>
 
