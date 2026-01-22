@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0](https://github.com/oriondor/orio-ui/compare/v1.10.4...v1.11.0) (2026-01-22)
+
+
+### Features
+
+* added validator composable to validate non-form (and form) control elements ([e43b5a6](https://github.com/oriondor/orio-ui/commit/e43b5a62f07f7649ad23cdbabcc01c986cd3cd02))
+
 ## [1.10.4](https://github.com/oriondor/orio-ui/compare/v1.10.3...v1.10.4) (2026-01-20)
 
 
