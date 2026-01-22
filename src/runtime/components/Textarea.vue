@@ -11,7 +11,7 @@ const modelValue = defineModel<string>({ default: "" });
 
 <template>
   <orio-control-element v-bind="attrs">
-    <textarea v-bind="attrs" v-model="modelValue" rows="4" class="textarea" />
+    <textarea v-model="modelValue" rows="4" v-bind="attrs" class="textarea" />
   </orio-control-element>
 </template>
 

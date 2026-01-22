@@ -5,9 +5,9 @@ const modelValue = defineModel<string>({ default: "" });
 <template>
   <orio-control-element v-bind="$attrs">
     <input
-      v-bind="$attrs"
       v-model="modelValue"
       type="text"
+      v-bind="$attrs"
       class="text-input"
     />
   </orio-control-element>
