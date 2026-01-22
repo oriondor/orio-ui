@@ -111,12 +111,13 @@ function handleClick() {
 
 - **Upload** - File upload component
 
-### Composables (7)
+### Composables (8)
 
 - **useTheme** - Theme and color mode management
 - **useModal** - Modal state with animation origin tracking
 - **useFuzzySearch** - Fuzzy search powered by Fuse.js
 - **useApi** - Type-safe API request wrapper
+- **useValidation** - Form validation with error handling
 - **useDecimalFormatter** - Number formatting utilities
 - **usePressAndHold** - Press and hold interaction handler
 - **useSound** - Audio playback with CDN-hosted sounds
@@ -184,7 +185,7 @@ orio-ui/
 ├── src/
 │   ├── runtime/
 │   │   ├── components/   # 26 Vue components
-│   │   ├── composables/  # 7 composables
+│   │   ├── composables/  # 8 composables
 │   │   ├── assets/css/   # Theme CSS files
 │   │   └── utils/        # Icon registry
 │   └── module.ts         # Nuxt Module definition
