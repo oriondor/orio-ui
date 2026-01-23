@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.2](https://github.com/oriondor/orio-ui/compare/v1.11.1...v1.11.2) (2026-01-23)
+
+
+### Bug Fixes
+
+* added infor family colors ([dda9b10](https://github.com/oriondor/orio-ui/commit/dda9b10f939359244bc976b2cce45633ab51766a))
+* added success color ([a1ae6b8](https://github.com/oriondor/orio-ui/commit/a1ae6b826ee89c468fc12ce404299410c5dc8a80))
+
 ## [1.11.1](https://github.com/oriondor/orio-ui/compare/v1.11.0...v1.11.1) (2026-01-22)
 
 
