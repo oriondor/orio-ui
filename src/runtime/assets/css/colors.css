@@ -35,6 +35,18 @@
   --color-alert-ink: #000000;
   --color-alert-soft: color-mix(in srgb, var(--color-alert) 15%, #e3e3e3);
   --color-alert-border: color-mix(in srgb, var(--color-alert) 40%, #fde68a);
+
+  /* Success family */
+  --color-success: hsl(142, 71%, 45%);
+  --color-success-ink: #ffffff;
+  --color-success-soft: color-mix(in srgb, var(--color-success) 15%, #e3e3e3);
+  --color-success-border: color-mix(in srgb, var(--color-success) 40%, #bbf7d0);
+
+  /* Info family */
+  --color-info: hsl(210, 79%, 46%);
+  --color-info-ink: #ffffff;
+  --color-info-soft: color-mix(in srgb, var(--color-info) 15%, #e3e3e3);
+  --color-info-border: color-mix(in srgb, var(--color-info) 40%, #bfdbfe);
 }
 
 /* 2) Category themes (light vs dark) */
@@ -75,6 +87,14 @@
   /* Alert family (dark) */
   --color-alert-soft: color-mix(in srgb, var(--color-alert) 12%, #0e1116);
   --color-alert-border: color-mix(in srgb, var(--color-alert) 40%, #0e1116);
+
+  /* Success family (dark) */
+  --color-success-soft: color-mix(in srgb, var(--color-success) 12%, #0e1116);
+  --color-success-border: color-mix(in srgb, var(--color-success) 40%, #0e1116);
+
+  /* Info family (dark) */
+  --color-info-soft: color-mix(in srgb, var(--color-info) 12%, #0e1116);
+  --color-info-border: color-mix(in srgb, var(--color-info) 40%, #0e1116);
 }
 
 /* 3) Accent themes (just accents, independent of light/dark) */
