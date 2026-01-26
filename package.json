@@ -1,6 +1,6 @@
 {
   "name": "orio-ui",
-  "version": "1.11.4",
+  "version": "1.11.5",
   "description": "Modern Nuxt component library with theme support",
   "type": "module",
   "main": "./dist/module.mjs",
