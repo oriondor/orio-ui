@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.6](https://github.com/oriondor/orio-ui/compare/v1.11.5...v1.11.6) (2026-01-26)
+
+
+### Bug Fixes
+
+* manifest change ([b56e49f](https://github.com/oriondor/orio-ui/commit/b56e49fb3c928570d86e542cd5ba87200bbd3ff0))
+
 ## [1.11.5](https://github.com/oriondor/orio-ui/compare/v1.11.4...v1.11.5) (2026-01-26)
 
 
