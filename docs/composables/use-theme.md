@@ -2,11 +2,53 @@
 
 Composable for managing theme and color mode preferences.
 
+## Live Demo
+
+<script setup>
+import { computed } from 'vue'
+import { useTheme } from '../../src/runtime/composables/useTheme'
+import { capitalCase } from "change-case";
+
+const { theme, mode, setTheme, setMode } = useTheme()
+
+const themes = [
+  { label: 'Navy', value: 'navy' },
+  { label: 'Teal', value: 'teal' },
+  { label: 'Forest', value: 'forest' },
+  { label: 'Wine', value: 'wine' },
+  { label: 'Royal', value: 'royal' },
+]
+
+const isDark = computed({
+  get: () => mode.value === 'dark',
+  set: (val) => setMode(val ? 'dark' : 'light')
+})
+
+const selectedTheme = computed(() => themes.find(({ value }) => value === theme.value))
+</script>
+
+<div class="demo-container">
+  <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <orio-selector
+      :model-value="selectedTheme"
+      :options="themes"
+      label="Theme"
+      field="value"
+      option-name="label"
+      @update:model-value="setTheme($event.value)"
+    />
+    <orio-switch-button v-model="isDark" label="Dark Mode">
+      Dark Mode
+    </orio-switch-button>
+  </div>
+  <p style="margin-top: 1rem;">Current: <orio-badge>{{ theme }}</orio-badge> <orio-badge variant="grey">{{ mode }}</orio-badge></p>
+</div>
+
 ## Basic Usage
 
 ```vue
 <script setup>
-const { theme, mode, setTheme, setMode } = useTheme()
+const { theme, mode, setTheme, setMode } = useTheme();
 </script>
 ```
 
@@ -16,18 +58,28 @@ const { theme, mode, setTheme, setMode } = useTheme()
 <template>
   <div>
     <h2>Choose Theme</h2>
-    <button @click="setTheme('navy')">Navy</button>
-    <button @click="setTheme('teal')">Teal</button>
-    <button @click="setTheme('forest')">Forest</button>
-    <button @click="setTheme('wine')">Wine</button>
-    <button @click="setTheme('royal')">Royal</button>
+    <orio-button variant="secondary" @click="setTheme('navy')">
+      Navy
+    </orio-button>
+    <orio-button variant="secondary" @click="setTheme('teal')">
+      Teal
+    </orio-button>
+    <orio-button variant="secondary" @click="setTheme('forest')">
+      Forest
+    </orio-button>
+    <orio-button variant="secondary" @click="setTheme('wine')">
+      Wine
+    </orio-button>
+    <orio-button variant="secondary" @click="setTheme('royal')">
+      Royal
+    </orio-button>
 
     <p>Current theme: {{ theme }}</p>
   </div>
 </template>
 
 <script setup>
-const { theme, setTheme } = useTheme()
+const { theme, setTheme } = useTheme();
 </script>
 ```
 
@@ -35,51 +87,57 @@ const { theme, setTheme } = useTheme()
 
 ```vue
 <template>
-  <button @click="toggleMode">
-    {{ mode === 'dark' ? '☀️ Light' : '🌙 Dark' }}
-  </button>
+  <orio-button variant="secondary" @click="toggleMode">
+    {{ mode === "dark" ? "☀️ Light" : "🌙 Dark" }}
+  </orio-button>
 </template>
 
 <script setup>
-const { mode, setMode } = useTheme()
+const { mode, setMode } = useTheme();
 
 function toggleMode() {
-  setMode(mode.value === 'dark' ? 'light' : 'dark')
+  setMode(mode.value === "dark" ? "light" : "dark");
 }
 </script>
 ```
 
 ## Return Values
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `theme` | `Ref<string>` | Current accent theme name |
-| `mode` | `Ref<string>` | Current color mode (`'light'` or `'dark'`) |
-| `setTheme` | `(name: string) => void` | Function to change accent theme |
-| `setMode` | `(mode: string) => void` | Function to change color mode |
+| Property   | Type                     | Description                                |
+| ---------- | ------------------------ | ------------------------------------------ |
+| `theme`    | `Ref<string>`            | Current accent theme name                  |
+| `mode`     | `Ref<string>`            | Current color mode (`'light'` or `'dark'`) |
+| `setTheme` | `(name: string) => void` | Function to change accent theme            |
+| `setMode`  | `(mode: string) => void` | Function to change color mode              |
 
 ## Built-in Themes
 
 The library includes five built-in themes that you can use out of the box:
 
 ### Navy
+
 Deep blue professional theme
 
 ### Teal
+
 Fresh cyan/turquoise theme
 
 ### Forest
+
 Natural green theme
 
 ### Wine
+
 Rich burgundy/red theme
 
 ### Royal
+
 Vibrant blue theme
 
 ## Persistence
 
 Theme preferences are automatically saved to `localStorage`:
+
 - `orio-theme` - Stores accent theme
 - `orio-mode` - Stores color mode
 
@@ -88,6 +146,7 @@ Preferences are restored on page load.
 ## SSR Compatibility
 
 The composable handles SSR gracefully:
+
 - localStorage operations only run on client
 - DOM updates are wrapped in `typeof document !== 'undefined'` checks
 - Theme is applied on mount
@@ -107,29 +166,29 @@ The composable handles SSR gracefully:
       <option value="royal">Royal</option>
     </select>
 
-    <button @click="toggleDarkMode">
-      {{ isDark ? 'Light Mode' : 'Dark Mode' }}
-    </button>
+    <orio-button variant="secondary" @click="toggleDarkMode">
+      {{ isDark ? "Light Mode" : "Dark Mode" }}
+    </orio-button>
   </div>
 </template>
 
 <script setup>
-const { theme, mode, setTheme, setMode } = useTheme()
+const { theme, mode, setTheme, setMode } = useTheme();
 
 const currentTheme = computed({
   get: () => theme.value,
-  set: (val) => setTheme(val)
-})
+  set: (val) => setTheme(val),
+});
 
-const isDark = computed(() => mode.value === 'dark')
+const isDark = computed(() => mode.value === "dark");
 
 function handleThemeChange() {
   // Theme already updated via v-model
-  console.log('Theme changed to:', theme.value)
+  console.log("Theme changed to:", theme.value);
 }
 
 function toggleDarkMode() {
-  setMode(isDark.value ? 'light' : 'dark')
+  setMode(isDark.value ? "light" : "dark");
 }
 </script>
 ```
@@ -144,47 +203,50 @@ function toggleDarkMode() {
     <div class="setting-group">
       <label>Color Theme</label>
       <div class="theme-options">
-        <button
+        <orio-button
           v-for="t in themes"
           :key="t.value"
+          variant="secondary"
           :class="{ active: theme === t.value }"
           @click="setTheme(t.value)"
         >
           {{ t.label }}
-        </button>
+        </orio-button>
       </div>
     </div>
 
     <div class="setting-group">
       <label>Mode</label>
       <div class="mode-toggle">
-        <button
+        <orio-button
+          variant="secondary"
           :class="{ active: mode === 'light' }"
           @click="setMode('light')"
         >
           ☀️ Light
-        </button>
-        <button
+        </orio-button>
+        <orio-button
+          variant="secondary"
           :class="{ active: mode === 'dark' }"
           @click="setMode('dark')"
         >
           🌙 Dark
-        </button>
+        </orio-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-const { theme, mode, setTheme, setMode } = useTheme()
+const { theme, mode, setTheme, setMode } = useTheme();
 
 const themes = [
-  { label: 'Navy', value: 'navy' },
-  { label: 'Teal', value: 'teal' },
-  { label: 'Forest', value: 'forest' },
-  { label: 'Wine', value: 'wine' },
-  { label: 'Royal', value: 'royal' },
-]
+  { label: "Navy", value: "navy" },
+  { label: "Teal", value: "teal" },
+  { label: "Forest", value: "forest" },
+  { label: "Wine", value: "wine" },
+  { label: "Royal", value: "royal" },
+];
 </script>
 ```
 
@@ -198,9 +260,9 @@ Themes control the accent colors used throughout the UI. The main variables you 
 
 ```css
 :root[data-theme="your-theme"] {
-  --color-accent: /* Main accent color */
-  --color-accent-soft: /* Light background tint */
-  --color-accent-border: /* Border color */
+  --color-accent: /* Main accent color */ --color-accent-soft:
+    /* Light background tint */
+    --color-accent-border: /* Border color */;
 }
 ```
 
@@ -235,10 +297,10 @@ Then use them in your app:
 
 ```vue
 <script setup>
-const { setTheme } = useTheme()
+const { setTheme } = useTheme();
 
 // Use your custom theme
-setTheme('sunset')
+setTheme("sunset");
 </script>
 ```
 
@@ -283,14 +345,20 @@ Here's a full example with multiple custom themes:
 ```vue
 <template>
   <div>
-    <button @click="setTheme('bright-pink')">Bright Pink</button>
-    <button @click="setTheme('mint')">Mint</button>
-    <button @click="setTheme('amber')">Amber</button>
+    <orio-button variant="secondary" @click="setTheme('bright-pink')"
+      >Bright Pink</orio-button
+    >
+    <orio-button variant="secondary" @click="setTheme('mint')"
+      >Mint</orio-button
+    >
+    <orio-button variant="secondary" @click="setTheme('amber')"
+      >Amber</orio-button
+    >
   </div>
 </template>
 
 <script setup>
-const { setTheme } = useTheme()
+const { setTheme } = useTheme();
 </script>
 ```
 

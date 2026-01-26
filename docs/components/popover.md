@@ -56,7 +56,7 @@ import { ref } from 'vue'
     <template #content="{ toggle }">
       <div class="popover-content">
         <p>Your content here</p>
-        <button @click="toggle(false)">Close</button>
+        <orio-button variant="secondary" @click="toggle(false)">Close</orio-button>
       </div>
     </template>
   </orio-popover>
