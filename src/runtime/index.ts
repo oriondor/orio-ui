@@ -29,7 +29,24 @@ export { default as ViewDates } from "./components/view/Dates.vue";
 export { default as ViewSeparator } from "./components/view/Separator.vue";
 
 // Export all composables
-export * from "./composables";
+export {
+  useApi,
+  type ApiOptions,
+  type RequestBody,
+  type RequestMethod,
+} from "./composables/useApi";
+export { useFuzzySearch } from "./composables/useFuzzySearch";
+export { useModal, type ModalProps, type OriginRect } from "./composables/useModal";
+export { useTheme } from "./composables/useTheme";
+export { useDecimalFormatter } from "./composables/useDecimalFormatter";
+export { usePressAndHold } from "./composables/usePressAndHold";
+export { useSound, type SoundOptions } from "./composables/useSound";
+export {
+  useValidation,
+  isFilled,
+  isEmail,
+  type ValidationRule,
+} from "./composables/useValidation";
 
 // Export utils
 export { iconRegistry, type IconName } from "./utils/icon-registry";
