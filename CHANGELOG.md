@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.3](https://github.com/oriondor/orio-ui/compare/v1.11.2...v1.11.3) (2026-01-26)
+
+
+### Bug Fixes
+
+* remove duplicated import ([7f9cd6d](https://github.com/oriondor/orio-ui/commit/7f9cd6d28cc14d637c3a535c19c21e517d713fda))
+* useTheme, both SSR and client -friendly ([9d74b29](https://github.com/oriondor/orio-ui/commit/9d74b2900a8e1352346d83663ba1ddf61d02750b))
+
 ## [1.11.2](https://github.com/oriondor/orio-ui/compare/v1.11.1...v1.11.2) (2026-01-23)
 
 
