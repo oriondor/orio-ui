@@ -315,13 +315,13 @@ const { modalProps, openModal } = useModal();
 
 <template>
   <!-- Simple fade-in (no animation) -->
-  <button @click="openModal()">Open</button>
+  <orio-button @click="openModal()">Open</orio-button>
 
   <!-- Morphing animation from button -->
-  <button @click="openModal">Open with Animation</button>
+  <orio-button @click="openModal">Open with Animation</orio-button>
 
   <!-- Programmatic open after some action -->
-  <button
+  <orio-button
     @click="
       async () => {
         await saveData();
@@ -330,13 +330,13 @@ const { modalProps, openModal } = useModal();
     "
   >
     Save & Open
-  </button>
+  </orio-button>
 
   <!-- The modal itself -->
   <orio-modal v-bind="modalProps">
     <h2>Title</h2>
     <p>Content</p>
-    <button @click="modalProps.show = false">Close</button>
+    <orio-button variant="secondary" @click="modalProps.show = false">Close</orio-button>
   </orio-modal>
 </template>
 ```

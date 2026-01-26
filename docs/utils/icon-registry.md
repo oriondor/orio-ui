@@ -156,15 +156,16 @@ const selectedIcon = ref<IconName>('edit')
 
 <template>
   <div class="icon-picker">
-    <button
+    <orio-button
       v-for="iconName in allIcons"
       :key="iconName"
+      variant="secondary"
       :class="{ selected: selectedIcon === iconName }"
       @click="selectedIcon = iconName"
     >
       <orio-icon :name="iconName" size="24" />
       <span>{{ iconName }}</span>
-    </button>
+    </orio-button>
   </div>
 
   <div>

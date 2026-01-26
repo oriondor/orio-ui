@@ -67,12 +67,12 @@ import { ref } from 'vue'
 <template>
   <!-- Simple text tooltip -->
   <orio-tooltip text="Hello World">
-    <button>Hover me</button>
+    <orio-button variant="secondary">Hover me</orio-button>
   </orio-tooltip>
 
   <!-- Custom content slot -->
   <orio-tooltip placement="top">
-    <button>Hover me</button>
+    <orio-button variant="secondary">Hover me</orio-button>
     <template #content>
       <div>Custom HTML content</div>
     </template>
@@ -80,7 +80,7 @@ import { ref } from 'vue'
 
   <!-- With delay -->
   <orio-tooltip text="Delayed" :delay="300">
-    <button>Hover me</button>
+    <orio-button variant="secondary">Hover me</orio-button>
   </orio-tooltip>
 </template>
 ```
