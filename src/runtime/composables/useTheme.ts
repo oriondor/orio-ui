@@ -1,31 +1,36 @@
-import { onMounted } from "vue";
-import { useLocalStorage } from "@vueuse/core";
+import { computed, onMounted } from "vue";
+import { useCookies } from "@vueuse/integrations/useCookies";
 
 export function useTheme() {
-  // Namespace storage keys to avoid conflicts with consumer apps
-  const theme = useLocalStorage<string>("orio-theme", "navy");
-  const mode = useLocalStorage<string>("orio-mode", "dark");
+  const cookies = useCookies(["orio-theme", "orio-mode"]);
+
+  const theme = computed({
+    get: () => cookies.get("orio-theme") || "navy",
+    set: (value: string) => cookies.set("orio-theme", value, { path: "/" }),
+  });
+
+  const mode = computed({
+    get: () => cookies.get("orio-mode") || "dark",
+    set: (value: string) => cookies.set("orio-mode", value, { path: "/" }),
+  });
+
+  function setHtmlAttrs() {
+    if (typeof document === "undefined") return;
+    document.documentElement.setAttribute("data-theme", theme.value);
+    document.documentElement.setAttribute("data-mode", mode.value);
+  }
 
   function setTheme(name: string) {
     theme.value = name;
-    // Only set DOM attributes on client side
-    if (typeof document !== "undefined") {
-      document.documentElement.setAttribute("data-theme", name);
-    }
+    setHtmlAttrs();
   }
 
   function setMode(name: string) {
     mode.value = name;
-    // Only set DOM attributes on client side
-    if (typeof document !== "undefined") {
-      document.documentElement.setAttribute("data-mode", name);
-    }
+    setHtmlAttrs();
   }
 
-  onMounted(() => {
-    setTheme(theme.value);
-    setMode(mode.value);
-  });
+  onMounted(setHtmlAttrs);
 
   return { theme, setTheme, mode, setMode };
 }
