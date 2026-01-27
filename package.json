@@ -87,7 +87,7 @@
     "type": "git",
     "url": "https://github.com/oriondor/orio-ui.git"
   },
-  "homepage": "https://github.com/oriondor/orio-ui#readme",
+  "homepage": "https://orio-ui.vercel.app/",
   "bugs": {
     "url": "https://github.com/oriondor/orio-ui/issues"
   }

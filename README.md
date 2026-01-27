@@ -4,6 +4,7 @@ A delightful, lightweight component library for Nuxt 3+ applications. Built with
 
 [![npm version](https://img.shields.io/npm/v/orio-ui.svg)](https://www.npmjs.com/package/orio-ui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Demo](https://img.shields.io/badge/Demo-Live-blue.svg)](https://orio-ui.vercel.app/)
 
 ## Features
 
@@ -58,7 +59,7 @@ const email = ref("");
 const { theme, setTheme } = useTheme();
 
 function handleClick() {
-  setTheme("ocean");
+  setTheme("teal");
 }
 </script>
 ```
@@ -127,10 +128,12 @@ function handleClick() {
 Built-in themes:
 
 - **Navy** (default) - Professional blue
-- **Ocean** - Fresh cyan
-- **Sunset** - Warm orange
+- **Teal** - Fresh cyan-green
 - **Forest** - Natural green
-- **Purple** - Creative purple
+- **Wine** - Deep burgundy
+- **Royal** - Rich purple-blue
+- **Normal** - Neutral gray
+- **Inverse** - High contrast (adapts to mode)
 
 All themes support light and dark modes. Fully customizable via CSS variables.
 
@@ -145,13 +148,13 @@ setMode("dark");
 
 ## Documentation
 
-Full documentation:
+**[Live Demo & Documentation](https://orio-ui.vercel.app/)**
 
-- [Getting Started Guide](./docs/getting-started.md)
-- [Theming Guide](./docs/theming.md)
-- [Component Documentation](./docs/components/)
-- [Composable Documentation](./docs/composables/)
-- [Utils Documentation](./docs/utils/)
+- [Getting Started Guide](https://orio-ui.vercel.app/getting-started)
+- [Theming Guide](https://orio-ui.vercel.app/theming)
+- [Component Documentation](https://orio-ui.vercel.app/components/button)
+- [Composable Documentation](https://orio-ui.vercel.app/composables/use-theme)
+- [Utils Documentation](https://orio-ui.vercel.app/utils/icon-registry)
 
 ## Development
 
