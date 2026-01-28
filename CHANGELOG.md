@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.9](https://github.com/oriondor/orio-ui/compare/v1.11.8...v1.11.9) (2026-01-28)
+
+
+### Bug Fixes
+
+* added possibility to change validation rules ([31435e5](https://github.com/oriondor/orio-ui/commit/31435e5edfd4cbf7e88ac8e557aa97f22791b9e0))
+
 ## [1.11.8](https://github.com/oriondor/orio-ui/compare/v1.11.7...v1.11.8) (2026-01-28)
 
 
