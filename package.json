@@ -4,12 +4,10 @@
   "description": "Modern Nuxt component library with theme support",
   "type": "module",
   "main": "./dist/module.mjs",
-  "types": "./dist/types.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/module.mjs",
-      "require": "./dist/module.cjs"
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
     },
     "./styles": "./dist/runtime/assets/css/main.css",
     "./theme": "./dist/runtime/assets/css/colors.css"
