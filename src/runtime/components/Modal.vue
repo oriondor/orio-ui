@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { ref, nextTick, watch } from "vue";
-import { useWindowSize, useTimeoutFn } from "@vueuse/core";
+import { ref, nextTick, watch, computed } from "vue";
+import { useWindowSize, useTimeoutFn, useScrollLock } from "@vueuse/core";
+
+import { useSlots } from "vue";
+
+const slots = useSlots();
 
 export interface OriginRect {
   x: number;
@@ -9,11 +13,16 @@ export interface OriginRect {
   height: number;
 }
 
-const props = defineProps<{
+interface Props {
+  title?: string;
   origin: OriginRect | null;
-}>();
+}
+
+const props = defineProps<Props>();
 
 const show = defineModel<boolean>("show");
+
+const isLocked = useScrollLock(document.body);
 
 const wrapper = ref<HTMLDivElement | null>(null);
 
@@ -51,16 +60,47 @@ async function animateOpen() {
 
 watch(show, (open) => {
   if (open) animateOpen();
+  isLocked.value = open as boolean;
+});
+
+const hasHeader = computed(() => {
+  return Boolean(props.title || slots.header);
+});
+
+const hasFooter = computed(() => {
+  return Boolean(slots.footer);
 });
 </script>
 
 <template>
   <transition name="overlay-fade">
-    <div v-if="show" class="overlay" @click.self="show = false">
-      <div ref="wrapper" class="modal">
-        <slot />
+    <teleport to="body">
+      <div v-if="show" class="overlay" @click.self="show = false">
+        <div ref="wrapper" class="modal">
+          <header v-if="hasHeader" class="modal-header">
+            <slot name="header">
+              <orio-view-text type="title" class="modal-title">
+                {{ title }}
+              </orio-view-text>
+              <orio-button
+                icon="close"
+                variant="subdued"
+                class="modal-close"
+                @click="show = false"
+              />
+            </slot>
+          </header>
+
+          <section class="modal-content">
+            <slot />
+          </section>
+
+          <footer v-if="hasFooter" class="modal-footer">
+            <slot name="footer" />
+          </footer>
+        </div>
       </div>
-    </div>
+    </teleport>
   </transition>
 </template>
 
@@ -83,13 +123,15 @@ watch(show, (open) => {
   position: absolute;
   z-index: 100;
 
-  width: 380px;
+  display: flex;
+  flex-direction: column;
+
+  min-width: 380px;
   max-width: 90vw;
   max-height: 90vh;
 
   background: var(--color-surface);
   border-radius: var(--border-radius-lg);
-  padding: 24px;
 
   transform-origin: top left;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
@@ -100,6 +142,25 @@ watch(show, (open) => {
 
   color: var(--color-text);
   opacity: 0;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-block-end: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+}
+
+.modal-content {
+  padding: 0.5rem 1rem;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.modal-footer {
+  border-block-start: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
 }
 
 .overlay-fade-enter-from,

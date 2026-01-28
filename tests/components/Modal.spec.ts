@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import Modal from "../../src/runtime/components/Modal.vue";
+import { ref } from "vue";
 
 vi.mock("@vueuse/core", () => ({
   useWindowSize: () => ({ width: { value: 800 }, height: { value: 600 } }),
@@ -8,12 +9,18 @@ vi.mock("@vueuse/core", () => ({
     fn();
     return { start: () => {}, stop: () => {} };
   },
+  useScrollLock: () => ref(false),
 }));
 
 describe("Modal", () => {
   it("renders overlay when show is true", () => {
     const wrapper = mount(Modal, {
       props: { show: true, origin: null },
+      global: {
+        stubs: {
+          teleport: true,
+        },
+      },
     });
 
     expect(wrapper.find(".overlay").exists()).toBe(true);
@@ -31,6 +38,11 @@ describe("Modal", () => {
     const onUpdateShow = vi.fn();
     const wrapper = mount(Modal, {
       props: { show: true, origin: null, "onUpdate:show": onUpdateShow },
+      global: {
+        stubs: {
+          teleport: true,
+        },
+      },
     });
 
     await wrapper.find(".overlay").trigger("click");
@@ -42,6 +54,11 @@ describe("Modal", () => {
     const wrapper = mount(Modal, {
       props: { show: true, origin: null },
       slots: { default: "Modal content" },
+      global: {
+        stubs: {
+          teleport: true,
+        },
+      },
     });
 
     expect(wrapper.find(".modal").text()).toContain("Modal content");
