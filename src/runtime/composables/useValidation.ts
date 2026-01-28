@@ -1,4 +1,4 @@
-import { reactive, isRef, type MaybeRef } from "vue";
+import { reactive, isRef, type MaybeRef, ref } from "vue";
 
 export interface ValidationRule {
   model: MaybeRef<any>;
@@ -18,7 +18,9 @@ export function isEmail(model: MaybeRef<string>): boolean {
   return emailRegex.test(value);
 }
 
-export function useValidation(rules: ValidationRule[]) {
+export function useValidation(rules?: ValidationRule[]) {
+  const validationRules = ref<ValidationRule[]>(rules ?? []);
+
   const errors = reactive<Record<string, string | null>>({});
 
   function validate({
@@ -42,7 +44,10 @@ export function useValidation(rules: ValidationRule[]) {
 
   function checkValidity(): boolean {
     clearAllErrors();
-    return rules.reduceRight((valid, rule) => validate(rule) && valid, true);
+    return validationRules.value.reduceRight(
+      (valid, rule) => validate(rule) && valid,
+      true,
+    );
   }
 
   function clearError(id: string) {
@@ -53,5 +58,9 @@ export function useValidation(rules: ValidationRule[]) {
     Object.keys(errors).forEach((key) => (errors[key] = null));
   }
 
-  return { checkValidity, errors, clearError, clearAllErrors };
+  function changeRules(rules: ValidationRule[]) {
+    validationRules.value = rules;
+  }
+
+  return { checkValidity, errors, clearError, clearAllErrors, changeRules };
 }
