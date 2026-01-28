@@ -1,17 +1,18 @@
 import { computed, onMounted } from "vue";
 import { useCookies } from "@vueuse/integrations/useCookies";
+import { THEME_DEFAULTS, COOKIE_NAMES } from "../constants/theme";
 
 export function useTheme() {
-  const cookies = useCookies(["orio-theme", "orio-mode"]);
+  const cookies = useCookies([COOKIE_NAMES.theme, COOKIE_NAMES.mode]);
 
   const theme = computed({
-    get: () => cookies.get("orio-theme") || "navy",
-    set: (value: string) => cookies.set("orio-theme", value, { path: "/" }),
+    get: () => cookies.get(COOKIE_NAMES.theme) || THEME_DEFAULTS.theme,
+    set: (value: string) => cookies.set(COOKIE_NAMES.theme, value, { path: "/" }),
   });
 
   const mode = computed({
-    get: () => cookies.get("orio-mode") || "dark",
-    set: (value: string) => cookies.set("orio-mode", value, { path: "/" }),
+    get: () => cookies.get(COOKIE_NAMES.mode) || THEME_DEFAULTS.mode,
+    set: (value: string) => cookies.set(COOKIE_NAMES.mode, value, { path: "/" }),
   });
 
   function setHtmlAttrs() {
