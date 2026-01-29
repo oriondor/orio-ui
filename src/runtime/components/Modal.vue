@@ -22,7 +22,7 @@ const props = defineProps<Props>();
 
 const show = defineModel<boolean>("show");
 
-const isLocked = useScrollLock(document.body);
+const isLocked = import.meta.client ? useScrollLock(document.body) : ref(false);
 
 const wrapper = ref<HTMLDivElement | null>(null);
 

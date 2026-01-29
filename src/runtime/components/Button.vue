@@ -80,6 +80,7 @@ button {
   line-height: 1.5;
   cursor: pointer;
   display: inline-flex;
+  justify-content: center;
   align-items: center;
   gap: 0.5rem;
   user-select: none;
