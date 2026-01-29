@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.10](https://github.com/oriondor/orio-ui/compare/v1.11.9...v1.11.10) (2026-01-29)
+
+
+### Bug Fixes
+
+* center the text inside the button (comes in handy for full-width buttons) ([8a758f6](https://github.com/oriondor/orio-ui/commit/8a758f6795bdbd0c6bc1a57a69805cbcb9d995c4))
+* SSR friendly modal and updated exports ([8f8f487](https://github.com/oriondor/orio-ui/commit/8f8f4874d70f2c4fd5262da9ed7259b4dc89c51a))
+
 ## [1.11.9](https://github.com/oriondor/orio-ui/compare/v1.11.8...v1.11.9) (2026-01-28)
 
 
