@@ -36,7 +36,11 @@ export {
   type RequestMethod,
 } from "./composables/useApi";
 export { useFuzzySearch } from "./composables/useFuzzySearch";
-export { useModal, type ModalProps, type OriginRect } from "./composables/useModal";
+export {
+  useModal,
+  type ModalProps,
+  type OriginRect,
+} from "./composables/useModal";
 export { useTheme } from "./composables/useTheme";
 export { useDecimalFormatter } from "./composables/useDecimalFormatter";
 export { usePressAndHold } from "./composables/usePressAndHold";
