@@ -33,6 +33,85 @@ An interactive image carousel component with smooth transitions, swipe support, 
   <orio-gallery-carousel style="margin: auto" :images="images.map((image) => `${basePath}/${image}`)" :fit="currentFitValue" />
 </div>
 
+# Custom image inside the carousel
+
+It can be useful if you want to make some modifications to every image you passed into the component
+
+In this example you can see the ball floating on top of the image
+
+<div class="demo-container">
+  <orio-gallery-carousel style="margin: auto" :images="images.map((image) => `${basePath}/${image}`)">
+    <template #image="{ image }">
+      <div class="image-container">
+        <img class="base-image" :src="image" />
+        <img class="design-overlay" :src="`${basePath}/ball.png`" />
+      </div>
+    </template>
+  </orio-gallery-carousel>
+</div>
+
+This can be achieved like that
+
+```vue
+<orio-gallery-carousel
+  style="margin: auto"
+  :images="images.map((image) => `${basePath}/${image}`)"
+>
+  <template #image="{ image }">
+    <div class="image-container">
+      <img class="base-image" :src="image" />
+      <img class="design-overlay" :src="`${basePath}/ball.png`" />
+    </div>
+  </template>
+</orio-gallery-carousel>
+
+<style scoped>
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.base-image {
+  width: 100%;
+  height: auto;
+  height: 100%;
+  object-fit: contain;
+}
+
+.design-overlay {
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  width: 20%;
+  height: auto;
+  object-fit: contain;
+}
+</style>
+```
+
+<style>
+  .image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .base-image {
+    width: 100%;
+    height: auto;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .design-overlay {
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    width: 20%;
+    height: auto;
+    object-fit: contain;
+  }
+</style>
+
 ## Usage
 
 ```vue
