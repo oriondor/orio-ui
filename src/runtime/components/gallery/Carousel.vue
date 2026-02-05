@@ -110,7 +110,9 @@ onMounted(() => {
         class="carousel__item"
         :class="getItemClasses(image)"
       >
-        <img :src="image" :alt="image" draggable="false" />
+        <slot name="image" :image>
+          <img :src="image" :alt="image" draggable="false" />
+        </slot>
       </div>
       <orio-button
         variant="subdued"
