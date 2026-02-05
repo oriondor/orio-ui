@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.1](https://github.com/oriondor/orio-ui/compare/v1.12.0...v1.12.1) (2026-02-05)
+
+
+### Bug Fixes
+
+* expose slot image from carousel, updated docs ([006ecb0](https://github.com/oriondor/orio-ui/commit/006ecb0f36621e51c1d8d3efbfefcd671b422b5b))
+
 ## [1.12.0](https://github.com/oriondor/orio-ui/compare/v1.11.10...v1.12.0) (2026-02-01)
 
 
