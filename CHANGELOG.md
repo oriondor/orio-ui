@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.2](https://github.com/oriondor/orio-ui/compare/v1.12.1...v1.12.2) (2026-02-06)
+
+
+### Bug Fixes
+
+* Dynamic carousel sizing based on content inside ([151a06f](https://github.com/oriondor/orio-ui/commit/151a06f16b644d93aef6f9be1f393091d5cea6a3))
+
 ## [1.12.1](https://github.com/oriondor/orio-ui/compare/v1.12.0...v1.12.1) (2026-02-05)
 
 
