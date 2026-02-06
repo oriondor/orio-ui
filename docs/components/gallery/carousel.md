@@ -15,8 +15,11 @@ An interactive image carousel component with smooth transitions, swipe support, 
   ]
 
   const currentFitValue = ref('contain')
+  const currentSizeValue = ref('400:')
 
   const fitOptions = ["fill", "cover", "contain", "scale-down"]
+
+  const sizeOptions = ["400:550", "400:", ":550"]
 </script>
 
 <div class="demo-container">
@@ -30,7 +33,7 @@ An interactive image carousel component with smooth transitions, swipe support, 
       {{ fit }}
     </orio-switch-button>
   </div>
-  <orio-gallery-carousel style="margin: auto" :images="images.map((image) => `${basePath}/${image}`)" :fit="currentFitValue" />
+  <orio-gallery-carousel :images="images.map((image) => `${basePath}/${image}`)" :fit="currentFitValue" />
 </div>
 
 # Custom image inside the carousel
@@ -40,7 +43,7 @@ It can be useful if you want to make some modifications to every image you passe
 In this example you can see the ball floating on top of the image
 
 <div class="demo-container">
-  <orio-gallery-carousel style="margin: auto" :images="images.map((image) => `${basePath}/${image}`)">
+  <orio-gallery-carousel :images="images.map((image) => `${basePath}/${image}`)">
     <template #image="{ image }">
       <div class="image-container">
         <img class="base-image" :src="image" />
@@ -89,7 +92,28 @@ This can be achieved like that
 </style>
 ```
 
+# Dynamic size based on image size
+
+Just pass one part of the size and it will adjust to the size of the real image
+
+<div class="demo-container">
+  <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;">
+    <orio-switch-button
+      v-for="size in sizeOptions"
+      :key="size"
+      :model-value="size === currentSizeValue"
+      @update:model-value="currentSizeValue = size"
+    >
+      {{ size }}
+    </orio-switch-button>
+  </div>
+  <orio-gallery-carousel :images="images.map((image) => `${basePath}/${image}`)" :size="currentSizeValue" />
+</div>
+
 <style>
+  .carousel {
+    margin: auto;
+  }
   .image-container {
     position: relative;
     width: 100%;
