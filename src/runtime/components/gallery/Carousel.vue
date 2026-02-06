@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, toRefs, useTemplateRef } from "vue";
+import {
+  computed,
+  nextTick,
+  onMounted,
+  ref,
+  toRefs,
+  useTemplateRef,
+  watch,
+} from "vue";
 import { useElementSize } from "@vueuse/core";
 
 interface CarouselProps {
@@ -16,25 +24,77 @@ const props = withDefaults(defineProps<CarouselProps>(), {
 
 const { images, size, fit } = toRefs(props);
 
-const rawSizes = computed(() =>
-  size.value.split(":").map((value) => parseFloat(value)),
+const rawSizes = computed(() => {
+  const parts = size.value.split(":");
+  return {
+    width: parts[0] ? parseFloat(parts[0]) : null,
+    height: parts[1] ? parseFloat(parts[1]) : null,
+  };
+});
+
+const isDynamicHeight = computed(
+  () => rawSizes.value.width !== null && rawSizes.value.height === null,
+);
+const isDynamicWidth = computed(
+  () => rawSizes.value.width === null && rawSizes.value.height !== null,
 );
 
 const carousel = useTemplateRef("carousel");
+const measureContainer = useTemplateRef("measureContainer");
 const { width: carouselWidth } = useElementSize(carousel);
 
+// Track measured content dimensions
+const contentWidth = ref(0);
+const contentHeight = ref(0);
+
+const contentAspectRatio = computed(() => {
+  if (!contentWidth.value || !contentHeight.value) return 1;
+  return contentWidth.value / contentHeight.value;
+});
+
 const calculatedSize = computed(() => {
+  const { width, height } = rawSizes.value;
+
+  if (isDynamicHeight.value) {
+    const dynamicHeight = contentAspectRatio.value
+      ? width! / contentAspectRatio.value
+      : width;
+    return {
+      width: `${width}px`,
+      height: `${dynamicHeight}px`,
+    };
+  }
+
+  if (isDynamicWidth.value) {
+    const dynamicWidth = contentAspectRatio.value
+      ? height! * contentAspectRatio.value
+      : height;
+    return {
+      width: `${dynamicWidth}px`,
+      height: `${height}px`,
+    };
+  }
+
   return {
-    width: `${rawSizes.value[0]}px`,
-    height: `${rawSizes.value[1]}px`,
+    width: `${width}px`,
+    height: `${height}px`,
   };
 });
 
 const maxHeight = computed(() => {
-  const dimensions = rawSizes.value[0] / rawSizes.value[1];
+  const { width, height } = rawSizes.value;
+  if (!width || !height) return "none";
+  const dimensions = width / height;
   if (!carouselWidth.value) return "100%";
   return `${carouselWidth.value / dimensions}px`;
 });
+
+function measureContent() {
+  if (!measureContainer.value) return;
+  const el = measureContainer.value as HTMLElement;
+  contentWidth.value = el.scrollWidth;
+  contentHeight.value = el.scrollHeight;
+}
 
 const activeImage = defineModel<string>("activeImage");
 
@@ -92,52 +152,91 @@ function getItemClasses(image: string) {
     return ["previous-image"];
 }
 
+// Re-measure content when active image changes
+watch(activeImage, () => {
+  if (isDynamicHeight.value || isDynamicWidth.value) {
+    nextTick(measureContent);
+  }
+});
+
 onMounted(() => {
   if (!activeImage.value) activeImage.value = images.value[0];
+  if (isDynamicHeight.value || isDynamicWidth.value) {
+    nextTick(measureContent);
+  }
 });
 </script>
 
 <template>
-  <div ref="carousel" class="carousel">
+  <div class="carousel-wrapper">
+    <!-- Hidden container to measure natural content size -->
     <div
-      class="carousel__track"
-      @pointerdown="onPointerDown"
-      @pointerup="onPointerUp"
+      v-if="isDynamicHeight || isDynamicWidth"
+      ref="measureContainer"
+      class="carousel__measure"
     >
+      <slot name="image" :image="activeImage">
+        <img :src="activeImage" :alt="activeImage" @load="measureContent" />
+      </slot>
+    </div>
+    <div ref="carousel" class="carousel">
       <div
-        v-for="image of images"
-        :key="image"
-        class="carousel__item"
-        :class="getItemClasses(image)"
+        class="carousel__track"
+        @pointerdown="onPointerDown"
+        @pointerup="onPointerUp"
       >
-        <slot name="image" :image>
-          <img :src="image" :alt="image" draggable="false" />
-        </slot>
+        <div
+          v-for="image of images"
+          :key="image"
+          class="carousel__item"
+          :class="getItemClasses(image)"
+        >
+          <slot name="image" :image>
+            <img :src="image" :alt="image" draggable="false" />
+          </slot>
+        </div>
+        <orio-button
+          variant="subdued"
+          icon="chevron-left"
+          class="switch-button previous-button"
+          @click="previousImage"
+        >
+          <template #icon>
+            <orio-icon name="chevron-left" size="40px" />
+          </template>
+        </orio-button>
+        <orio-button
+          variant="subdued"
+          class="switch-button next-button"
+          @click="nextImage"
+        >
+          <template #icon>
+            <orio-icon name="chevron-right" size="40px" />
+          </template>
+        </orio-button>
       </div>
-      <orio-button
-        variant="subdued"
-        icon="chevron-left"
-        class="switch-button previous-button"
-        @click="previousImage"
-      >
-        <template #icon>
-          <orio-icon name="chevron-left" size="40px" />
-        </template>
-      </orio-button>
-      <orio-button
-        variant="subdued"
-        class="switch-button next-button"
-        @click="nextImage"
-      >
-        <template #icon>
-          <orio-icon name="chevron-right" size="40px" />
-        </template>
-      </orio-button>
     </div>
   </div>
 </template>
 
 <style scoped>
+.carousel-wrapper {
+  position: relative;
+  display: block;
+}
+
+.carousel__measure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  width: max-content;
+  height: max-content;
+}
+
+.carousel__measure img {
+  display: block;
+}
+
 .carousel {
   overflow: hidden;
   border-radius: var(--border-radius-lg);
@@ -146,6 +245,7 @@ onMounted(() => {
   height: v-bind("calculatedSize.height");
   max-width: 100%;
   max-height: v-bind(maxHeight);
+  transition: width 0.3s ease, height 0.3s ease;
 }
 
 .carousel__track {
@@ -206,7 +306,6 @@ onMounted(() => {
 
 .switch-button {
   position: absolute;
-  top: 50%;
 }
 
 /* Override button color inheritance */
