@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0](https://github.com/oriondor/orio-ui/compare/v1.12.2...v1.13.0) (2026-02-11)
+
+
+### Features
+
+* added inner label to number input element ([f0076a6](https://github.com/oriondor/orio-ui/commit/f0076a64ead63a13d1542b23f0c84799ea5228d7))
+* added inner layout to input and textarea ([3d825ca](https://github.com/oriondor/orio-ui/commit/3d825ca28062aebdd168b6732931b3278e091021))
+
+
+### Bug Fixes
+
+* improved accessibility on switch and datepicker ([2113705](https://github.com/oriondor/orio-ui/commit/21137058882ebaa78f762a1fff92cbc161397492))
+* revised font-sizes and line-heights ([2128a6e](https://github.com/oriondor/orio-ui/commit/2128a6e7872e6e2d88376544cf4f1c972482253c))
+* small change for carousel, so that it only shows controls when there're more that 1 image ([d26f36b](https://github.com/oriondor/orio-ui/commit/d26f36b3107145974cf558703800c57bad3eb666))
+
 ## [1.12.2](https://github.com/oriondor/orio-ui/compare/v1.12.1...v1.12.2) (2026-02-06)
 
 
