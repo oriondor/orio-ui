@@ -31,14 +31,6 @@ const randomName = computed(() => `date-${nanoid(8)}`);
   cursor: pointer;
 }
 
-.date-picker-label {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.9rem;
-  color: var(--color-text);
-}
-
 .date-input {
   /* border-box allows correct sizing for input */
   box-sizing: border-box;
@@ -48,10 +40,7 @@ const randomName = computed(() => `date-${nanoid(8)}`);
   border-radius: var(--border-radius-md);
   padding: 0.4rem 0.6rem;
   color: var(--color-text);
-  font-size: 0.95rem;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: border-color 0.2s ease;
 }
 
 /* Hover + focus */
@@ -60,7 +49,6 @@ const randomName = computed(() => `date-${nanoid(8)}`);
 }
 .date-input:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px var(--color-accent-soft);
   outline: none;
 }
 

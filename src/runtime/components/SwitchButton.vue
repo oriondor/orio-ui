@@ -43,8 +43,6 @@ function toggle() {
   border: 1px solid var(--color-border);
 
   padding: 8px 16px;
-  font-size: 1rem;
-  line-height: 1.5;
 
   cursor: pointer;
   user-select: none;

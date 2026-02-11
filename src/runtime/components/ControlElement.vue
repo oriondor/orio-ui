@@ -64,6 +64,7 @@ const props = withDefaults(defineProps<ControlProps>(), {
   &.has-error {
     .slot-wrapper :deep(*) {
       border-color: var(--color-danger);
+      font-size: var(--font-md);
     }
   }
 
@@ -71,7 +72,6 @@ const props = withDefaults(defineProps<ControlProps>(), {
     margin: 0;
 
     .slot-wrapper :first-child {
-      line-height: 1.5;
       border: 0;
       &:focus {
         box-shadow: none;
