@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<ControlProps>(), {
     <label v-if="$attrs.label" class="control-label" :for="id">
       {{ $attrs.label }}
     </label>
-    <div>
+    <div class="control-group">
       <div class="slot-wrapper" v-bind="$attrs">
         <slot :id />
       </div>
@@ -54,6 +54,10 @@ const props = withDefaults(defineProps<ControlProps>(), {
   .control-label {
     font-size: var(--font-md);
     user-select: none;
+  }
+
+  .control-group {
+    width: 100%;
   }
 
   .control-error {

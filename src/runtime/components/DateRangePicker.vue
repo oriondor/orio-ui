@@ -32,16 +32,16 @@ defineExpose({ dateIsCorrect });
 </script>
 
 <template>
-  rio-control-element
-   vbind="$attrs"
-   :rror="!dateIsCorrect && 'Start date must be before end date.'"
->
-  <div class="date-range-picker">
-      rio-date-picker v-model:date="dates.startDate" :month />
-     <rio-date-picker v-model:date="dates.endDate" :month />
-     <rio-check-box v-model="present"> Present </orio-check-box>
-  </div>
-</orio-control-element>
+  <orio-control-element
+    v-bind="$attrs"
+    :error="!dateIsCorrect && 'Start date must be before end date.'"
+  >
+    <div class="date-range-picker">
+      <orio-date-picker v-model:date="dates.startDate" :month />
+      <orio-date-picker v-model:date="dates.endDate" :month />
+      <orio-check-box v-model="present"> Present </orio-check-box>
+    </div>
+  </orio-control-element>
 </template>
 
 <style lang="scss" scoped>

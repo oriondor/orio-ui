@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import { usePressAndHold } from "../../composables/usePressAndHold";
+import type { NumberInputProps } from "./index.vue";
 
-interface Props {
-  min?: number;
-  max?: number;
-  step?: number;
-  decimalPlaces?: number;
-  disabled?: boolean;
-}
-
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<NumberInputProps>(), {
+  layout: "vertical",
   min: undefined,
   max: undefined,
   step: 1,
