@@ -16,8 +16,9 @@ function toggle() {
 </script>
 
 <template>
-  <orio-control-element>
+  <orio-control-element v-slot="{ id }">
     <button
+      :id
       class="switch-button"
       :class="{ active: modelValue, disabled: disabled }"
       :disabled="disabled"

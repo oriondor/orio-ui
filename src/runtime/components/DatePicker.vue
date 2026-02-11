@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { nanoid } from "nanoid";
-
 interface Props {
   month?: boolean;
 }
@@ -10,17 +7,16 @@ defineProps<Props>();
 const date = defineModel<string | null | undefined>("date", {
   required: true,
 });
-
-const randomName = computed(() => `date-${nanoid(8)}`);
 </script>
 
 <template>
-  <orio-control-element class="date-picker" v-bind="$attrs">
+  <orio-control-element v-slot="{ id }" class="date-picker" v-bind="$attrs">
     <input
+      :id
       v-model="date"
       :type="month ? 'month' : 'date'"
       class="date-input"
-      :name="randomName"
+      :name="id"
     />
   </orio-control-element>
 </template>

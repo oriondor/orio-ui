@@ -48,14 +48,14 @@ describe("DateRangePicker", () => {
       },
       global: {
         stubs: {
-          "orio-control-element": ControlStub,
+          // "orio-control-element": ControlStub,
           "orio-date-picker": true,
           "orio-check-box": CheckBoxStub,
         },
       },
     });
 
-    expect(wrapper.find(".error-message").exists()).toBe(true);
+    expect(wrapper.find(".control-error").exists()).toBe(true);
   });
 
   it("sets end date to null when present is toggled on", async () => {
