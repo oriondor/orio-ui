@@ -1,54 +1,56 @@
 <script setup lang="ts">
 import { useAttrs } from "vue";
+import type { InputLayout } from "./Input.vue";
 
 const attrs = useAttrs();
-defineEmits<{
-  (e: "input", value: string): void;
-}>();
-
 const modelValue = defineModel<string>({ default: "" });
+
+interface Props {
+  layout?: InputLayout;
+}
+
+withDefaults(defineProps<Props>(), {
+  layout: "vertical",
+});
 </script>
 
 <template>
-  <orio-control-element v-bind="attrs">
-    <textarea v-model="modelValue" rows="4" v-bind="attrs" class="textarea" />
+  <orio-control-element
+    v-slot="{ id }"
+    v-bind="attrs"
+    :layout="layout === 'inner' ? 'vertical' : layout"
+    :class="{ inner: layout === 'inner' }"
+  >
+    <textarea v-bind="attrs" :id v-model="modelValue" rows="4" />
   </orio-control-element>
 </template>
 
 <style lang="scss" scoped>
-.textarea {
+@use "../assets/css/mixins" as *;
+
+.control.horizontal {
+  align-items: flex-start;
+  :deep(.control-label) {
+    padding-top: 0.5rem;
+  }
+}
+
+:deep(.slot-wrapper) {
+  @include input-wrapper;
+}
+
+textarea {
+  @include input-inner;
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  font-size: 1rem;
-  line-height: 1.5;
-  color: var(--color-text);
-  background-color: var(--color-bg);
-  box-sizing: border-box;
-  resize: vertical; /* Let user resize vertically only */
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  resize: vertical;
+}
 
-  &::placeholder {
-    color: var(--color-muted);
-  }
+.inner {
+  @include inner-label;
 
-  &:hover {
-    border-color: var(--color-accent);
-  }
-
-  &:focus {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 2px var(--color-accent-soft);
-    outline: none;
-  }
-
-  &:disabled {
-    background-color: var(--color-surface);
-    color: var(--color-muted);
-    cursor: not-allowed;
+  textarea {
+    padding: 1.25rem 0.75rem 0.25rem;
   }
 }
 </style>

@@ -68,16 +68,16 @@ div {
   }
 
   &.small {
-    font-size: 0.75rem;
+    font-size: var(--font-sm);
   }
   &.medium {
-    font-size: 0.875rem;
+    font-size: var(--font-md);
   }
   &.large {
-    font-size: 1.25rem;
+    font-size: var(--font-lg);
   }
   &.extra-large {
-    font-size: 1.75rem;
+    font-size: var(--font-xl);
   }
 }
 </style>

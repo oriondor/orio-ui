@@ -3,17 +3,15 @@
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: var(--font-md);
   color: var(--color-text);
   background-color: var(--color-bg);
   box-sizing: border-box;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: border-color 0.2s ease;
 
   &::placeholder {
     color: var(--color-muted);
+    user-select: none;
   }
 
   &:hover {
@@ -29,5 +27,55 @@
     background-color: var(--color-surface);
     color: var(--color-muted);
     cursor: not-allowed;
+  }
+}
+
+// Border + focus styling on a wrapper element (used when input is borderless inside)
+@mixin input-wrapper {
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-bg);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-accent);
+  }
+
+  &:focus-within {
+    border-color: var(--color-accent);
+  }
+
+  &:has(:disabled) {
+    background-color: var(--color-surface);
+    color: var(--color-muted);
+    cursor: not-allowed;
+  }
+}
+
+// Borderless input/textarea inside a wrapper
+@mixin input-inner {
+  border: 0;
+  background: transparent;
+  outline: none;
+  font-size: var(--font-md);
+  color: var(--color-text);
+
+  &::placeholder {
+    color: var(--color-muted);
+    user-select: none;
+  }
+}
+
+// Inner label — static label positioned inside the input area at the top
+@mixin inner-label {
+  position: relative;
+
+  :deep(.control-label) {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    left: 0.75rem;
+    top: 0.25rem;
+    color: var(--color-muted);
   }
 }

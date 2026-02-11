@@ -173,7 +173,7 @@ onMounted(() => {
     <div
       v-if="isDynamicHeight || isDynamicWidth"
       ref="measureContainer"
-      class="carousel__measure"
+      class="carousel-measure"
     >
       <slot name="image" :image="activeImage">
         <img :src="activeImage" :alt="activeImage" @load="measureContent" />
@@ -181,39 +181,41 @@ onMounted(() => {
     </div>
     <div ref="carousel" class="carousel">
       <div
-        class="carousel__track"
+        class="carousel-track"
         @pointerdown="onPointerDown"
         @pointerup="onPointerUp"
       >
         <div
           v-for="image of images"
           :key="image"
-          class="carousel__item"
+          class="carousel-item"
           :class="getItemClasses(image)"
         >
           <slot name="image" :image>
             <img :src="image" :alt="image" draggable="false" />
           </slot>
         </div>
-        <orio-button
-          variant="subdued"
-          icon="chevron-left"
-          class="switch-button previous-button"
-          @click="previousImage"
-        >
-          <template #icon>
-            <orio-icon name="chevron-left" size="40px" />
-          </template>
-        </orio-button>
-        <orio-button
-          variant="subdued"
-          class="switch-button next-button"
-          @click="nextImage"
-        >
-          <template #icon>
-            <orio-icon name="chevron-right" size="40px" />
-          </template>
-        </orio-button>
+        <template v-if="images.length > 1">
+          <orio-button
+            variant="subdued"
+            icon="chevron-left"
+            class="switch-button previous-button"
+            @click="previousImage"
+          >
+            <template #icon>
+              <orio-icon name="chevron-left" size="40px" />
+            </template>
+          </orio-button>
+          <orio-button
+            variant="subdued"
+            class="switch-button next-button"
+            @click="nextImage"
+          >
+            <template #icon>
+              <orio-icon name="chevron-right" size="40px" />
+            </template>
+          </orio-button>
+        </template>
       </div>
     </div>
   </div>
@@ -225,7 +227,7 @@ onMounted(() => {
   display: block;
 }
 
-.carousel__measure {
+.carousel-measure {
   position: absolute;
   visibility: hidden;
   pointer-events: none;
@@ -233,7 +235,7 @@ onMounted(() => {
   height: max-content;
 }
 
-.carousel__measure img {
+.carousel-measure img {
   display: block;
 }
 
@@ -245,10 +247,12 @@ onMounted(() => {
   height: v-bind("calculatedSize.height");
   max-width: 100%;
   max-height: v-bind(maxHeight);
-  transition: width 0.3s ease, height 0.3s ease;
+  transition:
+    width 0.3s ease,
+    height 0.3s ease;
 }
 
-.carousel__track {
+.carousel-track {
   position: relative;
   display: flex;
   gap: 0.75rem;
@@ -259,11 +263,11 @@ onMounted(() => {
   user-select: none;
 }
 
-.carousel__track:active {
+.carousel-track:active {
   cursor: grabbing;
 }
 
-.carousel__item {
+.carousel-item {
   position: absolute;
   inset: 0;
   padding: 0.5rem 0.75rem;
@@ -280,27 +284,27 @@ onMounted(() => {
   pointer-events: none;
 }
 
-.carousel__item.previous-image {
+.carousel-item.previous-image {
   transform: translateX(-100%);
 }
 
-.carousel__item.next-image {
+.carousel-item.next-image {
   transform: translateX(100%);
 }
 
-.carousel__item.active-image {
+.carousel-item.active-image {
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
 }
 
-.carousel__item img {
+.carousel-item img {
   width: 100%;
   height: 100%;
   object-fit: v-bind(fit);
 }
 
-.carousel__empty {
+.carousel-empty {
   color: var(--color-muted);
 }
 

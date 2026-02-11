@@ -11,6 +11,10 @@ const basic = ref(10)
 const vertical = ref(5)
 const horizontal = ref(1)
 const price = ref(9.99)
+const horizontalLayout = ref(3)
+const innerBasic = ref(25)
+const innerVertical = ref(8)
+const innerHorizontal = ref(4)
 </script>
 
 ### Basic (No Controls)
@@ -64,6 +68,46 @@ const price = ref(9.99)
     label="Price"
   />
   <div class="demo-output">Value: {{ price }}</div>
+</div>
+
+### Horizontal Layout
+
+<div class="demo-container">
+  <orio-number-input-vertical
+    v-model="horizontalLayout"
+    :min="0"
+    :max="10"
+    label="Amount"
+    layout="horizontal"
+  />
+</div>
+
+### Inner Layout
+
+<div class="demo-container">
+  <div class="demo-grid">
+    <orio-number-input
+      v-model="innerBasic"
+      :min="0"
+      :max="100"
+      label="Quantity"
+      layout="inner"
+    />
+    <orio-number-input-vertical
+      v-model="innerVertical"
+      :min="0"
+      :max="50"
+      label="Stock"
+      layout="inner"
+    />
+    <orio-number-input-horizontal
+      v-model="innerHorizontal"
+      :min="0"
+      :max="20"
+      label="Count"
+      layout="inner"
+    />
+  </div>
 </div>
 
 ## Variants
@@ -125,6 +169,18 @@ const value = ref(0)
 />
 ```
 
+### Horizontal Layout
+
+```vue
+<orio-number-input v-model="value" label="Amount" layout="horizontal" />
+```
+
+### Inner Layout
+
+```vue
+<orio-number-input v-model="value" label="Quantity" layout="inner" />
+```
+
 ## Features
 
 - **Boundary validation** - Values are clamped to min/max range on blur
@@ -134,15 +190,16 @@ const value = ref(0)
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `number` | `0` | Input value (v-model) |
-| `min` | `number` | `undefined` | Minimum allowed value |
-| `max` | `number` | `undefined` | Maximum allowed value |
-| `step` | `number` | `1` | Amount to increment/decrement per step |
-| `decimalPlaces` | `number` | `0` | Number of decimal places to display |
-| `label` | `string` | `undefined` | Label text displayed above input |
-| `placeholder` | `string` | `undefined` | Placeholder text |
+| Prop            | Type                                       | Default      | Description                            |
+| --------------- | ------------------------------------------ | ------------ | -------------------------------------- |
+| `modelValue`    | `number`                                   | `0`          | Input value (v-model)                  |
+| `layout`        | `"vertical" \| "horizontal" \| "inner"`    | `"vertical"` | Label position relative to input       |
+| `min`           | `number`                                   | `undefined`  | Minimum allowed value                  |
+| `max`           | `number`                                   | `undefined`  | Maximum allowed value                  |
+| `step`          | `number`                                   | `1`          | Amount to increment/decrement per step |
+| `decimalPlaces` | `number`                                   | `0`          | Number of decimal places to display    |
+| `label`         | `string`                                   | `undefined`  | Label text                             |
+| `placeholder`   | `string`                                   | `undefined`  | Placeholder text                       |
 
 All standard HTML input attributes are supported via `v-bind="$attrs"`.
 

@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
+import type { InputLayout } from "../Input.vue";
 
-interface Props {
+export interface NumberInputProps {
+  layout?: InputLayout;
   min?: number;
   max?: number;
   step?: number;
   decimalPlaces?: number;
+  disabled?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<NumberInputProps>(), {
+  layout: "vertical",
   min: undefined,
   max: undefined,
   step: 1,
   decimalPlaces: 0,
+  disabled: false,
 });
 
 const { min, max, step, decimalPlaces } = toRefs(props);
@@ -64,10 +69,16 @@ const slotExpose = computed(() => ({
 </script>
 
 <template>
-  <orio-control-element v-bind="$attrs">
+  <orio-control-element
+    v-slot="{ id }"
+    v-bind="$attrs"
+    :layout="layout === 'inner' ? 'vertical' : layout"
+    :class="{ inner: layout === 'inner' }"
+  >
     <div class="wrapper">
       <input
         v-bind="$attrs"
+        :id
         v-model="modelValue"
         type="number"
         class="number-input"
@@ -100,6 +111,14 @@ input[type="number"] {
 
 .number-input {
   @include base-input;
+}
+
+.inner {
+  @include inner-label;
+
+  .number-input {
+    padding: 1.25rem 0.75rem 0.25rem;
+  }
 }
 
 .controls {

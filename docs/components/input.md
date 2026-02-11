@@ -1,6 +1,6 @@
 # Input
 
-Text input component with label and placeholder support.
+Text input component with label, icon slots, and layout support.
 
 ## Live Demo
 
@@ -10,7 +10,14 @@ import { ref } from 'vue'
 const name = ref('')
 const email = ref('')
 const password = ref('')
+const search = ref('')
+const innerName = ref('')
+const innerEmail = ref('')
+const horizontalCity = ref('')
+const horizontalZip = ref('')
 </script>
+
+### Vertical (default)
 
 <div class="demo-container">
   <div class="demo-grid">
@@ -18,7 +25,11 @@ const password = ref('')
       v-model="name"
       placeholder="Enter your name"
       label="Name"
-    />
+    >
+      <template #before>
+        <orio-icon name="user" />
+      </template>
+    </orio-input>
     <orio-input
       v-model="email"
       type="email"
@@ -32,12 +43,80 @@ const password = ref('')
       label="Password"
     />
   </div>
+</div>
 
-  <div class="demo-output">
-    <strong>Current values:</strong><br>
-    Name: {{ name || '(empty)' }}<br>
-    Email: {{ email || '(empty)' }}<br>
-    Password: {{ password || '(empty)' }}
+### With Icons
+
+<div class="demo-container">
+  <div class="demo-grid">
+    <orio-input
+      v-model="search"
+      placeholder="Search..."
+    >
+      <template #before>
+        <orio-icon name="search" />
+      </template>
+    </orio-input>
+    <orio-input
+      v-model="email"
+      type="email"
+      placeholder="you@example.com"
+      label="Email"
+    >
+      <template #after>
+        <orio-icon name="mail" />
+      </template>
+    </orio-input>
+    <orio-input
+      v-model="password"
+      type="password"
+      placeholder="••••••••"
+      label="Password"
+    >
+      <template #before>
+        <orio-icon name="lock" />
+      </template>
+      <template #after>
+        <orio-icon name="eye" />
+      </template>
+    </orio-input>
+  </div>
+</div>
+
+### Horizontal
+
+<div class="demo-container">
+  <div class="demo-grid">
+    <orio-input
+      v-model="horizontalCity"
+      placeholder="City"
+      label="City"
+      layout="horizontal"
+    />
+    <orio-input
+      v-model="horizontalZip"
+      placeholder="Zip Code"
+      label="Zip"
+      layout="horizontal"
+    />
+  </div>
+</div>
+
+### Inner
+
+<div class="demo-container">
+  <div class="demo-grid">
+    <orio-input
+      v-model="innerName"
+      label="Full Name"
+      layout="inner"
+    />
+    <orio-input
+      v-model="innerEmail"
+      type="email"
+      label="Email Address"
+      layout="inner"
+    />
   </div>
 </div>
 
@@ -51,7 +130,7 @@ const password = ref('')
 </template>
 
 <script setup>
-const name = ref('')
+const name = ref("");
 </script>
 ```
 
@@ -66,6 +145,37 @@ const name = ref('')
 />
 ```
 
+### With Icons
+
+```vue
+<orio-input v-model="search" placeholder="Search...">
+  <template #before>
+    <orio-icon name="search" />
+  </template>
+</orio-input>
+
+<orio-input v-model="password" type="password" label="Password">
+  <template #before>
+    <orio-icon name="lock" />
+  </template>
+  <template #after>
+    <orio-icon name="eye" />
+  </template>
+</orio-input>
+```
+
+### Horizontal Layout
+
+```vue
+<orio-input v-model="city" label="City" layout="horizontal" />
+```
+
+### Inner Layout
+
+```vue
+<orio-input v-model="name" label="Full Name" layout="inner" />
+```
+
 ### Different Types
 
 ```vue
@@ -78,19 +188,27 @@ const name = ref('')
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `string` | - | Input value (v-model) |
-| `label` | `string` | `undefined` | Label text displayed above input |
-| `placeholder` | `string` | `undefined` | Placeholder text |
-| `type` | `string` | `'text'` | HTML input type |
+| Prop         | Type                                         | Default      | Description                        |
+| ------------ | -------------------------------------------- | ------------ | ---------------------------------- |
+| `modelValue` | `string`                                     | `""`         | Input value (v-model)              |
+| `layout`     | `"vertical" \| "horizontal" \| "inner"`   | `"vertical"` | Label position relative to input   |
+| `label`      | `string`                                     | `undefined`  | Label text                         |
+| `placeholder`| `string`                                     | `undefined`  | Placeholder text                   |
+| `type`       | `string`                                     | `"text"`     | HTML input type                    |
 
 All standard HTML input attributes are supported via `v-bind="$attrs"`.
 
+## Slots
+
+| Slot     | Description                                |
+| -------- | ------------------------------------------ |
+| `before` | Content placed before the input (e.g. icon)|
+| `after`  | Content placed after the input (e.g. icon) |
+
 ## Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
+| Event               | Payload  | Description                      |
+| ------------------- | -------- | -------------------------------- |
 | `update:modelValue` | `string` | Emitted when input value changes |
 
 ## Styling
@@ -100,4 +218,6 @@ All standard HTML input attributes are supported via `v-bind="$attrs"`.
 --color-border       /* Border color */
 --color-text         /* Text color */
 --color-accent       /* Focus border color */
+--color-accent-soft  /* Focus ring color */
+--color-muted        /* Placeholder and inner label color */
 ```

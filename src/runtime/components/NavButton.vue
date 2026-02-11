@@ -56,8 +56,6 @@ button {
   border: none;
   border-radius: var(--border-radius-md);
   padding: 8px 16px;
-  font-size: 1rem;
-  line-height: 1.5;
   cursor: pointer;
   display: inline-flex;
   align-items: center;

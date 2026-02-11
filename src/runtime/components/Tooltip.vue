@@ -161,8 +161,7 @@ const arrowClass = computed(() => `arrow-${props.placement}`);
   color: white;
   padding: 0.5rem 0.75rem;
   border-radius: var(--border-radius-sm, 4px);
-  font-size: 0.875rem;
-  line-height: 1.4;
+  font-size: var(--font-md);
   white-space: nowrap;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }

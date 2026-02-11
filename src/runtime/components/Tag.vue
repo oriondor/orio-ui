@@ -18,13 +18,11 @@ withDefaults(defineProps<Props>(), {
 
 <style scoped>
 .tag {
-  max-height: 1rem;
   display: inline-block;
   padding: 0.25rem 0.6rem;
   border-radius: var(--border-radius-lg);
-  font-size: 0.8rem;
+  font-size: var(--font-sm);
   font-weight: 500;
-  line-height: 1;
   border: 1px solid transparent;
   user-select: none;
 }

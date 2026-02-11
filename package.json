@@ -39,7 +39,6 @@
     "@vueuse/integrations": "^11.0.0",
     "change-case": "^5.4.4",
     "fuse.js": "^7.0.0",
-    "nanoid": "^5.0.0",
     "ofetch": "^1.5.1",
     "universal-cookie": "^7.0.0"
   },

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { nanoid } from "nanoid";
-
 interface Props {
   month?: boolean;
 }
@@ -10,17 +7,16 @@ defineProps<Props>();
 const date = defineModel<string | null | undefined>("date", {
   required: true,
 });
-
-const randomName = computed(() => `date-${nanoid(8)}`);
 </script>
 
 <template>
-  <orio-control-element class="date-picker" v-bind="$attrs">
+  <orio-control-element v-slot="{ id }" class="date-picker" v-bind="$attrs">
     <input
+      :id
       v-model="date"
       :type="month ? 'month' : 'date'"
       class="date-input"
-      :name="randomName"
+      :name="id"
     />
   </orio-control-element>
 </template>
@@ -29,14 +25,6 @@ const randomName = computed(() => `date-${nanoid(8)}`);
 .date-picker * {
   width: 100%;
   cursor: pointer;
-}
-
-.date-picker-label {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.9rem;
-  color: var(--color-text);
 }
 
 .date-input {
@@ -48,10 +36,7 @@ const randomName = computed(() => `date-${nanoid(8)}`);
   border-radius: var(--border-radius-md);
   padding: 0.4rem 0.6rem;
   color: var(--color-text);
-  font-size: 0.95rem;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: border-color 0.2s ease;
 }
 
 /* Hover + focus */
@@ -60,7 +45,6 @@ const randomName = computed(() => `date-${nanoid(8)}`);
 }
 .date-input:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px var(--color-accent-soft);
   outline: none;
 }
 

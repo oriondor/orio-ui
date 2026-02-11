@@ -1,14 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import DatePicker from "../../src/runtime/components/DatePicker.vue";
 
 const ControlStub = {
-  template: '<div class="control-stub"><slot /></div>',
+  template:
+    '<div class="control-stub"><slot id="test-id" /></div>',
 };
-
-vi.mock("nanoid", () => ({
-  nanoid: () => "fixedid",
-}));
 
 describe("DatePicker", () => {
   it("uses date input by default", () => {
@@ -37,7 +34,7 @@ describe("DatePicker", () => {
     expect(wrapper.find("input").attributes("type")).toBe("month");
   });
 
-  it("generates a stable name attribute", () => {
+  it("uses id as name attribute", () => {
     const wrapper = mount(DatePicker, {
       props: { date: "2024-01-01" },
       global: {
@@ -47,7 +44,8 @@ describe("DatePicker", () => {
       },
     });
 
-    expect(wrapper.find("input").attributes("name")).toBe("date-fixedid");
+    expect(wrapper.find("input").attributes("name")).toBe("test-id");
+    expect(wrapper.find("input").attributes("id")).toBe("test-id");
   });
 
   it("emits update when date changes", async () => {
