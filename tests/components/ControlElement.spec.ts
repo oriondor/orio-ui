@@ -51,4 +51,16 @@ describe("ControlElement", () => {
       "custom",
     );
   });
+
+  it("applies vertical layout by default", () => {
+    const wrapper = mount(ControlElement);
+    expect(wrapper.find(".control").classes()).toContain("vertical");
+  });
+
+  it("applies horizontal layout when specified", () => {
+    const wrapper = mount(ControlElement, {
+      props: { layout: "horizontal" },
+    });
+    expect(wrapper.find(".control").classes()).toContain("horizontal");
+  });
 });
