@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  nextTick,
-  onMounted,
-  ref,
-  toRefs,
-  useTemplateRef,
-  watch,
-} from "vue";
+import { computed, onMounted, toRefs, useTemplateRef } from "vue";
 import { useElementSize } from "@vueuse/core";
 
 interface CarouselProps {
@@ -43,9 +35,9 @@ const carousel = useTemplateRef("carousel");
 const measureContainer = useTemplateRef("measureContainer");
 const { width: carouselWidth } = useElementSize(carousel);
 
-// Track measured content dimensions
-const contentWidth = ref(0);
-const contentHeight = ref(0);
+// Reactively track measure container dimensions via ResizeObserver
+const { width: contentWidth, height: contentHeight } =
+  useElementSize(measureContainer);
 
 const contentAspectRatio = computed(() => {
   if (!contentWidth.value || !contentHeight.value) return 1;
@@ -88,13 +80,6 @@ const maxHeight = computed(() => {
   if (!carouselWidth.value) return "100%";
   return `${carouselWidth.value / dimensions}px`;
 });
-
-function measureContent() {
-  if (!measureContainer.value) return;
-  const el = measureContainer.value as HTMLElement;
-  contentWidth.value = el.scrollWidth;
-  contentHeight.value = el.scrollHeight;
-}
 
 const activeImage = defineModel<string>("activeImage");
 
@@ -152,18 +137,8 @@ function getItemClasses(image: string) {
     return ["previous-image"];
 }
 
-// Re-measure content when active image changes
-watch(activeImage, () => {
-  if (isDynamicHeight.value || isDynamicWidth.value) {
-    nextTick(measureContent);
-  }
-});
-
 onMounted(() => {
   if (!activeImage.value) activeImage.value = images.value[0];
-  if (isDynamicHeight.value || isDynamicWidth.value) {
-    nextTick(measureContent);
-  }
 });
 </script>
 
@@ -176,7 +151,7 @@ onMounted(() => {
       class="carousel-measure"
     >
       <slot name="image" :image="activeImage">
-        <img :src="activeImage" :alt="activeImage" @load="measureContent" />
+        <img :src="activeImage" :alt="activeImage" />
       </slot>
     </div>
     <div ref="carousel" class="carousel">
