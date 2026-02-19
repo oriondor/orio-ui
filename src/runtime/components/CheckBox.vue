@@ -38,14 +38,14 @@ defineProps<{
 
 <style lang="scss" scoped>
 .checkbox {
-  --box-size: 1rem;
+  --box-size: var(--control-icon-size, 1rem);
 
   &-label {
     position: relative;
     user-select: none;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: var(--control-gap, 0.4rem);
     cursor: pointer;
     color: var(--color-text);
   }
@@ -81,8 +81,8 @@ defineProps<{
   .checkbox-input:checked + .checkbox-box.defaultChecked {
     &::after {
       content: "";
-      width: 0.3rem;
-      height: 0.6rem;
+      width: calc(var(--box-size) * 0.3);
+      height: calc(var(--box-size) * 0.6);
       position: relative;
       bottom: 0.1rem;
       border: solid var(--color-accent-ink);
