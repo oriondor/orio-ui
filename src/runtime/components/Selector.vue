@@ -165,8 +165,8 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  padding: 0.5rem 0.75rem;
+  border-radius: var(--control-radius);
+  padding: var(--control-py) var(--control-px);
   color: var(--color-text);
   transition:
     border-color 0.2s ease,
@@ -200,7 +200,7 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--control-radius);
   margin-top: 0.25rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
@@ -210,7 +210,7 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
     margin: 0;
 
     li {
-      padding: 0.5rem 0.75rem;
+      padding: var(--control-py) var(--control-px);
       cursor: pointer;
       transition:
         background-color 0.15s ease,

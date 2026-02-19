@@ -54,17 +54,17 @@ button {
   background-color: transparent;
   color: var(--color-text);
   border: none;
-  border-radius: var(--border-radius-md);
-  padding: 8px 16px;
+  border-radius: var(--control-radius);
+  padding: var(--control-py) var(--control-px);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--control-gap);
   user-select: none;
   transition: color 0.2s ease;
 
   &.icon-only {
-    padding: 8px;
+    padding: var(--control-py);
     border-radius: 50%;
     aspect-ratio: 1;
     justify-content: center;

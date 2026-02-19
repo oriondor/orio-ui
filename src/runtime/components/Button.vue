@@ -74,13 +74,13 @@ button {
   background-color: var(--color-accent);
   color: var(--color-accent-ink);
   border: 1px solid transparent;
-  border-radius: var(--border-radius-md);
-  padding: 8px 16px;
+  border-radius: var(--control-radius);
+  padding: var(--control-py) var(--control-px);
   cursor: pointer;
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--control-gap);
   user-select: none;
 
   &.icon-only {

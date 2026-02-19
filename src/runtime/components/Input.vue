@@ -34,22 +34,22 @@ const modelValue = defineModel<string>({ default: "" });
   @include input-wrapper;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0 0.75rem;
+  gap: var(--control-gap);
+  padding: 0 var(--control-px);
 }
 
 input {
   @include input-inner;
   flex: 1;
   min-width: 0;
-  padding: 0.5rem 0;
+  padding: var(--control-py) 0;
 }
 
 .inner {
   @include inner-label;
 
   input {
-    padding: 1.25rem 0 0.25rem;
+    padding: var(--control-inner-block-start) 0 var(--control-inner-block-end);
   }
 }
 </style>

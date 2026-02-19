@@ -117,7 +117,7 @@ input[type="number"] {
   @include inner-label;
 
   .number-input {
-    padding: 1.25rem 0.75rem 0.25rem;
+    padding: var(--control-inner-block-start) var(--control-px) var(--control-inner-block-end);
   }
 }
 

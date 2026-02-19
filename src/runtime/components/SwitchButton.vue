@@ -36,14 +36,14 @@ function toggle() {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--control-gap);
 
-  border-radius: var(--border-radius-md);
+  border-radius: var(--control-radius);
   background-color: var(--color-surface);
   color: var(--color-muted);
   border: 1px solid var(--color-border);
 
-  padding: 8px 16px;
+  padding: var(--control-py) var(--control-px);
 
   cursor: pointer;
   user-select: none;

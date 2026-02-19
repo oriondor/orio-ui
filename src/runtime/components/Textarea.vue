@@ -31,7 +31,7 @@ withDefaults(defineProps<Props>(), {
 .control.horizontal {
   align-items: flex-start;
   :deep(.control-label) {
-    padding-top: 0.5rem;
+    padding-top: var(--control-py);
   }
 }
 
@@ -42,7 +42,7 @@ withDefaults(defineProps<Props>(), {
 textarea {
   @include input-inner;
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: var(--control-py) var(--control-px);
   resize: vertical;
 }
 
@@ -50,7 +50,7 @@ textarea {
   @include inner-label;
 
   textarea {
-    padding: 1.25rem 0.75rem 0.25rem;
+    padding: var(--control-inner-block-start) var(--control-px) var(--control-inner-block-end);
   }
 }
 </style>
