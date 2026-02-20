@@ -8,6 +8,11 @@ export { default as NumberInputVertical } from "./components/NumberInput/Vertica
 export { default as NumberInputHorizontal } from "./components/NumberInput/Horizontal.vue";
 export { default as Textarea } from "./components/Textarea.vue";
 export { default as CheckBox } from "./components/CheckBox.vue";
+export {
+  default as CheckboxGroup,
+  type CheckboxOption,
+  type CheckboxGroupProps,
+} from "./components/CheckboxGroup.vue";
 export { default as SwitchButton } from "./components/SwitchButton.vue";
 export { default as DatePicker } from "./components/DatePicker.vue";
 export { default as DateRangePicker } from "./components/DateRangePicker.vue";

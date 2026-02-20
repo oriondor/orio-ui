@@ -14,9 +14,19 @@ export interface ControlProps {
    */
   error?: string | null;
   /**
+   * Marks this control as a group (adds role="group" and aria-labelledby).
+   * The label renders as a <span> instead of <label>.
+   * Use for groups of related controls (e.g. CheckboxGroup).
+   */
+  group?: boolean;
+  /**
    * ID for the control's form element, auto-generated if not provided
    */
   id?: string;
+  /**
+   * Label text for the control (or legend text when group is true)
+   */
+  label?: string;
   /**
    * Label position relative to the control
    */
@@ -30,6 +40,7 @@ export interface ControlProps {
 const props = withDefaults(defineProps<ControlProps>(), {
   appearance: "normal",
   error: null,
+  group: false,
   id: () => useId(),
   layout: "vertical",
   size: "md",
@@ -39,11 +50,17 @@ const props = withDefaults(defineProps<ControlProps>(), {
 <template>
   <div
     class="control"
-    :class="[appearance, layout, `size-${size}`, { 'has-error': error }]"
+    :class="[appearance, layout, `size-${size}`, { 'has-error': error, group }]"
+    v-bind="group ? { role: 'group', 'aria-labelledby': id } : {}"
   >
-    <label v-if="$attrs.label" class="control-label" :for="id">
-      {{ $attrs.label }}
-    </label>
+    <component
+      :is="group ? 'span' : 'label'"
+      v-if="label"
+      class="control-label"
+      v-bind="group ? { id } : { for: id }"
+    >
+      {{ label }}
+    </component>
     <div class="control-group">
       <div class="slot-wrapper" v-bind="$attrs">
         <slot :id />
