@@ -13,6 +13,10 @@ export {
   type CheckboxOption,
   type CheckboxGroupProps,
 } from "./components/CheckboxGroup.vue";
+export {
+  default as RadioButton,
+  type RadioButtonProps,
+} from "./components/RadioButton.vue";
 export { default as SwitchButton } from "./components/SwitchButton.vue";
 export { default as DatePicker } from "./components/DatePicker.vue";
 export { default as DateRangePicker } from "./components/DateRangePicker.vue";
