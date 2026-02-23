@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.0](https://github.com/oriondor/orio-ui/compare/v1.14.0...v1.15.0) (2026-02-23)
+
+
+### Features
+
+* created checkbox group component ([666681c](https://github.com/oriondor/orio-ui/commit/666681cf98a7eb5a8ef7652da9effb4e483dab95))
+* Implemented radio button component ([0394708](https://github.com/oriondor/orio-ui/commit/0394708b82ff719b0329802bf632936c85db1bee))
+
 ## [1.14.0](https://github.com/oriondor/orio-ui/compare/v1.13.1...v1.14.0) (2026-02-19)
 
 
