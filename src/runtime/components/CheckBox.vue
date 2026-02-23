@@ -1,10 +1,12 @@
 <script setup lang="ts">
-const modelValue = defineModel<boolean>({ required: false });
-
-defineProps<{
+export interface CheckBoxProps {
   checkedIcon?: string; // optional: pass icon name for checked state
   uncheckedIcon?: string; // optional: pass icon name for unchecked state
-}>();
+}
+
+const modelValue = defineModel<boolean>({ required: false });
+
+defineProps<CheckBoxProps>();
 </script>
 
 <template>
@@ -83,8 +85,7 @@ defineProps<{
       content: "";
       width: calc(var(--box-size) * 0.3);
       height: calc(var(--box-size) * 0.6);
-      position: relative;
-      bottom: 0.1rem;
+      position: absolute;
       border: solid var(--color-accent-ink);
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
@@ -94,6 +95,7 @@ defineProps<{
   &-label:hover .checkbox-box {
     border-color: var(--color-accent);
   }
+
   .checkbox-input:focus-visible + .checkbox-box {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
