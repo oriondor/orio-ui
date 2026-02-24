@@ -92,6 +92,18 @@ This can be achieved like that
 </style>
 ```
 
+# Minimal appearance
+
+Use `appearance="minimal"` to strip the border and background from the carousel. Navigation arrows are hidden and only appear on hover — ideal for embedding the carousel directly into page content without a visible widget frame.
+
+<div class="demo-container">
+  <orio-gallery-carousel :images="images.map((image) => `${basePath}/${image}`)" appearance="minimal" />
+</div>
+
+```vue
+<orio-gallery-carousel :images="images" appearance="minimal" />
+```
+
 # Dynamic size based on image size
 
 Just pass one part of the size and it will adjust to the size of the real image
@@ -155,11 +167,12 @@ const images = [
 
 ## Props
 
-| Prop     | Type                                             | Default     | Description                                                          |
-| -------- | ------------------------------------------------ | ----------- | -------------------------------------------------------------------- |
-| `images` | `string[]`                                       | `[]`        | Array of image URLs to display in the carousel                       |
-| `size`   | `string`                                         | `"400:550"` | Carousel dimensions in "width:height" format (e.g., "800:600")       |
-| `fit`    | `"fill" \| "cover" \| "contain" \| "scale-down"` | `"contain"` | CSS object-fit property for images (how images fit within container) |
+| Prop         | Type                                             | Default     | Description                                                                              |
+| ------------ | ------------------------------------------------ | ----------- | ---------------------------------------------------------------------------------------- |
+| `images`     | `string[]`                                       | `[]`        | Array of image URLs to display in the carousel                                           |
+| `size`       | `string`                                         | `"400:550"` | Carousel dimensions in "width:height" format (e.g., "800:600")                           |
+| `fit`        | `"fill" \| "cover" \| "contain" \| "scale-down"` | `"contain"` | CSS object-fit property for images (how images fit within container)                     |
+| `appearance` | `"default" \| "minimal"`                         | `"default"` | Visual style. `minimal` removes the border/background and hides navigation until hovered |
 
 ## Model
 
@@ -176,6 +189,7 @@ const images = [
 - **Keyboard Navigation** - Navigate with arrow keys (when focused)
 - **Flexible Sizing** - Control image fit behavior (contain, cover, fill, scale-down)
 - **Loop Navigation** - Seamlessly loops from last to first image and vice versa
+- **Minimal Appearance** - Borderless, backgroundless mode with hover-reveal navigation
 
 ## Usage Examples
 
@@ -216,6 +230,15 @@ const images = [
 
   <!-- Fill: Stretch to fill (may distort) -->
   <orio-gallery-carousel :images="images" fit="fill" />
+</template>
+```
+
+### Minimal Appearance
+
+```vue
+<template>
+  <!-- No border/background; navigation arrows appear on hover only -->
+  <orio-gallery-carousel :images="images" appearance="minimal" />
 </template>
 ```
 

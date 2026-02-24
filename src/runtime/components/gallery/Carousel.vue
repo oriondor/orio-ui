@@ -2,19 +2,23 @@
 import { computed, onMounted, toRefs, useTemplateRef } from "vue";
 import { useElementSize } from "@vueuse/core";
 
+export type CarouselAppearance = "default" | "minimal";
+
 interface CarouselProps {
   images?: string[];
   size?: string;
   fit?: "fill" | "cover" | "contain" | "scale-down";
+  appearance?: CarouselAppearance;
 }
 
 const props = withDefaults(defineProps<CarouselProps>(), {
   images: () => [],
   size: "400:550",
   fit: "contain",
+  appearance: "default",
 });
 
-const { images, size, fit } = toRefs(props);
+const { images, size, fit, appearance } = toRefs(props);
 
 const rawSizes = computed(() => {
   const parts = size.value.split(":");
@@ -154,7 +158,7 @@ onMounted(() => {
         <img :src="activeImage" :alt="activeImage" />
       </slot>
     </div>
-    <div ref="carousel" class="carousel">
+    <div ref="carousel" class="carousel" :class="`carousel--${appearance}`">
       <div
         class="carousel-track"
         @pointerdown="onPointerDown"
@@ -246,6 +250,7 @@ onMounted(() => {
   position: absolute;
   inset: 0;
   padding: 0.5rem 0.75rem;
+  overflow: hidden;
   border-radius: var(--border-radius-sm);
   background: var(--color-surface);
   color: var(--color-text);
@@ -321,5 +326,24 @@ onMounted(() => {
 }
 .switch-button.next-button {
   right: 0;
+}
+
+/* ── Minimal appearance ─────────────────────────────────────────── */
+.carousel--minimal {
+  border: none;
+  background: none;
+}
+
+.carousel--minimal .carousel-item {
+  background: none;
+}
+
+.carousel--minimal .switch-button {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.carousel--minimal:hover .switch-button {
+  opacity: 1;
 }
 </style>
