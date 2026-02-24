@@ -1,0 +1,70 @@
+name: Inject CodeRabbit summary into changelog
+
+# Fires whenever CodeRabbit creates or updates its walkthrough comment on a PR.
+# Extracts conventional commit lines from the summary and writes them as a
+# BEGIN_COMMIT_OVERRIDE block in the PR body so release-please uses them
+# instead of the raw (terse) commit message.
+#
+# REQUIREMENT: PRs must be merged via squash-merge — release-please can only
+# apply BEGIN_COMMIT_OVERRIDE when it can identify a single commit per PR.
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  inject-override:
+    # Run only on PR comments from the CodeRabbit bot that contain its auto-generated marker
+    if: |
+      github.event.issue.pull_request != null &&
+      github.event.comment.user.login == 'coderabbitai[bot]' &&
+      contains(github.event.comment.body, 'auto-generated comment: summarize by coderabbit.ai')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = context.payload.comment.body;
+            const prNumber = context.payload.issue.number;
+
+            // Extract conventional commit lines produced by CodeRabbit's summary.
+            // These are injected because .coderabbit.yaml configures
+            // high_level_summary_instructions to output conventional commit format.
+            const commitLines = comment
+              .split('\n')
+              .map(l => l.trim())
+              .filter(l => /^(feat|fix|chore|docs|refactor|perf|test)(\([^)]+\))?!?:/.test(l));
+
+            if (!commitLines.length) {
+              console.log('No conventional commit lines found — skipping override injection.');
+              return;
+            }
+
+            const override = ['BEGIN_COMMIT_OVERRIDE', ...commitLines, 'END_COMMIT_OVERRIDE'].join('\n');
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            const currentBody = pr.body ?? '';
+            const overrideRegex = /BEGIN_COMMIT_OVERRIDE[\s\S]*?END_COMMIT_OVERRIDE/;
+
+            // Upsert: replace existing block or append
+            const newBody = overrideRegex.test(currentBody)
+              ? currentBody.replace(overrideRegex, override)
+              : (currentBody ? `${currentBody}\n\n---\n\n${override}` : override);
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              body: newBody,
+            });
+
+            console.log(`✅ PR #${prNumber} updated with BEGIN_COMMIT_OVERRIDE from CodeRabbit summary.`);
+            console.log('Lines injected:\n' + commitLines.join('\n'));

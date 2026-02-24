@@ -3,7 +3,8 @@
     "allow": [
       "Bash(source ~/.nvm/nvm.sh)",
       "Bash(nvm use:*)",
-      "Bash(npx vitest:*)"
+      "Bash(npx vitest:*)",
+      "WebFetch(domain:docs.coderabbit.ai)"
     ]
   }
 }
