@@ -64,3 +64,12 @@ export {
 
 // Export utils
 export { iconRegistry, type IconName } from "./utils/icon-registry";
+export {
+  flattenParams,
+  unflattenParams,
+  parsePath,
+  topLevelKeys,
+} from "./utils/urlParams";
+
+// Export URL sync composable
+export { useUrlSync } from "./composables/useUrlSync";
