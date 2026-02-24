@@ -5,6 +5,7 @@ import {
   topLevelKeys,
 } from "../utils/urlParams";
 import { computed, Ref, watch } from "vue";
+import { useRoute } from "#imports";
 
 /**
  * Syncs a reactive object's keys to/from URL query params.
