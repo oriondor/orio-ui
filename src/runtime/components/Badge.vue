@@ -2,16 +2,15 @@
 import { useSlots, computed } from "vue";
 
 export type BadgeVariant = "danger" | "alert" | "primary" | "grey";
-export type BadgeType = "default" | "pill";
 
 interface Props {
   variant?: BadgeVariant;
-  type?: BadgeType;
+  pill?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: "primary",
-  type: "default",
+  pill: false,
 });
 
 const slots = useSlots();
@@ -24,11 +23,11 @@ const isDot = computed(() => !hasDefaultContent.value);
 <template>
   <div v-if="hasWrapping" class="badge-wrapper">
     <slot name="wrapping" />
-    <span class="badge positioned" :class="[variant, type, { dot: isDot }]">
+    <span class="badge positioned" :class="[variant, { pill, dot: isDot }]">
       <slot />
     </span>
   </div>
-  <span v-else class="badge" :class="[variant, type, { dot: isDot }]">
+  <span v-else class="badge" :class="[variant, { pill, dot: isDot }]">
     <slot />
   </span>
 </template>
@@ -43,7 +42,7 @@ const isDot = computed(() => !hasDefaultContent.value);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.125rem 0.5rem;
+  padding: 0.125rem 0.35rem;
   font-size: var(--font-sm);
   font-weight: 600;
   border-radius: var(--border-radius-sm);
