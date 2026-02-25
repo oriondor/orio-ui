@@ -143,8 +143,11 @@ const props = withDefaults(defineProps<ControlProps>(), {
   }
 
   &.has-error {
+    .slot-wrapper {
+      border: 1px solid var(--color-danger);
+    }
+
     .slot-wrapper :deep(*) {
-      border-color: var(--color-danger);
       font-size: var(--control-font-size);
     }
   }
