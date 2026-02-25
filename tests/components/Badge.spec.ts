@@ -22,12 +22,12 @@ describe("Badge", () => {
       expect(wrapper.find(".badge").classes()).toContain("primary");
     });
 
-    it("applies default type", () => {
+    it("applies default (non-pill) shape", () => {
       const wrapper = mount(Badge, {
         slots: { default: "New" },
       });
 
-      expect(wrapper.find(".badge").classes()).toContain("default");
+      expect(wrapper.find(".badge").classes()).not.toContain("pill");
     });
   });
 
@@ -113,18 +113,17 @@ describe("Badge", () => {
   });
 
   describe("Types", () => {
-    it("applies default type", () => {
+    it("applies default (non-pill) shape", () => {
       const wrapper = mount(Badge, {
-        props: { type: "default" },
         slots: { default: "1" },
       });
 
-      expect(wrapper.find(".badge").classes()).toContain("default");
+      expect(wrapper.find(".badge").classes()).not.toContain("pill");
     });
 
-    it("applies pill type", () => {
+    it("applies pill shape", () => {
       const wrapper = mount(Badge, {
-        props: { type: "pill" },
+        props: { pill: true },
         slots: { default: "99+" },
       });
 
