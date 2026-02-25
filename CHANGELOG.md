@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.2](https://github.com/oriondor/orio-ui/compare/v1.16.1...v1.16.2) (2026-02-25)
+
+
+### Bug Fixes
+
+* Added minimal appearance for carousel component ([9e8e525](https://github.com/oriondor/orio-ui/commit/9e8e5255a9a3f7aa10ebcd71841b2232bcd8c183))
+* **badge:** reduce horizontal padding from 0.5rem to 0.35rem ([4c843b3](https://github.com/oriondor/orio-ui/commit/4c843b3088198a77fcd5b375cf4feb8c0d398d22))
+* effort to make ai-generated changelog ([#105](https://github.com/oriondor/orio-ui/issues/105)) ([ec279f5](https://github.com/oriondor/orio-ui/commit/ec279f559c38774a5f8b4a2c5bf44b4bd970d0f7))
+
 ## [1.16.1](https://github.com/oriondor/orio-ui/compare/v1.16.0...v1.16.1) (2026-02-24)
 
 
