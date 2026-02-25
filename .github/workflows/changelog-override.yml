@@ -17,9 +17,14 @@ permissions:
 
 jobs:
   inject-override:
-    # Run only on PR comments from the CodeRabbit bot that contain its auto-generated marker
+    # Run only on PR comments from the CodeRabbit bot that contain its auto-generated marker.
+    # User ID 136622811 is the canonical numeric ID for coderabbitai[bot] — verified via
+    # `gh api /users/coderabbitai%5Bbot%5D` and cross-checked against the installed app.
+    # The [bot] suffix is reserved by GitHub for Apps so the login alone is already strong,
+    # but the ID check makes impersonation impossible.
     if: |
       github.event.issue.pull_request != null &&
+      github.event.comment.user.id == 136622811 &&
       github.event.comment.user.login == 'coderabbitai[bot]' &&
       contains(github.event.comment.body, 'auto-generated comment: summarize by coderabbit.ai')
     runs-on: ubuntu-latest
