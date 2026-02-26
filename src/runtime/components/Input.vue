@@ -22,7 +22,7 @@ const modelValue = defineModel<string>({ default: "" });
     :class="{ inner: layout === 'inner' }"
   >
     <slot name="before" />
-    <input v-bind="$attrs" :id v-model="modelValue" type="text" />
+    <input :id v-model="modelValue" type="text" v-bind="$attrs" />
     <slot name="after" />
   </orio-control-element>
 </template>
@@ -48,8 +48,13 @@ input {
 .inner {
   @include inner-label;
 
+  :deep(.slot-wrapper) {
+    padding: var(--control-inner-block-start) var(--control-px)
+      var(--control-inner-block-end);
+  }
+
   input {
-    padding: var(--control-inner-block-start) 0 var(--control-inner-block-end);
+    padding: 0;
   }
 }
 </style>

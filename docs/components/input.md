@@ -13,6 +13,9 @@ const password = ref('')
 const search = ref('')
 const innerName = ref('')
 const innerEmail = ref('')
+const innerSearch = ref('')
+const innerPassword = ref('')
+const innerWebsite = ref('')
 const horizontalCity = ref('')
 const horizontalZip = ref('')
 </script>
@@ -120,6 +123,45 @@ const horizontalZip = ref('')
   </div>
 </div>
 
+### Inner with Icons
+
+<div class="demo-container">
+  <div class="demo-grid">
+    <orio-input
+      v-model="innerSearch"
+      label="Search"
+      layout="inner"
+    >
+      <template #before>
+        <orio-icon name="search" />
+      </template>
+    </orio-input>
+    <orio-input
+      v-model="innerPassword"
+      type="password"
+      label="Password"
+      layout="inner"
+    >
+      <template #before>
+        <orio-icon name="lock" />
+      </template>
+      <template #after>
+        <orio-icon name="eye" />
+      </template>
+    </orio-input>
+    <orio-input
+      v-model="innerWebsite"
+      type="url"
+      label="Website"
+      layout="inner"
+    >
+      <template #after>
+        <orio-icon name="external-link" />
+      </template>
+    </orio-input>
+  </div>
+</div>
+
 ## Usage
 
 ### Basic
@@ -188,22 +230,22 @@ const name = ref("");
 
 ## Props
 
-| Prop         | Type                                         | Default      | Description                        |
-| ------------ | -------------------------------------------- | ------------ | ---------------------------------- |
-| `modelValue` | `string`                                     | `""`         | Input value (v-model)              |
-| `layout`     | `"vertical" \| "horizontal" \| "inner"`   | `"vertical"` | Label position relative to input   |
-| `label`      | `string`                                     | `undefined`  | Label text                         |
-| `placeholder`| `string`                                     | `undefined`  | Placeholder text                   |
-| `type`       | `string`                                     | `"text"`     | HTML input type                    |
+| Prop          | Type                                    | Default      | Description                      |
+| ------------- | --------------------------------------- | ------------ | -------------------------------- |
+| `modelValue`  | `string`                                | `""`         | Input value (v-model)            |
+| `layout`      | `"vertical" \| "horizontal" \| "inner"` | `"vertical"` | Label position relative to input |
+| `label`       | `string`                                | `undefined`  | Label text                       |
+| `placeholder` | `string`                                | `undefined`  | Placeholder text                 |
+| `type`        | `string`                                | `"text"`     | HTML input type                  |
 
 All standard HTML input attributes are supported via `v-bind="$attrs"`.
 
 ## Slots
 
-| Slot     | Description                                |
-| -------- | ------------------------------------------ |
-| `before` | Content placed before the input (e.g. icon)|
-| `after`  | Content placed after the input (e.g. icon) |
+| Slot     | Description                                 |
+| -------- | ------------------------------------------- |
+| `before` | Content placed before the input (e.g. icon) |
+| `after`  | Content placed after the input (e.g. icon)  |
 
 ## Events
 
