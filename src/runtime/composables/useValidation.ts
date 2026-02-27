@@ -1,18 +1,17 @@
-import { reactive, isRef, type MaybeRef, ref } from "vue";
+import { reactive, type MaybeRef, ref, unref } from "vue";
 
 export interface ValidationRule {
   model: MaybeRef<any>;
   id: string;
-  validator: (model: MaybeRef<any>) => boolean;
+  validator: (model: any) => boolean;
   message?: string;
 }
 
-export function isFilled(model: MaybeRef<string | []>): boolean {
-  return isRef(model) ? !!model.value.length : !!model.length;
+export function isFilled(value: string | []): boolean {
+  return !!value.length;
 }
 
-export function isEmail(model: MaybeRef<string>): boolean {
-  const value = isRef(model) ? model.value : model;
+export function isEmail(value: string): boolean {
   if (!value) return true;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(value);
@@ -29,7 +28,7 @@ export function useValidation(rules?: ValidationRule[]) {
     validator,
     message,
   }: ValidationRule): boolean {
-    if (!validator(model)) {
+    if (!validator(unref(model))) {
       if (!errors[id]) {
         errors[id] = message || "Error on this field";
       }

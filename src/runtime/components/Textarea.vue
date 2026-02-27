@@ -21,7 +21,7 @@ withDefaults(defineProps<Props>(), {
     :layout="layout === 'inner' ? 'vertical' : layout"
     :class="{ inner: layout === 'inner' }"
   >
-    <textarea v-bind="attrs" :id v-model="modelValue" rows="4" />
+    <textarea :id v-model="modelValue" rows="4" v-bind="attrs" />
   </orio-control-element>
 </template>
 
@@ -50,7 +50,8 @@ textarea {
   @include inner-label;
 
   textarea {
-    padding: var(--control-inner-block-start) var(--control-px) var(--control-inner-block-end);
+    padding: var(--control-inner-block-start) var(--control-px)
+      var(--control-inner-block-end);
   }
 }
 </style>

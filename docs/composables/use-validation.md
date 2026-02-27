@@ -42,28 +42,28 @@ function handleReset() {
     id="demo-name"
     v-model="name"
     label="Name"
+    layout="inner"
     placeholder="Enter your name"
     :error="errors['demo-name']"
     @input="clearError('demo-name')"
   />
-
-<orio-input
-id="demo-email"
-v-model="email"
-label="Email"
-placeholder="Enter your email"
-:error="errors['demo-email']"
-@input="clearError('demo-email')"
-/>
-
-<orio-textarea
-id="demo-message"
-v-model="message"
-label="Message"
-placeholder="Enter your message"
-:error="errors['demo-message']"
-@input="clearError('demo-message')"
-/>
+  <orio-input
+    id="demo-email"
+    v-model="email"
+    label="Email"
+    layout="inner"
+    placeholder="Enter your email"
+    :error="errors['demo-email']"
+    @input="clearError('demo-email')"
+  />
+  <orio-textarea
+    id="demo-message"
+    v-model="message"
+    label="Message"
+    placeholder="Enter your message"
+    :error="errors['demo-message']"
+    @input="clearError('demo-message')"
+  />
 
   <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
     <orio-button @click="handleSubmit">Submit</orio-button>
@@ -183,29 +183,24 @@ function handleReset() {
 
 ```vue
 <script setup>
-import { ref, isRef } from "vue";
+import { ref } from "vue";
 import { useValidation, isFilled } from "orio-ui";
 
 const email = ref("");
 const age = ref("");
 const password = ref("");
 
-// Custom validator for email format
-function isValidEmail(model) {
-  const value = isRef(model) ? model.value : model;
+// The composable unwraps refs automatically — validators always receive a plain value
+function isValidEmail(value) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(value);
 }
 
-// Custom validator for minimum value
-function isAdult(model) {
-  const value = isRef(model) ? model.value : model;
+function isAdult(value) {
   return parseInt(value) >= 18;
 }
 
-// Custom validator for password strength
-function isStrongPassword(model) {
-  const value = isRef(model) ? model.value : model;
+function isStrongPassword(value) {
   return value.length >= 8 && /[A-Z]/.test(value) && /[0-9]/.test(value);
 }
 
@@ -293,7 +288,7 @@ function useValidation(rules: ValidationRule[]): {
 interface ValidationRule {
   model: MaybeRef<any>; // The reactive value to validate
   id: string; // Element ID (used for error mapping and scroll)
-  validator: (model: MaybeRef<any>) => boolean; // Validation function
+  validator: (value: any) => boolean; // Validation function — receives unwrapped value
   message?: string; // Error message (default: "This field is required")
 }
 ```
@@ -303,7 +298,7 @@ interface ValidationRule {
 Built-in validator for checking if a string or array has content:
 
 ```typescript
-function isFilled(model: MaybeRef<string | []>): boolean;
+function isFilled(value: string | []): boolean;
 ```
 
 ## Parameters

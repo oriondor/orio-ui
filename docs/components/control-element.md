@@ -15,6 +15,8 @@ const numberValue = ref(0)
 const selectorValue = ref(null)
 const checkboxValue = ref(false)
 const switchValue = ref(false)
+const innerInputValue = ref('')
+const innerTextareaValue = ref('')
 
 const options = ['Apple', 'Banana', 'Cherry', 'Date']
 </script>
@@ -146,6 +148,48 @@ The `size` prop controls font-size, padding, border-radius, and element sizing a
   </div>
 </div>
 
+## Inner Layout
+
+Input and Textarea support `layout="inner"`, which floats the label inside the control boundary. The label starts as a placeholder and animates upward when the field is focused or filled.
+
+### Input
+
+<div class="demo-container">
+  <div class="demo-grid">
+    <orio-input v-model="innerInputValue" label="Full Name" layout="inner" />
+    <orio-input v-model="innerInputValue" type="email" label="Email Address" layout="inner" />
+    <orio-input v-model="innerInputValue" type="password" label="Password" layout="inner" />
+  </div>
+  <div class="demo-grid">
+    <orio-input v-model="innerInputValue" label="Search" layout="inner" size="sm">
+      <template #before><orio-icon name="search" /></template>
+    </orio-input>
+    <orio-input v-model="innerInputValue" label="Website" layout="inner" size="lg">
+      <template #after><orio-icon name="external-link" /></template>
+    </orio-input>
+  </div>
+</div>
+
+### Textarea
+
+<div class="demo-container">
+  <div class="demo-grid">
+    <orio-textarea v-model="innerTextareaValue" label="Notes" layout="inner" />
+    <orio-textarea v-model="innerTextareaValue" label="Feedback" layout="inner" />
+  </div>
+</div>
+
+### Inner with sizes
+
+<div class="demo-container">
+  <div class="demo-grid">
+    <orio-input v-model="innerInputValue" label="Small" layout="inner" size="sm" />
+    <orio-input v-model="innerInputValue" label="Medium (default)" layout="inner" size="md" />
+    <orio-input v-model="innerInputValue" label="Large" layout="inner" size="lg" />
+    <orio-input v-model="innerInputValue" label="Extra Large" layout="inner" size="xl" />
+  </div>
+</div>
+
 ## Usage
 
 ```vue
@@ -180,7 +224,7 @@ The `size` prop controls font-size, padding, border-radius, and element sizing a
 | `appearance` | `'normal' \| 'minimal'`            | `'normal'` | Minimal removes margin, border, and box-shadow from slot |
 | `size`       | `'sm' \| 'md' \| 'lg' \| 'xl'`    | `'md'`     | Controls font-size, padding, and radius of inner elements |
 | `layout`     | `'vertical' \| 'horizontal'`       | `'vertical'` | Label position relative to the control                 |
-| `label`      | `string` (via `$attrs`)            | -          | Label text displayed above the control                   |
+| `label`      | `string`                           | -          | Label text displayed above the control                   |
 
 ## Slots
 
@@ -195,6 +239,7 @@ ControlElement sets the following CSS custom properties based on `size`, which c
 | Variable                        | sm       | md (default) | lg       | xl       |
 | ------------------------------- | -------- | ------------ | -------- | -------- |
 | `--control-font-size`           | 0.75rem  | 0.875rem     | 1.25rem  | 1.75rem  |
+| `--control-label-font-size`     | 0.65rem  | 0.75rem      | 0.875rem | 1.25rem  |
 | `--control-py`                  | 0.25rem  | 0.5rem       | 0.625rem | 0.75rem  |
 | `--control-px`                  | 0.5rem   | 0.75rem      | 1rem     | 1.25rem  |
 | `--control-gap`                 | 0.25rem  | 0.5rem       | 0.5rem   | 0.75rem  |
