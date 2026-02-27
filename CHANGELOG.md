@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.0](https://github.com/oriondor/orio-ui/compare/v1.16.2...v1.17.0) (2026-02-27)
+
+
+### Features
+
+* add control-label-font-size variable and adjust inner layout spacing ([54d3b55](https://github.com/oriondor/orio-ui/commit/54d3b55d4b4767107793269a31d5fa438e2c6c3c))
+
 ## [1.16.2](https://github.com/oriondor/orio-ui/compare/v1.16.1...v1.16.2) (2026-02-25)
 
 
