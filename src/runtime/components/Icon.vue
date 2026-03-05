@@ -9,7 +9,7 @@ export interface IconProps {
 }
 
 const props = withDefaults(defineProps<IconProps>(), {
-  size: "1em",
+  size: "1.5em",
   color: "currentColor",
 });
 
@@ -22,15 +22,7 @@ const sizeValue = computed(() =>
 <template>
   <span
     class="orio-icon"
-    :style="{
-      width: sizeValue,
-      height: sizeValue,
-      color: color,
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexShrink: 0,
-    }"
+    :style="{ color, width: sizeValue, height: sizeValue }"
     v-html="iconSvg"
   />
 </template>
