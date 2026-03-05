@@ -6,11 +6,13 @@ export type BadgeVariant = "danger" | "alert" | "primary" | "grey";
 interface Props {
   variant?: BadgeVariant;
   pill?: boolean;
+  hidden?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: "primary",
   pill: false,
+  hidden: false,
 });
 
 const slots = useSlots();
@@ -23,11 +25,19 @@ const isDot = computed(() => !hasDefaultContent.value);
 <template>
   <div v-if="hasWrapping" class="badge-wrapper">
     <slot name="wrapping" />
-    <span class="badge positioned" :class="[variant, { pill, dot: isDot }]">
+    <span
+      v-if="!hidden"
+      class="badge positioned"
+      :class="[variant, { pill, dot: isDot }]"
+    >
       <slot />
     </span>
   </div>
-  <span v-else class="badge" :class="[variant, { pill, dot: isDot }]">
+  <span
+    v-else-if="!hidden"
+    class="badge"
+    :class="[variant, { pill, dot: isDot }]"
+  >
     <slot />
   </span>
 </template>
@@ -53,8 +63,8 @@ const isDot = computed(() => !hasDefaultContent.value);
 
 .badge.positioned {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  top: 15%;
+  right: 15%;
   transform: translate(50%, -50%);
 }
 
