@@ -29,9 +29,9 @@ The label is visually hidden but still announced by screen readers.
 
 <div class="demo-container">
   <div class="demo-grid">
-    <orio-radio-button v-model="size" name="size" value="sm" label="Small" hide-label />
-    <orio-radio-button v-model="size" name="size" value="md" label="Medium" hide-label />
-    <orio-radio-button v-model="size" name="size" value="lg" label="Large" hide-label />
+    <orio-radio-button v-model="size" name="size" value="sm" text="Small" hide-label />
+    <orio-radio-button v-model="size" name="size" value="md" text="Medium" hide-label />
+    <orio-radio-button v-model="size" name="size" value="lg" text="Large" hide-label />
   </div>
 </div>
 
@@ -62,7 +62,7 @@ const plan = ref('monthly')
 | `modelValue` | `unknown` | -       | Shared group value (v-model); radio is checked when it matches `value` |
 | `value`      | `unknown` | -       | The value this radio represents                                  |
 | `name`       | `string`  | -       | HTML `name` attribute — groups radios for keyboard nav and form submission |
-| `label`      | `string`  | -       | Inline label text (alternative to default slot)                  |
+| `text`       | `string`  | -       | Inline label text (alternative to default slot)                  |
 | `hideLabel`  | `boolean` | `false` | Visually hides the label while keeping it accessible to screen readers |
 
 ## Events
@@ -75,4 +75,4 @@ const plan = ref('monthly')
 
 | Slot      | Props | Description                              |
 | --------- | ----- | ---------------------------------------- |
-| `default` | -     | Label text / content (overrides `label` prop) |
+| `default` | -     | Label text / content (overrides `text` prop) |

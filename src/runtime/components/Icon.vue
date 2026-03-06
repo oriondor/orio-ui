@@ -9,14 +9,14 @@ export interface IconProps {
 }
 
 const props = withDefaults(defineProps<IconProps>(), {
-  size: "1.5em",
   color: "currentColor",
 });
 
 const iconSvg = computed(() => iconRegistry[props.name] || "");
-const sizeValue = computed(() =>
-  typeof props.size === "number" ? `${props.size}px` : props.size,
-);
+const sizeValue = computed(() => {
+  if (props.size == null) return undefined;
+  return typeof props.size === "number" ? `${props.size}px` : props.size;
+});
 </script>
 
 <template>
@@ -33,6 +33,8 @@ const sizeValue = computed(() =>
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  width: var(--control-icon-size, 1.5em);
+  height: var(--control-icon-size, 1.5em);
 }
 
 .orio-icon :deep(svg) {
