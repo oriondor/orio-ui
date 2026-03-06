@@ -1,9 +1,10 @@
 <script setup lang="ts" generic="T extends object">
 import { computed, toRefs } from "vue";
+import type { ControlProps } from "./ControlElement.vue";
 
 export type SelectableOption<T extends object = object> = string | T;
 
-export interface SelectProps<T extends object = object> {
+export interface SelectProps<T extends object = object> extends ControlProps {
   options: SelectableOption[];
   multiple?: boolean;
   field?: string;
@@ -87,15 +88,25 @@ function getOptionKey(option: SelectableOption): string | number {
   return String((option as T)[key.value]);
 }
 
+const controlProps = computed(() => {
+  const { options, multiple, field, optionName, placeholder, ...rest } = props;
+  return rest;
+});
+
 const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 </script>
 
 <template>
-  <orio-control-element>
+  <orio-control-element v-bind="controlProps">
     <orio-popover position="bottom-right" :offset="5">
       <template #default="{ toggle }">
         <slot name="trigger" :toggle>
-          <div class="selector-trigger" @click="toggle()">
+          <button
+            :id="props.id"
+            type="button"
+            class="selector-trigger"
+            @click="toggle()"
+          >
             <slot
               name="trigger-content"
               :toggle
@@ -119,7 +130,7 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
               </div>
               <orio-icon name="chevron-down" />
             </slot>
-          </div>
+          </button>
         </slot>
       </template>
 
@@ -155,6 +166,7 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 
 <style lang="scss" scoped>
 .selector-trigger {
+  width: 100%;
   z-index: 1;
   min-height: 1.5rem;
   user-select: none;

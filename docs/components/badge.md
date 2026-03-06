@@ -24,10 +24,10 @@ const showBadge = ref(true)
 
 <div class="demo-container">
   <div class="demo-row">
-    <orio-badge type="pill">New</orio-badge>
-    <orio-badge type="pill" variant="danger">99+</orio-badge>
-    <orio-badge type="pill" variant="alert">Hot</orio-badge>
-    <orio-badge type="pill" variant="grey">Beta</orio-badge>
+    <orio-badge pill>New</orio-badge>
+    <orio-badge pill variant="danger">99+</orio-badge>
+    <orio-badge pill variant="alert">Hot</orio-badge>
+    <orio-badge pill variant="grey">Beta</orio-badge>
   </div>
 </div>
 
@@ -41,7 +41,7 @@ const showBadge = ref(true)
       </template>
       3
     </orio-badge>
-    <orio-badge variant="primary" type="pill">
+    <orio-badge variant="primary" pill>
       <template #wrapping>
         <orio-button variant="secondary">Messages</orio-button>
       </template>
@@ -85,7 +85,7 @@ const showBadge = ref(true)
       </template>
       7
     </orio-badge>
-    <orio-badge variant="primary" type="pill">
+    <orio-badge variant="primary" pill>
       <template #wrapping>
         <orio-nav-button icon="mail" />
       </template>
@@ -183,7 +183,7 @@ Use the `hidden` prop to suppress the badge without removing the wrapping conten
 <template>
   <orio-badge>5</orio-badge>
   <orio-badge variant="danger">Error</orio-badge>
-  <orio-badge type="pill">New</orio-badge>
+  <orio-badge pill>New</orio-badge>
 </template>
 ```
 
