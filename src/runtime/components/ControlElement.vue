@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useId } from "vue";
 
+defineOptions({ inheritAttrs: false });
+
 export type ControlLayout = "vertical" | "horizontal";
 export type ControlSize = "sm" | "md" | "lg" | "xl";
 
@@ -51,7 +53,10 @@ const props = withDefaults(defineProps<ControlProps>(), {
   <div
     class="control"
     :class="[appearance, layout, `size-${size}`, { 'has-error': error, group }]"
-    v-bind="group ? { role: 'group', 'aria-labelledby': id } : {}"
+    v-bind="{
+      ...$attrs,
+      ...(group ? { role: 'group', 'aria-labelledby': id } : {}),
+    }"
   >
     <component
       :is="group ? 'span' : 'label'"
@@ -62,7 +67,7 @@ const props = withDefaults(defineProps<ControlProps>(), {
       {{ label }}
     </component>
     <div class="control-group">
-      <div class="slot-wrapper" v-bind="$attrs">
+      <div class="slot-wrapper">
         <slot :id />
       </div>
       <span v-if="error" class="control-error">{{ error }}</span>

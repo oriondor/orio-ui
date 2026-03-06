@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
+import type { ControlProps } from "../ControlElement.vue";
 import type { InputLayout } from "../Input.vue";
 
-export interface NumberInputProps {
+export interface NumberInputProps extends Omit<ControlProps, "layout"> {
   layout?: InputLayout;
   min?: number;
   max?: number;
@@ -71,7 +72,7 @@ const slotExpose = computed(() => ({
 <template>
   <orio-control-element
     v-slot="{ id }"
-    v-bind="$attrs"
+    v-bind="props"
     :layout="layout === 'inner' ? 'vertical' : layout"
     :class="{ inner: layout === 'inner' }"
   >
@@ -117,7 +118,8 @@ input[type="number"] {
   @include inner-label;
 
   .number-input {
-    padding: var(--control-inner-block-start) var(--control-px) var(--control-inner-block-end);
+    padding: var(--control-inner-block-start) var(--control-px)
+      var(--control-inner-block-end);
   }
 }
 

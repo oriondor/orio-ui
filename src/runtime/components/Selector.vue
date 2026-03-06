@@ -1,9 +1,10 @@
 <script setup lang="ts" generic="T extends object">
 import { computed, toRefs } from "vue";
+import type { ControlProps } from "./ControlElement.vue";
 
 export type SelectableOption<T extends object = object> = string | T;
 
-export interface SelectProps<T extends object = object> {
+export interface SelectProps<T extends object = object> extends ControlProps {
   options: SelectableOption[];
   multiple?: boolean;
   field?: string;
@@ -91,7 +92,7 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 </script>
 
 <template>
-  <orio-control-element>
+  <orio-control-element v-bind="props">
     <orio-popover position="bottom-right" :offset="5">
       <template #default="{ toggle }">
         <slot name="trigger" :toggle>
