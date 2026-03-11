@@ -1,8 +1,8 @@
 name: Inject CodeRabbit summary into changelog
 
 # Fires whenever CodeRabbit creates or updates its walkthrough comment on a PR.
-# Extracts conventional commit lines from the summary and writes them as a
-# BEGIN_COMMIT_OVERRIDE block in the PR body so release-please uses them
+# Extracts the release-notes block from the summary and writes it as a
+# BEGIN_COMMIT_OVERRIDE block in the PR body so release-please uses it
 # instead of the raw (terse) commit message.
 #
 # REQUIREMENT: PRs must be merged via squash-merge — release-please can only
@@ -35,20 +35,19 @@ jobs:
             const comment = context.payload.comment.body;
             const prNumber = context.payload.issue.number;
 
-            // Extract conventional commit lines produced by CodeRabbit's summary.
-            // These are injected because .coderabbit.yaml configures
-            // high_level_summary_instructions to output conventional commit format.
-            const commitLines = comment
-              .split('\n')
-              .map(l => l.trim())
-              .filter(l => /^(feat|fix|chore|docs|refactor|perf|test)(\([^)]+\))?!?:/.test(l));
+            // Extract the release-notes block that CodeRabbit places between its
+            // HTML comment markers inside the walkthrough comment.
+            const notesMatch = comment.match(
+              /<!-- This is an auto-generated comment: release notes by coderabbit\.ai -->\s*([\s\S]*?)\s*<!-- end of auto-generated comment: release notes by coderabbit\.ai -->/
+            );
 
-            if (!commitLines.length) {
-              console.log('No conventional commit lines found — skipping override injection.');
+            if (!notesMatch || !notesMatch[1].trim()) {
+              console.log('No release-notes block found — skipping override injection.');
               return;
             }
 
-            const override = ['BEGIN_COMMIT_OVERRIDE', ...commitLines, 'END_COMMIT_OVERRIDE'].join('\n');
+            const summary = notesMatch[1].trim();
+            const override = ['BEGIN_COMMIT_OVERRIDE', summary, 'END_COMMIT_OVERRIDE'].join('\n');
 
             const { data: pr } = await github.rest.pulls.get({
               owner: context.repo.owner,
@@ -72,4 +71,4 @@ jobs:
             });
 
             console.log(`✅ PR #${prNumber} updated with BEGIN_COMMIT_OVERRIDE from CodeRabbit summary.`);
-            console.log('Lines injected:\n' + commitLines.join('\n'));
+            console.log('Content injected:\n' + summary);
