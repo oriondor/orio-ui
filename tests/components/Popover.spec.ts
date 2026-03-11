@@ -8,6 +8,8 @@ vi.mock("@vueuse/core", () => ({
     width: ref(0),
     height: ref(0),
   }),
+  onClickOutside: vi.fn(),
+  useEventListener: vi.fn(),
 }));
 
 describe("Popover", () => {
