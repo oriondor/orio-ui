@@ -62,7 +62,14 @@ const isAtMin = computed(
 );
 
 const controlProps = computed(() => {
-  const { min, max, step, decimalPlaces, disabled, ...rest } = props;
+  const {
+    min: _min,
+    max: _max,
+    step: _step,
+    decimalPlaces: _decimalPlaces,
+    disabled: _disabled,
+    ...rest
+  } = props;
   return rest;
 });
 
