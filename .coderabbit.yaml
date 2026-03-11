@@ -1,15 +1,24 @@
 reviews:
-  # Keep the high-level summary in the walkthrough comment (not the PR body),
-  # so the BEGIN_COMMIT_OVERRIDE block we inject stays clean.
   high_level_summary: true
   high_level_summary_in_walkthrough: true
   high_level_summary_instructions: |
-    Write the summary as 1–3 conventional commit messages, one per line, using this exact format:
-      feat(scope): description
-      fix: description
+    Write the summary as a release-note style changelog using bullet points.
+
+    Format:
+      type(optional-scope): short title
+
+      - Bullet point describing a specific change
+      - Another bullet point for a different change
+      - Optionally note consequences (e.g. "this means X now works / breaks Y")
+
     Rules:
+    - The first line MUST preserve the commit prefix exactly as written by the author.
+      If the commit says "fix:", use "fix:". If it says "feat(button):", use "feat(button):".
+      NEVER change, reclassify, or rename the prefix.
     - Only use types: feat, fix, chore, docs, refactor, perf, test
-    - Scope is optional; use it when the change is clearly scoped to one component or area (e.g. carousel, button, input)
-    - Each line must start with a valid type and colon — no bullet points, no markdown, no other text
-    - Keep each line under 100 characters
-    - Do not include a scope if changes are wide/cross-cutting
+    - Scope is optional; use it when the change is clearly scoped to one component or area
+    - After the title line, add bullet points summarising ALL commits in the PR
+    - Each bullet should describe one concrete change, not a vague summary
+    - Include consequences when relevant (e.g. "Icons inside ControlElement now auto-scale with size variants")
+    - Do not collapse multiple distinct changes into a single sentence
+    - Keep bullet points concise but informative — aim for good release notes
