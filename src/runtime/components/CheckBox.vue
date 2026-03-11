@@ -19,6 +19,7 @@ const props = defineProps<CheckBoxProps>();
         type="checkbox"
         class="checkbox-input"
         tabindex="-1"
+        v-bind="$attrs"
       />
       <span
         class="checkbox-box"
