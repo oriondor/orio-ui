@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends object">
 import { computed, toRefs } from "vue";
 import type { ControlProps } from "./ControlElement.vue";
+import { useListKeyboard } from "../composables/useListKeyboard";
 
 export type SelectableOption<T extends object = object> = string | T;
 
@@ -94,18 +95,46 @@ const controlProps = computed(() => {
 });
 
 const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
+
+let popoverToggle: (force?: boolean | null) => void = () => {};
+
+const {
+  highlightedIndex,
+  listRef,
+  onKeydown,
+  reset: resetHighlight,
+} = useListKeyboard({
+  count: () => props.options.length,
+  onSelect: (index) =>
+    toggleOption(props.options[index]!, () => popoverToggle(false)),
+  onOpen: () => {
+    popoverToggle(true);
+    resetHighlight();
+  },
+  onClose: () => popoverToggle(false),
+  initialIndex: () => props.options.findIndex(isOptionSelected),
+});
 </script>
 
 <template>
   <orio-control-element v-bind="controlProps">
     <orio-popover position="bottom-right" :offset="5">
-      <template #default="{ toggle }">
+      <template #default="{ toggle, isOpen }">
         <slot name="trigger" :toggle>
           <button
             :id="props.id"
             type="button"
             class="selector-trigger"
-            @click="toggle()"
+            aria-haspopup="listbox"
+            :aria-expanded="isOpen"
+            @click="
+              toggle();
+              !isOpen && resetHighlight();
+            "
+            @keydown="
+              popoverToggle = toggle;
+              onKeydown($event, isOpen);
+            "
           >
             <slot
               name="trigger-content"
@@ -136,12 +165,23 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 
       <template #content="{ toggle }">
         <div class="selector-content">
-          <ul v-if="options.length">
+          <ul
+            v-if="options.length"
+            ref="listRef"
+            role="listbox"
+            :aria-multiselectable="multiple || undefined"
+          >
             <li
-              v-for="option in options"
+              v-for="(option, index) in options"
               :key="getOptionKey(option)"
-              :class="{ selected: isOptionSelected(option) }"
+              role="option"
+              :aria-selected="isOptionSelected(option)"
+              :class="{
+                selected: isOptionSelected(option),
+                highlighted: index === highlightedIndex,
+              }"
               @click="toggleOption(option, toggle)"
+              @mouseenter="highlightedIndex = index"
             >
               <slot
                 name="option"
@@ -230,7 +270,8 @@ const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 
       color: var(--color-text);
 
-      &:hover {
+      &:hover,
+      &.highlighted {
         background-color: var(--color-surface); /* neutral lift */
       }
 
