@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, toRefs, useAttrs, useSlots } from "vue";
+import { computed, toRefs, useSlots } from "vue";
+import type { ControlProps } from "./ControlElement.vue";
 
-interface Props {
+interface Props extends ControlProps {
   icon?: string;
   disabled?: boolean;
   active?: boolean;
@@ -13,7 +14,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { disabled, active } = toRefs(props);
 
-const attrs = useAttrs();
 const slots = useSlots();
 
 const isIconOnly = computed(() => {
@@ -33,9 +33,9 @@ function click(event: PointerEvent) {
 </script>
 
 <template>
-  <orio-control-element>
+  <orio-control-element v-bind="props">
     <button
-      v-bind="attrs"
+      v-bind="$attrs"
       :class="{ 'icon-only': isIconOnly, active }"
       :disabled
       :aria-current="active ? 'page' : undefined"

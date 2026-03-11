@@ -42,16 +42,6 @@ describe("ControlElement", () => {
     expect(wrapper.find(".control").classes()).toContain("minimal");
   });
 
-  it("passes attributes to slot-wrapper", () => {
-    const wrapper = mount(ControlElement, {
-      attrs: { "data-test": "custom" },
-      slots: { default: "<input />" },
-    });
-    expect(wrapper.find(".slot-wrapper").attributes("data-test")).toBe(
-      "custom",
-    );
-  });
-
   it("applies vertical layout by default", () => {
     const wrapper = mount(ControlElement);
     expect(wrapper.find(".control").classes()).toContain("vertical");

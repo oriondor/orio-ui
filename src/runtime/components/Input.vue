@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { ControlLayout } from "./ControlElement.vue";
+import type { ControlLayout, ControlProps } from "./ControlElement.vue";
 
 export type InputLayout = ControlLayout | "inner";
 
-interface Props {
+interface Props extends Omit<ControlProps, "layout"> {
   layout?: InputLayout;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   layout: "vertical",
 });
 
@@ -17,7 +17,7 @@ const modelValue = defineModel<string>({ default: "" });
 <template>
   <orio-control-element
     v-slot="{ id }"
-    v-bind="$attrs"
+    v-bind="props"
     :layout="layout === 'inner' ? 'vertical' : layout"
     :class="{ inner: layout === 'inner' }"
   >

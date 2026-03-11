@@ -6,6 +6,7 @@ A versatile badge component that works as both a standalone badge and a wrapper 
 
 <script setup>
 import { ref } from 'vue'
+const showBadge = ref(true)
 </script>
 
 ### Standalone Badges
@@ -23,10 +24,10 @@ import { ref } from 'vue'
 
 <div class="demo-container">
   <div class="demo-row">
-    <orio-badge type="pill">New</orio-badge>
-    <orio-badge type="pill" variant="danger">99+</orio-badge>
-    <orio-badge type="pill" variant="alert">Hot</orio-badge>
-    <orio-badge type="pill" variant="grey">Beta</orio-badge>
+    <orio-badge pill>New</orio-badge>
+    <orio-badge pill variant="danger">99+</orio-badge>
+    <orio-badge pill variant="alert">Hot</orio-badge>
+    <orio-badge pill variant="grey">Beta</orio-badge>
   </div>
 </div>
 
@@ -40,7 +41,7 @@ import { ref } from 'vue'
       </template>
       3
     </orio-badge>
-    <orio-badge variant="primary" type="pill">
+    <orio-badge variant="primary" pill>
       <template #wrapping>
         <orio-button variant="secondary">Messages</orio-button>
       </template>
@@ -84,7 +85,7 @@ import { ref } from 'vue'
       </template>
       7
     </orio-badge>
-    <orio-badge variant="primary" type="pill">
+    <orio-badge variant="primary" pill>
       <template #wrapping>
         <orio-nav-button icon="mail" />
       </template>
@@ -111,18 +112,18 @@ import { ref } from 'vue'
   <div class="demo-row" style="gap: 2rem;">
     <orio-badge variant="danger">
       <template #wrapping>
-        <orio-icon name="mail" size="24" />
+        <orio-icon name="mail" />
       </template>
     </orio-badge>
     <orio-badge variant="primary">
       <template #wrapping>
-        <orio-icon name="bell" size="24" />
+        <orio-icon name="bell" />
       </template>
       3
     </orio-badge>
     <orio-badge variant="alert">
       <template #wrapping>
-        <orio-icon name="chat" size="24" />
+        <orio-icon name="chat" />
       </template>
     </orio-badge>
   </div>
@@ -157,6 +158,23 @@ When no content is provided in the default slot, the badge renders as a small do
   </div>
 </div>
 
+### Hidden
+
+Use the `hidden` prop to suppress the badge without removing the wrapping content. Toggle it reactively to show or hide the badge based on application state.
+
+<div class="demo-container">
+  <div class="demo-row" style="gap: 2rem; align-items: center;">
+    <orio-badge variant="danger" :hidden="!showBadge">
+      <template #wrapping>
+        <orio-nav-button icon="bell" />
+      </template>
+      4
+    </orio-badge>
+    <orio-badge variant="primary" :hidden="!showBadge">New</orio-badge>
+    <orio-switch-button v-model="showBadge">Show badge</orio-switch-button>
+  </div>
+</div>
+
 ## Usage
 
 ### Standalone Badge
@@ -165,7 +183,7 @@ When no content is provided in the default slot, the badge renders as a small do
 <template>
   <orio-badge>5</orio-badge>
   <orio-badge variant="danger">Error</orio-badge>
-  <orio-badge type="pill">New</orio-badge>
+  <orio-badge pill>New</orio-badge>
 </template>
 ```
 
@@ -203,12 +221,30 @@ When no content is provided in the default slot, the badge renders as a small do
 </template>
 ```
 
+### Hidden
+
+```vue
+<template>
+  <!-- Standalone badge -->
+  <orio-badge :hidden="!hasUnread">New</orio-badge>
+
+  <!-- Positioned badge — wrapping content still renders when hidden -->
+  <orio-badge variant="danger" :hidden="!hasNotifications">
+    <template #wrapping>
+      <orio-nav-button icon="bell" />
+    </template>
+    4
+  </orio-badge>
+</template>
+```
+
 ## Props
 
-| Prop      | Type                                         | Default     | Description               |
-| --------- | -------------------------------------------- | ----------- | ------------------------- |
-| `variant` | `'danger' \| 'alert' \| 'primary' \| 'grey'` | `'primary'` | Badge color variant       |
-| `type`    | `'default' \| 'pill'`                        | `'default'` | Badge border radius style |
+| Prop      | Type                                         | Default     | Description                             |
+| --------- | -------------------------------------------- | ----------- | --------------------------------------- |
+| `variant` | `'danger' \| 'alert' \| 'primary' \| 'grey'` | `'primary'` | Badge color variant                     |
+| `pill`    | `boolean`                                    | `false`     | Renders with pill (fully rounded) shape |
+| `hidden`  | `boolean`                                    | `false`     | When true, the badge is not rendered    |
 
 ## Slots
 
