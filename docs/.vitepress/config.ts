@@ -81,7 +81,10 @@ export default defineConfig({
     search: {
       provider: "local",
     },
-    nav: [{ text: "Guide", link: "/getting-started" }],
+    nav: [
+      { text: "Guide", link: "/getting-started" },
+      { text: "Changelog", link: "/changelog" },
+    ],
 
     sidebar: {
       "/": [
