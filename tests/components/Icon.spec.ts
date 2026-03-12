@@ -43,6 +43,14 @@ describe("Icon", () => {
     expect(span.attributes("style")).toContain("color: rgb(255, 0, 0)");
   });
 
+  it("uses default size of 1em", () => {
+    const wrapper = mount(Icon, {
+      props: { name: "check" },
+    });
+    const span = wrapper.find(".orio-icon");
+    expect(span.attributes("style")).toContain("width: 1em");
+  });
+
   it("uses currentColor as default color", () => {
     const wrapper = mount(Icon, {
       props: { name: "check" },

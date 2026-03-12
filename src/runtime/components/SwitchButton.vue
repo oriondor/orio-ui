@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { ControlProps } from "./ControlElement.vue";
-
-interface Props extends ControlProps {
+interface Props {
   disabled?: boolean;
 }
 
@@ -18,10 +16,9 @@ function toggle() {
 </script>
 
 <template>
-  <orio-control-element v-slot="{ id }" v-bind="props">
+  <orio-control-element v-slot="{ id }">
     <button
       :id
-      v-bind="$attrs"
       class="switch-button"
       :class="{ active: modelValue, disabled: disabled }"
       :disabled="disabled"

@@ -1,11 +1,9 @@
 <script setup lang="ts" generic="T extends object">
-import { computed, ref, toRefs } from "vue";
-import type { ControlProps } from "./ControlElement.vue";
-import { useListKeyboard } from "../composables/useListKeyboard";
+import { computed, toRefs } from "vue";
 
 export type SelectableOption<T extends object = object> = string | T;
 
-export interface SelectProps<T extends object = object> extends ControlProps {
+export interface SelectProps<T extends object = object> {
   options: SelectableOption[];
   multiple?: boolean;
   field?: string;
@@ -89,60 +87,15 @@ function getOptionKey(option: SelectableOption): string | number {
   return String((option as T)[key.value]);
 }
 
-const controlProps = computed(() => {
-  const {
-    options: _options,
-    multiple: _multiple,
-    field: _field,
-    optionName: _optionName,
-    placeholder: _placeholder,
-    ...rest
-  } = props;
-  return rest;
-});
-
 const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
-
-const popoverToggleRef = ref<(force?: boolean | null) => void>(() => {});
-
-const {
-  highlightedIndex,
-  listRef,
-  onKeydown,
-  reset: resetHighlight,
-} = useListKeyboard({
-  count: () => props.options.length,
-  onSelect: (index) =>
-    toggleOption(props.options[index]!, () => popoverToggleRef.value(false)),
-  onOpen: () => {
-    popoverToggleRef.value(true);
-    resetHighlight();
-  },
-  onClose: () => popoverToggleRef.value(false),
-  initialIndex: () => props.options.findIndex(isOptionSelected),
-});
 </script>
 
 <template>
-  <orio-control-element v-bind="controlProps">
+  <orio-control-element>
     <orio-popover position="bottom-right" :offset="5">
-      <template #default="{ toggle, isOpen }">
+      <template #default="{ toggle }">
         <slot name="trigger" :toggle>
-          <button
-            :id="props.id"
-            type="button"
-            class="selector-trigger"
-            aria-haspopup="listbox"
-            :aria-expanded="isOpen"
-            @click="
-              toggle();
-              !isOpen && resetHighlight();
-            "
-            @keydown="
-              popoverToggleRef = toggle;
-              onKeydown($event, isOpen);
-            "
-          >
+          <div class="selector-trigger" @click="toggle()">
             <slot
               name="trigger-content"
               :toggle
@@ -166,29 +119,18 @@ const {
               </div>
               <orio-icon name="chevron-down" />
             </slot>
-          </button>
+          </div>
         </slot>
       </template>
 
       <template #content="{ toggle }">
         <div class="selector-content">
-          <ul
-            v-if="options.length"
-            ref="listRef"
-            role="listbox"
-            :aria-multiselectable="multiple || undefined"
-          >
+          <ul v-if="options.length">
             <li
-              v-for="(option, index) in options"
+              v-for="option in options"
               :key="getOptionKey(option)"
-              role="option"
-              :aria-selected="isOptionSelected(option)"
-              :class="{
-                selected: isOptionSelected(option),
-                highlighted: index === highlightedIndex,
-              }"
+              :class="{ selected: isOptionSelected(option) }"
               @click="toggleOption(option, toggle)"
-              @mouseenter="highlightedIndex = index"
             >
               <slot
                 name="option"
@@ -213,7 +155,6 @@ const {
 
 <style lang="scss" scoped>
 .selector-trigger {
-  width: 100%;
   z-index: 1;
   min-height: 1.5rem;
   user-select: none;
@@ -277,8 +218,7 @@ const {
 
       color: var(--color-text);
 
-      &:hover,
-      &.highlighted {
+      &:hover {
         background-color: var(--color-surface); /* neutral lift */
       }
 
