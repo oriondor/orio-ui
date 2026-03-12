@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0](https://github.com/oriondor/orio-ui/compare/v1.17.0...v1.18.0) (2026-03-12)
+
+
+### Features
+
+* **selector:** Keyboard navigation | fix(control): accessibility features ([#117](https://github.com/oriondor/orio-ui/issues/117)) ([d6baf00](https://github.com/oriondor/orio-ui/commit/d6baf00f6db8cdf8c57c4af89a493033a1f19cc1))
+
 ## [1.17.0](https://github.com/oriondor/orio-ui/compare/v1.16.2...v1.17.0) (2026-02-27)
 
 
