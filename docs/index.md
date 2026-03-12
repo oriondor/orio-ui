@@ -4,12 +4,12 @@ A delightful, lightweight component library for Nuxt 3 applications.
 
 ## Features
 
-✨ **27 Components** - Beautiful, accessible components ready to use
+✨ **31 Components** - Beautiful, accessible components ready to use
 🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great DX
-🧪 **Tested** - 138 unit tests for reliability
+🧪 **Tested** - 29 test suites for reliability
 
 ## Quick Start
 
