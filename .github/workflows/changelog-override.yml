@@ -1,12 +1,15 @@
 name: Inject CodeRabbit summary into changelog
 
 # Fires whenever CodeRabbit creates or updates its walkthrough comment on a PR.
-# Extracts the release-notes block from the summary and writes it as a
+# Extracts the high-level summary from the walkthrough and writes it as a
 # BEGIN_COMMIT_OVERRIDE block in the PR body so release-please uses it
 # instead of the raw (terse) commit message.
 #
 # REQUIREMENT: PRs must be merged via squash-merge — release-please can only
 # apply BEGIN_COMMIT_OVERRIDE when it can identify a single commit per PR.
+#
+# REQUIREMENT: The PR title must use a conventional commit prefix (feat:, fix:,
+# etc.) so release-please can parse the squash commit and trigger a release.
 
 on:
   issue_comment:
@@ -35,18 +38,29 @@ jobs:
             const comment = context.payload.comment.body;
             const prNumber = context.payload.issue.number;
 
-            // Extract the release-notes block that CodeRabbit places between its
-            // HTML comment markers inside the walkthrough comment.
-            const notesMatch = comment.match(
-              /<!-- This is an auto-generated comment: release notes by coderabbit\.ai -->\s*([\s\S]*?)\s*<!-- end of auto-generated comment: release notes by coderabbit\.ai -->/
+            // Extract the high-level summary from the walkthrough section.
+            // CodeRabbit places it between <!-- walkthrough_start --> markers,
+            // inside a <details> block, as the text between "## Walkthrough" and "## Changes".
+            const walkthroughMatch = comment.match(
+              /<!-- walkthrough_start -->([\s\S]*?)<!-- walkthrough_end -->/
             );
 
-            if (!notesMatch || !notesMatch[1].trim()) {
-              console.log('No release-notes block found — skipping override injection.');
+            if (!walkthroughMatch) {
+              console.log('No walkthrough section found — skipping override injection.');
               return;
             }
 
-            const summary = notesMatch[1].trim();
+            // Pull the summary paragraph(s) between the Walkthrough heading and the Changes table.
+            const summaryMatch = walkthroughMatch[1].match(
+              /## Walkthrough\s*([\s\S]*?)(?=\n## )/
+            );
+
+            if (!summaryMatch || !summaryMatch[1].trim()) {
+              console.log('No summary text found in walkthrough — skipping override injection.');
+              return;
+            }
+
+            const summary = summaryMatch[1].trim();
             const override = ['BEGIN_COMMIT_OVERRIDE', summary, 'END_COMMIT_OVERRIDE'].join('\n');
 
             const { data: pr } = await github.rest.pulls.get({
