@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import type { ControlProps } from "./ControlElement.vue";
+import { useAttrs } from "vue";
 import type { InputLayout } from "./Input.vue";
 
+const attrs = useAttrs();
 const modelValue = defineModel<string>({ default: "" });
 
-interface Props extends Omit<ControlProps, "layout"> {
+interface Props {
   layout?: InputLayout;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   layout: "vertical",
 });
 </script>
@@ -16,11 +17,11 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
   <orio-control-element
     v-slot="{ id }"
-    v-bind="props"
+    v-bind="attrs"
     :layout="layout === 'inner' ? 'vertical' : layout"
     :class="{ inner: layout === 'inner' }"
   >
-    <textarea :id v-model="modelValue" rows="4" v-bind="$attrs" />
+    <textarea :id v-model="modelValue" rows="4" v-bind="attrs" />
   </orio-control-element>
 </template>
 

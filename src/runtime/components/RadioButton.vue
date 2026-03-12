@@ -1,24 +1,22 @@
 <script setup lang="ts">
-import type { ControlProps } from "./ControlElement.vue";
-
-export interface RadioButtonProps extends ControlProps {
+export interface RadioButtonProps {
   /** The value this radio represents; compared to v-model to determine checked state */
   value?: unknown;
   /** HTML name attribute — groups radios together so only one is selected at a time */
   name?: string;
   /** Inline label text (alternative to default slot) */
-  text?: string;
+  label?: string;
   /** Visually hides the label while keeping it accessible to SR (screen readers) */
   hideLabel?: boolean;
 }
 
 const modelValue = defineModel<unknown>();
 
-const props = defineProps<RadioButtonProps>();
+defineProps<RadioButtonProps>();
 </script>
 
 <template>
-  <orio-control-element v-bind="props" class="radio">
+  <orio-control-element class="radio">
     <label class="radio-label">
       <input
         v-model="modelValue"
@@ -30,11 +28,11 @@ const props = defineProps<RadioButtonProps>();
       />
       <span class="radio-box" />
       <span
-        v-if="text || $slots.default"
+        v-if="label || $slots.default"
         class="radio-text"
         :class="{ 'sr-only': hideLabel }"
       >
-        <slot>{{ text }}</slot>
+        <slot>{{ label }}</slot>
       </span>
     </label>
   </orio-control-element>

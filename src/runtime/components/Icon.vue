@@ -9,20 +9,28 @@ export interface IconProps {
 }
 
 const props = withDefaults(defineProps<IconProps>(), {
+  size: "1em",
   color: "currentColor",
 });
 
 const iconSvg = computed(() => iconRegistry[props.name] || "");
-const sizeValue = computed(() => {
-  if (props.size == null) return undefined;
-  return typeof props.size === "number" ? `${props.size}px` : props.size;
-});
+const sizeValue = computed(() =>
+  typeof props.size === "number" ? `${props.size}px` : props.size,
+);
 </script>
 
 <template>
   <span
     class="orio-icon"
-    :style="{ color, width: sizeValue, height: sizeValue }"
+    :style="{
+      width: sizeValue,
+      height: sizeValue,
+      color: color,
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0,
+    }"
     v-html="iconSvg"
   />
 </template>
@@ -33,8 +41,6 @@ const sizeValue = computed(() => {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: var(--control-icon-size, 1.5em);
-  height: var(--control-icon-size, 1.5em);
 }
 
 .orio-icon :deep(svg) {

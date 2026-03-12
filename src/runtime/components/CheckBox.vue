@@ -1,25 +1,22 @@
 <script setup lang="ts">
-import type { ControlProps } from "./ControlElement.vue";
-
-export interface CheckBoxProps extends ControlProps {
+export interface CheckBoxProps {
   checkedIcon?: string; // optional: pass icon name for checked state
   uncheckedIcon?: string; // optional: pass icon name for unchecked state
 }
 
 const modelValue = defineModel<boolean>({ required: false });
 
-const props = defineProps<CheckBoxProps>();
+defineProps<CheckBoxProps>();
 </script>
 
 <template>
-  <orio-control-element v-bind="props" class="checkbox">
+  <orio-control-element class="checkbox">
     <label class="checkbox-label">
       <input
         v-model="modelValue"
         type="checkbox"
         class="checkbox-input"
         tabindex="-1"
-        v-bind="$attrs"
       />
       <span
         class="checkbox-box"

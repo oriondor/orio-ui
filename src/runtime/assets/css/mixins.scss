@@ -73,6 +73,7 @@
   :deep(.control-label) {
     position: absolute;
     z-index: 1;
+    pointer-events: none;
     left: var(--control-px);
     top: var(--control-label-block-start);
     color: var(--color-muted);
