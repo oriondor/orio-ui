@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
+import type { ControlProps } from "../ControlElement.vue";
 import type { InputLayout } from "../Input.vue";
 
-export interface NumberInputProps {
+export interface NumberInputProps extends Omit<ControlProps, "layout"> {
   layout?: InputLayout;
   min?: number;
   max?: number;
@@ -60,6 +61,18 @@ const isAtMin = computed(
   () => Number.isFinite(min.value) && modelValue.value <= (min.value as number),
 );
 
+const controlProps = computed(() => {
+  const {
+    min: _min,
+    max: _max,
+    step: _step,
+    decimalPlaces: _decimalPlaces,
+    disabled: _disabled,
+    ...rest
+  } = props;
+  return rest;
+});
+
 const slotExpose = computed(() => ({
   increase,
   decrease,
@@ -71,7 +84,7 @@ const slotExpose = computed(() => ({
 <template>
   <orio-control-element
     v-slot="{ id }"
-    v-bind="$attrs"
+    v-bind="controlProps"
     :layout="layout === 'inner' ? 'vertical' : layout"
     :class="{ inner: layout === 'inner' }"
   >
@@ -82,6 +95,10 @@ const slotExpose = computed(() => ({
         v-model="modelValue"
         type="number"
         class="number-input"
+        :disabled
+        :min
+        :max
+        :step
         @blur="onBlur"
       />
       <div class="controls">
@@ -117,7 +134,8 @@ input[type="number"] {
   @include inner-label;
 
   .number-input {
-    padding: var(--control-inner-block-start) var(--control-px) var(--control-inner-block-end);
+    padding: var(--control-inner-block-start) var(--control-px)
+      var(--control-inner-block-end);
   }
 }
 

@@ -1,18 +1,18 @@
 <template>
   <div>
-    <div ref="trigger">
-      <slot :toggle="togglePopover" />
+    <div ref="triggerRef">
+      <slot :toggle="togglePopover" :is-open="showPopover" />
     </div>
 
     <Teleport to="body">
       <Transition name="animate-fade-slide" appear>
         <div
           v-if="showPopover"
-          ref="popover"
+          ref="containerRef"
           class="popover"
           :style="popoverStyle"
         >
-          <slot name="content" :toggle="togglePopover" />
+          <slot name="content" :toggle="togglePopover" :is-open="showPopover" />
         </div>
       </Transition>
     </Teleport>
@@ -20,17 +20,28 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, nextTick, useTemplateRef, watch } from "vue";
 import {
-  ref,
-  computed,
-  nextTick,
-  onMounted,
-  onBeforeUnmount,
-  watch,
-} from "vue";
-import { useElementBounding } from "@vueuse/core";
+  useElementBounding,
+  onClickOutside,
+  useEventListener,
+} from "@vueuse/core";
 
-const props = defineProps({
+type PopoverPosition =
+  | "top"
+  | "bottom"
+  | "left"
+  | "right"
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right"
+  | "left-top"
+  | "left-bottom"
+  | "right-top"
+  | "right-bottom";
+
+interface PopoverProps {
   /**
    * Defines where the popover is placed relative to the trigger.
    * Acceptable single values: 'top', 'bottom', 'left', 'right'
@@ -39,32 +50,29 @@ const props = defineProps({
    * If you only provide 'top', 'bottom', 'left', or 'right',
    * it aligns center by default.
    */
-  position: {
-    type: String,
-    default: "bottom-left",
-  },
+  position?: PopoverPosition;
   /**
    * Distance (in px) between the popover and the trigger element.
    */
-  offset: {
-    type: Number,
-    default: 10,
-  },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
+  offset?: number;
+  disabled?: boolean;
+}
+
+const props = withDefaults(defineProps<PopoverProps>(), {
+  position: "bottom-left",
+  offset: 10,
+  disabled: false,
 });
 
-const trigger = ref(null);
-const popover = ref(null);
+const triggerRef = useTemplateRef<HTMLElement>("triggerRef");
+const containerRef = useTemplateRef<HTMLElement>("containerRef");
 
 const { width: popoverWidth, height: popoverHeight } =
-  useElementBounding(popover);
+  useElementBounding(containerRef);
 
 const showPopover = ref(false);
-const triggerRect = ref(null);
-const popoverRect = ref(null);
+const triggerRect = ref<DOMRect | null>(null);
+const popoverRect = ref<DOMRect | null>(null);
 
 /**
  * Calculates the inline style for the popover based on position & offset.
@@ -118,8 +126,8 @@ const popoverStyle = computed(() => {
 
 const currentPosition = ref(props.position);
 
-const getFallbackPositions = (pos: string) => {
-  const [main, sub = "center"] = pos.split("-");
+const getFallbackPositions = (pos: string): PopoverPosition[] => {
+  const [main = "", sub = "center"] = pos.split("-");
 
   const opposites: Record<string, string> = {
     top: "bottom",
@@ -133,15 +141,26 @@ const getFallbackPositions = (pos: string) => {
     `${opposites[main]}-${sub}`,
     `${main}-center`,
     `${opposites[main]}-center`,
-    `${sub}-${main}`, // e.g. left-top
-    `${sub}-${opposites[main]}`,
   ];
 
-  return [...new Set(allPositions)];
+  // Only add cross-axis fallbacks when sub is a real direction (not "center")
+  if (sub !== "center") {
+    allPositions.push(
+      `${sub}-${main}`, // e.g. left-top
+      `${sub}-${opposites[main]}`,
+    );
+  }
+
+  return [...new Set(allPositions)] as PopoverPosition[];
 };
 
-function checkIfFits(position: string, tRect: any, pRect: any, offset: number) {
-  const [main, sub = "center"] = position.split("-");
+function checkIfFits(
+  position: string,
+  tRect: DOMRect,
+  pRect: DOMRect,
+  offset: number,
+) {
+  const [main] = position.split("-");
 
   const space = {
     top: tRect.top,
@@ -164,8 +183,8 @@ function checkIfFits(position: string, tRect: any, pRect: any, offset: number) {
  */
 async function updateRects() {
   await nextTick();
-  const triggerEl = trigger.value;
-  const popoverEl = popover.value?.firstElementChild || popover.value;
+  const triggerEl = triggerRef.value;
+  const popoverEl = containerRef.value;
 
   if (!triggerEl || !popoverEl) return;
 
@@ -174,11 +193,10 @@ async function updateRects() {
 
   const fallbacks = getFallbackPositions(props.position);
 
-  for (const pos of fallbacks) {
-    // temporarily apply style to measure it
-    popoverEl.style.visibility = "hidden";
-    popoverEl.style.display = "block";
+  // Hide while measuring to avoid flicker
+  popoverEl.style.visibility = "hidden";
 
+  for (const pos of fallbacks) {
     const pRect = popoverEl.getBoundingClientRect();
     const fits = checkIfFits(pos, tRect, pRect, props.offset);
 
@@ -190,9 +208,10 @@ async function updateRects() {
     }
   }
 
-  // fallback to original
+  // No position fits — use original and restore visibility
   popoverRect.value = popoverEl.getBoundingClientRect();
   currentPosition.value = props.position;
+  popoverEl.style.visibility = "";
 }
 
 /**
@@ -212,18 +231,13 @@ async function togglePopover(force: boolean | null = null) {
 /**
  * Closes the popover if the click is outside trigger/popover.
  */
-function handleDocumentClick(e: MouseEvent) {
-  if (!showPopover.value) return;
-
-  const clickedInsideTrigger =
-    trigger.value && trigger.value.contains(e.target as Node);
-  const clickedInsidePopover =
-    popover.value && popover.value.contains(e.target as Node);
-
-  if (!clickedInsideTrigger && !clickedInsidePopover) {
+onClickOutside(
+  containerRef,
+  () => {
     showPopover.value = false;
-  }
-}
+  },
+  { ignore: [triggerRef] },
+);
 
 /**
  * Updates position of popover on scroll/resize if popover is open.
@@ -235,17 +249,8 @@ function redrawPopover() {
 
 watch([popoverWidth, popoverHeight], redrawPopover);
 
-onMounted(() => {
-  document.addEventListener("click", handleDocumentClick);
-  window.addEventListener("scroll", redrawPopover, true);
-  window.addEventListener("resize", redrawPopover, true);
-});
-
-onBeforeUnmount(() => {
-  document.removeEventListener("click", handleDocumentClick);
-  window.removeEventListener("scroll", redrawPopover, true);
-  window.removeEventListener("resize", redrawPopover, true);
-});
+useEventListener(window, "scroll", redrawPopover, { capture: true });
+useEventListener(window, "resize", redrawPopover, { capture: true });
 </script>
 <style lang="scss" scoped>
 .popover {
