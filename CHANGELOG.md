@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0](https://github.com/oriondor/orio-ui/compare/v1.17.0...v1.18.0) (2026-03-12)
+
+
+### Keyboard & Accessibility
+
+* Full keyboard navigation for Selector — Arrow keys, Home/End, Enter/Space/Escape now navigate and select options with automatic scroll-into-view
+* ARIA attributes — Selector exposes `aria-haspopup`, `aria-expanded`, `aria-multiselectable`, `aria-selected`, `role="listbox"`, and `role="option"` for screen reader support
+
+### Component Improvements
+
+* Popover — Migrated to TypeScript with typed props (`position`, `offset`, `disabled`), automatic fallback repositioning when the popover overflows the viewport
+* Badge — New option to hide the badge; updated documentation with additional examples
+* Icon — Sizing now driven by `--control-icon-size` CSS custom property instead of a static prop, allowing icons to auto-scale with ControlElement size variants
+
+### Architecture & Bug Fixes
+
+* Standardized attribute forwarding — ControlElement uses `inheritAttrs: false` with explicit `$attrs` binding; all consumers (Button, Input, Textarea, Selector, CheckBox, etc.) cleanly separate control-level props from native HTML attributes forwarded to inner elements
+* RadioButton — `label` prop renamed to `text` to avoid collision with `ControlProps.label`
+* Fixed input click handling — Removed `pointer-events: none` on inner layout so floating-label inputs correctly receive click events
+
+### Internal
+
+* New `useListKeyboard` composable — reusable keyboard navigation logic for list-based components
+* 20 files changed across the codebase with a net addition of ~200 lines
+
 ## [1.17.0](https://github.com/oriondor/orio-ui/compare/v1.16.2...v1.17.0) (2026-02-27)
 
 
