@@ -6,28 +6,19 @@ Central registry for all bundled SVG icons used in the Icon component.
 
 The icon registry provides a collection of commonly used SVG icons bundled with Orio UI. All icons are stored as inline SVG strings for optimal performance and flexibility.
 
-## Available Icons (12 Total)
+## Available Icons
 
-### Loading & Status
-- **loading-loop** - Animated loading spinner with smooth rotation
+<script setup>
+import { iconRegistry } from '../../src/runtime/utils/icon-registry'
+const icons = Object.keys(iconRegistry)
+</script>
 
-### Navigation
-- **chevron-down** - Dropdown chevron pointing down
-- **chevron-up** - Dropdown chevron pointing up
-
-### Actions
-- **edit** - Edit/pencil icon for modification actions
-- **check** - Checkmark for confirmation and success states
-- **plus** - Plus/add icon for creation actions
-- **minus** - Minus/remove icon for subtraction actions
-- **close** - Close/X icon for dismissing or canceling
-- **search** - Search/magnifying glass icon
-- **upload** - Upload arrow icon
-- **download** - Download arrow icon
-- **delete** - Delete/trash icon for removal actions
-
-### Other
-- **calendar** - Calendar icon for date-related features
+<div :style="{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem', padding: '1rem 0' }">
+  <div v-for="name in icons" :key="name" :style="{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--vp-c-divider)', textAlign: 'center' }">
+    <OrioIcon :name="name" size="24" />
+    <code :style="{ fontSize: '0.7rem', wordBreak: 'break-all' }">{{ name }}</code>
+  </div>
+</div>
 
 ## Usage
 
@@ -198,24 +189,6 @@ const selectedIcon = ref<IconName>('edit')
 </style>
 ```
 
-### Displaying All Available Icons
-
-```vue
-<script setup>
-import { iconRegistry } from '0re0-ui/runtime/utils/icon-registry'
-
-const icons = Object.keys(iconRegistry)
-</script>
-
-<template>
-  <div class="icon-gallery">
-    <div v-for="name in icons" :key="name" class="icon-item">
-      <orio-icon :name="name" size="32" />
-      <code>{{ name }}</code>
-    </div>
-  </div>
-</template>
-```
 
 ## See Also
 

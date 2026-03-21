@@ -28,6 +28,7 @@ yarn-error.log*
 .idea
 .vscode
 .claude*
+.cheatsheets*
 CLAUDE.md
 *.swp
 *.swo

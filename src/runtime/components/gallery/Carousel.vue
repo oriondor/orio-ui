@@ -204,6 +204,7 @@ onMounted(() => {
 .carousel-wrapper {
   position: relative;
   display: block;
+  overflow: hidden;
 }
 
 .carousel-measure {
