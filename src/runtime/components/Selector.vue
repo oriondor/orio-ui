@@ -5,7 +5,7 @@ import { useListKeyboard } from "../composables/useListKeyboard";
 
 export type SelectableOption<T extends object = object> = string | T;
 
-export interface SelectProps<T extends object = object> extends ControlProps {
+export interface SelectProps extends ControlProps {
   options: SelectableOption[];
   multiple?: boolean;
   field?: string;
