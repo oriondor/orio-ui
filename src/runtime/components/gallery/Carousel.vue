@@ -211,7 +211,7 @@ onMounted(() => {
   height: v-bind(measureHeight);
 }
 
-.carousel-measure img {
+.carousel-measure :deep(> *) {
   display: block;
   width: 100%;
   height: 100%;
@@ -277,7 +277,7 @@ onMounted(() => {
   pointer-events: auto;
 }
 
-.carousel-item img {
+.carousel-item :deep(> *) {
   width: 100%;
   height: 100%;
   object-fit: v-bind(fit);

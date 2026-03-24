@@ -67,8 +67,14 @@ export function provideControlSize(
   provide(CONTROL_SIZE_KEY, size);
 }
 
-export function useControlTokens(fallback: ControlSize = "md") {
-  const size = inject<Ref<ControlSize>>(CONTROL_SIZE_KEY, ref(fallback));
+export function useControlTokens(
+  explicit?:
+    | Ref<ControlSize | undefined>
+    | ComputedRef<ControlSize | undefined>,
+  fallback: ControlSize = "md",
+) {
+  const injected = inject<Ref<ControlSize>>(CONTROL_SIZE_KEY, ref(fallback));
+  const size = computed(() => explicit?.value ?? injected.value);
   const tokens = computed(() => sizeTokens[size.value]);
   return { size, tokens };
 }

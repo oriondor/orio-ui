@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends object">
-import { computed, ref, toRefs } from "vue";
+import { computed, ref, toRef, toRefs } from "vue";
 import type { ControlProps } from "./ControlElement.vue";
 import { useControlTokens } from "../composables/useControlSize";
 import { useListKeyboard } from "../composables/useListKeyboard";
@@ -90,7 +90,7 @@ function getOptionKey(option: SelectableOption): string | number {
   return String((option as T)[key.value]);
 }
 
-const { tokens: controlTokens } = useControlTokens();
+const { tokens: controlTokens } = useControlTokens(toRef(props, "size"));
 
 const controlProps = computed(() => {
   const {
