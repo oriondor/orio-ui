@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends object">
 import { computed, ref, toRefs } from "vue";
 import type { ControlProps } from "./ControlElement.vue";
+import { useControlTokens } from "../composables/useControlSize";
 import { useListKeyboard } from "../composables/useListKeyboard";
 
 export type SelectableOption<T extends object = object> = string | T;
@@ -89,6 +90,8 @@ function getOptionKey(option: SelectableOption): string | number {
   return String((option as T)[key.value]);
 }
 
+const { tokens: controlTokens } = useControlTokens();
+
 const controlProps = computed(() => {
   const {
     options: _options,
@@ -171,7 +174,7 @@ const {
       </template>
 
       <template #content="{ toggle }">
-        <div class="selector-content">
+        <div class="selector-content" :style="controlTokens">
           <ul
             v-if="options.length"
             ref="listRef"

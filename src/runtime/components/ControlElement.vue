@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useId } from "vue";
+import { computed, toRef, useId } from "vue";
+import { provideControlSize, sizeTokens } from "../composables/useControlSize";
 
 defineOptions({ inheritAttrs: false });
 
@@ -47,12 +48,16 @@ const props = withDefaults(defineProps<ControlProps>(), {
   layout: "vertical",
   size: "md",
 });
+
+provideControlSize(toRef(props, "size"));
+const sizeStyle = computed(() => sizeTokens[props.size]);
 </script>
 
 <template>
   <div
     class="control"
     :class="[appearance, layout, `size-${size}`, { 'has-error': error, group }]"
+    :style="sizeStyle"
     v-bind="{
       ...$attrs,
       ...(group
@@ -79,57 +84,6 @@ const props = withDefaults(defineProps<ControlProps>(), {
 
 <style lang="scss" scoped>
 .control {
-  // Size tokens — md is the default
-  --control-font-size: var(--font-md);
-  --control-label-font-size: var(--font-sm);
-  --control-py: 0.5rem;
-  --control-px: 0.75rem;
-  --control-gap: 0.5rem;
-  --control-radius: var(--border-radius-md);
-  --control-icon-size: 1rem;
-  --control-inner-block-start: 1.25rem;
-  --control-inner-block-end: 0.2rem;
-  --control-label-block-start: 0.25rem;
-
-  &.size-sm {
-    --control-font-size: var(--font-sm);
-    --control-label-font-size: var(--font-xs);
-    --control-py: 0.25rem;
-    --control-px: 0.5rem;
-    --control-gap: 0.25rem;
-    --control-radius: var(--border-radius-sm);
-    --control-icon-size: 0.75rem;
-    --control-inner-block-start: 1rem;
-    --control-inner-block-end: 0.1rem;
-    --control-label-block-start: 0.2rem;
-  }
-
-  &.size-lg {
-    --control-font-size: var(--font-lg);
-    --control-label-font-size: var(--font-md);
-    --control-py: 0.625rem;
-    --control-px: 1rem;
-    --control-gap: 0.5rem;
-    --control-radius: var(--border-radius-md);
-    --control-icon-size: 1.25rem;
-    --control-inner-block-start: 1.1rem;
-    --control-inner-block-end: 0.2rem;
-    --control-label-block-start: 0.25rem;
-  }
-
-  &.size-xl {
-    --control-font-size: var(--font-xl);
-    --control-label-font-size: var(--font-lg);
-    --control-py: 0.75rem;
-    --control-px: 1.25rem;
-    --control-gap: 0.75rem;
-    --control-radius: var(--border-radius-lg);
-    --control-icon-size: 1.5rem;
-    --control-inner-block-start: 1.5rem;
-    --control-inner-block-end: 0;
-    --control-label-block-start: 0.25rem;
-  }
-
   margin: 0.5rem;
   display: flex;
   flex-direction: column;
