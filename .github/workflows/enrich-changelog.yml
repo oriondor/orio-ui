@@ -5,8 +5,8 @@ name: Enrich release changelog with CodeRabbit summaries
 # the rich CodeRabbit summaries stored in each merged PR's body.
 
 on:
-  pull_request:
-    types: [opened, synchronize]
+  pull_request_target:
+    types: [opened, reopened, synchronize]
 
 concurrency:
   group: changelog-release-${{ github.event.pull_request.number }}
