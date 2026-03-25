@@ -51,7 +51,7 @@ jobs:
             console.log('Version heading:', versionHeading.trim());
             console.log('Content length:', existingContent.length);
 
-            const prNumbers = [...existingContent.matchAll(/\(#(\d+)\)/g)]
+            const prNumbers = [...existingContent.matchAll(/\[#(\d+)\]/g)]
               .map(m => parseInt(m[1], 10))
               .filter((n, i, arr) => arr.indexOf(n) === i);
 
