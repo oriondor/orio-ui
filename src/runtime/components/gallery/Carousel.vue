@@ -43,30 +43,26 @@ const { width: carouselWidth } = useElementSize(carousel);
 const { width: contentWidth, height: contentHeight } =
   useElementSize(measureContainer);
 
-const contentAspectRatio = computed(() => {
-  if (!contentWidth.value || !contentHeight.value) return 1;
-  return contentWidth.value / contentHeight.value;
-});
+const measureWidth = computed(() =>
+  isDynamicHeight.value ? `${rawSizes.value.width}px` : "max-content",
+);
+const measureHeight = computed(() =>
+  isDynamicWidth.value ? `${rawSizes.value.height}px` : "max-content",
+);
 
 const calculatedSize = computed(() => {
   const { width, height } = rawSizes.value;
 
   if (isDynamicHeight.value) {
-    const dynamicHeight = contentAspectRatio.value
-      ? width! / contentAspectRatio.value
-      : width;
     return {
       width: `${width}px`,
-      height: `${dynamicHeight}px`,
+      height: contentHeight.value ? `${contentHeight.value}px` : `${width}px`,
     };
   }
 
   if (isDynamicWidth.value) {
-    const dynamicWidth = contentAspectRatio.value
-      ? height! * contentAspectRatio.value
-      : height;
     return {
-      width: `${dynamicWidth}px`,
+      width: contentWidth.value ? `${contentWidth.value}px` : `${height}px`,
       height: `${height}px`,
     };
   }
@@ -204,19 +200,21 @@ onMounted(() => {
 .carousel-wrapper {
   position: relative;
   display: block;
-  overflow: hidden;
 }
 
 .carousel-measure {
-  position: absolute;
+  position: fixed;
+  left: -9999px;
   visibility: hidden;
   pointer-events: none;
-  width: max-content;
-  height: max-content;
+  width: v-bind(measureWidth);
+  height: v-bind(measureHeight);
 }
 
-.carousel-measure img {
+.carousel-measure :deep(> *) {
   display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .carousel {
@@ -279,7 +277,7 @@ onMounted(() => {
   pointer-events: auto;
 }
 
-.carousel-item img {
+.carousel-item :deep(> *) {
   width: 100%;
   height: 100%;
   object-fit: v-bind(fit);
