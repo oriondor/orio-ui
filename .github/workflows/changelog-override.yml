@@ -1,12 +1,9 @@
-name: Inject CodeRabbit summary into changelog
+name: Store CodeRabbit summary in PR body
 
 # Fires whenever CodeRabbit creates or updates its walkthrough comment on a PR.
-# Extracts the high-level summary from the walkthrough and writes it as a
-# BEGIN_COMMIT_OVERRIDE block in the PR body so release-please uses it
-# instead of the raw (terse) commit message.
-#
-# REQUIREMENT: PRs must be merged via squash-merge — release-please can only
-# apply BEGIN_COMMIT_OVERRIDE when it can identify a single commit per PR.
+# Extracts the high-level summary from the walkthrough and stores it in the PR
+# body inside HTML comment markers. The enrich-changelog workflow later picks
+# these up when release-please creates a release PR.
 #
 # REQUIREMENT: The PR title must use a conventional commit prefix (feat:, fix:,
 # etc.) so release-please can parse the squash commit and trigger a release.
@@ -19,12 +16,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  inject-override:
-    # Run only on PR comments from the CodeRabbit bot that contain its auto-generated marker.
-    # User ID 136622811 is the canonical numeric ID for coderabbitai[bot] — verified via
-    # `gh api /users/coderabbitai%5Bbot%5D` and cross-checked against the installed app.
-    # The [bot] suffix is reserved by GitHub for Apps so the login alone is already strong,
-    # but the ID check makes impersonation impossible.
+  inject-summary:
     if: |
       github.event.issue.pull_request != null &&
       github.event.comment.user.id == 136622811 &&
@@ -38,30 +30,30 @@ jobs:
             const comment = context.payload.comment.body;
             const prNumber = context.payload.issue.number;
 
-            // Extract the high-level summary from the walkthrough section.
-            // CodeRabbit places it between <!-- walkthrough_start --> markers,
-            // inside a <details> block, as the text between "## Walkthrough" and "## Changes".
             const walkthroughMatch = comment.match(
               /<!-- walkthrough_start -->([\s\S]*?)<!-- walkthrough_end -->/
             );
 
             if (!walkthroughMatch) {
-              console.log('No walkthrough section found — skipping override injection.');
+              console.log('No walkthrough section found — skipping.');
               return;
             }
 
-            // Pull the summary paragraph(s) between the Walkthrough heading and the Changes table.
             const summaryMatch = walkthroughMatch[1].match(
               /## Walkthrough\s*([\s\S]*?)(?=\n## )/
             );
 
             if (!summaryMatch || !summaryMatch[1].trim()) {
-              console.log('No summary text found in walkthrough — skipping override injection.');
+              console.log('No summary text found in walkthrough — skipping.');
               return;
             }
 
             const summary = summaryMatch[1].trim();
-            const override = ['BEGIN_COMMIT_OVERRIDE', summary, 'END_COMMIT_OVERRIDE'].join('\n');
+            const marker = [
+              '<!-- coderabbit-summary-start -->',
+              summary,
+              '<!-- coderabbit-summary-end -->',
+            ].join('\n');
 
             const { data: pr } = await github.rest.pulls.get({
               owner: context.repo.owner,
@@ -70,12 +62,11 @@ jobs:
             });
 
             const currentBody = pr.body ?? '';
-            const overrideRegex = /BEGIN_COMMIT_OVERRIDE[\s\S]*?END_COMMIT_OVERRIDE/;
+            const markerRegex = /<!-- coderabbit-summary-start -->[\s\S]*?<!-- coderabbit-summary-end -->/;
 
-            // Upsert: replace existing block or append
-            const newBody = overrideRegex.test(currentBody)
-              ? currentBody.replace(overrideRegex, override)
-              : (currentBody ? `${currentBody}\n\n---\n\n${override}` : override);
+            const newBody = markerRegex.test(currentBody)
+              ? currentBody.replace(markerRegex, marker)
+              : (currentBody ? `${currentBody}\n\n${marker}` : marker);
 
             await github.rest.pulls.update({
               owner: context.repo.owner,
@@ -84,5 +75,5 @@ jobs:
               body: newBody,
             });
 
-            console.log(`✅ PR #${prNumber} updated with BEGIN_COMMIT_OVERRIDE from CodeRabbit summary.`);
-            console.log('Content injected:\n' + summary);
+            console.log(`✅ PR #${prNumber} updated with CodeRabbit summary.`);
+            console.log('Content:\n' + summary);
