@@ -1,6 +1,7 @@
 // Export all components
 export { default as AnimatedContainer } from "./components/AnimatedContainer.vue";
 export { default as Button } from "./components/Button.vue";
+export { default as Form, type FormProps } from "./components/Form.vue";
 export { default as NavButton } from "./components/NavButton.vue";
 export { default as Input } from "./components/Input.vue";
 export { default as NumberInput } from "./components/NumberInput/index.vue";
