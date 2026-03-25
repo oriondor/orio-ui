@@ -72,9 +72,21 @@ jobs:
                 });
 
                 const body = mergedPr.body ?? '';
+                const hasStart = body.includes('coderabbit-summary-start');
+                const hasEnd = body.includes('coderabbit-summary-end');
+                const hasCR = body.includes('\r\n');
+                const startIdx = body.indexOf('coderabbit-summary-start');
+                const endIdx = body.indexOf('coderabbit-summary-end');
+                console.log(`PR #${prNum} body: length=${body.length}, hasStart=${hasStart}, hasEnd=${hasEnd}, hasCR=${hasCR}`);
+                if (hasStart) {
+                  // Log 50 chars around the start marker to see what surrounds it
+                  const context = body.slice(Math.max(0, startIdx - 10), startIdx + 60);
+                  console.log(`PR #${prNum} context around start: ${JSON.stringify(context)}`);
+                }
                 const summaryMatch = body.match(
-                  /<!-- coderabbit-summary-start -->\n([\s\S]*?)\n<!-- coderabbit-summary-end -->/
+                  /<!-- coderabbit-summary-start -->\r?\n([\s\S]*?)\r?\n<!-- coderabbit-summary-end -->/
                 );
+                console.log(`PR #${prNum} regex matched: ${!!summaryMatch}`);
 
                 if (summaryMatch && summaryMatch[1].trim()) {
                   summaries.push({
