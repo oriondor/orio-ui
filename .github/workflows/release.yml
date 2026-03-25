@@ -35,19 +35,23 @@ jobs:
             const changelogPath = 'CHANGELOG.md';
             let changelog = fs.readFileSync(changelogPath, 'utf-8');
 
-            const versionMatch = changelog.match(
-              /^(## \[\d+\.\d+\.\d+\].*?\n)([\s\S]*?)(?=\n## \[|$)/m
-            );
+            // Split changelog into sections by version headings
+            const sections = changelog.split(/(?=^## \[)/m);
+            const latestSection = sections.find(s => /^## \[\d+\.\d+\.\d+\]/.test(s));
 
-            if (!versionMatch) {
+            if (!latestSection) {
               console.log('No version section found in changelog — skipping.');
               return;
             }
 
-            const versionHeading = versionMatch[1];
-            const existingContent = versionMatch[2];
+            const headingEnd = latestSection.indexOf('\n') + 1;
+            const versionHeading = latestSection.slice(0, headingEnd);
+            const existingContent = latestSection.slice(headingEnd);
 
-            const prNumbers = [...existingContent.matchAll(/#(\d+)/g)]
+            console.log('Version heading:', versionHeading.trim());
+            console.log('Content length:', existingContent.length);
+
+            const prNumbers = [...existingContent.matchAll(/\(#(\d+)\)/g)]
               .map(m => parseInt(m[1], 10))
               .filter((n, i, arr) => arr.indexOf(n) === i);
 
@@ -102,9 +106,8 @@ jobs:
               }
             }
 
-            const fullMatch = versionHeading + existingContent;
             const replacement = versionHeading + enriched;
-            changelog = changelog.replace(fullMatch, replacement);
+            changelog = changelog.replace(latestSection, replacement);
 
             fs.writeFileSync(changelogPath, changelog);
             console.log('📝 Changelog enriched with CodeRabbit summaries.');
