@@ -7,20 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.19.0](https://github.com/oriondor/orio-ui/compare/v1.18.1...v1.19.0) (2026-03-26)
 
+Fixes:
+Adds a runtime control-size composable (provide/inject) and applies computed size token styles to components; refactors carousel measurement to use explicit measured dimensions and broader child selectors; replaces HTMLAudioElement playback with a cached Web Audio API pipeline and async play/prefetch.
 
-### Features
+Features:
+Adds a new Vue Form component with model-bound field wiring, submit emission, and loading/disabled handling, plus documentation and an export from the runtime index.
 
-* changed the workflow for the changelog ([#129](https://github.com/oriondor/orio-ui/issues/129)) ([90fe8bf](https://github.com/oriondor/orio-ui/commit/90fe8bfc74d25a9d2eef8e14d8624484fda2c144))
-* **ci:** enrich release changelog with CodeRabbit summaries ([b433b8a](https://github.com/oriondor/orio-ui/commit/b433b8a3c136133e31f844531c71322bb9737299))
-
-
-### Bug Fixes
-
-* **ci:** fix changelog section parsing regex ([10026b4](https://github.com/oriondor/orio-ui/commit/10026b4398c281e6cb1459eeabf4a2be323b99d4))
-* **ci:** fix changelog section parsing regex v2 ([9d36d1c](https://github.com/oriondor/orio-ui/commit/9d36d1ceef6d38d4c066cdf7caf2a68cfc536b01))
-* **ci:** fix changelog section parsing regex v3 ([d2f3477](https://github.com/oriondor/orio-ui/commit/d2f347776ab7855da1186a7ee260623e5145656d))
-* **ci:** move changelog enrichment into release workflow ([5d074e6](https://github.com/oriondor/orio-ui/commit/5d074e683e3cd34bf897628f99a948649a93dcbf))
-
+CI/CD:
+The PR updates the changelog injection workflow to use HTML comment markers instead of override blocks, renaming the job accordingly. Additionally, a new workflow is introduced that automatically enriches the changelog by extracting and inserting CodeRabbit summaries from referenced PRs into the latest version section.
 ## [1.18.1](https://github.com/oriondor/orio-ui/compare/v1.18.0...v1.18.1) (2026-03-22)
 
 
