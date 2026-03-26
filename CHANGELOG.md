@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.0](https://github.com/oriondor/orio-ui/compare/v1.18.1...v1.19.0) (2026-03-26)
+
+
+### Features
+
+* changed the workflow for the changelog ([#129](https://github.com/oriondor/orio-ui/issues/129)) ([90fe8bf](https://github.com/oriondor/orio-ui/commit/90fe8bfc74d25a9d2eef8e14d8624484fda2c144))
+* **ci:** enrich release changelog with CodeRabbit summaries ([b433b8a](https://github.com/oriondor/orio-ui/commit/b433b8a3c136133e31f844531c71322bb9737299))
+
+
+### Bug Fixes
+
+* **ci:** fix changelog section parsing regex ([10026b4](https://github.com/oriondor/orio-ui/commit/10026b4398c281e6cb1459eeabf4a2be323b99d4))
+* **ci:** fix changelog section parsing regex v2 ([9d36d1c](https://github.com/oriondor/orio-ui/commit/9d36d1ceef6d38d4c066cdf7caf2a68cfc536b01))
+* **ci:** fix changelog section parsing regex v3 ([d2f3477](https://github.com/oriondor/orio-ui/commit/d2f347776ab7855da1186a7ee260623e5145656d))
+* **ci:** move changelog enrichment into release workflow ([5d074e6](https://github.com/oriondor/orio-ui/commit/5d074e683e3cd34bf897628f99a948649a93dcbf))
+
 ## [1.18.1](https://github.com/oriondor/orio-ui/compare/v1.18.0...v1.18.1) (2026-03-22)
 
 
