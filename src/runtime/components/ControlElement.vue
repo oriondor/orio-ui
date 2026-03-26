@@ -38,6 +38,10 @@ export interface ControlProps {
    * Size of the control and its inner elements
    */
   size?: ControlSize;
+  /**
+   * Whether element should fill the container
+   */
+  fill?: boolean;
 }
 
 const props = withDefaults(defineProps<ControlProps>(), {
@@ -47,6 +51,7 @@ const props = withDefaults(defineProps<ControlProps>(), {
   id: () => useId(),
   layout: "vertical",
   size: "md",
+  fill: false,
 });
 
 provideControlSize(toRef(props, "size"));
@@ -56,7 +61,12 @@ const sizeStyle = computed(() => sizeTokens[props.size]);
 <template>
   <div
     class="control"
-    :class="[appearance, layout, `size-${size}`, { 'has-error': error, group }]"
+    :class="[
+      appearance,
+      layout,
+      `size-${size}`,
+      { 'has-error': error, group, fill },
+    ]"
     :style="sizeStyle"
     v-bind="{
       ...$attrs,
@@ -101,6 +111,14 @@ const sizeStyle = computed(() => sizeTokens[props.size]);
   .control-error {
     color: var(--color-danger);
     font-size: var(--control-label-font-size);
+  }
+
+  &.fill .slot-wrapper {
+    display: flex;
+
+    & > * {
+      flex: 1;
+    }
   }
 
   .slot-wrapper :deep(*) {
