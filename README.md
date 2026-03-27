@@ -8,7 +8,7 @@ A delightful, lightweight component library for Nuxt 3+ applications. Built with
 
 ## Features
 
-✨ **31 Components** - Beautiful, accessible components ready to use
+✨ **32 Components** - Beautiful, accessible components ready to use
 🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
@@ -66,7 +66,7 @@ function handleClick() {
 
 ## What's Included
 
-### Components (31)
+### Components (32)
 
 #### Form Controls
 
@@ -112,7 +112,7 @@ function handleClick() {
 
 - **Upload** - File upload component
 
-### Composables (10)
+### Composables (11)
 
 - **useTheme** - Theme and color mode management
 - **useModal** - Modal state with animation origin tracking
@@ -187,8 +187,8 @@ npm run docs:dev
 orio-ui/
 ├── src/
 │   ├── runtime/
-│   │   ├── components/   # 31 Vue components
-│   │   ├── composables/  # 10 composables
+│   │   ├── components/   # 32 Vue components
+│   │   ├── composables/  # 11 composables
 │   │   ├── assets/css/   # Theme CSS files
 │   │   └── utils/        # Icon registry
 │   └── module.ts         # Nuxt Module definition
