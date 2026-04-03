@@ -181,15 +181,14 @@ const {
             role="listbox"
             :aria-multiselectable="multiple || undefined"
           >
-            <li
+            <orio-list-item
               v-for="(option, index) in options"
               :key="getOptionKey(option)"
+              :selectable="multiple"
+              :selected="isOptionSelected(option)"
               role="option"
               :aria-selected="isOptionSelected(option)"
-              :class="{
-                selected: isOptionSelected(option),
-                highlighted: index === highlightedIndex,
-              }"
+              :class="{ highlighted: index === highlightedIndex }"
               @click="toggleOption(option, toggle)"
               @mouseenter="highlightedIndex = index"
             >
@@ -202,7 +201,7 @@ const {
               >
                 {{ getOptionLabel(option) }}
               </slot>
-            </li>
+            </orio-list-item>
           </ul>
           <slot v-else name="no-options">
             <orio-empty-state title="No options found" size="small" />
@@ -271,24 +270,12 @@ const {
     padding: 0;
     margin: 0;
 
-    li {
+    :deep(.list-item) {
       padding: var(--control-py) var(--control-px);
       cursor: pointer;
-      transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
 
-      color: var(--color-text);
-
-      &:hover,
-      &.highlighted {
-        background-color: var(--color-surface); /* neutral lift */
-      }
-
-      &.selected {
-        background-color: var(--color-accent);
-        color: var(--color-accent-soft-darker);
-        font-weight: 400;
+      &.highlighted:not(.selected) {
+        background-color: var(--color-surface);
       }
     }
   }
