@@ -12,7 +12,7 @@ const props = defineProps<CheckBoxProps>();
 </script>
 
 <template>
-  <orio-control-element v-bind="props" class="checkbox">
+  <orio-control-element v-bind="props" class="checkbox" fill>
     <label class="checkbox-label">
       <input
         v-model="modelValue"
@@ -45,6 +45,10 @@ const props = defineProps<CheckBoxProps>();
 .checkbox {
   --box-size: var(--control-icon-size, 1rem);
 
+  .checkbox-label {
+    vertical-align: baseline;
+  }
+
   &-label {
     position: relative;
     user-select: none;
@@ -59,7 +63,6 @@ const props = defineProps<CheckBoxProps>();
     position: absolute;
     inset: 0;
     width: var(--box-size);
-    height: 1rem;
     margin: 0;
     opacity: 0;
   }
