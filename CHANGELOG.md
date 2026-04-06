@@ -7,15 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.20.0](https://github.com/oriondor/orio-ui/compare/v1.19.0...v1.20.0) (2026-04-06)
 
+### feat: Implemented list item and taggable select; Integrated list item into a select ([#134](https://github.com/oriondor/orio-ui/pull/134))
 
-### Features
+Adds two new components (ListItem, TaggableSelector), updates Selector to render options via ListItem and delegate selectable/selected state, adjusts CheckBox and Tag typings/styling, updates public exports, and adds/updates documentation and site styling; docs component count changed from 32 → 34.
 
-* Implemented list item and taggable select; Integrated list item into a select ([#134](https://github.com/oriondor/orio-ui/issues/134)) ([c95dce4](https://github.com/oriondor/orio-ui/commit/c95dce499339105245ee984641a8c9d8335ab69a))
+### fix(button): Added possibility for the control element to fill the block ([#132](https://github.com/oriondor/orio-ui/pull/132))
 
-
-### Bug Fixes
-
-* **button:** Added possibility for the control element to fill the block ([#132](https://github.com/oriondor/orio-ui/issues/132)) ([55749f2](https://github.com/oriondor/orio-ui/commit/55749f29fae1a75ff960cadf5f6e314428c90d9a))
+This PR updates the component count in documentation from 31 to 32, and adds a new optional `fill` prop to the ControlElement component that enables child elements to expand and fill available space through flexbox styling.
 
 ## [1.19.0](https://github.com/oriondor/orio-ui/compare/v1.18.1...v1.19.0) (2026-03-26)
 
