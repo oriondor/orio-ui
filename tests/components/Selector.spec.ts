@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { defineComponent, h, nextTick } from "vue";
 import Selector from "../../src/runtime/components/Selector.vue";
+import ListItem from "../../src/runtime/components/ListItem.vue";
 
 const ControlStub = {
   template: '<div class="control-stub"><slot /></div>',
@@ -42,6 +43,8 @@ describe("Selector", () => {
           "orio-popover": PopoverStub,
           "orio-empty-state": EmptyStateStub,
           "orio-icon": true,
+          "orio-list-item": ListItem,
+          "orio-check-box": true,
         },
       },
     });
@@ -63,11 +66,13 @@ describe("Selector", () => {
           "orio-popover": PopoverStub,
           "orio-empty-state": EmptyStateStub,
           "orio-icon": true,
+          "orio-list-item": ListItem,
+          "orio-check-box": true,
         },
       },
     });
 
-    await wrapper.findAll("li")[0].trigger("click");
+    await wrapper.findAll(".list-item")[0].trigger("click");
 
     expect(wrapper.emitted("update:modelValue")?.[0]).toEqual(["Option 1"]);
   });
@@ -85,11 +90,13 @@ describe("Selector", () => {
           "orio-popover": PopoverStub,
           "orio-empty-state": EmptyStateStub,
           "orio-icon": true,
+          "orio-list-item": ListItem,
+          "orio-check-box": true,
         },
       },
     });
 
-    expect(wrapper.findAll("li")[0].text()).toBe("First");
+    expect(wrapper.findAll(".list-item")[0].text()).toBe("First");
   });
 
   it("shows empty state when options are empty", () => {
@@ -104,6 +111,8 @@ describe("Selector", () => {
           "orio-popover": PopoverStub,
           "orio-empty-state": EmptyStateStub,
           "orio-icon": true,
+          "orio-list-item": ListItem,
+          "orio-check-box": true,
         },
       },
     });
@@ -124,11 +133,13 @@ describe("Selector", () => {
           "orio-popover": PopoverStub,
           "orio-empty-state": EmptyStateStub,
           "orio-icon": true,
+          "orio-list-item": ListItem,
+          "orio-check-box": true,
         },
       },
     });
 
-    await wrapper.findAll("li")[0].trigger("click");
+    await wrapper.findAll(".list-item")[0].trigger("click");
     await nextTick();
 
     expect(wrapper.find(".trigger-content").text()).toContain("1 selected");

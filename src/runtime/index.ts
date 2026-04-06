@@ -22,6 +22,7 @@ export { default as SwitchButton } from "./components/SwitchButton.vue";
 export { default as DatePicker } from "./components/DatePicker.vue";
 export { default as DateRangePicker } from "./components/DateRangePicker.vue";
 export { default as Selector } from "./components/Selector.vue";
+export { default as TaggableSelector } from "./components/TaggableSelector.vue";
 export { default as Tag } from "./components/Tag.vue";
 export { default as Badge } from "./components/Badge.vue";
 export { default as Banner } from "./components/Banner.vue";
@@ -30,7 +31,7 @@ export { default as LoadingSpinner } from "./components/LoadingSpinner.vue";
 export { default as Modal } from "./components/Modal.vue";
 export { default as Popover } from "./components/Popover.vue";
 export { default as Tooltip } from "./components/Tooltip.vue";
-export { default as Upload } from "./components/Upload/index.vue";
+export { default as Upload } from "./components/upload/index.vue";
 export { default as EmptyState } from "./components/EmptyState.vue";
 export { default as DashedContainer } from "./components/DashedContainer.vue";
 export { default as ControlElement } from "./components/ControlElement.vue";
@@ -38,6 +39,7 @@ export { default as GalleryCarousel } from "./components/gallery/Carousel.vue";
 export { default as ViewText } from "./components/view/Text.vue";
 export { default as ViewDates } from "./components/view/Dates.vue";
 export { default as ViewSeparator } from "./components/view/Separator.vue";
+export { default as ListItem } from "./components/ListItem.vue";
 
 // Export all composables
 export {
