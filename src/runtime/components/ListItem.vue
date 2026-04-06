@@ -11,14 +11,29 @@ const slots = useSlots();
 
 const selected = defineModel<boolean>("selected");
 
-function click() {
+function toggle() {
   if (!selectable) return;
   selected.value = !selected.value;
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    toggle();
+  }
 }
 </script>
 
 <template>
-  <li class="list-item" :class="{ selectable, selected }" @click="click">
+  <li
+    class="list-item"
+    :class="{ selectable, selected }"
+    :tabindex="selectable ? 0 : undefined"
+    :role="selectable ? 'checkbox' : undefined"
+    :aria-checked="selectable ? selected : undefined"
+    @click="toggle"
+    @keydown="onKeydown"
+  >
     <div v-if="!!slots.start || selectable" class="boundary">
       <slot name="start">
         <orio-check-box :model-value="selected" />
