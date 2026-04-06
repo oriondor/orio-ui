@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.0](https://github.com/oriondor/orio-ui/compare/v1.19.0...v1.20.0) (2026-04-06)
+
+
+### Features
+
+* Implemented list item and taggable select; Integrated list item into a select ([#134](https://github.com/oriondor/orio-ui/issues/134)) ([c95dce4](https://github.com/oriondor/orio-ui/commit/c95dce499339105245ee984641a8c9d8335ab69a))
+
+
+### Bug Fixes
+
+* **button:** Added possibility for the control element to fill the block ([#132](https://github.com/oriondor/orio-ui/issues/132)) ([55749f2](https://github.com/oriondor/orio-ui/commit/55749f29fae1a75ff960cadf5f6e314428c90d9a))
+
 ## [1.19.0](https://github.com/oriondor/orio-ui/compare/v1.18.1...v1.19.0) (2026-03-26)
 
 Fixes:
