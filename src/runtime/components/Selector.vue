@@ -3,6 +3,7 @@ import { computed, ref, toRef, toRefs } from "vue";
 import type { ControlProps } from "./ControlElement.vue";
 import { useControlTokens } from "../composables/useControlSize";
 import { useListKeyboard } from "../composables/useListKeyboard";
+import { useI18n } from "vue-i18n";
 
 export type SelectableOption<T extends object = object> = string | T;
 
@@ -14,12 +15,16 @@ export interface SelectProps extends ControlProps {
   placeholder?: string;
 }
 
+const { t } = useI18n();
+
 const props = withDefaults(defineProps<SelectProps>(), {
-  placeholder: "Select an option",
   field: "id",
 });
 
-const { field, optionName, placeholder } = toRefs(props);
+const { field, optionName } = toRefs(props);
+const resolvedPlaceholder = computed(
+  () => props.placeholder ?? t("selector.placeholder"),
+);
 
 const modelValue = defineModel<
   SelectableOption | SelectableOption[] | null | undefined
@@ -79,7 +84,7 @@ function isOptionSelected(option: SelectableOption): boolean {
 }
 
 function getOptionLabel(option: SelectableOption | undefined): string {
-  if (!option) return placeholder.value;
+  if (!option) return resolvedPlaceholder.value;
   if (typeof option === "string") return option;
   if (optionName.value) return String((option as T)[label.value]);
   return JSON.stringify(option);
@@ -163,7 +168,11 @@ const {
                     {{ getOptionLabel(modelValue as T) }}
                   </template>
                   <template v-else-if="Array.isArray(modelValue)">
-                    <span> {{ modelValue!.length }} selected </span>
+                    <span>
+                      {{
+                        t("selector.selected", { count: modelValue!.length })
+                      }}
+                    </span>
                   </template>
                 </slot>
               </div>
@@ -204,7 +213,7 @@ const {
             </orio-list-item>
           </ul>
           <slot v-else name="no-options">
-            <orio-empty-state title="No options found" size="small" />
+            <orio-empty-state :title="t('selector.noOptions')" size="small" />
           </slot>
           <slot name="options-addon" />
         </div>

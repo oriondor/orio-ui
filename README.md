@@ -8,7 +8,7 @@ A delightful, lightweight component library for Nuxt 3+ applications. Built with
 
 ## Features
 
-✨ **34 Components** - Beautiful, accessible components ready to use
+✨ **35 Components** - Beautiful, accessible components ready to use
 🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
@@ -16,6 +16,7 @@ A delightful, lightweight component library for Nuxt 3+ applications. Built with
 🧪 **Tested** - 29 test suites for reliability
 📱 **Responsive** - Mobile-first design approach
 ♿ **Accessible** - ARIA-compliant components
+🌐 **i18n** - Built-in vue-i18n support with English defaults
 
 ## Quick Start
 
@@ -66,7 +67,7 @@ function handleClick() {
 
 ## What's Included
 
-### Components (34)
+### Components (35)
 
 #### Form Controls
 
@@ -78,16 +79,22 @@ function handleClick() {
 - **DatePicker** - Date selection with month/year options
 - **DateRangePicker** - Start and end date selection
 - **Selector** - Generic dropdown selector (single/multi-select)
+- **TaggableSelector** - Selector with taggable input
+- **CheckboxGroup** - Group of checkboxes with shared model
+- **RadioButton** - Radio button component
 - **Tag** - Styled tag/badge component
 - **Badge** - Status badge with variants
+- **ListItem** - Selectable list item
 
 #### Interactive
 
 - **Button** - Primary, secondary, subdued variants with loading/icon support
 - **NavButton** - Navigation button component
+- **Form** - Form wrapper with validation support
 - **Modal** - Animated modal with origin morphing
 - **Popover** - Positioned popover with smart placement
 - **Tooltip** - Hover tooltip component
+- **Banner** - Notification banner component
 
 #### Display
 
@@ -187,7 +194,7 @@ npm run docs:dev
 orio-ui/
 ├── src/
 │   ├── runtime/
-│   │   ├── components/   # 34 Vue components
+│   │   ├── components/   # 35 Vue components
 │   │   ├── composables/  # 11 composables
 │   │   ├── assets/css/   # Theme CSS files
 │   │   └── utils/        # Icon registry

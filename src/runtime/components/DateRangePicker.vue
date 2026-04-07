@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import type { ResumeDate } from "./view/Dates.vue";
+import { useI18n } from "vue-i18n";
 
 export interface DateRangePickerProps {
   month?: boolean;
 }
 
 defineProps<DateRangePickerProps>();
+
+const { t } = useI18n();
 
 const dates = defineModel<ResumeDate>("dates", { required: true });
 
@@ -34,12 +37,14 @@ defineExpose({ dateIsCorrect });
 <template>
   <orio-control-element
     v-bind="$attrs"
-    :error="!dateIsCorrect && 'Start date must be before end date.'"
+    :error="!dateIsCorrect && t('dateRangePicker.startBeforeEnd')"
   >
     <div class="date-range-picker">
       <orio-date-picker v-model:date="dates.startDate" :month />
       <orio-date-picker v-model:date="dates.endDate" :month />
-      <orio-check-box v-model="present"> Present </orio-check-box>
+      <orio-check-box v-model="present">
+        {{ t("dateRangePicker.present") }}
+      </orio-check-box>
     </div>
   </orio-control-element>
 </template>

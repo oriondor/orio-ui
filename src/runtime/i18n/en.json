@@ -1,0 +1,17 @@
+{
+  "selector": {
+    "placeholder": "Select an option",
+    "selected": "{count} selected",
+    "noOptions": "No options found"
+  },
+  "dateRangePicker": {
+    "startBeforeEnd": "Start date must be before end date.",
+    "present": "Present"
+  },
+  "dates": {
+    "present": "Present"
+  },
+  "validation": {
+    "fieldError": "Error on this field"
+  }
+}

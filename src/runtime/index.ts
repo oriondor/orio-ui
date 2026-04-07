@@ -40,6 +40,10 @@ export { default as ViewText } from "./components/view/Text.vue";
 export { default as ViewDates } from "./components/view/Dates.vue";
 export { default as ViewSeparator } from "./components/view/Separator.vue";
 export { default as ListItem } from "./components/ListItem.vue";
+export {
+  default as LocaleSwitcher,
+  type LocaleOption,
+} from "./components/LocaleSwitcher.vue";
 
 // Export all composables
 export {
@@ -76,3 +80,14 @@ export {
 
 // Export URL sync composable
 export { useUrlSync } from "./composables/useUrlSync";
+
+// Export i18n
+export {
+  i18n,
+  en,
+  uk,
+  addLocale,
+  mergeLocale,
+  setLocale,
+  type LocaleMessages,
+} from "./i18n";

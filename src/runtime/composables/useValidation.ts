@@ -1,4 +1,6 @@
 import { reactive, type MaybeRef, ref, unref } from "vue";
+import { useI18n } from "vue-i18n";
+import en from "../i18n/en.json";
 
 export interface ValidationRule {
   model: MaybeRef<any>;
@@ -17,7 +19,17 @@ export function isEmail(value: string): boolean {
   return emailRegex.test(value);
 }
 
+function getT(): (key: string) => string {
+  try {
+    return useI18n().t;
+  } catch {
+    return (key: string) =>
+      key.split(".").reduce((o: any, k) => o?.[k], en) ?? key;
+  }
+}
+
 export function useValidation(rules?: ValidationRule[]) {
+  const t = getT();
   const validationRules = ref<ValidationRule[]>(rules ?? []);
 
   const errors = reactive<Record<string, string | null>>({});
@@ -30,7 +42,7 @@ export function useValidation(rules?: ValidationRule[]) {
   }: ValidationRule): boolean {
     if (!validator(unref(model))) {
       if (!errors[id]) {
-        errors[id] = message || "Error on this field";
+        errors[id] = message || t("validation.fieldError");
       }
       document.getElementById(id)?.scrollIntoView({
         behavior: "smooth",

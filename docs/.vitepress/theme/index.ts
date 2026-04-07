@@ -7,6 +7,9 @@ import Layout from "./Layout.vue";
 // Import CSS
 import "../../../src/runtime/assets/css/main.css";
 
+// Import i18n
+import { i18n } from "../../../src/runtime/i18n";
+
 // Auto-import all components
 const components = import.meta.glob(
   "../../../src/runtime/components/**/*.vue",
@@ -19,6 +22,7 @@ export default {
   extends: DefaultTheme,
   Layout,
   enhanceApp({ app }) {
+    app.use(i18n);
     // Register all components globally with Orio prefix
     for (const path in components) {
       const component = components[path];
