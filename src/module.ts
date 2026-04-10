@@ -3,6 +3,8 @@ import {
   createResolver,
   addComponentsDir,
   addImportsDir,
+  addImports,
+  addPlugin,
 } from "@nuxt/kit";
 import { THEME_DEFAULTS, COOKIE_NAMES } from "./runtime/constants/theme";
 
@@ -52,5 +54,9 @@ export default defineNuxtModule({
 
     // Register composables
     addImportsDir(resolver.resolve("./runtime/composables"));
+
+    // Register i18n auto-import and plugin
+    addImports({ name: "useI18n", from: "vue-i18n" });
+    addPlugin(resolver.resolve("./runtime/plugins/i18n"));
   },
 });

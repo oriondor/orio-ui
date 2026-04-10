@@ -3,6 +3,7 @@ import { mount } from "@vue/test-utils";
 import { defineComponent, h, nextTick } from "vue";
 import Selector from "../../src/runtime/components/Selector.vue";
 import ListItem from "../../src/runtime/components/ListItem.vue";
+import { i18n } from "../../src/runtime/i18n";
 
 const ControlStub = {
   template: '<div class="control-stub"><slot /></div>',
@@ -38,6 +39,7 @@ describe("Selector", () => {
         modelValue: null,
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-control-element": ControlStub,
           "orio-popover": PopoverStub,
@@ -61,6 +63,7 @@ describe("Selector", () => {
         modelValue: null,
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-control-element": ControlStub,
           "orio-popover": PopoverStub,
@@ -85,6 +88,7 @@ describe("Selector", () => {
         optionName: "name",
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-control-element": ControlStub,
           "orio-popover": PopoverStub,
@@ -106,6 +110,7 @@ describe("Selector", () => {
         modelValue: null,
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-control-element": ControlStub,
           "orio-popover": PopoverStub,
@@ -128,6 +133,7 @@ describe("Selector", () => {
         multiple: true,
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-control-element": ControlStub,
           "orio-popover": PopoverStub,

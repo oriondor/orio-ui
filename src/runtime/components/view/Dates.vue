@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
+import { useI18n } from "vue-i18n";
 
 export interface ResumeDate {
   startDate: string;
@@ -19,16 +20,17 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const { dates } = toRefs(props);
+const { t, locale } = useI18n();
 
 function formatMonthYear(value: string) {
   if (!value) return "";
   if (!props.month)
-    return new Intl.DateTimeFormat("en-US", {
+    return new Intl.DateTimeFormat(locale.value, {
       day: "numeric",
       month: "short",
       year: "numeric",
     }).format(new Date(value));
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat(locale.value, {
     month: "short",
     year: "numeric",
   }).format(new Date(value));
@@ -40,7 +42,7 @@ const endDate = computed(() => {
   if (dates.value.endDate === undefined) return null;
   return dates.value.endDate !== null
     ? formatMonthYear(dates.value.endDate)
-    : "Present";
+    : t("dates.present");
 });
 </script>
 

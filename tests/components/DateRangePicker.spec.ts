@@ -3,6 +3,7 @@ import { mount } from "@vue/test-utils";
 import { defineComponent, nextTick } from "vue";
 import DateRangePicker from "../../src/runtime/components/DateRangePicker.vue";
 import type { ResumeDate } from "../../src/runtime/components/view/Dates.vue";
+import { i18n } from "../../src/runtime/i18n";
 
 const ControlStub = {
   template: '<div class="control-stub"><slot /></div>',
@@ -27,6 +28,7 @@ describe("DateRangePicker", () => {
         dates: defaultDates,
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-control-element": ControlStub,
           "orio-date-picker": true,
@@ -47,6 +49,7 @@ describe("DateRangePicker", () => {
         },
       },
       global: {
+        plugins: [i18n],
         stubs: {
           // "orio-control-element": ControlStub,
           "orio-date-picker": true,
@@ -69,6 +72,7 @@ describe("DateRangePicker", () => {
         dates,
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-control-element": ControlStub,
           "orio-date-picker": true,

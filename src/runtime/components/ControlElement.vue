@@ -98,6 +98,7 @@ const sizeStyle = computed(() => sizeTokens[props.size]);
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
+  border-radius: var(--control-radius);
 
   .control-label {
     font-size: var(--control-label-font-size);
@@ -126,7 +127,13 @@ const sizeStyle = computed(() => sizeTokens[props.size]);
   }
 
   &.has-error {
-    .slot-wrapper {
+    // If component has .error-fields - we want manual error handling for it
+    // Can be improved in the future though
+    .slot-wrapper:not(:has(:deep(.error-fields))) {
+      border: 1px solid var(--color-danger);
+    }
+
+    .slot-wrapper :deep(.error-fields .slot-wrapper > *) {
       border: 1px solid var(--color-danger);
     }
 

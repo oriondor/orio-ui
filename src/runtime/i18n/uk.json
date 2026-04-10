@@ -1,0 +1,17 @@
+{
+  "selector": {
+    "placeholder": "Оберіть опцію",
+    "selected": "{count} обрано",
+    "noOptions": "Опцій не знайдено"
+  },
+  "dateRangePicker": {
+    "startBeforeEnd": "Дата початку має бути раніше дати завершення.",
+    "present": "Теперішній час"
+  },
+  "dates": {
+    "present": "Теперішній час"
+  },
+  "validation": {
+    "fieldError": "Помилка в цьому полі"
+  }
+}

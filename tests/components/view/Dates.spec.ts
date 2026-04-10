@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import Dates from "../../../src/runtime/components/view/Dates.vue";
+import { i18n } from "../../../src/runtime/i18n";
 
 const ViewTextStub = {
   template:
@@ -15,6 +16,7 @@ describe("view/Dates", () => {
         dates: { startDate: "2024-01-01" },
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-view-text": ViewTextStub,
         },
@@ -30,6 +32,7 @@ describe("view/Dates", () => {
         dates: { startDate: "2024-01-01", endDate: null },
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-view-text": ViewTextStub,
         },
@@ -47,6 +50,7 @@ describe("view/Dates", () => {
         size: "large",
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-view-text": ViewTextStub,
         },
@@ -65,6 +69,7 @@ describe("view/Dates", () => {
         month: true,
       },
       global: {
+        plugins: [i18n],
         stubs: {
           "orio-view-text": ViewTextStub,
         },

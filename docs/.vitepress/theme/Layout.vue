@@ -4,6 +4,7 @@ import { useData } from "vitepress";
 import DefaultTheme from "vitepress/theme";
 import { useTheme } from "../../../src/runtime/composables/useTheme";
 import ThemeSwitcher from "./components/ThemeSwitcher.vue";
+import LocaleSwitcher from "../../../src/runtime/components/LocaleSwitcher.vue";
 
 const { isDark } = useData();
 const { mode, setMode } = useTheme();
@@ -29,6 +30,7 @@ onMounted(() => {
 <template>
   <default-theme.Layout>
     <template #nav-bar-content-after>
+      <locale-switcher />
       <theme-switcher />
     </template>
   </default-theme.Layout>
