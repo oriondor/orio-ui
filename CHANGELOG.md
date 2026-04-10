@@ -7,11 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.21.0](https://github.com/oriondor/orio-ui/compare/v1.20.0...v1.21.0) (2026-04-10)
 
-
-### Features
-
-* Implemented translations ([#135](https://github.com/oriondor/orio-ui/issues/135)) ([f1a8c3b](https://github.com/oriondor/orio-ui/commit/f1a8c3b702948ddd7f69b5da3f1028e0f1789847))
-
+Adds vue-i18n: new runtime i18n module and en/uk resources, a Nuxt runtime i18n plugin and module registration, package dependency update, localized component text and locale-aware formatting, docs/theme locale switcher, updated tests, and a new LocaleSwitcher component. (50 words)
 ## [1.20.0](https://github.com/oriondor/orio-ui/compare/v1.19.0...v1.20.0) (2026-04-06)
 
 ### feat: Implemented list item and taggable select; Integrated list item into a select ([#134](https://github.com/oriondor/orio-ui/pull/134))
