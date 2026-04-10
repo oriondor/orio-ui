@@ -37,11 +37,19 @@ defineExpose({ dateIsCorrect });
 <template>
   <orio-control-element
     v-bind="$attrs"
-    :error="!dateIsCorrect && t('dateRangePicker.startBeforeEnd')"
+    :error="!dateIsCorrect ? t('dateRangePicker.startBeforeEnd') : null"
   >
     <div class="date-range-picker">
-      <orio-date-picker v-model:date="dates.startDate" :month />
-      <orio-date-picker v-model:date="dates.endDate" :month />
+      <orio-date-picker
+        v-model:date="dates.startDate"
+        class="error-fields"
+        :month
+      />
+      <orio-date-picker
+        v-model:date="dates.endDate"
+        class="error-fields"
+        :month
+      />
       <orio-check-box v-model="present">
         {{ t("dateRangePicker.present") }}
       </orio-check-box>
