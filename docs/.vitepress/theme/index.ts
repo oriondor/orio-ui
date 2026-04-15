@@ -27,10 +27,16 @@ export default {
     for (const path in components) {
       const component = components[path];
 
-      // Extract component path relative to components directory
-      // e.g., "../../../src/runtime/components/gallery/Carousel.vue" -> ["gallery", "Carousel"]
+      // Extract component path relative to the runtime components directory.
+      // Splitting on the full marker avoids matching nested "components/"
+      // folders (e.g. Canvas/components/Stage.vue).
+      // e.g. ".../src/runtime/components/gallery/Carousel.vue" -> ["gallery", "Carousel"]
+      // e.g. ".../src/runtime/components/Canvas/components/Stage.vue" -> ["Canvas", "components", "Stage"]
       const pathParts =
-        path.split("/components/")[1]?.replace(".vue", "").split("/") || [];
+        path
+          .split("src/runtime/components/")[1]
+          ?.replace(".vue", "")
+          .split("/") || [];
 
       // Build component name with proper nesting
       // e.g., ["gallery", "Carousel"] -> "GalleryCarousel"
@@ -38,10 +44,11 @@ export default {
       // e.g., ["Button"] -> "Button"
       const componentName = pathParts
         .map((part) => {
-          // Capitalize first letter of each part
-          return part === "index"
-            ? ""
-            : part.charAt(0).toUpperCase() + part.slice(1);
+          // Capitalize first letter of each part; skip "index" and
+          // internal "components" segments so Canvas/components/Stage
+          // registers as OrioCanvasStage, not OrioCanvasComponentsStage.
+          if (part === "index" || part === "components") return "";
+          return part.charAt(0).toUpperCase() + part.slice(1);
         })
         .filter(Boolean)
         .join("");

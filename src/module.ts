@@ -45,11 +45,15 @@ export default defineNuxtModule({
       tagPosition: "head",
     });
 
-    // Register components with Orio prefix
+    // Register components with Orio prefix.
+    // Nested `components/` subfolders are reserved for internal building
+    // blocks that parent SFCs import explicitly — they are intentionally
+    // excluded from auto-registration to keep consumers' namespace clean.
     addComponentsDir({
       path: resolver.resolve("./runtime/components"),
       prefix: "Orio",
       pathPrefix: true,
+      ignore: ["**/components/**"],
     });
 
     // Register composables
