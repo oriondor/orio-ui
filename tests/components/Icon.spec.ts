@@ -21,7 +21,7 @@ describe("Icon", () => {
     const wrapper = mount(Icon, {
       props: { name: "check", size: 24 },
     });
-    const span = wrapper.find(".orio-icon");
+    const span = wrapper.find(".icon");
     expect(span.attributes("style")).toContain("width: 24px");
     expect(span.attributes("style")).toContain("height: 24px");
   });
@@ -30,7 +30,7 @@ describe("Icon", () => {
     const wrapper = mount(Icon, {
       props: { name: "check", size: "2rem" },
     });
-    const span = wrapper.find(".orio-icon");
+    const span = wrapper.find(".icon");
     expect(span.attributes("style")).toContain("width: 2rem");
     expect(span.attributes("style")).toContain("height: 2rem");
   });
@@ -39,7 +39,7 @@ describe("Icon", () => {
     const wrapper = mount(Icon, {
       props: { name: "check", color: "#ff0000" },
     });
-    const span = wrapper.find(".orio-icon");
+    const span = wrapper.find(".icon");
     expect(span.attributes("style")).toContain("color: rgb(255, 0, 0)");
   });
 
@@ -47,7 +47,7 @@ describe("Icon", () => {
     const wrapper = mount(Icon, {
       props: { name: "check" },
     });
-    const span = wrapper.find(".orio-icon");
+    const span = wrapper.find(".icon");
     expect(span.attributes("style")).toContain("color: currentcolor");
   });
 

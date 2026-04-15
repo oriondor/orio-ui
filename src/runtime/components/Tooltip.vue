@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, nextTick } from "vue";
+import { ref, computed, nextTick, toRefs, watch } from "vue";
 import { useEventListener } from "@vueuse/core";
 
 export interface TooltipProps {
@@ -16,6 +16,12 @@ const props = withDefaults(defineProps<TooltipProps>(), {
   delay: 500,
   disabled: false,
   offset: 8,
+});
+
+const { disabled } = toRefs(props);
+
+watch(disabled, () => {
+  if (disabled.value) hideTooltip();
 });
 
 const isVisible = ref(false);
@@ -70,7 +76,7 @@ function calculatePosition() {
 }
 
 function showTooltip() {
-  if (props.disabled) return;
+  if (disabled.value) return;
 
   if (props.delay > 0) {
     showTimeout = setTimeout(() => {
