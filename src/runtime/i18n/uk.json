@@ -13,5 +13,8 @@
   },
   "validation": {
     "fieldError": "Помилка в цьому полі"
+  },
+  "canvas": {
+    "toolbarLabel": "Панель інструментів полотна"
   }
 }

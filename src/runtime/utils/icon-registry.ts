@@ -201,6 +201,21 @@ export const iconRegistry: Record<string, string> = {
   discount: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m12.79 21l-.16-.16L2.38 10.59a2.04 2.04 0 0 1-.38-.62a2 2 0 0 1 0-1.54c.08-.23.2-.45.38-.62l1.67-1.67a2.04 2.04 0 0 1 .62-.38c.24-.09.49-.13.75-.13s.51.04.75.13c.23.08.44.2.62.38l1.26 1.25V3c0-.55.2-1.02.59-1.41C9.03 1.2 9.5 1 10.04 1h3.92c.54 0 1.01.2 1.41.59c.39.39.59.86.59 1.41v4.39l1.26-1.25c.18-.18.39-.3.62-.38c.24-.09.49-.13.75-.13s.51.04.75.13c.23.08.44.2.62.38l1.67 1.67c.18.17.3.38.38.62c.09.24.13.49.13.76c0 .26-.04.51-.13.75s-.2.45-.38.63L11.38 20.83l-.17.16c-.39.39-.86.59-1.41.59s-1.02-.2-1.41-.59zM14 8V3h-4v5zm-6.8 4.2c.26.26.57.39.93.39c.36 0 .67-.13.93-.39c.26-.26.39-.57.39-.93c0-.36-.13-.67-.39-.93a1.28 1.28 0 0 0-.93-.39c-.36 0-.67.13-.93.39c-.26.26-.39.57-.39.93c0 .36.13.67.39.93m9.6 4.6c.26.26.57.39.93.39c.36 0 .67-.13.93-.39c.26-.26.39-.57.39-.93c0-.36-.13-.67-.39-.93a1.28 1.28 0 0 0-.93-.39c-.36 0-.67.13-.93.39c-.26.26-.39.57-.39.93c0 .36.13.67.39.93m-8.4 1.1l9.5-9.5l-1.4-1.4l-9.5 9.5z"/></svg>`,
 
   box: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5v-3h14zm0-5H5V5h14z"/></svg>`,
+
+  // CANVAS / DRAWING
+  pencil: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83l3.75 3.75z"/></svg>`,
+
+  text: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M2.5 4v3h5v12h3V7h5V4zm19 5h-9v3h3v7h3v-7h3z"/></svg>`,
+
+  undo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12.5 8c-2.65 0-5.05 1.04-6.83 2.73L3 8v9h9l-2.83-2.83A7.95 7.95 0 0 1 12.5 12c3.04 0 5.64 1.71 6.96 4.21l1.77-.89A9.96 9.96 0 0 0 12.5 8"/></svg>`,
+
+  redo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M18.4 10.6C16.55 9 14.15 8 11.5 8c-4.16 0-7.74 2.42-9.44 5.93l1.77.89A7.96 7.96 0 0 1 11.5 12c2.13 0 4.07.74 5.62 1.98L14 17h9V8z"/></svg>`,
+
+  eraser: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M16.24 3.56l4.95 4.94c.78.79.78 2.05 0 2.84L12 20.53a4.01 4.01 0 0 1-2.83 1.17H4.59L2 19.12l4.83-4.83l-1.42-1.42l7.79-7.78l1.41-1.41l1.42-.12zm-1.42 4.24l-5.66 5.66l2.83 2.83l5.66-5.66z"/></svg>`,
+
+  move: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M13 6v5h5V8l4 4l-4 4v-3h-5v5h3l-4 4l-4-4h3v-5H6v3l-4-4l4-4v3h5V6H8l4-4l4 4z"/></svg>`,
+
+  highlight: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h18v2H3zm0 16h18v2H3zm0-8h18v2H3zm2-4v4h14V7zm0 8v4h14v-4z" opacity="0.5"/><rect x="5" y="7" width="14" height="4" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="5" y="13" width="14" height="4" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
 };
 
 export type IconName = keyof typeof iconRegistry;

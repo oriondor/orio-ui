@@ -21,14 +21,14 @@ const sizeValue = computed(() => {
 
 <template>
   <span
-    class="orio-icon"
+    class="icon"
     :style="{ color, width: sizeValue, height: sizeValue }"
     v-html="iconSvg"
   />
 </template>
 
 <style scoped>
-.orio-icon {
+.icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -37,7 +37,7 @@ const sizeValue = computed(() => {
   height: var(--control-icon-size, 1.5em);
 }
 
-.orio-icon :deep(svg) {
+.icon :deep(svg) {
   width: 100%;
   height: 100%;
   fill: currentColor;

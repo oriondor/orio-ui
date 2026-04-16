@@ -302,7 +302,7 @@ onMounted(() => {
   color: transparent !important;
 }
 
-.switch-button :deep(.orio-icon) {
+.switch-button :deep(.icon) {
   color: white !important;
   fill: white !important;
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8))
@@ -311,7 +311,7 @@ onMounted(() => {
 
 /* Use mix-blend-mode on browsers that support it properly (not Safari) */
 @supports (mix-blend-mode: difference) and (not (-webkit-hyphens: none)) {
-  .switch-button :deep(.orio-icon) {
+  .switch-button :deep(.icon) {
     color: black !important;
     fill: black !important;
     mix-blend-mode: difference;

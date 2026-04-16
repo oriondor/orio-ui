@@ -52,19 +52,19 @@ div {
   }
 
   &.text {
-    color: var(--color-text);
+    color: var(--view-text-color, var(--color-text));
   }
   &.title {
     font-weight: bold;
-    color: var(--color-text);
+    color: var(--view-text-color, var(--color-text));
   }
   &.subtitle {
     font-weight: semi-bold;
-    color: var(--color-muted);
+    color: var(--view-text-color, var(--color-muted));
   }
   &.italics {
     font-style: italic;
-    color: var(--color-muted);
+    color: var(--view-text-color, var(--color-muted));
   }
 
   &.small {
