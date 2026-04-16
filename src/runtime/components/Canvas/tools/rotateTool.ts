@@ -23,6 +23,8 @@ export function rotateTool(options: Partial<RotateToolOptions> = {}) {
   let dragging = false;
 
   function clearSelection(api: CanvasToolApi<RotateToolOptions>) {
+    dragging = false;
+    prevAngle = 0;
     if (selectedNodeId) {
       selectedNodeId = null;
       api.setCursor(null);
@@ -60,6 +62,8 @@ export function rotateTool(options: Partial<RotateToolOptions> = {}) {
         }
       }
       // Otherwise, try selecting a node under the pointer.
+      dragging = false;
+      prevAngle = 0;
       const node = findTopNode(e, api, api.options.radius);
       selectedNodeId = node ? node.id : null;
       api.requestRender();

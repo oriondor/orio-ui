@@ -93,6 +93,16 @@ export {
   transformTool,
   type TransformToolOptions,
 } from "./components/Canvas/tools/transformTool";
+export {
+  imageTool,
+  type ImageToolOptions,
+  type ImageNodeData,
+} from "./components/Canvas/tools/imageTool";
+export {
+  exportTool,
+  type ExportToolOptions,
+  type ExportFormat,
+} from "./components/Canvas/tools/exportTool";
 export { default as EmptyState } from "./components/EmptyState.vue";
 export { default as DashedContainer } from "./components/DashedContainer.vue";
 export { default as ControlElement } from "./components/ControlElement.vue";

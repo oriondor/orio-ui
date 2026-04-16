@@ -24,6 +24,8 @@ import { highlightTool } from "../../../src/runtime/components/Canvas/tools/high
 import { rotateTool } from "../../../src/runtime/components/Canvas/tools/rotateTool";
 import { resizeTool } from "../../../src/runtime/components/Canvas/tools/resizeTool";
 import { transformTool } from "../../../src/runtime/components/Canvas/tools/transformTool";
+import { imageTool } from "../../../src/runtime/components/Canvas/tools/imageTool";
+import { exportTool } from "../../../src/runtime/components/Canvas/tools/exportTool";
 
 const tools = shallowRef([
   drawTool({ color: "#1f7aec", size: 5 }),
@@ -34,10 +36,12 @@ const tools = shallowRef([
   resizeTool(),
   transformTool(),
   highlightTool(),
+  imageTool(),
   colorPickerTool({ color: "#1f7aec", targets: ["draw", "text"] }),
   undoTool(),
   redoTool(),
   clearTool(),
+  exportTool({ filename: "canvas-demo" }),
 ]);
 
 const nodes = ref([]);
@@ -328,7 +332,7 @@ template content the user shouldn't modify.
 Every tool is a factory function you import and call. There are three kinds:
 
 - **Interaction tools** (`drawTool`, `textTool`, `eraseTool`, `moveTool`, `rotateTool`, `resizeTool`, `transformTool`, `highlightTool`) — become the active tool, receive pointer events. Erase and move show hover highlights; rotate/resize/transform use a click-to-select model and render handles around the selected node. `transformTool` combines move, resize, and rotate into a single dispatcher.
-- **Action tools** (`undoTool`, `redoTool`, `clearTool`) — fire on click, never become active. They can be disabled.
+- **Action tools** (`undoTool`, `redoTool`, `clearTool`, `imageTool`, `exportTool`) — fire on click, never become active. They can be disabled. `imageTool` opens a file picker (PNG, JPEG, WebP, GIF, SVG, AVIF, BMP) and adds the file as an `image` node. `exportTool` downloads the canvas as PNG, JPEG, or WebP.
 - **Widget tools** (`colorPickerTool`) — render a custom component in the toolbar instead of a button.
 
 All built-in tools ship with tooltip components (using `orio-view-text` and
@@ -348,6 +352,8 @@ import {
   resizeTool,
   transformTool,
   highlightTool,
+  imageTool,
+  exportTool,
   colorPickerTool,
   undoTool,
   redoTool,
@@ -369,6 +375,8 @@ const tools = shallowRef([
   colorPickerTool({ color: "#1f7aec", targets: ["draw", "text"] }),
 
   // Action tools
+  imageTool(),
+  exportTool({ format: "png", filename: "my-canvas" }),
   undoTool(),
   redoTool(),
   clearTool(),
@@ -687,10 +695,7 @@ const ctx = useCanvasContext();
 
 Things explicitly **not** in v1 but the architecture is ready for:
 
-- **Image tool** — image nodes with upload integration.
-- **Selection / resize / rotate** — generic interaction tool.
 - **Zoom & pan** — viewport transform; tools already work in canvas-space.
-- **Bitmap export** — `canvas.toDataURL()` is one line away.
 
-If you want any of these now, you can write them as a tool — see
+If you want this now, you can write it as a tool — see
 [Extending Canvas](./extending.md).

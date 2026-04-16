@@ -222,6 +222,8 @@ export const iconRegistry: Record<string, string> = {
   resize: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M22 22H2V2h2v18h18zM6 6h4v2H8v2H6zm12 12h-4v-2h2v-2h2zM6 18v-4h2v2h2v2zm12-12v4h-2V8h-2V6z"/></svg>`,
 
   transform: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M5 5h14v14H5z"/><circle cx="5" cy="5" r="1.75" fill="currentColor"/><circle cx="19" cy="5" r="1.75" fill="currentColor"/><circle cx="5" cy="19" r="1.75" fill="currentColor"/><circle cx="19" cy="19" r="1.75" fill="currentColor"/><path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 5V2"/><circle cx="12" cy="2" r="1.25" fill="currentColor"/></svg>`,
+
+  export: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M5 20h14v-2H5zM19 9h-4V3H9v6H5l7 7z"/></svg>`,
 };
 
 export type IconName = keyof typeof iconRegistry;
