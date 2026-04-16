@@ -65,6 +65,12 @@ export interface CanvasToolApi<
   getToolOptions: <T extends Record<string, unknown>>(id: string) => T;
   /** All registered tools — useful for hit-testing across tool types. */
   getTools: () => CanvasTool[];
+  /**
+   * Override the stage cursor — pass `null` to fall back to the active tool's
+   * static `cursor`. Use for hover-state feedback (resize handles, rotation
+   * handle, etc.).
+   */
+  setCursor: (cursor: string | null) => void;
 }
 
 /**

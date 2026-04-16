@@ -81,6 +81,18 @@ export {
   highlightTool,
   type HighlightToolOptions,
 } from "./components/Canvas/tools/highlightTool";
+export {
+  rotateTool,
+  type RotateToolOptions,
+} from "./components/Canvas/tools/rotateTool";
+export {
+  resizeTool,
+  type ResizeToolOptions,
+} from "./components/Canvas/tools/resizeTool";
+export {
+  transformTool,
+  type TransformToolOptions,
+} from "./components/Canvas/tools/transformTool";
 export { default as EmptyState } from "./components/EmptyState.vue";
 export { default as DashedContainer } from "./components/DashedContainer.vue";
 export { default as ControlElement } from "./components/ControlElement.vue";

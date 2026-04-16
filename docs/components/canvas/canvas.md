@@ -21,12 +21,18 @@ import { clearTool } from "../../../src/runtime/components/Canvas/tools/clearToo
 import { colorPickerTool } from "../../../src/runtime/components/Canvas/tools/colorPickerTool";
 import { moveTool } from "../../../src/runtime/components/Canvas/tools/moveTool";
 import { highlightTool } from "../../../src/runtime/components/Canvas/tools/highlightTool";
+import { rotateTool } from "../../../src/runtime/components/Canvas/tools/rotateTool";
+import { resizeTool } from "../../../src/runtime/components/Canvas/tools/resizeTool";
+import { transformTool } from "../../../src/runtime/components/Canvas/tools/transformTool";
 
 const tools = shallowRef([
   drawTool({ color: "#1f7aec", size: 5 }),
   textTool({ fontSize: 28, color: "#222" }),
   eraseTool({ radius: 12 }),
   moveTool(),
+  rotateTool(),
+  resizeTool(),
+  transformTool(),
   highlightTool(),
   colorPickerTool({ color: "#1f7aec", targets: ["draw", "text"] }),
   undoTool(),
@@ -73,7 +79,9 @@ function onSetup(api) {
 
 > Pick the **Draw** tool and drag to draw, or the **Text** tool and click
 > anywhere to drop text. Press <kbd>Enter</kbd> to commit, <kbd>Esc</kbd> to
-> cancel. Use <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Z</kbd> to undo.
+> cancel. Use <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Z</kbd> to undo. Try **Transform**
+> — click a node to select it, then drag corners to resize, the top circle to
+> rotate, or the body to move.
 
 ## Quick Start
 
@@ -319,7 +327,7 @@ template content the user shouldn't modify.
 
 Every tool is a factory function you import and call. There are three kinds:
 
-- **Interaction tools** (`drawTool`, `textTool`, `eraseTool`, `moveTool`, `highlightTool`) — become the active tool, receive pointer events. The erase and move tools show hover highlights.
+- **Interaction tools** (`drawTool`, `textTool`, `eraseTool`, `moveTool`, `rotateTool`, `resizeTool`, `transformTool`, `highlightTool`) — become the active tool, receive pointer events. Erase and move show hover highlights; rotate/resize/transform use a click-to-select model and render handles around the selected node. `transformTool` combines move, resize, and rotate into a single dispatcher.
 - **Action tools** (`undoTool`, `redoTool`, `clearTool`) — fire on click, never become active. They can be disabled.
 - **Widget tools** (`colorPickerTool`) — render a custom component in the toolbar instead of a button.
 
@@ -336,6 +344,9 @@ import {
   textTool,
   eraseTool,
   moveTool,
+  rotateTool,
+  resizeTool,
+  transformTool,
   highlightTool,
   colorPickerTool,
   undoTool,
@@ -349,6 +360,9 @@ const tools = shallowRef([
   textTool({ fontSize: 28, color: "#222" }),
   eraseTool({ radius: 12 }),
   moveTool(),
+  rotateTool(),
+  resizeTool(),
+  transformTool(),
   highlightTool(),
 
   // Widget tools

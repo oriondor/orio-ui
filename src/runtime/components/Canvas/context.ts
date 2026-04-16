@@ -20,6 +20,9 @@ export interface CanvasContext {
   ) => CanvasToolApi<T>;
   stageEl: Ref<HTMLElement | null>;
   size: Ref<{ width: number; height: number }>;
+  /** Reactive cursor override. `null` falls back to the active tool's cursor. */
+  cursorOverride: Ref<string | null>;
+  setCursor: (cursor: string | null) => void;
   undo: () => void;
   redo: () => void;
   canUndo: ComputedRef<boolean>;
