@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.22.0](https://github.com/oriondor/orio-ui/compare/v1.21.0...v1.22.0) (2026-04-16)
+
+Adds a new Canvas feature: a pluggable, tool-driven HTML <canvas> system with tool APIs, stage/toolbar UI, node CRUD/history composables, nine built-in tools, hit-testing utilities, docs, i18n, icon additions, and small auto-registration/theme fixes.
 ## [1.21.0](https://github.com/oriondor/orio-ui/compare/v1.20.0...v1.21.0) (2026-04-10)
 
 Adds vue-i18n: new runtime i18n module and en/uk resources, a Nuxt runtime i18n plugin and module registration, package dependency update, localized component text and locale-aware formatting, docs/theme locale switcher, updated tests, and a new LocaleSwitcher component. (50 words)
