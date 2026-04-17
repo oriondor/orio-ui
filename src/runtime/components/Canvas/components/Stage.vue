@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, useTemplateRef, watch } from "vue";
 import { useEventListener } from "@vueuse/core";
 import { useCanvasContext } from "../context";
+import { getNodeBounds } from "../tools/hitTest";
 import type { CanvasPointerEvent, CanvasTool } from "../types";
 
 const ctx = useCanvasContext();
@@ -38,7 +39,21 @@ function render() {
     (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
   );
   for (const node of ordered) {
-    toolMap.get(node.type)?.render?.(c, node);
+    const renderFn = toolMap.get(node.type)?.render;
+    if (!renderFn) continue;
+    if (node.rotation) {
+      const b = getNodeBounds(node);
+      const cx = b.x + b.width / 2;
+      const cy = b.y + b.height / 2;
+      c.save();
+      c.translate(cx, cy);
+      c.rotate(node.rotation);
+      c.translate(-cx, -cy);
+      renderFn(c, node);
+      c.restore();
+    } else {
+      renderFn(c, node);
+    }
   }
 
   // Render overlay for the active tool (e.g. highlight bounding rect).
@@ -81,7 +96,9 @@ const activeTool = computed(() =>
   ctx.tools.value.find((t) => t.id === ctx.activeToolId.value),
 );
 
-const cursor = computed(() => activeTool.value?.cursor ?? "default");
+const cursor = computed(
+  () => ctx.cursorOverride.value ?? activeTool.value?.cursor ?? "default",
+);
 
 function toCanvasEvent(e: PointerEvent): CanvasPointerEvent {
   const rect = (rootEl.value as HTMLElement).getBoundingClientRect();

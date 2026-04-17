@@ -47,6 +47,10 @@ const nodes = defineModel<CanvasNode[]>("nodes", { default: () => [] });
 const toolsRef = computed(() => props.tools);
 const size = computed(() => ({ width: props.width, height: props.height }));
 const stageEl = ref<HTMLElement | null>(null);
+const cursorOverride = ref<string | null>(null);
+function setCursor(cursor: string | null) {
+  cursorOverride.value = cursor;
+}
 
 const activeToolId = ref<string | null>(
   props.defaultTool ??
@@ -130,6 +134,7 @@ function getToolApi<T extends Record<string, unknown>>(
       canRedo,
       getToolOptions,
       getTools: () => props.tools,
+      setCursor,
     };
     toolApiCache.set(id, api);
   }
@@ -140,6 +145,7 @@ function setActiveTool(id: string | null) {
   if (id === activeToolId.value) return;
   const prev = props.tools.find((t) => t.id === activeToolId.value);
   prev?.onDeactivate?.(getToolApi(prev.id));
+  cursorOverride.value = null;
   activeToolId.value = id;
   const next = id ? props.tools.find((t) => t.id === id) : null;
   next?.onActivate?.(getToolApi(next.id));
@@ -177,6 +183,8 @@ const context: CanvasContext = {
   beginAction,
   endAction,
   onKeyDown: handleKeyDown,
+  cursorOverride,
+  setCursor,
 };
 
 provide(CANVAS_CONTEXT, context);

@@ -23,16 +23,33 @@ export function defaultHitTest(
   return dx * dx + dy * dy <= radius * radius;
 }
 
+/** Transform a canvas-space point into the node's pre-rotation local space. */
+export function toLocalPoint(
+  node: CanvasNode,
+  point: CanvasPoint,
+): CanvasPoint {
+  if (!node.rotation) return point;
+  const b = getNodeBounds(node);
+  const cx = b.x + b.width / 2;
+  const cy = b.y + b.height / 2;
+  const cos = Math.cos(-node.rotation);
+  const sin = Math.sin(-node.rotation);
+  const dx = point.x - cx;
+  const dy = point.y - cy;
+  return { x: cx + dx * cos - dy * sin, y: cy + dx * sin + dy * cos };
+}
+
 export function hitTestNode(
   node: CanvasNode,
   point: CanvasPoint,
   radius: number,
   toolMap: Map<string, CanvasTool>,
 ): boolean {
+  const local = toLocalPoint(node, point);
   const ownerTool = toolMap.get(node.type);
   return ownerTool?.hitTest
-    ? ownerTool.hitTest(node, point, radius)
-    : defaultHitTest(node, point, radius);
+    ? ownerTool.hitTest(node, local, radius)
+    : defaultHitTest(node, local, radius);
 }
 
 export function findTopNode(
@@ -132,6 +149,13 @@ export function renderHighlightRect(
   const pad = 6;
 
   ctx.save();
+  if (node.rotation) {
+    const cx = bounds.x + bounds.width / 2;
+    const cy = bounds.y + bounds.height / 2;
+    ctx.translate(cx, cy);
+    ctx.rotate(node.rotation);
+    ctx.translate(-cx, -cy);
+  }
   ctx.strokeStyle = strokeColor;
   ctx.fillStyle = fillColor;
   ctx.lineWidth = lineWidth;
