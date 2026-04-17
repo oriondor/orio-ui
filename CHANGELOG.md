@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.22.1](https://github.com/oriondor/orio-ui/compare/v1.22.0...v1.22.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* Updaated tools with rotate, resize and transform tools ([#139](https://github.com/oriondor/orio-ui/issues/139)) ([45acb5c](https://github.com/oriondor/orio-ui/commit/45acb5cd0cb803e96a503281c61bb5b4e531d326))
+
 ## [1.22.0](https://github.com/oriondor/orio-ui/compare/v1.21.0...v1.22.0) (2026-04-16)
 
 Adds a new Canvas feature: a pluggable, tool-driven HTML <canvas> system with tool APIs, stage/toolbar UI, node CRUD/history composables, nine built-in tools, hit-testing utilities, docs, i18n, icon additions, and small auto-registration/theme fixes.
