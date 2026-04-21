@@ -39,6 +39,7 @@ export { default as EmptyState } from "./components/EmptyState.vue";
 export { default as DashedContainer } from "./components/DashedContainer.vue";
 export { default as ControlElement } from "./components/ControlElement.vue";
 export { default as GalleryCarousel } from "./components/gallery/Carousel.vue";
+export { default as GalleryCarouselPreview } from "./components/gallery/CarouselPreview.vue";
 export { default as ViewText } from "./components/view/Text.vue";
 export {
   default as ViewKeyBinds,
