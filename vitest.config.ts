@@ -1,7 +1,5 @@
 import { defineConfig } from "vitest/config";
 import vue from "@vitejs/plugin-vue";
-import { resolve } from "path";
-
 export default defineConfig({
   plugins: [vue()],
   test: {
@@ -23,8 +21,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "~": resolve(__dirname, "./src"),
-      "@": resolve(__dirname, "./src"),
+      "~": new URL("./src", import.meta.url).pathname,
+      "@": new URL("./src", import.meta.url).pathname,
     },
   },
 });

@@ -100,7 +100,7 @@ import {
   undoTool,
   redoTool,
   clearTool,
-} from "@your-org/orio-ui";
+} from "orio-ui/canvas";
 
 const nodes = ref([]);
 const tools = shallowRef([
@@ -232,7 +232,7 @@ regardless of which tools are registered.
 
 ```vue
 <script setup>
-import { drawTool, eraseTool } from "@your-org/orio-ui";
+import { drawTool, eraseTool } from "orio-ui/canvas";
 import { shallowRef } from "vue";
 
 const tools = shallowRef([drawTool(), eraseTool()]);
@@ -358,7 +358,7 @@ import {
   undoTool,
   redoTool,
   clearTool,
-} from "@your-org/orio-ui";
+} from "orio-ui/canvas";
 
 const tools = shallowRef([
   // Interaction tools — order determines toolbar button order
@@ -456,7 +456,7 @@ Action tool. Calls `api.redo()`. Disabled when `api.canRedo` is false.
 
 ### `clearTool()`
 
-Action tool. Calls `api.clear()`. Disabled when `api.nodes.value.length === 0`.
+Action tool. Calls `api.clear()`. Disabled when all nodes are frozen (or none exist). Frozen nodes are preserved.
 
 ### `colorPickerTool(options?)`
 
@@ -660,7 +660,7 @@ Provides the full canvas state to any descendant component via Vue's
 if called outside an `<orio-canvas>` parent.
 
 ```ts
-import { useCanvasContext } from "@your-org/orio-ui";
+import { useCanvasContext } from "orio-ui/canvas";
 
 const ctx = useCanvasContext();
 // ctx.nodes, ctx.activeToolId, ctx.setActiveTool, ctx.getToolApi, ...

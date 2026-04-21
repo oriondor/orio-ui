@@ -6,12 +6,16 @@
   "main": "./dist/module.mjs",
   "exports": {
     ".": {
-      "types": "./dist/types.d.mts",
+      "types": "./dist/runtime/index.d.ts",
       "import": "./dist/module.mjs"
     },
     "./runtime": {
       "types": "./dist/runtime/index.d.ts",
-      "import": "./dist/runtime/index.mjs"
+      "import": "./dist/runtime/index.js"
+    },
+    "./canvas": {
+      "types": "./dist/runtime/canvas.d.ts",
+      "import": "./dist/runtime/canvas.js"
     },
     "./styles": "./dist/runtime/assets/css/main.css",
     "./theme": "./dist/runtime/assets/css/colors.css"

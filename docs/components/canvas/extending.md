@@ -22,7 +22,7 @@ A tool is a plain object describing:
    that lives on the canvas context.
 
 ```ts
-import { defineCanvasTool } from "@your-org/orio-ui";
+import { defineCanvasTool } from "orio-ui/canvas";
 
 export const noopTool = defineCanvasTool({
   id: "noop",
@@ -107,7 +107,7 @@ Here's a complete tool that lets the user drag to draw a filled rectangle.
 
 ```ts
 // tools/rectangleTool.ts
-import { defineCanvasTool } from "@your-org/orio-ui";
+import { defineCanvasTool } from "orio-ui/canvas";
 
 interface RectOptions extends Record<string, unknown> {
   fill: string;
@@ -193,7 +193,7 @@ Then drop it into the tool list:
 
 ```vue
 <script setup>
-import { drawTool, textTool } from "@your-org/orio-ui";
+import { drawTool, textTool } from "orio-ui/canvas";
 import { rectangleTool } from "./tools/rectangleTool";
 import { shallowRef } from "vue";
 
@@ -333,7 +333,7 @@ and build any UI you like:
 ```vue
 <!-- MyToolPanel.vue -->
 <script setup lang="ts">
-import { useCanvasContext } from "@your-org/orio-ui";
+import { useCanvasContext } from "orio-ui/canvas";
 
 const ctx = useCanvasContext();
 </script>
@@ -422,7 +422,7 @@ or any styled content.
 ```
 
 ```ts
-import { defineCanvasTool } from "@your-org/orio-ui";
+import { defineCanvasTool } from "orio-ui/canvas";
 import MyToolTip from "./tooltips/MyToolTip.vue";
 
 export function myTool() {

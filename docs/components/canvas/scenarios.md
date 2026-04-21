@@ -4,6 +4,100 @@ The `setup` prop lets you seed the canvas with initial content before the user
 interacts with it. Think of it as a scenario — a pre-configured starting state
 that can include text labels, shapes, guides, or any node type.
 
+## Live Demo — Image Setup
+
+<script setup>
+import { ref, shallowRef } from "vue";
+import { drawTool } from "../../../src/runtime/components/Canvas/tools/drawTool";
+import { textTool } from "../../../src/runtime/components/Canvas/tools/textTool";
+import { eraseTool } from "../../../src/runtime/components/Canvas/tools/eraseTool";
+import { moveTool } from "../../../src/runtime/components/Canvas/tools/moveTool";
+import { transformTool } from "../../../src/runtime/components/Canvas/tools/transformTool";
+import { imageTool } from "../../../src/runtime/components/Canvas/tools/imageTool";
+import { undoTool } from "../../../src/runtime/components/Canvas/tools/undoTool";
+import { redoTool } from "../../../src/runtime/components/Canvas/tools/redoTool";
+import { clearTool } from "../../../src/runtime/components/Canvas/tools/clearTool";
+import { colorPickerTool } from "../../../src/runtime/components/Canvas/tools/colorPickerTool";
+
+const nodes = ref([]);
+const tools = shallowRef([
+  drawTool({ color: "#1f7aec", size: 4 }),
+  textTool({ fontSize: 24, color: "#222" }),
+  eraseTool({ radius: 12 }),
+  moveTool(),
+  transformTool(),
+  imageTool(),
+  colorPickerTool({ color: "#1f7aec", targets: ["draw", "text"] }),
+  undoTool(),
+  redoTool(),
+  clearTool(),
+]);
+
+async function onSetup(api) {
+  const { width: cw, height: ch } = api.size();
+  const w = 200;
+  const h = 200;
+
+  const img = new Image();
+  img.src = "/samples/ball.png";
+
+  await new Promise((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject();
+  });
+
+  api.addNode({
+    type: "image",
+    x: (cw - w) / 2,
+    y: (ch - h) / 2,
+    width: w,
+    height: h,
+    frozen: true,
+    data: {
+      src: img.src,
+      naturalHeight: img.naturalHeight,
+      naturalWidth: img.naturalWidth,
+    },
+  });
+
+  api.addNode({
+    type: "text",
+    x: 200,
+    y: 20,
+    frozen: true,
+    data: {
+      text: "Draw over the image!",
+      fontSize: 18,
+      fontFamily: "system-ui, sans-serif",
+      color: "#999",
+      weight: "normal",
+    },
+  });
+}
+</script>
+
+<div class="demo-container">
+  <orio-canvas
+    v-model:nodes="nodes"
+    :tools="tools"
+    :setup="onSetup"
+    :width="640"
+    :height="360"
+    background="#f7f8fa"
+    style="border: 1px solid var(--vp-c-border); border-radius: 8px;"
+  >
+    <orio-canvas-toolbar />
+    <orio-canvas-stage />
+  </orio-canvas>
+  <p style="font-size: 0.875rem; opacity: 0.7;">
+    {{ nodes.length }} node(s) on the canvas
+  </p>
+</div>
+
+> The ball image is loaded during async `setup` and centered on the canvas.
+> Both the image and the text label are **frozen** — they act as a non-interactive
+> background. Try drawing over them with the **Draw** tool.
+
 ## Basic usage
 
 Pass a function to `setup`. It receives the full `CanvasToolApi` and runs once
@@ -12,7 +106,7 @@ on mount:
 ```vue
 <script setup>
 import { ref, shallowRef } from "vue";
-import { drawTool, textTool, eraseTool, undoTool, redoTool } from "@your-org/orio-ui";
+import { drawTool, textTool, eraseTool, undoTool, redoTool } from "orio-ui/canvas";
 
 const nodes = ref([]);
 const tools = shallowRef([
@@ -155,7 +249,7 @@ Since `setup` is just a function, you can make it conditional:
 ```vue
 <script setup>
 import { ref, shallowRef } from "vue";
-import { drawTool, textTool, undoTool, redoTool } from "@your-org/orio-ui";
+import { drawTool, textTool, undoTool, redoTool } from "orio-ui/canvas";
 
 const props = defineProps<{
   mode: "blank" | "guided" | "template";
@@ -281,16 +375,109 @@ function onSetup(api) {
 > If you need stable ids (e.g. for collaborative editing), pass the original
 > `id` in the node object — `addNode` respects explicit ids.
 
+## Pre-loading images
+
+You can add image nodes during setup by providing a `src` (any URL or data URL)
+along with the image's natural dimensions. The `imageTool` renderer will decode
+and paint them automatically.
+
+```vue
+<script setup>
+import { ref, shallowRef } from "vue";
+import {
+  drawTool,
+  eraseTool,
+  moveTool,
+  transformTool,
+  imageTool,
+  undoTool,
+  redoTool,
+} from "orio-ui/canvas";
+
+const nodes = ref([]);
+const tools = shallowRef([
+  drawTool(),
+  eraseTool(),
+  moveTool(),
+  transformTool(),
+  imageTool(),
+  undoTool(),
+  redoTool(),
+]);
+
+/** Convert an HTMLImageElement to a data URL for inline decoding. */
+function toDataUrl(img) {
+  const c = document.createElement("canvas");
+  c.width = img.naturalWidth;
+  c.height = img.naturalHeight;
+  c.getContext("2d").drawImage(img, 0, 0);
+  return c.toDataURL("image/png");
+}
+
+async function onSetup(api) {
+  const img = await new Promise((resolve, reject) => {
+    const el = new Image();
+    el.crossOrigin = "anonymous";
+    el.onload = () => resolve(el);
+    el.onerror = () => reject(new Error("Failed to load image"));
+    el.src = "/images/sample-background.png";
+  });
+
+  // Convert to data URL so the node is self-contained and
+  // imageTool's render cache decodes it without a second fetch.
+  const src = toDataUrl(img);
+
+  const { width: cw, height: ch } = api.size();
+  const maxSize = 300;
+  const scale = Math.min(
+    1,
+    maxSize / Math.max(img.naturalWidth, img.naturalHeight),
+  );
+  const w = img.naturalWidth * scale;
+  const h = img.naturalHeight * scale;
+
+  api.addNode({
+    type: "image",
+    x: (cw - w) / 2,
+    y: (ch - h) / 2,
+    width: w,
+    height: h,
+    frozen: true,
+    data: {
+      src,
+      naturalWidth: img.naturalWidth,
+      naturalHeight: img.naturalHeight,
+      alt: "Background image",
+    },
+  });
+}
+</script>
+
+<template>
+  <orio-canvas v-model:nodes="nodes" :tools="tools" :setup="onSetup">
+    <orio-canvas-toolbar />
+    <orio-canvas-stage />
+  </orio-canvas>
+</template>
+```
+
+Converting to a data URL ensures the image data is embedded in the node. When
+`imageTool`'s render cache decodes it, the data is inline — no second network
+request needed.
+
+> **Tip:** Set `frozen: true` if the image should act as a non-interactive
+> background. Remove it if you want users to move, resize, or delete the image.
+
 ## API reference
 
 The `setup` function receives the same `CanvasToolApi` that tools get. The most
 useful methods for scenarios:
 
-| Method              | Description                                  |
-| ------------------- | -------------------------------------------- |
-| `api.addNode(node)` | Add a node. Returns the created node with id. |
-| `api.nodes`         | Read current nodes (useful for conditional logic). |
-| `api.size()`        | Get canvas dimensions for centering content. |
-| `api.requestRender()` | Force a redraw (rarely needed in setup).   |
+| Method                | Description                                        |
+| --------------------- | -------------------------------------------------- |
+| `api.addNode(node)`   | Add a node. Returns the created node with id.      |
+| `api.nodes`           | Read current nodes (useful for conditional logic). |
+| `api.size()`          | Get canvas dimensions for centering content.       |
+| `api.requestRender()` | Force a redraw (rarely needed in setup).           |
 
 See [Extending Canvas](./extending.md) for the full `CanvasToolApi` reference.

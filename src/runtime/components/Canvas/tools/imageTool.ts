@@ -73,12 +73,25 @@ export function imageTool(options: Partial<ImageToolOptions> = {}) {
     const img = new Image();
     img.crossOrigin = "anonymous";
     const entry: CacheEntry = { img, failed: false };
-    img.onload = () => latestApi?.requestRender();
+    const triggerRender = () => {
+      if (latestApi) {
+        latestApi.requestRender();
+      } else {
+        // latestApi not yet captured (e.g. image pre-loaded via setup before
+        // the toolbar renders). Poll until it becomes available.
+        const poll = () => {
+          if (latestApi) latestApi.requestRender();
+          else requestAnimationFrame(poll);
+        };
+        requestAnimationFrame(poll);
+      }
+    };
+    img.onload = triggerRender;
     img.onerror = () => {
       entry.failed = true;
       // Log once per failed src via the cache — subsequent renders skip.
       console.warn(`[imageTool] Failed to load image: ${src}`);
-      latestApi?.requestRender();
+      triggerRender();
     };
     img.src = src;
     cache.set(src, entry);
@@ -98,8 +111,7 @@ export function imageTool(options: Partial<ImageToolOptions> = {}) {
       const cleanup = () => {
         input.onchange = null;
         // Cast because `oncancel` isn't in older DOM lib typings.
-        (input as unknown as { oncancel: (() => void) | null }).oncancel =
-          null;
+        (input as unknown as { oncancel: (() => void) | null }).oncancel = null;
         window.removeEventListener("focus", onFocus);
         if (focusTimer !== null) {
           clearTimeout(focusTimer);
@@ -147,7 +159,10 @@ export function imageTool(options: Partial<ImageToolOptions> = {}) {
         cache.set(src, { img, failed: false });
 
         const max = api.options.maxSize;
-        const scale = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+        const scale = Math.min(
+          1,
+          max / Math.max(img.naturalWidth, img.naturalHeight),
+        );
         const w = img.naturalWidth * scale;
         const h = img.naturalHeight * scale;
 
@@ -181,6 +196,10 @@ export function imageTool(options: Partial<ImageToolOptions> = {}) {
       maxSize: 320,
       multiple: false,
       ...options,
+    },
+    disabled(api) {
+      latestApi = api;
+      return false;
     },
     action(api) {
       latestApi = api;
