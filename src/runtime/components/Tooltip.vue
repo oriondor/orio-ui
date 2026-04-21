@@ -117,7 +117,9 @@ const tooltipStyle = computed(() => ({
   left: `${position.value.left}px`,
 }));
 
-const arrowClass = computed(() => `arrow-${props.placement}`);
+const arrowClass = computed(
+  () => `orio-tooltip-arrow orio-tooltip-arrow-${props.placement}`,
+);
 </script>
 
 <template>
@@ -133,17 +135,17 @@ const arrowClass = computed(() => `arrow-${props.placement}`);
     <Teleport v-if="isVisible" to="body">
       <div
         ref="tooltip"
-        class="tooltip"
+        class="orio-tooltip"
         :style="tooltipStyle"
         role="tooltip"
         :aria-hidden="!isVisible"
       >
-        <div class="content">
+        <div class="orio-tooltip-content">
           <slot name="content">
             {{ text }}
           </slot>
         </div>
-        <div :class="['arrow', arrowClass]" />
+        <div :class="arrowClass" />
       </div>
     </Teleport>
   </div>
@@ -155,14 +157,18 @@ const arrowClass = computed(() => `arrow-${props.placement}`);
   align-items: center;
   justify-content: center;
 }
+</style>
 
-.tooltip {
+<!-- Unscoped: teleported content lives outside the component tree,
+     so scoped styles don't reliably apply. BEM prefix avoids collisions. -->
+<style>
+.orio-tooltip {
   position: absolute;
   z-index: 9999;
   pointer-events: none;
 }
 
-.content {
+.orio-tooltip-content {
   background-color: rgba(0, 0, 0, 0.9);
   color: white;
   padding: 0.5rem 0.75rem;
@@ -172,14 +178,14 @@ const arrowClass = computed(() => `arrow-${props.placement}`);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.arrow {
+.orio-tooltip-arrow {
   position: absolute;
   width: 0;
   height: 0;
   border-style: solid;
 }
 
-.arrow-top {
+.orio-tooltip-arrow-top {
   bottom: -4px;
   left: 50%;
   transform: translateX(-50%);
@@ -187,7 +193,7 @@ const arrowClass = computed(() => `arrow-${props.placement}`);
   border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
 }
 
-.arrow-bottom {
+.orio-tooltip-arrow-bottom {
   top: -4px;
   left: 50%;
   transform: translateX(-50%);
@@ -195,7 +201,7 @@ const arrowClass = computed(() => `arrow-${props.placement}`);
   border-color: transparent transparent rgba(0, 0, 0, 0.9) transparent;
 }
 
-.arrow-left {
+.orio-tooltip-arrow-left {
   right: -4px;
   top: 50%;
   transform: translateY(-50%);
@@ -203,7 +209,7 @@ const arrowClass = computed(() => `arrow-${props.placement}`);
   border-color: transparent transparent transparent rgba(0, 0, 0, 0.9);
 }
 
-.arrow-right {
+.orio-tooltip-arrow-right {
   left: -4px;
   top: 50%;
   transform: translateY(-50%);
