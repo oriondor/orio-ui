@@ -34,7 +34,6 @@ const tools = shallowRef([
 ]);
 
 async function onSetup(api) {
-  console.log("[setup] start, nodes:", api.nodes.value.length);
   const { width: cw, height: ch } = api.size();
   const w = 200;
   const h = 200;
@@ -47,9 +46,7 @@ async function onSetup(api) {
     img.onerror = () => reject();
   });
 
-  console.log(img.src, img)
-
-  const imgNode = api.addNode({
+  api.addNode({
     type: "image",
     x: (cw - w) / 2,
     y: (ch - h) / 2,
@@ -62,9 +59,8 @@ async function onSetup(api) {
       naturalWidth: img.naturalWidth,
     },
   });
-  console.log("[setup] after image addNode:", api.nodes.value.length, imgNode);
 
-  const txtNode = api.addNode({
+  api.addNode({
     type: "text",
     x: 200,
     y: 20,
@@ -77,12 +73,10 @@ async function onSetup(api) {
       weight: "normal",
     },
   });
-  console.log("[setup] after text addNode:", api.nodes.value.length, txtNode);
-  console.log("[setup] done, all nodes:", JSON.stringify(api.nodes.value.map(n => ({ id: n.id, type: n.type }))));
 }
 </script>
 
-<div class="demo-container" id="pidor">
+<div class="demo-container">
   <orio-canvas
     v-model:nodes="nodes"
     :tools="tools"
@@ -101,8 +95,8 @@ async function onSetup(api) {
 </div>
 
 > The ball image is loaded during async `setup` and centered on the canvas.
-> It's **not frozen** — try selecting it with **Transform** to move, resize, or
-> rotate it. The frozen text label stays in place.
+> Both the image and the text label are **frozen** — they act as a non-interactive
+> background. Try drawing over them with the **Draw** tool.
 
 ## Basic usage
 
@@ -112,7 +106,7 @@ on mount:
 ```vue
 <script setup>
 import { ref, shallowRef } from "vue";
-import { drawTool, textTool, eraseTool, undoTool, redoTool } from "orio-ui";
+import { drawTool, textTool, eraseTool, undoTool, redoTool } from "orio-ui/canvas";
 
 const nodes = ref([]);
 const tools = shallowRef([
@@ -255,7 +249,7 @@ Since `setup` is just a function, you can make it conditional:
 ```vue
 <script setup>
 import { ref, shallowRef } from "vue";
-import { drawTool, textTool, undoTool, redoTool } from "@your-org/orio-ui";
+import { drawTool, textTool, undoTool, redoTool } from "orio-ui/canvas";
 
 const props = defineProps<{
   mode: "blank" | "guided" | "template";
@@ -398,7 +392,7 @@ import {
   imageTool,
   undoTool,
   redoTool,
-} from "@your-org/orio-ui";
+} from "orio-ui/canvas";
 
 const nodes = ref([]);
 const tools = shallowRef([
