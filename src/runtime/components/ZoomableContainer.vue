@@ -109,6 +109,30 @@ let dragId: number | null = null;
 let lastX = 0;
 let lastY = 0;
 
+// Multi-touch state for pinch-to-zoom
+const activePointers = new Map<number, { x: number; y: number }>();
+
+function pointerDistance() {
+  const pts = [...activePointers.values()];
+  if (pts.length < 2) return 0;
+  const dx = pts[1].x - pts[0].x;
+  const dy = pts[1].y - pts[0].y;
+  return Math.hypot(dx, dy);
+}
+
+function pointerMidpoint() {
+  const pts = [...activePointers.values()];
+  if (pts.length < 2) return { x: 0, y: 0 };
+  return {
+    x: (pts[0].x + pts[1].x) / 2,
+    y: (pts[0].y + pts[1].y) / 2,
+  };
+}
+
+let pinchStartDist = 0;
+let pinchStartScale = 1;
+let pinchLastMid = { x: 0, y: 0 };
+
 function shouldPan(e: PointerEvent) {
   if (e.button === 1) return true;
   if (spaceHeld.value) return true;
@@ -117,15 +141,74 @@ function shouldPan(e: PointerEvent) {
 }
 
 function onPointerDown(e: PointerEvent) {
+  const el = e.currentTarget as HTMLElement;
+
+  // Track touch pointers for pinch gesture
+  if (e.pointerType === "touch") {
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    el.setPointerCapture(e.pointerId);
+
+    if (activePointers.size === 2) {
+      // Start pinch — cancel any single-finger drag
+      dragId = null;
+      pinchStartDist = pointerDistance();
+      pinchStartScale = scale.value;
+      pinchLastMid = pointerMidpoint();
+      return;
+    }
+
+    if (activePointers.size === 1) {
+      // Single touch — treat as pan
+      e.preventDefault();
+      dragId = e.pointerId;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      return;
+    }
+
+    // 3+ fingers — ignore
+    return;
+  }
+
+  // Mouse / pen — original behavior
   if (!shouldPan(e)) return;
   e.preventDefault();
   dragId = e.pointerId;
   lastX = e.clientX;
   lastY = e.clientY;
-  (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  el.setPointerCapture(e.pointerId);
 }
 
 function onPointerMove(e: PointerEvent) {
+  // Update tracked pointer position
+  if (activePointers.has(e.pointerId)) {
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  }
+
+  // Pinch-to-zoom + two-finger pan
+  if (activePointers.size === 2 && e.pointerType === "touch") {
+    const dist = pointerDistance();
+    const mid = pointerMidpoint();
+    const rect = viewportEl.value!.getBoundingClientRect();
+
+    // Zoom at midpoint
+    if (pinchStartDist > 0) {
+      const newScale = pinchStartScale * (dist / pinchStartDist);
+      const px = mid.x - rect.left;
+      const py = mid.y - rect.top;
+      setScaleAt(newScale, px, py);
+    }
+
+    // Pan by midpoint delta
+    const dx = mid.x - pinchLastMid.x;
+    const dy = mid.y - pinchLastMid.y;
+    if (dx !== 0 || dy !== 0) panBy(dx, dy);
+
+    pinchLastMid = mid;
+    return;
+  }
+
+  // Single-pointer drag
   if (dragId !== e.pointerId) return;
   const dx = e.clientX - lastX;
   const dy = e.clientY - lastY;
@@ -135,6 +218,22 @@ function onPointerMove(e: PointerEvent) {
 }
 
 function onPointerUp(e: PointerEvent) {
+  activePointers.delete(e.pointerId);
+
+  // If returning from pinch to single finger, reset single-drag state
+  if (activePointers.size === 1 && e.pointerType === "touch") {
+    const [id, pt] = [...activePointers.entries()][0];
+    dragId = id;
+    lastX = pt.x;
+    lastY = pt.y;
+    pinchStartDist = 0;
+    return;
+  }
+
+  if (activePointers.size === 0) {
+    pinchStartDist = 0;
+  }
+
   if (dragId !== e.pointerId) return;
   dragId = null;
   try {
