@@ -10,16 +10,21 @@ export function useCanvasSetup(
 ) {
   onMounted(() => {
     if (!setupFn) return;
-    const result = setupFn(opts.getToolApi());
-    if (result && typeof result.then === "function") {
-      result.then(
-        () => opts.resetBaseline(),
-        (err) => {
-          console.error("[Canvas] setup() rejected:", err);
-        },
-      );
-    } else {
+    const api = opts.getToolApi();
+    const done = () => {
       opts.resetBaseline();
+      // Image nodes added during setup rely on imageTool's render cache which
+      // decodes images asynchronously. Schedule a re-render so they appear
+      // once decoded instead of staying as placeholders until user interaction.
+      requestAnimationFrame(() => api.requestRender());
+    };
+    const result = setupFn(api);
+    if (result && typeof result.then === "function") {
+      result.then(done, (err) => {
+        console.error("[Canvas] setup() rejected:", err);
+      });
+    } else {
+      done();
     }
   });
 }

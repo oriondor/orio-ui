@@ -11,7 +11,7 @@ export function clearTool() {
       api.clear();
     },
     disabled(api) {
-      return api.nodes.value.length === 0;
+      return api.nodes.value.every((n) => n.frozen);
     },
   });
 }
