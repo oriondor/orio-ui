@@ -36,6 +36,8 @@ export function usePinchZoom(callbacks: PinchCallbacks) {
   function onPointerDown(e: PointerEvent) {
     if (e.pointerType !== "touch") return false;
 
+    if (pointers.size >= 2) return false;
+
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 
