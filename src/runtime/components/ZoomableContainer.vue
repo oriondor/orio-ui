@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, useTemplateRef } from "vue";
-import { useResizeObserver } from "@vueuse/core";
+import { useResizeObserver, useEventListener } from "@vueuse/core";
+import { usePinchZoom } from "../composables/usePinchZoom";
+import { useInertia } from "../composables/useInertia";
 
 export interface ZoomableContainerProps {
   minScale?: number;
@@ -86,6 +88,39 @@ function resetView() {
   centerWorld();
 }
 
+// --- Inertia ---
+const inertia = useInertia(panBy);
+
+// --- Pinch-to-zoom ---
+let pinchBaseScale = 1;
+
+const pinch = usePinchZoom({
+  onPinchStart() {
+    dragId = null;
+    pinchBaseScale = scale.value;
+  },
+  onPinchMove(scaleFactor, midX, midY, dx, dy) {
+    const rect = viewportEl.value!.getBoundingClientRect();
+    setScaleAt(pinchBaseScale * scaleFactor, midX - rect.left, midY - rect.top);
+    if (dx !== 0 || dy !== 0) panBy(dx, dy);
+  },
+  onSingleDown(e) {
+    e.preventDefault();
+    dragId = e.pointerId;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    inertia.resetTime();
+  },
+  onSingleUp(id, x, y) {
+    dragId = id;
+    lastX = x;
+    lastY = y;
+    inertia.resetTime();
+    inertia.stop();
+  },
+});
+
+// --- Wheel ---
 function onWheel(e: WheelEvent) {
   e.preventDefault();
   if (e.ctrlKey || e.metaKey) {
@@ -105,6 +140,7 @@ function onWheel(e: WheelEvent) {
   panBy(dx, dy);
 }
 
+// --- Single-pointer drag ---
 let dragId: number | null = null;
 let lastX = 0;
 let lastY = 0;
@@ -117,26 +153,51 @@ function shouldPan(e: PointerEvent) {
 }
 
 function onPointerDown(e: PointerEvent) {
+  inertia.stop();
+
+  // Touch — delegate to pinch handler
+  if (e.pointerType === "touch") {
+    pinch.onPointerDown(e);
+    return;
+  }
+
+  // Mouse / pen
   if (!shouldPan(e)) return;
   e.preventDefault();
   dragId = e.pointerId;
   lastX = e.clientX;
   lastY = e.clientY;
+  inertia.resetTime();
   (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 }
 
 function onPointerMove(e: PointerEvent) {
+  // Touch — delegate to pinch handler
+  if (e.pointerType === "touch") {
+    if (pinch.onPointerMove(e)) return;
+  }
+
+  // Single-pointer drag
   if (dragId !== e.pointerId) return;
   const dx = e.clientX - lastX;
   const dy = e.clientY - lastY;
   lastX = e.clientX;
   lastY = e.clientY;
+
+  inertia.trackMove(dx, dy);
   panBy(dx, dy);
 }
 
 function onPointerUp(e: PointerEvent) {
+  // Touch — delegate to pinch handler
+  if (e.pointerType === "touch") {
+    if (pinch.onPointerUp(e)) return;
+  }
+
   if (dragId !== e.pointerId) return;
   dragId = null;
+  inertia.release();
+
   try {
     (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
   } catch {
@@ -144,13 +205,15 @@ function onPointerUp(e: PointerEvent) {
   }
 }
 
-function onKeyDown(e: KeyboardEvent) {
+// --- Keyboard ---
+useEventListener("keydown", (e: KeyboardEvent) => {
   if (e.code === "Space") spaceHeld.value = true;
-}
-function onKeyUp(e: KeyboardEvent) {
+});
+useEventListener("keyup", (e: KeyboardEvent) => {
   if (e.code === "Space") spaceHeld.value = false;
-}
+});
 
+// --- Resize observers ---
 useResizeObserver(viewportEl, (entries) => {
   const r = entries[0].contentRect;
   viewport.value = { w: r.width, h: r.height };
@@ -174,8 +237,6 @@ useResizeObserver(worldEl, (entries) => {
 });
 
 onMounted(() => {
-  window.addEventListener("keydown", onKeyDown);
-  window.addEventListener("keyup", onKeyUp);
   const vEl = viewportEl.value;
   const wEl = worldEl.value;
   if (!vEl || !wEl) return;
@@ -188,8 +249,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener("keydown", onKeyDown);
-  window.removeEventListener("keyup", onKeyUp);
+  inertia.stop();
 });
 
 const transform = computed(
