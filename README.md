@@ -119,7 +119,7 @@ function handleClick() {
 
 - **Upload** - File upload component
 
-### Composables (11)
+### Composables (13)
 
 - **useTheme** - Theme and color mode management
 - **useModal** - Modal state with animation origin tracking
@@ -195,7 +195,7 @@ orio-ui/
 ├── src/
 │   ├── runtime/
 │   │   ├── components/   # 56 Vue components
-│   │   ├── composables/  # 11 composables
+│   │   ├── composables/  # 13 composables
 │   │   ├── assets/css/   # Theme CSS files
 │   │   └── utils/        # Icon registry
 │   └── module.ts         # Nuxt Module definition
