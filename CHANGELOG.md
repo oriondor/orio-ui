@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.23.1](https://github.com/oriondor/orio-ui/compare/v1.23.0...v1.23.1) (2026-04-23)
+
+The changes add two-finger touch gesture support to ZoomableContainer.vue, enabling pinch zoom and pan operations. When two touch pointers are detected, the component enters pinch mode, calculates zoom and pan transformations from the pinch midpoint, and gracefully handles state transitions when touches begin or end.
 ## [1.23.0](https://github.com/oriondor/orio-ui/compare/v1.22.2...v1.23.0) (2026-04-21)
 
 Added a new CarouselPreview component, its documentation, and a runtime export. The component renders a horizontal thumbnail strip, syncs selection via a shared `v-model:activeImage` with the main carousel, and auto-hides when fewer than two images exist.
