@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.23.2](https://github.com/oriondor/orio-ui/compare/v1.23.1...v1.23.2) (2026-04-30)
+
+
+### Bug Fixes
+
+* Allow canvas toolbar be placed anywhere by creating canvas registry ([#147](https://github.com/oriondor/orio-ui/issues/147)) ([9187797](https://github.com/oriondor/orio-ui/commit/918779790d4d13e70abae76e7fd9794fae784753))
+
 ## [1.23.1](https://github.com/oriondor/orio-ui/compare/v1.23.0...v1.23.1) (2026-04-23)
 
 The changes add two-finger touch gesture support to ZoomableContainer.vue, enabling pinch zoom and pan operations. When two touch pointers are detected, the component enters pinch mode, calculates zoom and pan transformations from the pinch midpoint, and gracefully handles state transitions when touches begin or end.
