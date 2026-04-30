@@ -65,6 +65,7 @@ function onSetup(api) {
 
 <div class="demo-container">
   <orio-canvas
+    name="demo"
     v-model:nodes="nodes"
     :tools="tools"
     :setup="onSetup"
@@ -73,7 +74,7 @@ function onSetup(api) {
     background="#f7f8fa"
     style="border: 1px solid var(--vp-c-border); border-radius: 8px;"
   >
-    <orio-canvas-toolbar />
+    <orio-canvas-toolbar canvas="demo" />
     <orio-canvas-stage />
   </orio-canvas>
   <p style="font-size: 0.875rem; opacity: 0.7;">
@@ -115,8 +116,14 @@ const tools = shallowRef([
 </script>
 
 <template>
-  <orio-canvas v-model:nodes="nodes" :tools="tools" :width="800" :height="500">
-    <orio-canvas-toolbar />
+  <orio-canvas
+    name="editor"
+    v-model:nodes="nodes"
+    :tools="tools"
+    :width="800"
+    :height="500"
+  >
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
 </template>
@@ -152,9 +159,9 @@ Use `useCanvasContext()` inside any child component to access the full canvas
 API.
 
 ```vue
-<orio-canvas :width="600" :height="400">
+<orio-canvas name="editor" :width="600" :height="400">
   <header style="display: flex; justify-content: space-between;">
-    <orio-canvas-toolbar />
+    <orio-canvas-toolbar canvas="editor" />
   </header>
   <orio-canvas-stage />
 </orio-canvas>
@@ -174,8 +181,13 @@ manually inside the default slot:
   with `appearance="minimal"`. Widget tools render their `toolbar` component
   directly. Default slot exposes `{ tool, isActive, activate }`.
 
-All three call `useCanvasContext()` internally, so they only work inside an
-`<orio-canvas>` parent.
+`<orio-canvas-stage>` and `<orio-canvas-tool-button>` call `useCanvasContext()`
+internally, so they only work inside an `<orio-canvas>` parent.
+
+`<orio-canvas-toolbar>` resolves its canvas via the `canvas` prop, which must
+match the `name` of an `<orio-canvas>` mounted anywhere in the app — header,
+sidebar, modal, completely separate route. It does **not** need to be a
+descendant of the canvas.
 
 ### ToolButton behavior
 
@@ -193,8 +205,11 @@ All three call `useCanvasContext()` internally, so they only work inside an
 ### Overriding toolbar buttons
 
 ```vue
-<orio-canvas v-slot>
-  <orio-canvas-toolbar v-slot="{ tools, activeToolId, setActiveTool }">
+<orio-canvas name="editor" v-slot>
+  <orio-canvas-toolbar
+    canvas="editor"
+    v-slot="{ tools, activeToolId, setActiveTool }"
+  >
     <orio-button
       v-for="tool in tools"
       :key="tool.id"
@@ -256,8 +271,8 @@ function onSetup(api) {
 </script>
 
 <template>
-  <orio-canvas :tools="tools" :setup="onSetup">
-    <orio-canvas-toolbar />
+  <orio-canvas name="editor" :tools="tools" :setup="onSetup">
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
 </template>
@@ -313,8 +328,8 @@ watch(nodes, (next) => {
 </script>
 
 <template>
-  <orio-canvas v-model:nodes="nodes">
-    <orio-canvas-toolbar />
+  <orio-canvas name="editor" v-model:nodes="nodes">
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
 </template>
@@ -538,8 +553,8 @@ function addLabel() {
 </script>
 
 <template>
-  <orio-canvas ref="canvasRef">
-    <orio-canvas-toolbar />
+  <orio-canvas name="editor" ref="canvasRef">
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
   <orio-button @click="addLabel">Add label</orio-button>
@@ -588,8 +603,8 @@ const canvasRef = ref();
 </script>
 
 <template>
-  <orio-canvas ref="canvasRef" :max-history="100">
-    <orio-canvas-toolbar />
+  <orio-canvas name="editor" ref="canvasRef" :max-history="100">
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
 

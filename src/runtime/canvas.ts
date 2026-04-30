@@ -18,6 +18,7 @@ export {
   useCanvasContext,
   type CanvasContext,
 } from "./components/Canvas/context";
+export { canvasRegistry } from "./components/Canvas/registry";
 export {
   drawTool,
   type DrawToolOptions,

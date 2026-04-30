@@ -205,8 +205,8 @@ const tools = shallowRef([
 </script>
 
 <template>
-  <orio-canvas :tools="tools">
-    <orio-canvas-toolbar />
+  <orio-canvas name="editor" :tools="tools">
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
 </template>
@@ -291,7 +291,7 @@ you'll usually want your own UI. There are three levels of override.
 Use the default slot of `<orio-canvas-tool-button>`:
 
 ```vue
-<orio-canvas-toolbar v-slot="{ tools }">
+<orio-canvas-toolbar canvas="editor" v-slot="{ tools }">
   <orio-canvas-tool-button
     v-for="tool in tools"
     :key="tool.id"
@@ -311,7 +311,7 @@ Use the default slot of `<orio-canvas-toolbar>` to render whatever you want
 around the tool list:
 
 ```vue
-<orio-canvas-toolbar v-slot="{ tools, activeToolId, setActiveTool }">
+<orio-canvas-toolbar canvas="editor" v-slot="{ tools, activeToolId, setActiveTool }">
   <orio-button
     v-for="tool in tools"
     :key="tool.id"
@@ -355,11 +355,40 @@ const ctx = useCanvasContext();
 ```
 
 ```vue
-<orio-canvas v-slot>
+<orio-canvas name="editor" v-slot>
   <my-tool-panel />
   <orio-canvas-stage />
 </orio-canvas>
 ```
+
+## Detaching the toolbar
+
+`<orio-canvas>` requires a `name` prop. Any `<orio-canvas-toolbar>` with a
+matching `canvas="<name>"` binds to it — wherever it lives in the app.
+
+```vue
+<template>
+  <header class="app-header">
+    <orio-canvas-toolbar canvas="editor" />
+  </header>
+
+  <main>
+    <orio-canvas name="editor" :tools="tools">
+      <orio-canvas-stage />
+    </orio-canvas>
+  </main>
+</template>
+```
+
+The toolbar resolves the canvas through a module-level reactive registry, not
+through `provide`/`inject` — so it works across sibling subtrees, modals,
+teleported headers, anywhere on the page. Mount order doesn't matter: a toolbar
+mounted before its canvas renders nothing until the canvas registers, then
+catches up automatically.
+
+Multiple canvases on the same page each need a unique `name`. A duplicate name
+logs a dev warning and the toolbar will resolve to whichever canvas was mounted
+last.
 
 ## Reading and writing tool options
 
@@ -380,8 +409,8 @@ watchEffect(() => {
 </script>
 
 <template>
-  <orio-canvas ref="canvasRef">
-    <orio-canvas-toolbar />
+  <orio-canvas name="editor" ref="canvasRef">
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
   <input v-model.number="brushSize" type="range" min="1" max="40" />

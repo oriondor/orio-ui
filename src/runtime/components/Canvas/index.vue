@@ -1,6 +1,15 @@
 <script setup lang="ts">
-import { computed, provide, reactive, ref, shallowRef, watch } from "vue";
+import {
+  computed,
+  onBeforeUnmount,
+  provide,
+  reactive,
+  ref,
+  shallowRef,
+  watch,
+} from "vue";
 import { CANVAS_CONTEXT, type CanvasContext } from "./context";
+import { canvasRegistry } from "./registry";
 import type { CanvasNode, CanvasTool, CanvasToolApi } from "./types";
 import { useCanvasHistory } from "./composables/useCanvasHistory";
 import { useCanvasNodes } from "./composables/useCanvasNodes";
@@ -9,6 +18,12 @@ import Stage from "./components/Stage.vue";
 import Toolbar from "./components/Toolbar.vue";
 
 export interface CanvasProps {
+  /**
+   * Unique name for this canvas instance. Required so detached toolbars and
+   * other UI can bind to this canvas via the `canvas` prop, e.g.
+   * `<orio-canvas-toolbar canvas="editor" />` rendered anywhere in the app.
+   */
+  name: string;
   /** Tools available to the canvas. Empty by default — specify all tools explicitly. */
   tools?: CanvasTool[];
   /** Drawing surface width in CSS pixels. */
@@ -189,6 +204,33 @@ const context: CanvasContext = {
 
 provide(CANVAS_CONTEXT, context);
 
+let registeredName: string | null = null;
+
+watch(
+  () => props.name,
+  (newName, oldName) => {
+    if (oldName && canvasRegistry.get(oldName) === context) {
+      canvasRegistry.delete(oldName);
+    }
+    if (import.meta.env.DEV && canvasRegistry.has(newName)) {
+      console.warn(
+        `[orio-canvas] duplicate canvas name "${newName}" — ` +
+          `detached toolbars bound to this name will resolve to the most ` +
+          `recently mounted canvas.`,
+      );
+    }
+    canvasRegistry.set(newName, context);
+    registeredName = newName;
+  },
+  { immediate: true },
+);
+
+onBeforeUnmount(() => {
+  if (registeredName && canvasRegistry.get(registeredName) === context) {
+    canvasRegistry.delete(registeredName);
+  }
+});
+
 useCanvasSetup(props.setup, {
   getToolApi: () => getToolApi("__setup__"),
   resetBaseline,
@@ -217,7 +259,7 @@ defineExpose({
 <template>
   <div class="canvas-root" :style="{ background }">
     <slot>
-      <Toolbar />
+      <Toolbar :canvas="name" />
       <Stage />
     </slot>
   </div>
