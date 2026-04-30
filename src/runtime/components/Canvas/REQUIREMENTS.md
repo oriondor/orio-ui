@@ -144,6 +144,9 @@ Canvas/
 ├── index.vue               <- <orio-canvas>
 ├── types.ts                <- CanvasNode, CanvasTool, defineCanvasTool
 ├── context.ts              <- provide/inject + useCanvasContext
+├── registry.ts             <- module-level Map<name, CanvasContext> for
+│                              detached toolbars (toolbar in a different
+│                              subtree binds via `canvas="<name>"`)
 ├── components/
 │   ├── Stage.vue           <- <orio-canvas-stage>
 │   ├── Toolbar.vue         <- <orio-canvas-toolbar>

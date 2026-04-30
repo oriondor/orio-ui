@@ -78,6 +78,7 @@ async function onSetup(api) {
 
 <div class="demo-container">
   <orio-canvas
+    name="frozen-bg"
     v-model:nodes="nodes"
     :tools="tools"
     :setup="onSetup"
@@ -86,7 +87,7 @@ async function onSetup(api) {
     background="#f7f8fa"
     style="border: 1px solid var(--vp-c-border); border-radius: 8px;"
   >
-    <orio-canvas-toolbar />
+    <orio-canvas-toolbar canvas="frozen-bg" />
     <orio-canvas-stage />
   </orio-canvas>
   <p style="font-size: 0.875rem; opacity: 0.7;">
@@ -134,8 +135,8 @@ function onSetup(api) {
 </script>
 
 <template>
-  <orio-canvas v-model:nodes="nodes" :tools="tools" :setup="onSetup">
-    <orio-canvas-toolbar />
+  <orio-canvas name="editor" v-model:nodes="nodes" :tools="tools" :setup="onSetup">
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
 </template>
@@ -296,8 +297,8 @@ function onSetup(api) {
 </script>
 
 <template>
-  <orio-canvas v-model:nodes="nodes" :tools="tools" :setup="onSetup">
-    <orio-canvas-toolbar />
+  <orio-canvas name="editor" v-model:nodes="nodes" :tools="tools" :setup="onSetup">
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
 </template>
@@ -364,8 +365,8 @@ function onSetup(api) {
 </script>
 
 <template>
-  <orio-canvas v-model:nodes="nodes" :setup="onSetup">
-    <orio-canvas-toolbar />
+  <orio-canvas name="editor" v-model:nodes="nodes" :setup="onSetup">
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
 </template>
@@ -454,8 +455,8 @@ async function onSetup(api) {
 </script>
 
 <template>
-  <orio-canvas v-model:nodes="nodes" :tools="tools" :setup="onSetup">
-    <orio-canvas-toolbar />
+  <orio-canvas name="editor" v-model:nodes="nodes" :tools="tools" :setup="onSetup">
+    <orio-canvas-toolbar canvas="editor" />
     <orio-canvas-stage />
   </orio-canvas>
 </template>
