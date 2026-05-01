@@ -1,5 +1,6 @@
 import { inject, type ComputedRef, type InjectionKey, type Ref } from "vue";
 import type { CanvasNode, CanvasTool, CanvasToolApi } from "./types";
+import type { ExportOptions, ExportResult } from "./tools/exportTool";
 
 export interface CanvasContext {
   tools: Ref<CanvasTool[]>;
@@ -33,6 +34,14 @@ export interface CanvasContext {
   endAction: () => void;
   /** Keyboard handler for undo/redo shortcuts. Attach to the stage element. */
   onKeyDown: (e: KeyboardEvent) => void;
+  /**
+   * Export the current canvas as an image. Overrides merge over the registered
+   * `exportTool` options (if any) and the built-in defaults. Without
+   * `onExport`/`download` overrides the call triggers a browser download for
+   * backwards compatibility; pass `{ download: false }` or supply `onExport`
+   * to consume the result instead (e.g. push to a cart, upload to a backend).
+   */
+  exportCanvas: (overrides?: ExportOptions) => Promise<ExportResult>;
 }
 
 export const CANVAS_CONTEXT: InjectionKey<CanvasContext> = Symbol("OrioCanvas");
