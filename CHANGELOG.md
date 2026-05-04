@@ -7,11 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.23.3](https://github.com/oriondor/orio-ui/compare/v1.23.2...v1.23.3) (2026-05-04)
 
-
-### Bug Fixes
-
-* Programmatically save canvas content and made download optional  ([#149](https://github.com/oriondor/orio-ui/issues/149)) ([442ebcc](https://github.com/oriondor/orio-ui/commit/442ebcc082cdda697b08b507969fe08fa59fb2f7))
-
+The Canvas export functionality is refactored and exposed. Export logic is extracted into reusable `renderCanvasSnapshot` and `performExport` functions with new types (`ExportOptions`, `ExportResult`). An `exportCanvas` method is added to `CanvasContext` and implemented in the Canvas component, re-exported via the canvas runtime module.
 ## [1.23.2](https://github.com/oriondor/orio-ui/compare/v1.23.1...v1.23.2) (2026-04-30)
 
 This PR introduces a named registry system for the Canvas component, enabling toolbars to be mounted anywhere in the component tree and bind to specific canvas instances by name. A `canvasRegistry` module tracks canvas contexts by identifier, while the Canvas component registers itself on mount and the Toolbar resolves its target canvas via an explicit `canvas` prop.
