@@ -16,6 +16,12 @@ import { useCanvasNodes } from "./composables/useCanvasNodes";
 import { useCanvasSetup } from "./composables/useCanvasSetup";
 import Stage from "./components/Stage.vue";
 import Toolbar from "./components/Toolbar.vue";
+import {
+  performExport,
+  type ExportOptions,
+  type ExportResult,
+  type ExportToolOptions,
+} from "./tools/exportTool";
 
 export interface CanvasProps {
   /**
@@ -175,6 +181,19 @@ function handleKeyDown(e: KeyboardEvent) {
   onKeyDown(e);
 }
 
+function exportCanvas(overrides: ExportOptions = {}): Promise<ExportResult> {
+  const toolOpts = getToolOptions<Partial<ExportToolOptions>>("export");
+  return performExport(
+    {
+      nodes: nodes.value,
+      tools: props.tools,
+      width: props.width,
+      height: props.height,
+    },
+    { ...toolOpts, ...overrides },
+  );
+}
+
 const context: CanvasContext = {
   tools: toolsRef,
   activeToolId,
@@ -200,6 +219,7 @@ const context: CanvasContext = {
   onKeyDown: handleKeyDown,
   cursorOverride,
   setCursor,
+  exportCanvas,
 };
 
 provide(CANVAS_CONTEXT, context);
@@ -253,6 +273,7 @@ defineExpose({
   redo,
   canUndo,
   canRedo,
+  exportCanvas,
 });
 </script>
 

@@ -67,6 +67,12 @@ export {
 } from "./components/Canvas/tools/imageTool";
 export {
   exportTool,
+  performExport,
+  renderCanvasSnapshot,
+  DEFAULT_EXPORT_OPTIONS,
   type ExportToolOptions,
+  type ExportOptions,
+  type ExportResult,
   type ExportFormat,
+  type CanvasSnapshot,
 } from "./components/Canvas/tools/exportTool";
