@@ -10,10 +10,10 @@ const ViewTextStub = {
 };
 
 describe("view/Dates", () => {
-  it("renders a single date when endDate is undefined", () => {
+  it("renders only the start when end is null", () => {
     const wrapper = mount(Dates, {
       props: {
-        dates: { startDate: "2024-01-01" },
+        dates: { start: "2024-01-01", end: null },
       },
       global: {
         plugins: [i18n],
@@ -23,13 +23,15 @@ describe("view/Dates", () => {
       },
     });
 
-    expect(wrapper.findAll(".view-text")).toHaveLength(1);
+    const items = wrapper.findAll(".view-text");
+    expect(items).toHaveLength(1);
+    expect(items[0].text()).toContain("2024");
   });
 
-  it("renders Present when endDate is null", () => {
+  it("renders both start and end when both are set", () => {
     const wrapper = mount(Dates, {
       props: {
-        dates: { startDate: "2024-01-01", endDate: null },
+        dates: { start: "2024-01-01", end: "2024-12-31" },
       },
       global: {
         plugins: [i18n],
@@ -39,13 +41,13 @@ describe("view/Dates", () => {
       },
     });
 
-    expect(wrapper.text()).toContain("Present");
+    expect(wrapper.findAll(".view-text")).toHaveLength(2);
   });
 
   it("passes type and size to view text", () => {
     const wrapper = mount(Dates, {
       props: {
-        dates: { startDate: "2024-01-01", endDate: "2024-02-01" },
+        dates: { start: "2024-01-01", end: "2024-02-01" },
         type: "title",
         size: "large",
       },
@@ -65,7 +67,7 @@ describe("view/Dates", () => {
   it("formats month and year when month is true", () => {
     const wrapper = mount(Dates, {
       props: {
-        dates: { startDate: "2024-01-15" },
+        dates: { start: "2024-01-15", end: null },
         month: true,
       },
       global: {

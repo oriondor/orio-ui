@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
-
-export interface ResumeDate {
-  startDate: string;
-  endDate?: string | null; // undefined - mean single date, null - means "Present"
-}
+import { formatDate, type DateRange } from "../../utils/date";
 
 interface Props {
-  dates: ResumeDate;
-  month?: boolean; // Optional prop to indicate if the date should be displayed as month/year
+  dates: DateRange;
+  month?: boolean;
   size?: "small" | "medium" | "large";
   type?: "text" | "title" | "subtitle" | "italics";
 }
@@ -20,38 +16,28 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const { dates } = toRefs(props);
-const { t, locale } = useI18n();
+const { locale } = useI18n();
 
-function formatMonthYear(value: string) {
-  if (!value) return "";
-  if (!props.month)
-    return new Intl.DateTimeFormat(locale.value, {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    }).format(new Date(value));
-  return new Intl.DateTimeFormat(locale.value, {
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
-}
+const formatOptions = computed<Intl.DateTimeFormatOptions>(() => ({
+  day: props.month ? undefined : "numeric",
+  month: "short",
+  year: "numeric",
+}));
 
-const startDate = computed(() => formatMonthYear(dates.value.startDate));
-
-const endDate = computed(() => {
-  if (dates.value.endDate === undefined) return null;
-  return dates.value.endDate !== null
-    ? formatMonthYear(dates.value.endDate)
-    : t("dates.present");
-});
+const startText = computed(() =>
+  formatDate(dates.value?.start, locale.value, formatOptions.value),
+);
+const endText = computed(() =>
+  formatDate(dates.value?.end, locale.value, formatOptions.value),
+);
 </script>
 
 <template>
   <div class="view-date">
-    <orio-view-text :model-value="startDate" :type :size />
-    <template v-if="endDate">
-      <span v-if="startDate"> - </span>
-      <orio-view-text :model-value="endDate" :type :size />
+    <orio-view-text :model-value="startText" :type :size />
+    <template v-if="endText">
+      <span v-if="startText"> - </span>
+      <orio-view-text :model-value="endText" :type :size />
     </template>
   </div>
 </template>
