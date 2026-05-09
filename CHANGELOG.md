@@ -7,11 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.24.0](https://github.com/oriondor/orio-ui/compare/v1.23.3...v1.24.0) (2026-05-09)
 
-
-### Features
-
-* Implemented calendar and datepicker ([#151](https://github.com/oriondor/orio-ui/issues/151)) ([66fa472](https://github.com/oriondor/orio-ui/commit/66fa47257f87f15bda0ec04b03d512c094a25583))
-
+This PR refactors the date picker system by introducing a reusable Calendar primitive component, restructuring DatePicker and DateRangePicker as higher-level wrappers, adding date utility functions, and updating documentation and tests to match the new architecture.
 ## [1.23.3](https://github.com/oriondor/orio-ui/compare/v1.23.2...v1.23.3) (2026-05-04)
 
 The Canvas export functionality is refactored and exposed. Export logic is extracted into reusable `renderCanvasSnapshot` and `performExport` functions with new types (`ExportOptions`, `ExportResult`). An `exportCanvas` method is added to `CanvasContext` and implemented in the Canvas component, re-exported via the canvas runtime module.
