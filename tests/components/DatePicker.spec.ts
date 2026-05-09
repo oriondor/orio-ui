@@ -1,65 +1,94 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
-import DatePicker from "../../src/runtime/components/DatePicker.vue";
+import { defineComponent, h } from "vue";
+import DatePicker from "../../src/runtime/components/date/Picker.vue";
+import { i18n } from "../../src/runtime/i18n";
 
-const ControlStub = {
-  template:
-    '<div class="control-stub"><slot id="test-id" /></div>',
-};
+const TriggerStub = defineComponent({
+  name: "TriggerStub",
+  props: {
+    text: { type: String, default: "" },
+    placeholder: { type: String, default: "" },
+  },
+  setup(props, { slots }) {
+    const toggle = vi.fn();
+    return () =>
+      h("div", { class: "trigger-stub" }, [
+        h("span", { class: "trigger-text" }, props.text || props.placeholder),
+        h("div", { class: "trigger-content" }, slots.default?.({ toggle })),
+      ]);
+  },
+});
+
+const CalendarStub = defineComponent({
+  name: "CalendarStub",
+  props: {
+    selected: { type: String, default: null },
+    rangeStart: { type: String, default: null },
+    rangeEnd: { type: String, default: null },
+    anchor: { type: String, default: null },
+    min: { type: String, default: null },
+    max: { type: String, default: null },
+  },
+  emits: ["select", "dayEnter", "update:anchor"],
+  setup(props, { emit }) {
+    return () =>
+      h(
+        "button",
+        {
+          class: "calendar-stub",
+          "data-selected": props.selected ?? "",
+          onClick: () => emit("select", "2024-07-04"),
+        },
+        "pick",
+      );
+  },
+});
+
+function mountDatePicker(props: Record<string, unknown> = {}) {
+  return mount(DatePicker, {
+    props,
+    global: {
+      plugins: [i18n],
+      stubs: {
+        "orio-date-picker-trigger": TriggerStub,
+        "orio-calendar": CalendarStub,
+      },
+    },
+  });
+}
 
 describe("DatePicker", () => {
-  it("uses date input by default", () => {
-    const wrapper = mount(DatePicker, {
-      props: { date: "2024-01-01" },
-      global: {
-        stubs: {
-          "orio-control-element": ControlStub,
-        },
-      },
-    });
-
-    expect(wrapper.find("input").attributes("type")).toBe("date");
+  it("renders default placeholder when no value", () => {
+    const wrapper = mountDatePicker({ modelValue: null });
+    expect(wrapper.find(".trigger-text").text()).toBe("Select a date");
   });
 
-  it("uses month input when month prop is true", () => {
-    const wrapper = mount(DatePicker, {
-      props: { date: "2024-01", month: true },
-      global: {
-        stubs: {
-          "orio-control-element": ControlStub,
-        },
-      },
+  it("renders custom placeholder", () => {
+    const wrapper = mountDatePicker({
+      modelValue: null,
+      placeholder: "Pick a day",
     });
-
-    expect(wrapper.find("input").attributes("type")).toBe("month");
+    expect(wrapper.find(".trigger-text").text()).toBe("Pick a day");
   });
 
-  it("uses id as name attribute", () => {
-    const wrapper = mount(DatePicker, {
-      props: { date: "2024-01-01" },
-      global: {
-        stubs: {
-          "orio-control-element": ControlStub,
-        },
-      },
-    });
-
-    expect(wrapper.find("input").attributes("name")).toBe("test-id");
-    expect(wrapper.find("input").attributes("id")).toBe("test-id");
+  it("renders formatted value", () => {
+    const wrapper = mountDatePicker({ modelValue: "2024-06-15" });
+    const text = wrapper.find(".trigger-text").text();
+    expect(text).toContain("2024");
+    expect(text).not.toContain("Select a date");
   });
 
-  it("emits update when date changes", async () => {
-    const wrapper = mount(DatePicker, {
-      props: { date: "2024-01-01" },
-      global: {
-        stubs: {
-          "orio-control-element": ControlStub,
-        },
-      },
-    });
+  it("passes value to calendar as selected prop", () => {
+    const wrapper = mountDatePicker({ modelValue: "2024-06-15" });
+    expect(wrapper.find(".calendar-stub").attributes("data-selected")).toBe(
+      "2024-06-15",
+    );
+  });
 
-    await wrapper.find("input").setValue("2024-02-02");
-
-    expect(wrapper.emitted("update:date")?.[0]).toEqual(["2024-02-02"]);
+  it("emits update:modelValue when calendar emits select", async () => {
+    const wrapper = mountDatePicker({ modelValue: null });
+    await wrapper.find(".calendar-stub").trigger("click");
+    expect(wrapper.emitted("update:modelValue")?.[0]).toEqual(["2024-07-04"]);
   });
 });

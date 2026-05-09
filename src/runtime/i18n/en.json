@@ -4,12 +4,15 @@
     "selected": "{count} selected",
     "noOptions": "No options found"
   },
-  "dateRangePicker": {
-    "startBeforeEnd": "Start date must be before end date.",
-    "present": "Present"
+  "calendar": {
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month"
   },
-  "dates": {
-    "present": "Present"
+  "datePicker": {
+    "placeholder": "Select a date"
+  },
+  "dateRangePicker": {
+    "placeholder": "Select a date range"
   },
   "validation": {
     "fieldError": "Error on this field"

@@ -19,8 +19,13 @@ export {
   type RadioButtonProps,
 } from "./components/RadioButton.vue";
 export { default as SwitchButton } from "./components/SwitchButton.vue";
-export { default as DatePicker } from "./components/DatePicker.vue";
-export { default as DateRangePicker } from "./components/DateRangePicker.vue";
+export {
+  default as Calendar,
+  type CalendarProps,
+} from "./components/Calendar.vue";
+export { default as DatePicker } from "./components/date/Picker.vue";
+export { default as DateRangePicker } from "./components/date/RangePicker.vue";
+export { type DateRange, parseISO, formatISO, formatDate } from "./utils/date";
 export { default as Selector } from "./components/Selector.vue";
 export { default as TaggableSelector } from "./components/TaggableSelector.vue";
 export { default as Tag } from "./components/Tag.vue";
