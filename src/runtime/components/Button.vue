@@ -7,6 +7,13 @@ interface Props extends ControlProps {
   icon?: string;
   loading?: boolean;
   disabled?: boolean;
+  /** Roving-focus identifier — paired with useRovingGrid via `[data-focus-key]`. */
+  focusKey?: string;
+  /**
+   * Explicit tabindex on the inner button. Declared as a prop so it does not
+   * leak onto the ControlElement wrapper via $attrs auto-inheritance.
+   */
+  tabindex?: number | string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -55,6 +62,8 @@ function onMouseleave(event: MouseEvent) {
       v-bind="$attrs"
       :class="[variant, 'gradient-hover', { 'icon-only': isIconOnly }]"
       :disabled
+      :tabindex
+      :data-focus-key="focusKey"
       @click="click"
       @mousedown="onMousedown"
       @mouseup="onMouseup"
@@ -84,9 +93,9 @@ button {
   user-select: none;
 
   &.icon-only {
-    padding: 0;
-    border-radius: 50%;
+    // padding: 0;
     line-height: 0;
+    aspect-ratio: 1;
   }
 
   &:disabled,

@@ -9,15 +9,15 @@ Used internally by [`DatePicker`](./date/picker.md) and [`DateRangePicker`](./da
 <script setup>
 import { ref } from 'vue'
 
-const anchor = ref('2024-06-01')
+const anchor = ref('2026-07-01')
 const picked = ref(null)
 
-const annotated = ref('2024-06-15')
-const annotatedAnchor = ref('2024-06-01')
+const annotated = ref('2026-07-14')
+const annotatedAnchor = ref('2026-07-01')
 const markers = [
-  { variant: 'success', start: '2024-06-03', end: '2024-06-07' },
-  { variant: 'alert', start: '2024-06-12', end: '2024-06-14' },
-  { variant: 'danger', start: '2024-06-20', end: '2024-06-20' },
+  { variant: 'success', start: '2026-07-03', end: '2026-07-07' },
+  { variant: 'alert', start: '2026-07-12', end: '2026-07-14' },
+  { variant: 'danger', start: '2026-07-20', end: '2026-07-20' },
 ]
 const isDisabled = (iso) => {
   const day = new Date(iso).getDay()
@@ -52,12 +52,12 @@ const isDisabled = (iso) => {
 <script setup>
 import { ref } from "vue";
 
-const anchor = ref("2024-06-01");
+const anchor = ref("2026-07-01");
 const picked = ref(null);
 
 const markers = [
-  { variant: "success", start: "2024-06-03", end: "2024-06-07" },
-  { variant: "danger", start: "2024-06-20", end: "2024-06-20" },
+  { variant: "success", start: "2026-07-03", end: "2026-07-07" },
+  { variant: "danger", start: "2026-07-20", end: "2026-07-20" },
 ];
 
 const isDisabled = (iso) => {
@@ -79,13 +79,13 @@ const isDisabled = (iso) => {
 
 ## Props
 
-| Prop           | Type                                          | Default | Description                                            |
-| -------------- | --------------------------------------------- | ------- | ------------------------------------------------------ |
-| `selected`     | `string \| null`                              | `null`  | ISO date highlighted as the active pick                |
-| `markers`      | `CalendarMarker[]`                            | `[]`    | Declarative ranges to highlight                        |
-| `getMarker`    | `(iso) => CalendarMarker \| null`             | —       | Per-day callback, overrides `markers` when non-null    |
-| `isDisabled`   | `(iso) => boolean`                            | —       | Predicate; days returning `true` are non-clickable     |
-| `weekStartsOn` | `0 \| 1`                                      | `1`     | `0` = Sunday, `1` = Monday                             |
+| Prop           | Type                              | Default | Description                                         |
+| -------------- | --------------------------------- | ------- | --------------------------------------------------- |
+| `selected`     | `string \| null`                  | `null`  | ISO date highlighted as the active pick             |
+| `markers`      | `CalendarMarker[]`                | `[]`    | Declarative ranges to highlight                     |
+| `getMarker`    | `(iso) => CalendarMarker \| null` | —       | Per-day callback, overrides `markers` when non-null |
+| `isDisabled`   | `(iso) => boolean`                | —       | Predicate; days returning `true` are non-clickable  |
+| `weekStartsOn` | `0 \| 1`                          | `1`     | `0` = Sunday, `1` = Monday                          |
 
 ## Types
 

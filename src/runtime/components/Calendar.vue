@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, useId, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRovingGrid } from "../composables/useRovingGrid";
 import {
   addMonths,
   formatISO,
@@ -43,11 +44,19 @@ const { locale, t } = useI18n();
 const today = new Date();
 
 const visibleMonth = computed(() =>
-  startOfMonth(parseISO(anchor.value) ?? new Date()),
+  startOfMonth(
+    parseISO(anchor.value) ?? parseISO(props.selected) ?? new Date(),
+  ),
 );
 
-function shift(delta: number) {
+function shiftMonth(delta: number) {
   anchor.value = formatISO(addMonths(visibleMonth.value, delta));
+}
+
+function shiftYear(delta: number) {
+  const target = new Date(visibleMonth.value);
+  target.setFullYear(target.getFullYear() + delta);
+  anchor.value = formatISO(startOfMonth(target));
 }
 
 const monthLabel = computed(() =>
@@ -57,14 +66,33 @@ const monthLabel = computed(() =>
   }).format(visibleMonth.value),
 );
 
+const titleId = useId();
+
+const dayLabelFormat = computed(
+  () =>
+    new Intl.DateTimeFormat(locale.value, {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
+);
+
+function fullDateLabel(iso: string): string {
+  const date = parseISO(iso);
+  return date ? dayLabelFormat.value.format(date) : iso;
+}
+
 const weekdayLabels = computed(() => {
-  // 2024-01-07 is a Sunday
-  const sunday = new Date(2024, 0, 7);
-  return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(sunday);
-    d.setDate(sunday.getDate() + ((i + props.weekStartsOn) % 7));
+  // 1998-07-14 is a Tuesday
+  const tuesday = new Date(1998, 6, 14);
+  return Array.from({ length: 7 }, (_, position) => {
+    const date = new Date(tuesday);
+    date.setDate(
+      tuesday.getDate() + ((position + props.weekStartsOn - 2 + 7) % 7),
+    );
     return new Intl.DateTimeFormat(locale.value, { weekday: "short" }).format(
-      d,
+      date,
     );
   });
 });
@@ -86,112 +114,266 @@ interface Day {
 }
 
 function resolveMarker(iso: string): ResolvedMarker | null {
-  if (props.getMarker) {
-    const m = props.getMarker(iso);
-    if (m) {
-      return {
-        variant: m.variant,
-        isStart: iso === m.start,
-        isEnd: iso === m.end,
-      };
-    }
-  }
-  for (let i = props.markers.length - 1; i >= 0; i--) {
-    const m = props.markers[i]!;
-    if (iso >= m.start && iso <= m.end) {
-      return {
-        variant: m.variant,
-        isStart: iso === m.start,
-        isEnd: iso === m.end,
-      };
-    }
-  }
-  return null;
+  const fromGetter = props.getMarker?.(iso) ?? null;
+  const matched =
+    fromGetter ??
+    [...props.markers]
+      .reverse()
+      .find((marker) => iso >= marker.start && iso <= marker.end) ??
+    null;
+  if (!matched) return null;
+  return {
+    variant: matched.variant,
+    isStart: iso === matched.start,
+    isEnd: iso === matched.end,
+  };
 }
 
 const days = computed<Day[]>(() => {
-  const first = visibleMonth.value;
-  const startWeekday = first.getDay();
-  const offset = (startWeekday - props.weekStartsOn + 7) % 7;
-  const gridStart = new Date(first);
-  gridStart.setDate(gridStart.getDate() - offset);
+  const firstOfMonth = visibleMonth.value;
+  const leadingOffset = (firstOfMonth.getDay() - props.weekStartsOn + 7) % 7;
+  const gridStart = new Date(firstOfMonth);
+  gridStart.setDate(gridStart.getDate() - leadingOffset);
 
-  const sel = parseISO(props.selected);
+  const selectedDate = parseISO(props.selected);
 
-  const result: Day[] = [];
-  for (let i = 0; i < 42; i++) {
-    const d = new Date(gridStart);
-    d.setDate(gridStart.getDate() + i);
-    const iso = formatISO(d);
-    result.push({
+  return Array.from({ length: 42 }, (_, dayOffset) => {
+    const date = new Date(gridStart);
+    date.setDate(gridStart.getDate() + dayOffset);
+    const iso = formatISO(date);
+    return {
       iso,
-      label: d.getDate(),
-      inMonth: d.getMonth() === first.getMonth(),
-      isToday: isSameDay(d, today),
-      isSelected: !!sel && isSameDay(d, sel),
+      label: date.getDate(),
+      inMonth: date.getMonth() === firstOfMonth.getMonth(),
+      isToday: isSameDay(date, today),
+      isSelected: !!selectedDate && isSameDay(date, selectedDate),
       isDisabled: props.isDisabled?.(iso) ?? false,
       marker: resolveMarker(iso),
-    });
-  }
-  return result;
+    };
+  });
 });
 
-function onSelect(day: Day) {
+const weeks = computed<Day[][]>(() =>
+  Array.from({ length: 6 }, (_, weekIndex) =>
+    days.value.slice(weekIndex * 7, weekIndex * 7 + 7),
+  ),
+);
+
+function isInVisibleMonth(date: Date): boolean {
+  return (
+    date.getMonth() === visibleMonth.value.getMonth() &&
+    date.getFullYear() === visibleMonth.value.getFullYear()
+  );
+}
+
+function initialActiveISO(): string {
+  const selectedDate = parseISO(props.selected);
+  if (selectedDate && isInVisibleMonth(selectedDate)) {
+    return formatISO(selectedDate);
+  }
+  if (isInVisibleMonth(today)) return formatISO(today);
+  return formatISO(visibleMonth.value);
+}
+
+interface NavButton {
+  key: string;
+  ariaLabel: string;
+  icon: string;
+  size: "sm" | "md";
+  action: () => void;
+}
+
+const navButtons = computed<NavButton[]>(() => [
+  {
+    key: "year-prev",
+    ariaLabel: t("calendar.previousYear"),
+    icon: "chevron-left",
+    size: "md",
+    action: () => shiftYear(-1),
+  },
+  {
+    key: "month-prev",
+    ariaLabel: t("calendar.previousMonth"),
+    icon: "chevron-left",
+    size: "sm",
+    action: () => shiftMonth(-1),
+  },
+  {
+    key: "month-next",
+    ariaLabel: t("calendar.nextMonth"),
+    icon: "chevron-right",
+    size: "sm",
+    action: () => shiftMonth(1),
+  },
+  {
+    key: "year-next",
+    ariaLabel: t("calendar.nextYear"),
+    icon: "chevron-right",
+    size: "md",
+    action: () => shiftYear(1),
+  },
+]);
+
+const navRows = computed<NavButton[][]>(() => [navButtons.value]);
+
+const navRef = ref<HTMLDivElement | null>(null);
+
+const {
+  tabindexFor: tabindexForNav,
+  setActive: setActiveNav,
+  onKeydown: onNavKeydown,
+} = useRovingGrid<NavButton>({
+  rows: navRows,
+  gridRef: navRef,
+  getKey: (button) => button.key,
+  initial: () => "month-prev",
+  onActivate: (button) => button.action(),
+});
+
+function onNavButtonClick(button: NavButton) {
+  setActiveNav(button.key, false);
+  button.action();
+}
+
+const ARROW_DAY_DELTA: Record<string, number> = {
+  up: -7,
+  down: 7,
+  left: -1,
+  right: 1,
+};
+
+const gridRef = ref<HTMLDivElement | null>(null);
+
+const { activeKey, setActive, tabindexFor, onKeydown } = useRovingGrid<Day>({
+  rows: weeks,
+  gridRef,
+  getKey: (day) => day.iso,
+  initial: initialActiveISO,
+  onActivate(day) {
+    if (day.isDisabled) return;
+    emit("select", day.iso);
+  },
+  onArrowOverflow(direction, currentKey) {
+    const date = parseISO(currentKey);
+    if (!date) return null;
+    date.setDate(date.getDate() + ARROW_DAY_DELTA[direction]!);
+    return formatISO(date);
+  },
+  onPage(direction, bigJump, currentKey) {
+    const date = parseISO(currentKey);
+    if (!date) return null;
+    const monthDelta = (direction === "down" ? 1 : -1) * (bigJump ? 12 : 1);
+    const target = new Date(
+      date.getFullYear(),
+      date.getMonth() + monthDelta,
+      1,
+    );
+    const lastDayOfTargetMonth = new Date(
+      target.getFullYear(),
+      target.getMonth() + 1,
+      0,
+    ).getDate();
+    target.setDate(Math.min(date.getDate(), lastDayOfTargetMonth));
+    return formatISO(target);
+  },
+});
+
+watch(activeKey, (iso) => {
+  const date = parseISO(iso);
+  if (date && !isInVisibleMonth(date)) {
+    anchor.value = formatISO(startOfMonth(date));
+  }
+});
+
+function onDayClick(day: Day) {
   if (day.isDisabled) return;
+  setActive(day.iso, false);
   emit("select", day.iso);
 }
 
-function onEnter(day: Day) {
+function onDayMouseenter(day: Day) {
   emit("dayEnter", day.iso);
 }
 </script>
 
 <template>
   <div class="calendar">
-    <div class="calendar-nav">
-      <orio-button
-        variant="subdued"
-        icon="chevron-left"
-        :aria-label="t('calendar.previousMonth')"
-        @click="shift(-1)"
-      />
-      <span class="calendar-month-title">{{ monthLabel }}</span>
-      <orio-button
-        variant="subdued"
-        icon="chevron-right"
-        :aria-label="t('calendar.nextMonth')"
-        @click="shift(1)"
-      />
+    <div
+      ref="navRef"
+      class="calendar-nav"
+      role="toolbar"
+      aria-orientation="horizontal"
+      :aria-label="t('calendar.navigation')"
+      @keydown="onNavKeydown"
+    >
+      <template v-for="(button, position) in navButtons" :key="button.key">
+        <orio-button
+          variant="subdued"
+          :icon="button.icon"
+          :size="button.size"
+          :focus-key="button.key"
+          :tabindex="tabindexForNav(button.key)"
+          :aria-label="button.ariaLabel"
+          @click="onNavButtonClick(button)"
+        />
+        <span v-if="position === 1" :id="titleId" class="calendar-month-title">
+          {{ monthLabel }}
+        </span>
+      </template>
     </div>
     <div class="calendar-weekdays">
-      <span v-for="w in weekdayLabels" :key="w" class="calendar-weekday">
-        {{ w }}
+      <span
+        v-for="weekday in weekdayLabels"
+        :key="weekday"
+        class="calendar-weekday"
+      >
+        {{ weekday }}
       </span>
     </div>
-    <div class="calendar-grid">
-      <button
-        v-for="day in days"
-        :key="day.iso"
-        type="button"
-        class="calendar-day"
-        :class="{
-          'out-of-month': !day.inMonth,
-          today: day.isToday,
-          selected: day.isSelected,
-          'has-marker': !!day.marker,
-          [`marker-${day.marker?.variant}`]: !!day.marker,
-          'marker-start': day.marker?.isStart,
-          'marker-end': day.marker?.isEnd,
-        }"
-        :disabled="day.isDisabled"
-        @click="onSelect(day)"
-        @mouseenter="onEnter(day)"
+    <div
+      ref="gridRef"
+      class="calendar-grid"
+      role="grid"
+      :aria-labelledby="titleId"
+      @keydown="onKeydown"
+    >
+      <div
+        v-for="(week, weekIndex) in weeks"
+        :key="weekIndex"
+        role="row"
+        class="calendar-week"
       >
-        <orio-badge v-if="day.isSelected" pill variant="primary">
-          {{ day.label }}
-        </orio-badge>
-        <template v-else>{{ day.label }}</template>
-      </button>
+        <button
+          v-for="day in week"
+          :key="day.iso"
+          type="button"
+          role="gridcell"
+          class="calendar-day"
+          :class="{
+            'out-of-month': !day.inMonth,
+            today: day.isToday,
+            selected: day.isSelected,
+            'has-marker': !!day.marker,
+            [`marker-${day.marker?.variant}`]: !!day.marker,
+            'marker-start': day.marker?.isStart,
+            'marker-end': day.marker?.isEnd,
+            active: day.iso === activeKey,
+          }"
+          :data-focus-key="day.iso"
+          :tabindex="tabindexFor(day.iso)"
+          :aria-selected="day.isSelected"
+          :aria-current="day.isToday ? 'date' : undefined"
+          :aria-label="fullDateLabel(day.iso)"
+          :disabled="day.isDisabled"
+          @click="onDayClick(day)"
+          @mouseenter="onDayMouseenter(day)"
+        >
+          <orio-badge v-if="day.isSelected" pill variant="primary">
+            {{ day.label }}
+          </orio-badge>
+          <template v-else>{{ day.label }}</template>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -212,12 +394,13 @@ function onEnter(day: Day) {
 .calendar-nav {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.25rem;
   margin-bottom: 0.5rem;
 }
 
 .calendar-month-title {
+  flex: 1;
+  text-align: center;
   font-weight: 600;
   text-transform: capitalize;
 }
@@ -226,6 +409,10 @@ function onEnter(day: Day) {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-week {
+  display: contents;
 }
 
 .calendar-weekday {
@@ -253,6 +440,11 @@ function onEnter(day: Day) {
 
   &:hover:not(:disabled):not(.has-marker):not(.selected) {
     background-color: var(--color-surface);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
   }
 
   &.out-of-month {
