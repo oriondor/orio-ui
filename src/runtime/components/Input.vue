@@ -16,13 +16,17 @@ const modelValue = defineModel<string>({ default: "" });
 
 <template>
   <orio-control-element
-    v-slot="{ id }"
+    v-slot="{ control }"
     v-bind="props"
     :layout="layout === 'inner' ? 'vertical' : layout"
     :class="{ inner: layout === 'inner' }"
   >
     <slot name="before" />
-    <input :id v-model="modelValue" type="text" v-bind="$attrs" />
+    <input
+      v-model="modelValue"
+      type="text"
+      v-bind="{ ...$attrs, ...control }"
+    />
     <slot name="after" />
   </orio-control-element>
 </template>

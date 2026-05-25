@@ -6,14 +6,6 @@ interface Props extends ControlProps {
   variant?: "primary" | "secondary" | "subdued";
   icon?: string;
   loading?: boolean;
-  disabled?: boolean;
-  /** Roving-focus identifier — paired with useRovingGrid via `[data-focus-key]`. */
-  focusKey?: string;
-  /**
-   * Explicit tabindex on the inner button. Declared as a prop so it does not
-   * leak onto the ControlElement wrapper via $attrs auto-inheritance.
-   */
-  tabindex?: number | string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,13 +49,10 @@ function onMouseleave(event: MouseEvent) {
 </script>
 
 <template>
-  <orio-control-element v-bind="props">
+  <orio-control-element v-slot="{ control }" v-bind="props">
     <button
-      v-bind="$attrs"
+      v-bind="{ ...$attrs, ...control }"
       :class="[variant, 'gradient-hover', { 'icon-only': isIconOnly }]"
-      :disabled
-      :tabindex
-      :data-focus-key="focusKey"
       @click="click"
       @mousedown="onMousedown"
       @mouseup="onMouseup"

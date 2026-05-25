@@ -388,7 +388,7 @@ function onDayMouseenter(day: Day) {
   user-select: none;
   font-size: var(--control-font-size, var(--font-md));
   color: var(--color-text);
-  min-width: 17rem;
+  width: 22rem;
 }
 
 .calendar-nav {
