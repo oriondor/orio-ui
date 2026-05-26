@@ -7,11 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.25.0](https://github.com/oriondor/orio-ui/compare/v1.24.0...v1.25.0) (2026-05-26)
 
-
-### Features
-
-* **calendar:** full keyboard a11y via roving-focus composable ([#153](https://github.com/oriondor/orio-ui/issues/153)) ([cf9bbb9](https://github.com/oriondor/orio-ui/commit/cf9bbb90860054e1e2c0aeb8af67fec08b722f76))
-
+This PR adds a generic 2D roving-grid composable, integrates roving focus into Calendar navigation and day grid, updates ControlElement/Input/Button to pass merged control attrs, updates calendar i18n keys, and refreshes Calendar docs examples to new demo dates.
 ## [1.24.0](https://github.com/oriondor/orio-ui/compare/v1.23.3...v1.24.0) (2026-05-09)
 
 This PR refactors the date picker system by introducing a reusable Calendar primitive component, restructuring DatePicker and DateRangePicker as higher-level wrappers, adding date utility functions, and updating documentation and tests to match the new architecture.
