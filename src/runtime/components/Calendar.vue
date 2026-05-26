@@ -113,13 +113,15 @@ interface Day {
   marker: ResolvedMarker | null;
 }
 
-function resolveMarker(iso: string): ResolvedMarker | null {
-  const fromGetter = props.getMarker?.(iso) ?? null;
+function resolveMarker(
+  iso: string,
+  reversedMarkers: CalendarMarker[],
+): ResolvedMarker | null {
   const matched =
-    fromGetter ??
-    [...props.markers]
-      .reverse()
-      .find((marker) => iso >= marker.start && iso <= marker.end) ??
+    props.getMarker?.(iso) ??
+    reversedMarkers.find(
+      (marker) => iso >= marker.start && iso <= marker.end,
+    ) ??
     null;
   if (!matched) return null;
   return {
@@ -136,6 +138,7 @@ const days = computed<Day[]>(() => {
   gridStart.setDate(gridStart.getDate() - leadingOffset);
 
   const selectedDate = parseISO(props.selected);
+  const reversedMarkers = [...props.markers].reverse();
 
   return Array.from({ length: 42 }, (_, dayOffset) => {
     const date = new Date(gridStart);
@@ -148,7 +151,7 @@ const days = computed<Day[]>(() => {
       isToday: isSameDay(date, today),
       isSelected: !!selectedDate && isSameDay(date, selectedDate),
       isDisabled: props.isDisabled?.(iso) ?? false,
-      marker: resolveMarker(iso),
+      marker: resolveMarker(iso, reversedMarkers),
     };
   });
 });

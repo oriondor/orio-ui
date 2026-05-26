@@ -57,6 +57,7 @@ const picked = ref(null);
 
 const markers = [
   { variant: "success", start: "2026-07-03", end: "2026-07-07" },
+  { variant: "alert", start: "2026-07-12", end: "2026-07-14" },
   { variant: "danger", start: "2026-07-20", end: "2026-07-20" },
 ];
 

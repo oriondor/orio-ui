@@ -124,10 +124,10 @@ export function useRovingGrid<Cell>(options: RovingGridOptions<Cell>) {
     if (!position) return;
     const row = options.rows.value[position.rowIndex]!;
     const ordered = toEnd ? [...row].reverse() : row;
-    const edgeCell =
-      ordered.find(
-        (cell) => !options.isNavigable || options.isNavigable(cell),
-      ) ?? ordered[0]!;
+    const edgeCell = ordered.find(
+      (cell) => !options.isNavigable || options.isNavigable(cell),
+    );
+    if (!edgeCell) return;
     setActive(options.getKey(edgeCell));
   }
 

@@ -131,30 +131,33 @@ describe("Calendar", () => {
 
   it("emits update:anchor when navigating months", async () => {
     const wrapper = mountCalendar({ anchor: "2024-06-01" });
-    // Nav order: [year-prev, month-prev, month-next, year-next]
-    const buttons = wrapper.findAll(".calendar-nav-btn");
-    await buttons[2]!.trigger("click");
+    const button = wrapper.find('[aria-label="Next month"]');
+    expect(button.exists()).toBe(true);
+    await button.trigger("click");
     expect(wrapper.emitted("update:anchor")?.[0]).toEqual(["2024-07-01"]);
   });
 
   it("emits update:anchor with previous month", async () => {
     const wrapper = mountCalendar({ anchor: "2024-06-01" });
-    const buttons = wrapper.findAll(".calendar-nav-btn");
-    await buttons[1]!.trigger("click");
+    const button = wrapper.find('[aria-label="Previous month"]');
+    expect(button.exists()).toBe(true);
+    await button.trigger("click");
     expect(wrapper.emitted("update:anchor")?.[0]).toEqual(["2024-05-01"]);
   });
 
   it("emits update:anchor with next year", async () => {
     const wrapper = mountCalendar({ anchor: "2024-06-01" });
-    const buttons = wrapper.findAll(".calendar-nav-btn");
-    await buttons[3]!.trigger("click");
+    const button = wrapper.find('[aria-label="Next year"]');
+    expect(button.exists()).toBe(true);
+    await button.trigger("click");
     expect(wrapper.emitted("update:anchor")?.[0]).toEqual(["2025-06-01"]);
   });
 
   it("emits update:anchor with previous year", async () => {
     const wrapper = mountCalendar({ anchor: "2024-06-01" });
-    const buttons = wrapper.findAll(".calendar-nav-btn");
-    await buttons[0]!.trigger("click");
+    const button = wrapper.find('[aria-label="Previous year"]');
+    expect(button.exists()).toBe(true);
+    await button.trigger("click");
     expect(wrapper.emitted("update:anchor")?.[0]).toEqual(["2023-06-01"]);
   });
 
