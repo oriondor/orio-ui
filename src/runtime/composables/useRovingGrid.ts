@@ -8,6 +8,13 @@ export interface RovingGridOptions<Cell> {
   gridRef: Ref<HTMLElement | null>;
   getKey: (cell: Cell) => string;
   initial: () => string;
+  /**
+   * Cells where this returns `false` are skipped by arrow navigation —
+   * pressing Arrow steps past them in the same direction until a navigable
+   * cell is found (or the grid edge is reached, then `onArrowOverflow` fires).
+   * Default: every cell is navigable.
+   */
+  isNavigable?: (cell: Cell) => boolean;
   onActivate?: (cell: Cell) => void;
   /**
    * Called when an arrow key would move past the rendered grid edge.
@@ -74,7 +81,7 @@ export function useRovingGrid<Cell>(options: RovingGridOptions<Cell>) {
 
   function focusActive() {
     nextTick(() => {
-      const selector = `[data-focus-key="${CSS.escape(activeKey.value)}"]`;
+      const selector = `[focus-key="${CSS.escape(activeKey.value)}"]`;
       const element =
         options.gridRef.value?.querySelector<HTMLElement>(selector);
       if (!element) return;
@@ -97,13 +104,16 @@ export function useRovingGrid<Cell>(options: RovingGridOptions<Cell>) {
     if (!position) return;
     const offset = ARROW_OFFSETS[direction];
     const rows = options.rows.value;
-    const targetRowIndex = position.rowIndex + offset.rowDelta;
-    const targetColumnIndex = position.columnIndex + offset.columnDelta;
-    const targetRow = rows[targetRowIndex];
-    const targetCell = targetRow?.[targetColumnIndex];
-    if (targetCell !== undefined) {
-      setActive(options.getKey(targetCell));
-      return;
+    let targetRowIndex = position.rowIndex + offset.rowDelta;
+    let targetColumnIndex = position.columnIndex + offset.columnDelta;
+    while (rows[targetRowIndex]?.[targetColumnIndex] !== undefined) {
+      const candidate = rows[targetRowIndex]![targetColumnIndex]!;
+      if (!options.isNavigable || options.isNavigable(candidate)) {
+        setActive(options.getKey(candidate));
+        return;
+      }
+      targetRowIndex += offset.rowDelta;
+      targetColumnIndex += offset.columnDelta;
     }
     const overflowKey = options.onArrowOverflow?.(direction, activeKey.value);
     if (overflowKey) setActive(overflowKey);
@@ -113,7 +123,11 @@ export function useRovingGrid<Cell>(options: RovingGridOptions<Cell>) {
     const position = findCell(activeKey.value);
     if (!position) return;
     const row = options.rows.value[position.rowIndex]!;
-    const edgeCell = toEnd ? row[row.length - 1]! : row[0]!;
+    const ordered = toEnd ? [...row].reverse() : row;
+    const edgeCell =
+      ordered.find(
+        (cell) => !options.isNavigable || options.isNavigable(cell),
+      ) ?? ordered[0]!;
     setActive(options.getKey(edgeCell));
   }
 

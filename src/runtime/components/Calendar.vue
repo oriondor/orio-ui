@@ -249,6 +249,7 @@ const { activeKey, setActive, tabindexFor, onKeydown } = useRovingGrid<Day>({
   gridRef,
   getKey: (day) => day.iso,
   initial: initialActiveISO,
+  isNavigable: (day) => !day.isDisabled,
   onActivate(day) {
     if (day.isDisabled) return;
     emit("select", day.iso);
@@ -256,8 +257,15 @@ const { activeKey, setActive, tabindexFor, onKeydown } = useRovingGrid<Day>({
   onArrowOverflow(direction, currentKey) {
     const date = parseISO(currentKey);
     if (!date) return null;
-    date.setDate(date.getDate() + ARROW_DAY_DELTA[direction]!);
-    return formatISO(date);
+    const stepDays = ARROW_DAY_DELTA[direction]!;
+    // Loop past disabled days in the same direction; cap to a sane horizon
+    // (~2 years) so a fully-disabled future doesn't spin forever.
+    for (let attempt = 0; attempt < 750; attempt++) {
+      date.setDate(date.getDate() + stepDays);
+      const iso = formatISO(date);
+      if (!props.isDisabled?.(iso)) return iso;
+    }
+    return null;
   },
   onPage(direction, bigJump, currentKey) {
     const date = parseISO(currentKey);
@@ -359,7 +367,7 @@ function onDayMouseenter(day: Day) {
             'marker-end': day.marker?.isEnd,
             active: day.iso === activeKey,
           }"
-          :data-focus-key="day.iso"
+          :focus-key="day.iso"
           :tabindex="tabindexFor(day.iso)"
           :aria-selected="day.isSelected"
           :aria-current="day.isToday ? 'date' : undefined"
