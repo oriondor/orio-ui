@@ -6,7 +6,6 @@ interface Props extends ControlProps {
   variant?: "primary" | "secondary" | "subdued";
   icon?: string;
   loading?: boolean;
-  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -50,11 +49,10 @@ function onMouseleave(event: MouseEvent) {
 </script>
 
 <template>
-  <orio-control-element v-bind="props">
+  <orio-control-element v-slot="{ control }" v-bind="props">
     <button
-      v-bind="$attrs"
+      v-bind="{ ...$attrs, ...control }"
       :class="[variant, 'gradient-hover', { 'icon-only': isIconOnly }]"
-      :disabled
       @click="click"
       @mousedown="onMousedown"
       @mouseup="onMouseup"
@@ -84,9 +82,9 @@ button {
   user-select: none;
 
   &.icon-only {
-    padding: 0;
-    border-radius: 50%;
+    // padding: 0;
     line-height: 0;
+    aspect-ratio: 1;
   }
 
   &:disabled,

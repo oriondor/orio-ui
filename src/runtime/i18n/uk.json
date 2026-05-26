@@ -6,7 +6,10 @@
   },
   "calendar": {
     "previousMonth": "Попередній місяць",
-    "nextMonth": "Наступний місяць"
+    "nextMonth": "Наступний місяць",
+    "previousYear": "Попередній рік",
+    "nextYear": "Наступний рік",
+    "navigation": "Навігація календаря"
   },
   "datePicker": {
     "placeholder": "Оберіть дату"

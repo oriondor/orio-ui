@@ -6,7 +6,10 @@
   },
   "calendar": {
     "previousMonth": "Previous month",
-    "nextMonth": "Next month"
+    "nextMonth": "Next month",
+    "previousYear": "Previous year",
+    "nextYear": "Next year",
+    "navigation": "Calendar navigation"
   },
   "datePicker": {
     "placeholder": "Select a date"
