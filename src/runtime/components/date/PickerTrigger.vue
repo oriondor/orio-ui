@@ -20,11 +20,11 @@ const controlProps = computed(() => {
 </script>
 
 <template>
-  <orio-control-element v-slot="{ id }" v-bind="controlProps">
+  <orio-control-element v-slot="{ control }" v-bind="controlProps">
     <orio-popover position="bottom-right" :offset="5">
       <template #default="{ toggle, isOpen }">
         <button
-          :id
+          v-bind="control"
           type="button"
           class="date-trigger"
           :aria-expanded="isOpen"

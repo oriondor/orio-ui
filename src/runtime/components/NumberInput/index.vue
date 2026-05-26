@@ -9,7 +9,6 @@ export interface NumberInputProps extends Omit<ControlProps, "layout"> {
   max?: number;
   step?: number;
   decimalPlaces?: number;
-  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<NumberInputProps>(), {
@@ -18,7 +17,6 @@ const props = withDefaults(defineProps<NumberInputProps>(), {
   max: undefined,
   step: 1,
   decimalPlaces: 0,
-  disabled: false,
 });
 
 const { min, max, step, decimalPlaces } = toRefs(props);
@@ -67,7 +65,6 @@ const controlProps = computed(() => {
     max: _max,
     step: _step,
     decimalPlaces: _decimalPlaces,
-    disabled: _disabled,
     ...rest
   } = props;
   return rest;
@@ -83,19 +80,17 @@ const slotExpose = computed(() => ({
 
 <template>
   <orio-control-element
-    v-slot="{ id }"
+    v-slot="{ control }"
     v-bind="controlProps"
     :layout="layout === 'inner' ? 'vertical' : layout"
     :class="{ inner: layout === 'inner' }"
   >
     <div class="wrapper">
       <input
-        v-bind="$attrs"
-        :id
+        v-bind="{ ...$attrs, ...control }"
         v-model="modelValue"
         type="number"
         class="number-input"
-        :disabled
         :min
         :max
         :step

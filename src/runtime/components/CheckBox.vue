@@ -12,14 +12,14 @@ const props = defineProps<CheckBoxProps>();
 </script>
 
 <template>
-  <orio-control-element v-bind="props" class="checkbox" fill>
+  <orio-control-element v-slot="{ control }" v-bind="props" class="checkbox" fill>
     <label class="checkbox-label">
       <input
         v-model="modelValue"
+        v-bind="{ ...$attrs, ...control }"
         type="checkbox"
         class="checkbox-input"
         tabindex="-1"
-        v-bind="$attrs"
       />
       <span
         class="checkbox-box"

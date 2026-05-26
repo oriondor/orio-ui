@@ -132,12 +132,12 @@ const {
 </script>
 
 <template>
-  <orio-control-element v-bind="controlProps">
+  <orio-control-element v-slot="{ control }" v-bind="controlProps">
     <orio-popover position="bottom-right" :offset="5">
       <template #default="{ toggle, isOpen }">
-        <slot name="trigger" :toggle>
+        <slot name="trigger" :toggle :control>
           <button
-            :id="props.id"
+            v-bind="control"
             type="button"
             class="selector-trigger"
             aria-haspopup="listbox"
