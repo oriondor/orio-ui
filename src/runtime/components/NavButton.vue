@@ -4,7 +4,6 @@ import type { ControlProps } from "./ControlElement.vue";
 
 interface Props extends ControlProps {
   icon?: string;
-  disabled?: boolean;
   active?: boolean;
 }
 
@@ -33,11 +32,10 @@ function click(event: PointerEvent) {
 </script>
 
 <template>
-  <orio-control-element v-bind="props">
+  <orio-control-element v-slot="{ control }" v-bind="props">
     <button
-      v-bind="$attrs"
+      v-bind="{ ...$attrs, ...control }"
       :class="{ 'icon-only': isIconOnly, active }"
-      :disabled
       :aria-current="active ? 'page' : undefined"
       @click="click"
     >

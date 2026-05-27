@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import type { ControlProps } from "./ControlElement.vue";
 
-interface Props extends ControlProps {
-  disabled?: boolean;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ControlProps>(), {
   disabled: false,
 });
 
@@ -18,13 +14,11 @@ function toggle() {
 </script>
 
 <template>
-  <orio-control-element v-slot="{ id }" v-bind="props">
+  <orio-control-element v-slot="{ control }" v-bind="props">
     <button
-      :id
-      v-bind="$attrs"
+      v-bind="{ ...$attrs, ...control }"
       class="switch-button"
-      :class="{ active: modelValue, disabled: disabled }"
-      :disabled="disabled"
+      :class="{ active: modelValue, disabled: props.disabled }"
       @click="toggle"
       @keydown.enter.prevent="toggle"
       @keydown.space.prevent="toggle"

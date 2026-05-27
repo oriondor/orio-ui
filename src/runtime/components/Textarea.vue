@@ -15,12 +15,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 <template>
   <orio-control-element
-    v-slot="{ id }"
+    v-slot="{ control }"
     v-bind="props"
     :layout="layout === 'inner' ? 'vertical' : layout"
     :class="{ inner: layout === 'inner' }"
   >
-    <textarea :id v-model="modelValue" rows="4" v-bind="$attrs" />
+    <textarea
+      v-model="modelValue"
+      rows="4"
+      v-bind="{ ...$attrs, ...control }"
+    />
   </orio-control-element>
 </template>
 
