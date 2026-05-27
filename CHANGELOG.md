@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.25.1](https://github.com/oriondor/orio-ui/compare/v1.25.0...v1.25.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* aligned to a new prop forwarding ([#155](https://github.com/oriondor/orio-ui/issues/155)) ([4dc7289](https://github.com/oriondor/orio-ui/commit/4dc72893d04131abd81d8896a01a71045eccbc63))
+
 ## [1.25.0](https://github.com/oriondor/orio-ui/compare/v1.24.0...v1.25.0) (2026-05-26)
 
 This PR adds a generic 2D roving-grid composable, integrates roving focus into Calendar navigation and day grid, updates ControlElement/Input/Button to pass merged control attrs, updates calendar i18n keys, and refreshes Calendar docs examples to new demo dates.
