@@ -59,10 +59,15 @@ function onMouseleave(event: MouseEvent) {
       @mouseleave="onMouseleave"
     >
       <orio-loading-spinner v-if="loading" />
-      <slot v-else name="icon">
-        <orio-icon v-if="icon" :name="icon" />
-      </slot>
-      <slot />
+      <template v-else>
+        <slot name="icon">
+          <orio-icon v-if="icon" :name="icon" />
+        </slot>
+
+        <slot />
+
+        <slot name="icon-right" />
+      </template>
     </button>
   </orio-control-element>
 </template>

@@ -34,7 +34,7 @@ This PR introduces interactive transformation tools for the Canvas component (ro
 Adds handle-based transform features (rotate, resize, combined transform), image import and canvas export tools, cursor-override API, rotated-node rendering and hit-testing, new tooltips/icons/docs, exports for new tools, and tests covering interactions and export behavior.
 ## [1.22.0](https://github.com/oriondor/orio-ui/compare/v1.21.0...v1.22.0) (2026-04-16)
 
-Adds a new Canvas feature: a pluggable, tool-driven HTML <canvas> system with tool APIs, stage/toolbar UI, node CRUD/history composables, nine built-in tools, hit-testing utilities, docs, i18n, icon additions, and small auto-registration/theme fixes.
+Adds a new Canvas feature: a pluggable, tool-driven HTML `<canvas>` system with tool APIs, stage/toolbar UI, node CRUD/history composables, nine built-in tools, hit-testing utilities, docs, i18n, icon additions, and small auto-registration/theme fixes.
 ## [1.21.0](https://github.com/oriondor/orio-ui/compare/v1.20.0...v1.21.0) (2026-04-10)
 
 Adds vue-i18n: new runtime i18n module and en/uk resources, a Nuxt runtime i18n plugin and module registration, package dependency update, localized component text and locale-aware formatting, docs/theme locale switcher, updated tests, and a new LocaleSwitcher component. (50 words)
