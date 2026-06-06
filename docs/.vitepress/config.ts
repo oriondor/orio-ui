@@ -159,5 +159,14 @@ export default defineConfig({
     ssr: {
       noExternal: ["vue-i18n", "@intlify/core-base", "@intlify/shared"],
     },
+    build: {
+      // `useUrlSync` (transitively loaded by `useFilter` only when
+      // `{ url: true }` is passed) imports `useRoute` from Nuxt's `#imports`.
+      // The docs build never exercises that code path; mark `#imports` as
+      // external so Rollup does not try to bundle a Nuxt-only specifier.
+      rollupOptions: {
+        external: ["#imports"],
+      },
+    },
   },
 });
