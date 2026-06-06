@@ -27,9 +27,10 @@ yarn-error.log*
 .fleet
 .idea
 .vscode
-.claude*
+# Claude Code: share CLAUDE.md + agents, keep personal settings local
+.claude/*
+!.claude/agents/
 .cheatsheets*
-CLAUDE.md
 *.swp
 *.swo
 *~
