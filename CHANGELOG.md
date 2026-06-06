@@ -7,11 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.26.0](https://github.com/oriondor/orio-ui/compare/v1.25.1...v1.26.0) (2026-06-06)
 
-
-### Features
-
-* Implemented useFilter composable ([#157](https://github.com/oriondor/orio-ui/issues/157)) ([053dcf7](https://github.com/oriondor/orio-ui/commit/053dcf72af980716b3f2803bba59b62416d6179b))
-
+This PR introduces the `useFilter` composable for managing named filter groups with shared registry-backed state, optional URL query synchronization, and computed active-filter lists, alongside comprehensive documentation and usage examples. It also enhances `Button.vue` to support customizable left and right icon slots with prop-based fallback rendering.
 ## [1.25.1](https://github.com/oriondor/orio-ui/compare/v1.25.0...v1.25.1) (2026-05-27)
 
 Multiple runtime form and button components now source control attributes from `orio-control-element`'s scoped `control` slot and merge those bindings with `$attrs` in templates; local redundant props (e.g., `disabled`, `name`) and explicit attribute bindings were removed.
