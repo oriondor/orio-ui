@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.27.0](https://github.com/oriondor/orio-ui/compare/v1.26.0...v1.27.0) (2026-06-06)
+
+
+### Features
+
+* initial agents onboarding ([#159](https://github.com/oriondor/orio-ui/issues/159)) ([504a899](https://github.com/oriondor/orio-ui/commit/504a899308be28463003cecc17dca876077e2add))
+
 ## [1.26.0](https://github.com/oriondor/orio-ui/compare/v1.25.1...v1.26.0) (2026-06-06)
 
 This PR introduces the `useFilter` composable for managing named filter groups with shared registry-backed state, optional URL query synchronization, and computed active-filter lists, alongside comprehensive documentation and usage examples. It also enhances `Button.vue` to support customizable left and right icon slots with prop-based fallback rendering.
