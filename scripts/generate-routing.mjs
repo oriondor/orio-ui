@@ -3,7 +3,9 @@
  * injects it into CLAUDE.md, .claude/agents/component-worker.md, and
  * .claude/agents/component-finder.md between routing markers.
  *
- * Run via the "prebuild" npm script.
+ * Run via the "prebuild" npm script. The companion postbuild script
+ * `emit-consumer-agents.mjs` emits the same routing into `dist/agents/` for
+ * downstream consumer projects.
  *
  * ============================================================================
  * USAGE.md frontmatter spec
@@ -54,99 +56,13 @@
  * Anthropic prompt-cache prefix stable across runs.
  */
 import { readFileSync, writeFileSync } from "node:fs";
-import fg from "fast-glob";
-
-const CATEGORY_ORDER = [
-  "Layout & containers",
-  "Form inputs",
-  "Date",
-  "Buttons & indicators",
-  "Media & misc",
-  "Composables",
-];
+import { loadEntries, groupAndSort } from "./lib/load-entries.mjs";
 
 const TARGETS = [
   { file: "CLAUDE.md", format: "claude" },
   { file: ".claude/agents/component-worker.md", format: "worker" },
   { file: ".claude/agents/component-finder.md", format: "finder" },
 ];
-
-const ROOTS = {
-  component: "src/runtime/components/",
-  composable: "src/runtime/composables/",
-};
-
-function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return null;
-  const data = {};
-  for (const line of match[1].split("\n")) {
-    const fieldMatch = line.match(/^(\w+):\s*(.*)$/);
-    if (!fieldMatch) continue;
-    let value = fieldMatch[2].trim();
-    if (value === "true") value = true;
-    else if (value === "false") value = false;
-    data[fieldMatch[1]] = value;
-  }
-  return data;
-}
-
-function derivePath(file, kind) {
-  const root = ROOTS[kind];
-  const rel = file.slice(file.indexOf(root) + root.length);
-  if (rel.endsWith("/USAGE.md")) {
-    return rel.replace(/USAGE\.md$/, "");
-  }
-  const stem = rel.replace(/\.USAGE\.md$/, "");
-  return kind === "component" ? `${stem}.vue` : stem;
-}
-
-function loadEntries() {
-  const files = fg.sync([
-    "src/runtime/components/**/*USAGE.md",
-    "src/runtime/composables/**/*USAGE.md",
-  ]);
-  const entries = [];
-  for (const file of files) {
-    const content = readFileSync(file, "utf8");
-    const fm = parseFrontmatter(content);
-    if (!fm) {
-      console.warn(`  skip (no frontmatter): ${file}`);
-      continue;
-    }
-    const missing = ["kind", "category", "purpose", "short"].filter(
-      (key) => fm[key] === undefined || fm[key] === "",
-    );
-    if (missing.length) {
-      console.warn(`  skip (missing ${missing.join(", ")}): ${file}`);
-      continue;
-    }
-    if (!ROOTS[fm.kind]) {
-      console.warn(`  skip (bad kind "${fm.kind}"): ${file}`);
-      continue;
-    }
-    entries.push({ ...fm, file, path: derivePath(file, fm.kind) });
-  }
-  return entries;
-}
-
-function groupAndSort(entries) {
-  const groups = new Map();
-  for (const cat of CATEGORY_ORDER) groups.set(cat, []);
-  for (const entry of entries) {
-    if (!groups.has(entry.category)) {
-      console.warn(
-        `  warn (unknown category "${entry.category}"): ${entry.file}`,
-      );
-      groups.set(entry.category, []);
-    }
-    groups.get(entry.category).push(entry);
-  }
-  for (const list of groups.values()) {
-    list.sort((a, b) => a.path.localeCompare(b.path));
-  }
-  return groups;
-}
 
 function renderClaude(groups) {
   const sections = [];
@@ -215,14 +131,20 @@ function main() {
   const printOnly = process.argv.includes("--print");
   const entries = loadEntries();
   const groups = groupAndSort(entries);
-  const renderers = { claude: renderClaude, worker: renderWorker, finder: renderFinder };
+  const renderers = {
+    claude: renderClaude,
+    worker: renderWorker,
+    finder: renderFinder,
+  };
 
   if (printOnly) {
     for (const { file, format } of TARGETS) {
       console.log(`\n===== ${file} =====\n`);
       console.log(renderers[format](groups));
     }
-    console.log(`\nRouting: ${entries.length} entries (print mode, no files written)`);
+    console.log(
+      `\nRouting: ${entries.length} entries (print mode, no files written)`,
+    );
     return;
   }
 
@@ -233,7 +155,9 @@ function main() {
       console.log(`  updated ${file}`);
     }
   }
-  console.log(`Routing: ${entries.length} entries${changed ? "" : " (no changes)"}`);
+  console.log(
+    `Routing: ${entries.length} entries${changed ? "" : " (no changes)"}`,
+  );
 }
 
 main();

@@ -163,6 +163,68 @@ setMode("dark");
 - [Composable Documentation](https://orio-ui.vercel.app/composables/use-theme)
 - [Utils Documentation](https://orio-ui.vercel.app/utils/icon-registry)
 
+## AI Agent Onboarding
+
+Orio UI ships a routing index and per-component invariants/gotchas files
+designed for AI coding agents (Claude Code, Cursor, Copilot, etc.) so they can
+discover and integrate components without re-reading the whole codebase. The
+files are version-pinned to your installed `orio-ui` — upgrade the package and
+the agent sees the new API automatically.
+
+### What ships inside `node_modules/orio-ui/dist/`
+
+- `agents/ROUTING.md` — full routing index (every component and composable,
+  grouped by category, with a one-line purpose).
+- `agents/component-worker.md` — optional subagent definition. Picks the right
+  component for a vague request, reads its `USAGE.md`, then implements the
+  integration in your app. Model: opus.
+- `agents/component-finder.md` — optional read-only subagent. Locates a
+  component for a vague request and returns paths without writing code.
+  Model: haiku.
+- `runtime/components/<Name>.USAGE.md` and
+  `runtime/composables/<name>.USAGE.md` — per-component invariants, gotchas,
+  and a quick-reference snippet, sitting next to the compiled source.
+
+### Wire it into your project
+
+Paste this block into your project's `CLAUDE.md` (or `AGENTS.md` /
+`.cursorrules` — any agent instruction file your tooling reads):
+
+```md
+# orio-ui
+
+This project consumes the [orio-ui](https://orio-ui.vercel.app/) Vue 3 component
+library. Before integrating an orio-ui component:
+
+- Routing index: `node_modules/orio-ui/dist/agents/ROUTING.md`
+- Per-component invariants: `node_modules/orio-ui/dist/runtime/components/<Name>.USAGE.md`
+- Per-composable invariants: `node_modules/orio-ui/dist/runtime/composables/<name>.USAGE.md`
+
+Read the matching `USAGE.md` (when present) before writing integration code —
+it documents non-obvious invariants and gotchas the source alone will not
+reveal.
+```
+
+### Optional: install the subagents
+
+If your AI tooling supports subagents (e.g. Claude Code's `.claude/agents/`),
+copy the shipped definitions in once and forget about them:
+
+```bash
+mkdir -p .claude/agents
+cp node_modules/orio-ui/dist/agents/component-worker.md .claude/agents/
+cp node_modules/orio-ui/dist/agents/component-finder.md .claude/agents/
+```
+
+After that, requests like *"add a date range picker to the booking form"* or
+*"where is the toast component?"* are routed automatically to the right
+subagent, which already knows the orio-ui routing table and reads the matching
+`USAGE.md` before writing code.
+
+> **Re-copy after `orio-ui` upgrades** so the routing table in the subagent
+> definition tracks the installed version. (Pin this to your project's
+> `postinstall` script if you want it automated.)
+
 ## Development
 
 ### Setup Development Environment
