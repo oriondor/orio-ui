@@ -1,3 +1,11 @@
+---
+kind: component
+category: Form inputs
+purpose: text input, single-line input
+short: text input wrapping ControlElement; supports inner-floating label layout
+invariants: true
+---
+
 # Input — agent-only invariants
 
 `<orio-input>` is the text input wrapping `ControlElement`. Read

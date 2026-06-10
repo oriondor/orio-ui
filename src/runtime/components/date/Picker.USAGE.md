@@ -1,3 +1,11 @@
+---
+kind: component
+category: Date
+purpose: date input, single date picker, "pick a date"
+short: single date picker built from Calendar plus PickerTrigger
+invariants: true
+---
+
 # date/Picker — agent-only invariants
 
 `<orio-date-picker>` is the single-date picker: a `<orio-date-picker-trigger>`

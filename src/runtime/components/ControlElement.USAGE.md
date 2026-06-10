@@ -1,3 +1,11 @@
+---
+kind: component
+category: Form inputs
+purpose: label + error + a11y wrapper for any form control
+short: label/legend wrapper, owns a11y attrs, exposes the `control` slot prop bag
+invariants: true
+---
+
 # ControlElement — agent-only invariants
 
 `ControlElement` is the wrapper every form input uses (Input, Textarea,

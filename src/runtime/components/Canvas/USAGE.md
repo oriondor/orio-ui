@@ -1,3 +1,11 @@
+---
+kind: component
+category: Layout & containers
+purpose: canvas, drawing board, whiteboard, sketch, freeform editor, pluggable tools
+short: pannable workspace with pluggable tools and detached toolbar registry
+invariants: true
+---
+
 # Canvas — agent-only invariants
 
 Read this before integrating `<orio-canvas>` into a consumer app. Public API

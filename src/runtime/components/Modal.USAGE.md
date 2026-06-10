@@ -1,3 +1,11 @@
+---
+kind: component
+category: Layout & containers
+purpose: modal, dialog, popup overlay, lightbox
+short: teleported overlay dialog with open-from-origin animation
+invariants: true
+---
+
 # Modal — agent-only invariants
 
 `<orio-modal>` is the teleported overlay dialog.

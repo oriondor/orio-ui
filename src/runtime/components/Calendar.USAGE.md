@@ -1,3 +1,11 @@
+---
+kind: component
+category: Date
+purpose: month calendar, date grid, day picker UI
+short: month grid with roving-focus keyboard a11y
+invariants: true
+---
+
 # Calendar — agent-only invariants
 
 `<orio-calendar>` is the month-grid primitive. `date/Picker.vue` and
