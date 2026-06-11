@@ -97,4 +97,5 @@ Narrow subagents live in `.claude/agents/`:
 - `component-finder` (haiku, read-only) — resolves vague requests to source path + USAGE.md path + relevant composable docs. No reads beyond locating.
 - `component-worker` (inherit) — picks the matching component, reads its USAGE.md and source, then implements (e.g. wires the component into a consumer app).
 - `use-filter-onboarder` (opus) — integrates `useFilter` end-to-end: defines the group, binds pickers, builds chip bars, wires URL sync. Triggered by "add filters", "wire up useFilter", "filter bar with chips".
+- `usage-auditor` (sonnet, read-only) — audits a component/composable's USAGE.md for drift after its source changes. Dispatched automatically via a PostToolUse hook (`scripts/hooks/usage-audit-reminder.mjs`); reports findings, caller applies fixes.
 Routing/component agents hold the full component list in their prompt prefix for cache-friendly reuse. The onboarder holds the `useFilter` API + canonical patterns in its prefix for the same reason.
