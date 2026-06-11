@@ -6,6 +6,16 @@ A delightful, lightweight component library for Nuxt 3+ applications. Built with
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Demo](https://img.shields.io/badge/Demo-Live-blue.svg)](https://orio-ui.vercel.app/)
 
+## ⚡ AI agents
+
+```bash
+npx orio-ui agents
+```
+
+One command wires your AI coding agent (Claude Code, Cursor, Copilot, …) to
+orio-ui's shipped, version-pinned agent docs. Details in
+[AI Agent Onboarding](#ai-agent-onboarding).
+
 ## Features
 
 ✨ **58 Components** - Beautiful, accessible components ready to use
@@ -177,33 +187,36 @@ the agent sees the new API automatically.
   grouped by category, with a one-line purpose).
 - `agents/component-worker.md` — optional subagent definition. Picks the right
   component for a vague request, reads its `USAGE.md`, then implements the
-  integration in your app. Model: opus.
+  integration in your app.
 - `agents/component-finder.md` — optional read-only subagent. Locates a
   component for a vague request and returns paths without writing code.
-  Model: haiku.
+- `agents/snippet.md` — the CLAUDE.md snippet appended by `npx orio-ui agents`.
 - `runtime/components/<Name>.USAGE.md` and
   `runtime/composables/<name>.USAGE.md` — per-component invariants, gotchas,
   and a quick-reference snippet, sitting next to the compiled source.
 
 ### Wire it into your project
 
-Paste this block into your project's `CLAUDE.md` (or `AGENTS.md` /
-`.cursorrules` — any agent instruction file your tooling reads):
+Run once in your project root:
 
-```md
-# orio-ui
-
-This project consumes the [orio-ui](https://orio-ui.vercel.app/) Vue 3 component
-library. Before integrating an orio-ui component:
-
-- Routing index: `node_modules/orio-ui/dist/agents/ROUTING.md`
-- Per-component invariants: `node_modules/orio-ui/dist/runtime/components/<Name>.USAGE.md`
-- Per-composable invariants: `node_modules/orio-ui/dist/runtime/composables/<name>.USAGE.md`
-
-Read the matching `USAGE.md` (when present) before writing integration code —
-it documents non-obvious invariants and gotchas the source alone will not
-reveal.
+```bash
+npx orio-ui agents
 ```
+
+It appends the snippet below to your `CLAUDE.md`, creating the file if missing
+(no-op when already wired). Or paste it yourself — into `CLAUDE.md`,
+`AGENTS.md`, `.cursorrules`, or any agent instruction file your tooling reads:
+
+<!-- snippet:start -->
+```md
+## orio-ui
+
+orio-ui ships agent-ready docs inside the package itself. Before answering
+anything about orio-ui components/composables, read
+`node_modules/orio-ui/dist/agents/ROUTING.md` — it routes to per-component
+USAGE.md files and optional subagents. Don't explore the package source blindly.
+```
+<!-- snippet:end -->
 
 ### Optional: install the subagents
 

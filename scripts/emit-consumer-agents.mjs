@@ -1,19 +1,22 @@
 /**
- * Postbuild step: emits a consumer-facing agent bundle into `dist/agents/` and
- * mirrors every USAGE.md file into `dist/runtime/` alongside the compiled
+ * Postbuild step: emits the consumer-facing agent bundle into `dist/agents/`
+ * and mirrors every USAGE.md file into `dist/runtime/` alongside the compiled
  * component / composable sources.
  *
- * Consumers reference these paths from their own `CLAUDE.md`:
- *   - node_modules/orio-ui/dist/agents/ROUTING.md
- *   - node_modules/orio-ui/dist/agents/component-worker.md
- *   - node_modules/orio-ui/dist/agents/component-finder.md
- *   - node_modules/orio-ui/dist/runtime/components/<name>.USAGE.md
- *   - node_modules/orio-ui/dist/runtime/composables/<name>.USAGE.md
+ * Shipped files:
+ *   - dist/agents/ROUTING.md          ← scripts/templates/consumer-routing.md
+ *   - dist/agents/component-worker.md ← scripts/templates/bodies/component-worker.md
+ *   - dist/agents/component-finder.md ← scripts/templates/bodies/component-finder.md
+ *   - dist/agents/snippet.md          ← scripts/templates/consumer-snippet.md
+ *   - dist/runtime/.../<name>.USAGE.md ← copied from src/runtime/
+ *
+ * Consumers wire it up with `npx orio-ui agents` (see bin/orio-ui.mjs), which
+ * appends `dist/agents/snippet.md` to their CLAUDE.md.
  *
  * Run as the `postbuild` npm script so it executes after `nuxt-module-build`
- * has populated `dist/`. The routing block source-of-truth is the same
- * USAGE.md frontmatter that `generate-routing.mjs` reads — kept identical so
- * the in-repo and shipped routing never drift.
+ * has populated `dist/`. Sources and renderers are shared with
+ * `generate-routing.mjs` (see `scripts/lib/`) so the in-repo and shipped
+ * routing never drift.
  */
 import {
   copyFileSync,
@@ -23,125 +26,70 @@ import {
   writeFileSync,
 } from "node:fs";
 import { dirname, join } from "node:path";
+import { loadEntries, groupAndSort, ROOTS } from "./lib/load-entries.mjs";
 import {
-  loadEntries,
-  groupAndSort,
-  ROOTS,
-} from "./lib/load-entries.mjs";
+  renderShortIndex,
+  renderPurposeIndex,
+  injectBetweenMarkers,
+  fenceMarkdown,
+} from "./lib/render-routing.mjs";
+import { renderTemplate } from "./lib/render-template.mjs";
 
 const DIST_AGENTS = "dist/agents";
 const DIST_RUNTIME = "dist/runtime";
 
-const TEMPLATES = [
+const CONSUMER_VARS = {
+  componentsRoot: "node_modules/orio-ui/dist/runtime/components/",
+  composablesRoot: "node_modules/orio-ui/dist/runtime/composables/",
+};
+
+const AGENT_BODIES = [
   {
-    src: "scripts/templates/consumer-routing.md",
-    out: `${DIST_AGENTS}/ROUTING.md`,
-    format: "claude",
-  },
-  {
-    src: "scripts/templates/consumer-component-worker.md",
+    body: "scripts/templates/bodies/component-worker.md",
     out: `${DIST_AGENTS}/component-worker.md`,
-    format: "worker",
   },
   {
-    src: "scripts/templates/consumer-component-finder.md",
+    body: "scripts/templates/bodies/component-finder.md",
     out: `${DIST_AGENTS}/component-finder.md`,
-    format: "finder",
   },
 ];
 
-function renderClaude(groups) {
-  const sections = [];
-  for (const [cat, list] of groups) {
-    if (list.length === 0) continue;
-    const lines = [`### ${cat}`];
-    for (const entry of list) {
-      const marker = entry.invariants ? " **Has USAGE.md.**" : "";
-      lines.push(`- \`${entry.path}\` — ${entry.short}.${marker}`);
-    }
-    sections.push(lines.join("\n"));
-  }
-  return sections.join("\n\n");
-}
+function emitAgents(groups, snippet) {
+  const shortIndex = renderShortIndex(groups);
+  const purposeIndex = renderPurposeIndex(groups);
 
-function renderWorker(groups) {
-  const sections = [];
-  for (const [cat, list] of groups) {
-    if (list.length === 0) continue;
-    const lines = [`### ${cat}`];
-    for (const entry of list) {
-      const marker = entry.invariants ? " (USAGE.md)" : "";
-      lines.push(`- **${entry.purpose}** → \`${entry.path}\`${marker}`);
-    }
-    sections.push(lines.join("\n"));
-  }
-  return sections.join("\n\n");
-}
+  const routingTemplate = readFileSync(
+    "scripts/templates/consumer-routing.md",
+    "utf8",
+  );
+  let routing = injectBetweenMarkers(routingTemplate, "routing", shortIndex);
+  routing = injectBetweenMarkers(routing, "snippet", fenceMarkdown(snippet));
+  writeFileSync(`${DIST_AGENTS}/ROUTING.md`, routing);
+  console.log(`  emitted ${DIST_AGENTS}/ROUTING.md`);
 
-function renderFinder(groups) {
-  const sections = [];
-  for (const [cat, list] of groups) {
-    if (list.length === 0) continue;
-    const lines = [`### ${cat}`];
-    for (const entry of list) {
-      const marker = entry.invariants ? " (has `USAGE.md`)" : "";
-      lines.push(`- **${entry.purpose}** → \`${entry.path}\`${marker}`);
-    }
-    sections.push(lines.join("\n"));
-  }
-  return sections.join("\n\n");
-}
-
-function injectIntoTemplate(templateContent, block) {
-  const start = "<!-- routing:start -->";
-  const end = "<!-- routing:end -->";
-  const regex = new RegExp(`${start}[\\s\\S]*?${end}`);
-  if (!regex.test(templateContent)) {
-    throw new Error("template missing routing markers");
-  }
-  return templateContent.replace(regex, `${start}\n${block}\n${end}`);
-}
-
-function ensureDir(filePath) {
-  mkdirSync(dirname(filePath), { recursive: true });
-}
-
-function emitAgents(groups) {
-  const renderers = {
-    claude: renderClaude,
-    worker: renderWorker,
-    finder: renderFinder,
-  };
-  for (const { src, out, format } of TEMPLATES) {
-    const template = readFileSync(src, "utf8");
-    const block = renderers[format](groups);
-    const rendered = injectIntoTemplate(template, block);
-    ensureDir(out);
-    writeFileSync(out, rendered);
+  AGENT_BODIES.forEach(({ body, out }) => {
+    const rendered = renderTemplate(readFileSync(body, "utf8"), {
+      variant: "consumer",
+      vars: CONSUMER_VARS,
+    });
+    writeFileSync(out, injectBetweenMarkers(rendered, "routing", purposeIndex));
     console.log(`  emitted ${out}`);
-  }
+  });
+
+  writeFileSync(`${DIST_AGENTS}/snippet.md`, `${snippet}\n`);
+  console.log(`  emitted ${DIST_AGENTS}/snippet.md`);
 }
 
 function copyUsageFiles(entries) {
   let copied = 0;
-  let missing = 0;
-  for (const entry of entries) {
+  entries.forEach((entry) => {
     const targetRoot = ROOTS[entry.kind].replace(/^src\//, "dist/");
     const out = join(targetRoot, entry.usagePath);
-    if (!existsSync(dirname(out))) {
-      mkdirSync(dirname(out), { recursive: true });
-    }
-    if (!existsSync(entry.file)) {
-      console.warn(`  skip (source missing): ${entry.file}`);
-      missing += 1;
-      continue;
-    }
+    mkdirSync(dirname(out), { recursive: true });
     copyFileSync(entry.file, out);
     copied += 1;
-  }
-  console.log(
-    `  copied ${copied} USAGE.md file(s) into dist/runtime/${missing ? ` (${missing} missing)` : ""}`,
-  );
+  });
+  console.log(`  copied ${copied} USAGE.md file(s) into dist/runtime/`);
 }
 
 function main() {
@@ -153,8 +101,12 @@ function main() {
   }
   const entries = loadEntries();
   const groups = groupAndSort(entries);
+  const snippet = readFileSync(
+    "scripts/templates/consumer-snippet.md",
+    "utf8",
+  ).trimEnd();
   mkdirSync(DIST_AGENTS, { recursive: true });
-  emitAgents(groups);
+  emitAgents(groups, snippet);
   copyUsageFiles(entries);
   console.log(`Consumer agents: ${entries.length} entries`);
 }

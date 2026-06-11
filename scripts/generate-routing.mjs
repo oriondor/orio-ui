@@ -1,11 +1,15 @@
 /**
- * Generates the component/composable routing index from USAGE.md files and
- * injects it into CLAUDE.md, .claude/agents/component-worker.md, and
- * .claude/agents/component-finder.md between routing markers.
+ * Generates the in-repo agent artifacts from their single sources of truth:
+ *
+ *   - CLAUDE.md routing block            ← USAGE.md frontmatter
+ *   - .claude/agents/component-worker.md ← scripts/templates/bodies/component-worker.md
+ *   - .claude/agents/component-finder.md ← scripts/templates/bodies/component-finder.md
+ *   - README.md onboarding snippet       ← scripts/templates/consumer-snippet.md
  *
  * Run via the "prebuild" npm script. The companion postbuild script
- * `emit-consumer-agents.mjs` emits the same routing into `dist/agents/` for
- * downstream consumer projects.
+ * `emit-consumer-agents.mjs` renders the same sources with consumer paths
+ * into `dist/agents/` for downstream projects — shared renderers live in
+ * `scripts/lib/` so the two can never drift.
  *
  * ============================================================================
  * USAGE.md frontmatter spec
@@ -16,10 +20,10 @@
  *
  *   ---
  *   kind: component                   # "component" | "composable"
- *   category: Layout & containers     # one of CATEGORY_ORDER below
+ *   category: Layout & containers     # one of CATEGORY_ORDER in load-entries
  *   purpose: modal, dialog, popup overlay, lightbox
  *   short: teleported overlay dialog with open-from-origin animation
- *   invariants: true                  # true → routing emits a "USAGE.md" marker
+ *   invariants: true                  # true → routing emits a read-first marker
  *   ---
  *
  * Fields:
@@ -31,8 +35,9 @@
  *   short       One-sentence description used by the CLAUDE.md routing index.
  *               No trailing period — the renderer adds it.
  *   invariants  true if the USAGE.md body documents gotchas worth reading
- *               before integration; false for trivial wrappers (Button, Tag,
- *               Badge). Drives the "(USAGE.md)" / "Has USAGE.md" marker.
+ *               before integration; false for trivial wrappers (LoadingSpinner,
+ *               view/Separator, useApi). Drives the "read USAGE.md first"
+ *               marker — every entry ships a USAGE.md either way.
  *
  * File location → derived path:
  *   src/runtime/components/Modal.USAGE.md         → Modal.vue
@@ -40,88 +45,39 @@
  *   src/runtime/components/date/Picker.USAGE.md   → date/Picker.vue
  *   src/runtime/composables/useFilter.USAGE.md    → useFilter
  *
- * ============================================================================
- * Target file markers
- * ============================================================================
- *
- * Each target file must contain a pair of markers; the script replaces
- * everything between them:
- *
- *   <!-- routing:start -->
- *   ...generated...
- *   <!-- routing:end -->
- *
  * Stability: entries are emitted in a deterministic order (category order
- * fixed below, alphabetical by path inside each category). This keeps the
- * Anthropic prompt-cache prefix stable across runs.
+ * fixed in load-entries, alphabetical by path inside each category). This
+ * keeps the Anthropic prompt-cache prefix stable across runs.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { loadEntries, groupAndSort } from "./lib/load-entries.mjs";
+import {
+  renderShortIndex,
+  renderPurposeIndex,
+  injectBetweenMarkers,
+  fenceMarkdown,
+} from "./lib/render-routing.mjs";
+import { renderTemplate } from "./lib/render-template.mjs";
 
-const TARGETS = [
-  { file: "CLAUDE.md", format: "claude" },
-  { file: ".claude/agents/component-worker.md", format: "worker" },
-  { file: ".claude/agents/component-finder.md", format: "finder" },
+const REPO_VARS = {
+  componentsRoot: "src/runtime/components/",
+  composablesRoot: "src/runtime/composables/",
+};
+
+const AGENT_BODIES = [
+  {
+    body: "scripts/templates/bodies/component-worker.md",
+    out: ".claude/agents/component-worker.md",
+  },
+  {
+    body: "scripts/templates/bodies/component-finder.md",
+    out: ".claude/agents/component-finder.md",
+  },
 ];
 
-function renderClaude(groups) {
-  const sections = [];
-  for (const [cat, list] of groups) {
-    if (list.length === 0) continue;
-    const lines = [`### ${cat}`];
-    for (const entry of list) {
-      const marker = entry.invariants ? " **Has USAGE.md.**" : "";
-      lines.push(`- \`${entry.path}\` — ${entry.short}.${marker}`);
-    }
-    sections.push(lines.join("\n"));
-  }
-  return sections.join("\n\n");
-}
-
-function renderWorker(groups) {
-  const sections = [];
-  for (const [cat, list] of groups) {
-    if (list.length === 0) continue;
-    const lines = [`### ${cat}`];
-    for (const entry of list) {
-      const marker = entry.invariants ? " (USAGE.md)" : "";
-      lines.push(`- **${entry.purpose}** → \`${entry.path}\`${marker}`);
-    }
-    sections.push(lines.join("\n"));
-  }
-  return sections.join("\n\n");
-}
-
-function renderFinder(groups) {
-  const sections = [];
-  for (const [cat, list] of groups) {
-    if (list.length === 0) continue;
-    const lines = [`### ${cat}`];
-    for (const entry of list) {
-      const marker = entry.invariants ? " (has `USAGE.md`)" : "";
-      lines.push(`- **${entry.purpose}** → \`${entry.path}\`${marker}`);
-    }
-    sections.push(lines.join("\n"));
-  }
-  return sections.join("\n\n");
-}
-
-function inject(filePath, block) {
-  let content;
-  try {
-    content = readFileSync(filePath, "utf8");
-  } catch {
-    console.warn(`  skip (not found): ${filePath}`);
-    return false;
-  }
-  const start = "<!-- routing:start -->";
-  const end = "<!-- routing:end -->";
-  const regex = new RegExp(`${start}[\\s\\S]*?${end}`);
-  if (!regex.test(content)) {
-    console.warn(`  skip (no markers): ${filePath}`);
-    return false;
-  }
-  const updated = content.replace(regex, `${start}\n${block}\n${end}`);
+function injectIntoFile(filePath, markerName, block) {
+  const content = readFileSync(filePath, "utf8");
+  const updated = injectBetweenMarkers(content, markerName, block);
   if (updated === content) return false;
   writeFileSync(filePath, updated);
   return true;
@@ -131,33 +87,40 @@ function main() {
   const printOnly = process.argv.includes("--print");
   const entries = loadEntries();
   const groups = groupAndSort(entries);
-  const renderers = {
-    claude: renderClaude,
-    worker: renderWorker,
-    finder: renderFinder,
-  };
+  const shortIndex = renderShortIndex(groups);
+  const purposeIndex = renderPurposeIndex(groups);
+  const snippet = readFileSync(
+    "scripts/templates/consumer-snippet.md",
+    "utf8",
+  ).trimEnd();
 
   if (printOnly) {
-    for (const { file, format } of TARGETS) {
-      console.log(`\n===== ${file} =====\n`);
-      console.log(renderers[format](groups));
-    }
+    console.log(`\n===== short index =====\n\n${shortIndex}`);
+    console.log(`\n===== purpose index =====\n\n${purposeIndex}`);
     console.log(
       `\nRouting: ${entries.length} entries (print mode, no files written)`,
     );
     return;
   }
 
-  let changed = false;
-  for (const { file, format } of TARGETS) {
-    if (inject(file, renderers[format](groups))) {
-      changed = true;
-      console.log(`  updated ${file}`);
-    }
+  if (injectIntoFile("CLAUDE.md", "routing", shortIndex)) {
+    console.log("  updated CLAUDE.md");
   }
-  console.log(
-    `Routing: ${entries.length} entries${changed ? "" : " (no changes)"}`,
-  );
+  if (injectIntoFile("README.md", "snippet", fenceMarkdown(snippet))) {
+    console.log("  updated README.md");
+  }
+
+  AGENT_BODIES.forEach(({ body, out }) => {
+    const rendered = renderTemplate(readFileSync(body, "utf8"), {
+      variant: "repo",
+      vars: REPO_VARS,
+    });
+    const withRouting = injectBetweenMarkers(rendered, "routing", purposeIndex);
+    writeFileSync(out, withRouting);
+    console.log(`  rendered ${out}`);
+  });
+
+  console.log(`Routing: ${entries.length} entries`);
 }
 
 main();

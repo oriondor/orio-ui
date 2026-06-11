@@ -20,7 +20,11 @@
     "./styles": "./dist/runtime/assets/css/main.css",
     "./theme": "./dist/runtime/assets/css/colors.css"
   },
+  "bin": {
+    "orio-ui": "./bin/orio-ui.mjs"
+  },
   "files": [
+    "bin",
     "dist"
   ],
   "scripts": {

@@ -1,29 +1,44 @@
 # orio-ui — agent routing index
 
-This file is shipped inside the published `orio-ui` package. Reference it from
-your consumer project's `CLAUDE.md` (or equivalent) so AI coding agents can
-discover every reusable component and composable that ships with the library.
+This file is shipped inside the published `orio-ui` package. Point your AI
+coding agent here so it can discover every reusable component and composable
+that ships with the library instead of exploring the package source blindly.
 
 **Path:** `node_modules/orio-ui/dist/agents/ROUTING.md`
 
 ## How to wire it up
 
-Add this block to your project's `CLAUDE.md`:
+Run once in your project root:
 
-```md
-# orio-ui
-
-This project consumes the [orio-ui](https://orio-ui.vercel.app/) Vue 3 component
-library. For the full component / composable list and per-component invariants:
-
-- Routing index: `node_modules/orio-ui/dist/agents/ROUTING.md`
-- Per-component USAGE.md: `node_modules/orio-ui/dist/runtime/components/<name>.USAGE.md`
-- Per-composable USAGE.md: `node_modules/orio-ui/dist/runtime/composables/<name>.USAGE.md`
-
-Optional subagents (copy to `.claude/agents/` to enable):
-- `node_modules/orio-ui/dist/agents/component-worker.md` — integrate components into your app.
-- `node_modules/orio-ui/dist/agents/component-finder.md` — locate the right component for a vague request.
+```bash
+npx orio-ui agents
 ```
+
+It appends the snippet below to your `CLAUDE.md` (creating the file if
+missing). Or paste it yourself — into `CLAUDE.md`, `AGENTS.md`,
+`.cursorrules`, or whatever instruction file your tooling reads:
+
+<!-- snippet:start -->
+<!-- snippet:end -->
+
+## Optional subagents
+
+If your AI tooling supports subagents (e.g. Claude Code's `.claude/agents/`),
+copy the shipped definitions in:
+
+```bash
+mkdir -p .claude/agents
+cp node_modules/orio-ui/dist/agents/component-worker.md .claude/agents/
+cp node_modules/orio-ui/dist/agents/component-finder.md .claude/agents/
+```
+
+- `component-worker.md` — picks the right component for a vague request, reads
+  its USAGE.md, then implements the integration in your app.
+- `component-finder.md` — read-only; locates a component and returns paths
+  without writing code.
+
+Re-copy after `orio-ui` upgrades so the embedded routing table tracks the
+installed version.
 
 ## Conventions
 
@@ -32,8 +47,10 @@ Optional subagents (copy to `.claude/agents/` to enable):
 - Paths below are relative to `node_modules/orio-ui/dist/runtime/components/`
   for components and `node_modules/orio-ui/dist/runtime/composables/` for
   composables.
-- Entries marked **Has USAGE.md** ship an agent-only invariants/gotchas file
-  next to the source. Read it before integrating.
+- Every entry ships an agent-only USAGE.md next to its compiled source, named
+  `<Name>.USAGE.md` (or `<Folder>/USAGE.md` for folder components). Entries
+  marked **Read USAGE.md first.** document non-trivial invariants/gotchas —
+  read them before integrating.
 
 ## Components & composables
 
