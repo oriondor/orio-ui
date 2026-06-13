@@ -6,6 +6,16 @@ A delightful, lightweight component library for Nuxt 3+ applications. Built with
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Demo](https://img.shields.io/badge/Demo-Live-blue.svg)](https://orio-ui.vercel.app/)
 
+## ⚡ AI agents
+
+```bash
+npx orio-ui agents
+```
+
+One command wires your AI coding agent (Claude Code, Cursor, Copilot, …) to
+orio-ui's shipped, version-pinned agent docs. Details in
+[AI Agent Onboarding](#ai-agent-onboarding).
+
 ## Features
 
 ✨ **58 Components** - Beautiful, accessible components ready to use
@@ -13,7 +23,7 @@ A delightful, lightweight component library for Nuxt 3+ applications. Built with
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great developer experience
-🧪 **Tested** - 29 test suites for reliability
+🧪 **Tested** - 36 test suites for reliability
 📱 **Responsive** - Mobile-first design approach
 ♿ **Accessible** - ARIA-compliant components
 🌐 **i18n** - Built-in vue-i18n support with English defaults
@@ -162,6 +172,71 @@ setMode("dark");
 - [Component Documentation](https://orio-ui.vercel.app/components/button)
 - [Composable Documentation](https://orio-ui.vercel.app/composables/use-theme)
 - [Utils Documentation](https://orio-ui.vercel.app/utils/icon-registry)
+
+## AI Agent Onboarding
+
+Orio UI ships a routing index and per-component invariants/gotchas files
+designed for AI coding agents (Claude Code, Cursor, Copilot, etc.) so they can
+discover and integrate components without re-reading the whole codebase. The
+files are version-pinned to your installed `orio-ui` — upgrade the package and
+the agent sees the new API automatically.
+
+### What ships inside `node_modules/orio-ui/dist/`
+
+- `agents/ROUTING.md` — full routing index (every component and composable,
+  grouped by category, with a one-line purpose).
+- `agents/component-worker.md` — optional subagent definition. Picks the right
+  component for a vague request, reads its `USAGE.md`, then implements the
+  integration in your app.
+- `agents/component-finder.md` — optional read-only subagent. Locates a
+  component for a vague request and returns paths without writing code.
+- `agents/snippet.md` — the CLAUDE.md snippet appended by `npx orio-ui agents`.
+- `runtime/components/<Name>.USAGE.md` and
+  `runtime/composables/<name>.USAGE.md` — per-component invariants, gotchas,
+  and a quick-reference snippet, sitting next to the compiled source.
+
+### Wire it into your project
+
+Run once in your project root:
+
+```bash
+npx orio-ui agents
+```
+
+It appends the snippet below to your `CLAUDE.md`, creating the file if missing
+(no-op when already wired). Or paste it yourself — into `CLAUDE.md`,
+`AGENTS.md`, `.cursorrules`, or any agent instruction file your tooling reads:
+
+<!-- snippet:start -->
+```md
+## orio-ui
+
+orio-ui ships agent-ready docs inside the package itself. Before answering
+anything about orio-ui components/composables, read
+`node_modules/orio-ui/dist/agents/ROUTING.md` — it routes to per-component
+USAGE.md files and optional subagents. Don't explore the package source blindly.
+```
+<!-- snippet:end -->
+
+### Optional: install the subagents
+
+If your AI tooling supports subagents (e.g. Claude Code's `.claude/agents/`),
+copy the shipped definitions in once and forget about them:
+
+```bash
+mkdir -p .claude/agents
+cp node_modules/orio-ui/dist/agents/component-worker.md .claude/agents/
+cp node_modules/orio-ui/dist/agents/component-finder.md .claude/agents/
+```
+
+After that, requests like *"add a date range picker to the booking form"* or
+*"where is the toast component?"* are routed automatically to the right
+subagent, which already knows the orio-ui routing table and reads the matching
+`USAGE.md` before writing code.
+
+> **Re-copy after `orio-ui` upgrades** so the routing table in the subagent
+> definition tracks the installed version. (Pin this to your project's
+> `postinstall` script if you want it automated.)
 
 ## Development
 

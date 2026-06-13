@@ -20,13 +20,19 @@
     "./styles": "./dist/runtime/assets/css/main.css",
     "./theme": "./dist/runtime/assets/css/colors.css"
   },
+  "bin": {
+    "orio-ui": "./bin/orio-ui.mjs"
+  },
   "files": [
+    "bin",
     "dist"
   ],
   "scripts": {
     "dev": "vitepress dev docs",
-    "prebuild": "node scripts/update-counts.mjs",
+    "prebuild": "node scripts/update-counts.mjs && node scripts/generate-routing.mjs",
     "build": "nuxt-module-build build",
+    "postbuild": "node scripts/emit-consumer-agents.mjs",
+    "prepare": "simple-git-hooks",
     "prepack": "npm run build",
     "test": "vitest",
     "test:unit": "vitest run",
@@ -68,6 +74,7 @@
     "prettier": "^3.7.4",
     "sass": "^1.70.0",
     "sass-embedded": "^1.92.1",
+    "simple-git-hooks": "^2.13.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.52.0",
     "vitepress": "^1.6.4",
@@ -75,6 +82,9 @@
     "vitest": "^4.0.18",
     "vue": "^3.5.13",
     "vue-tsc": "^3.2.1"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "node scripts/generate-routing.mjs && git add CLAUDE.md .claude/agents/component-worker.md .claude/agents/component-finder.md"
   },
   "peerDependencies": {
     "nuxt": "^3.0.0 || ^4.0.0",

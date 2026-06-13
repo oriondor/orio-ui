@@ -11,7 +11,7 @@ const tests = fg.sync("tests/**/*.spec.ts").length;
 
 const replacements = [
   [/\*\*\d+ Components\*\*/, `**${components} Components**`],
-  [/\*\*Tested\*\* - [\d+]+ unit tests/, `**Tested** - ${tests} test suites`],
+  [/\*\*Tested\*\* - \d+ test suites/, `**Tested** - ${tests} test suites`],
   [/### Components \(\d+\)/, `### Components (${components})`],
   [/### Composables \(\d+\)/, `### Composables (${composables})`],
   [/# \d+ Vue components/, `# ${components} Vue components`],

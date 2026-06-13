@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/usage-audit-reminder.mjs",
+            "timeout": 10,
+            "statusMessage": "Checking whether USAGE.md audit is needed"
+          }
+        ]
+      }
+    ]
+  }
+}
