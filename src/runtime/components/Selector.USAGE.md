@@ -25,9 +25,11 @@ combine with `useFuzzySearch` and slot `#options-addon`. Generic over
 - **v-model is required.** Type: `SelectableOption | SelectableOption[] |
   null | undefined`. Single-select binds the option (or its primitive);
   multi-select binds an array.
-- **`multiple: true` mutates the bound array in place** via `splice`/`push`.
-  The bound ref must be a writable array — readonly v-models will throw
-  silently in dev or warn in prod.
+- **`multiple: true` mutates the bound array in place** via
+  `modelValue.value.splice(...)` / `modelValue.value.push(...)`. The bound
+  ref must be a writable array — a deep `readonly` v-model blocks those
+  mutations: Vue warns in dev (`Set operation on key … failed: target is
+  readonly`) and fails silently in prod, so the selection won't update.
 - **Single-select closes the popover on choice**; multi-select keeps it
   open. Wire your own close on multi-select via the `option` slot
   `toggle` prop if needed.

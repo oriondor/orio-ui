@@ -44,7 +44,7 @@ Read the source file and the USAGE.md, then verify:
 
 ## Output format
 
-```
+```text
 Component: <path to source>
 USAGE.md:  <path or "MISSING">
 Verdict:   PASS | DRIFT | MISSING

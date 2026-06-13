@@ -25,6 +25,20 @@ describe("renderTemplate", () => {
     expect(output).toBe("shared line\nrepo-only line\ntail line");
   });
 
+  it("matches block markers across CRLF line endings", () => {
+    const template = [
+      "shared line",
+      "{{#repo}}",
+      "repo-only line",
+      "{{/repo}}",
+      "tail line",
+    ].join("\r\n");
+
+    const output = renderTemplate(template, { variant: "repo", vars: {} });
+
+    expect(output).toBe("shared line\r\nrepo-only line\r\ntail line");
+  });
+
   it("removes inactive variant blocks entirely", () => {
     const template = [
       "shared line",

@@ -3,7 +3,7 @@ kind: component
 category: Media & misc
 purpose: carousel preview, thumbnails strip, image picker strip, gallery thumbnails
 short: horizontal thumbnail strip for the Carousel; clicking a thumb updates the shared `activeImage` model
-invariants: false
+invariants: true
 ---
 
 # gallery/CarouselPreview — agent-only invariants

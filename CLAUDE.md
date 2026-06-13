@@ -57,7 +57,7 @@ files; do not edit by hand.
 
 ### Media & misc
 - `gallery/Carousel.vue` — image carousel with swipe gestures, prev/next buttons, dynamic sizing, and per-image slot. **Read USAGE.md first.**
-- `gallery/CarouselPreview.vue` — horizontal thumbnail strip for the Carousel; clicking a thumb updates the shared `activeImage` model.
+- `gallery/CarouselPreview.vue` — horizontal thumbnail strip for the Carousel; clicking a thumb updates the shared `activeImage` model. **Read USAGE.md first.**
 - `ListItem.vue` — `<li>` row with start/end slots and optional selectable checkbox-style behavior. **Read USAGE.md first.**
 - `LocaleSwitcher.vue` — preconfigured Selector that mutates vue-i18n's locale; defaults to English + Ukrainian with flag emojis. **Read USAGE.md first.**
 - `upload/` — headless file upload — provides drop-zone state and file-dialog opener via slot props; consumer renders the UI. **Read USAGE.md first.**

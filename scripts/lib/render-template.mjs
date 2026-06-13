@@ -20,7 +20,7 @@ export function renderTemplate(template, { variant, vars }) {
   let output = template;
   VARIANTS.forEach((blockVariant) => {
     const block = new RegExp(
-      `^\\{\\{#${blockVariant}\\}\\}\\n([\\s\\S]*?)^\\{\\{/${blockVariant}\\}\\}\\n?`,
+      `^\\{\\{#${blockVariant}\\}\\}\\r?\\n([\\s\\S]*?)^\\{\\{/${blockVariant}\\}\\}\\r?\\n?`,
       "gm",
     );
     output = output.replace(block, (match, body) =>

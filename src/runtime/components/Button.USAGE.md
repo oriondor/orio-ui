@@ -48,7 +48,7 @@ often used standalone.
 - **`type` defaults to `submit`** (native default). Inside an
   `<orio-form>`, every `<orio-button>` will submit unless you pass
   `type="button"`.
-- **Loading hides the icon **and** the icon-right slot.** No way to keep
+- **Loading hides the icon and the icon-right slot.** No way to keep
   the trailing icon while showing a spinner — render the spinner
   yourself in `#icon-right` if you need that.
 - **No `aria-busy` on loading.** Set it via `$attrs` if you need

@@ -41,9 +41,18 @@ export function renderPurposeIndex(groups) {
   return sections.join("\n\n");
 }
 
-/** Wrap the onboarding snippet in a ```md fence for copy-paste display. */
+/**
+ * Wrap the onboarding snippet in a ```md fence for copy-paste display. The
+ * fence length is one backtick longer than the longest backtick run inside the
+ * snippet (minimum three) so nested code fences can't close the outer block.
+ */
 export function fenceMarkdown(snippet) {
-  return `\`\`\`md\n${snippet}\n\`\`\``;
+  const longestRun = Math.max(
+    0,
+    ...[...snippet.matchAll(/`+/g)].map((match) => match[0].length),
+  );
+  const fence = "`".repeat(Math.max(3, longestRun + 1));
+  return `${fence}md\n${snippet}\n${fence}`;
 }
 
 /** Replace everything between `<!-- <name>:start -->` / `<!-- <name>:end -->`. */

@@ -32,7 +32,7 @@
     "prebuild": "node scripts/update-counts.mjs && node scripts/generate-routing.mjs",
     "build": "nuxt-module-build build",
     "postbuild": "node scripts/emit-consumer-agents.mjs",
-    "postinstall": "simple-git-hooks",
+    "prepare": "simple-git-hooks",
     "prepack": "npm run build",
     "test": "vitest",
     "test:unit": "vitest run",

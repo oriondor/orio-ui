@@ -94,10 +94,10 @@ function copyUsageFiles(entries) {
 
 function main() {
   if (!existsSync(DIST_RUNTIME)) {
-    console.warn(
-      `  skip: ${DIST_RUNTIME} does not exist — run the build before this script`,
+    console.error(
+      `  error: ${DIST_RUNTIME} does not exist — run the build before this script`,
     );
-    process.exit(0);
+    process.exit(1);
   }
   const entries = loadEntries();
   const groups = groupAndSort(entries);

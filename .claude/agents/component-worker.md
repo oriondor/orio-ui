@@ -75,7 +75,7 @@ not edit by hand.
 
 ### Media & misc
 - **carousel, image slider, gallery, lightbox slider, image viewer** → `gallery/Carousel.vue` (read USAGE.md first)
-- **carousel preview, thumbnails strip, image picker strip, gallery thumbnails** → `gallery/CarouselPreview.vue`
+- **carousel preview, thumbnails strip, image picker strip, gallery thumbnails** → `gallery/CarouselPreview.vue` (read USAGE.md first)
 - **list row, list item, selectable row, list entry** → `ListItem.vue` (read USAGE.md first)
 - **locale switcher, language toggle, i18n switcher** → `LocaleSwitcher.vue` (read USAGE.md first)
 - **upload, file picker, drop-to-upload, file input, headless file upload** → `upload/` (read USAGE.md first)
