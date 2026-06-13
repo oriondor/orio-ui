@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.0](https://github.com/oriondor/orio-ui/compare/v1.27.0...v1.28.0) (2026-06-13)
+
+This PR introduces a comprehensive infrastructure for generating, organizing, and distributing AI agent documentation from USAGE.md frontmatter metadata. It includes entry discovery and routing generation scripts, build-time automation via git hooks, a consumer-facing CLI, updated agent instructions with a new usage-auditor subagent, and 85+ component and composable usage documentation files.
 ## [1.27.0](https://github.com/oriondor/orio-ui/compare/v1.26.0...v1.27.0) (2026-06-06)
 
 This PR establishes a Claude agent framework for the orio-ui Nuxt component library, defining three specialized subagents and comprehensive USAGE.md documentation. Agent roles include component discovery, integration workflow guidance, and useFilter API onboarding, complemented by per-component invariant documentation.
