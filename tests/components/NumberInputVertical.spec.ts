@@ -34,6 +34,20 @@ describe("NumberInputVertical", () => {
     expect(buttons[1].props("icon")).toBe("chevron-down");
   });
 
+  it("renders chevron buttons at xs size", () => {
+    const wrapper = mount(NumberInputVertical);
+    const buttons = wrapper.findAllComponents(Button);
+    expect(buttons[0].props("size")).toBe("xs");
+    expect(buttons[1].props("size")).toBe("xs");
+  });
+
+  it("renders chevron buttons as pills", () => {
+    const wrapper = mount(NumberInputVertical);
+    const buttons = wrapper.findAllComponents(Button);
+    expect(buttons[0].props("pill")).toBe(true);
+    expect(buttons[1].props("pill")).toBe(true);
+  });
+
   it("disables increase button when at max", () => {
     const wrapper = mount(NumberInputVertical, {
       props: { modelValue: 10, max: 10 },

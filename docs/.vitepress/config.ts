@@ -1,6 +1,23 @@
 import { defineConfig } from "vitepress";
-import { generateSidebar } from "vitepress-sidebar";
+import { generateSidebar, type VitePressSidebarOptions } from "vitepress-sidebar";
 import { SidebarItem } from "vitepress-sidebar/types";
+
+// `vitepress-sidebar` emits root-relative links *without* a leading slash
+// (e.g. "components/number-input"). VitePress only flags a sidebar item as
+// active when its link matches the absolute route ("/components/number-input"),
+// so without the slash nothing ever highlights. Prepend it recursively.
+function withAbsoluteLinks(items: SidebarItem[]): SidebarItem[] {
+  return items.map((item) => ({
+    ...item,
+    ...(item.link && !item.link.startsWith("/")
+      ? { link: `/${item.link}` }
+      : {}),
+    ...(item.items ? { items: withAbsoluteLinks(item.items) } : {}),
+  }));
+}
+
+const sidebarSection = (options: VitePressSidebarOptions): SidebarItem[] =>
+  withAbsoluteLinks(generateSidebar(options) as SidebarItem[]);
 
 export default defineConfig({
   title: "Orio UI",
@@ -98,36 +115,36 @@ export default defineConfig({
         },
         {
           text: "Components",
-          items: generateSidebar({
+          items: sidebarSection({
             documentRootPath: "/docs",
             scanStartPath: "/components",
             useTitleFromFrontmatter: true,
             useTitleFromFileHeading: true,
             collapseDepth: 1,
             capitalizeFirst: true,
-          }) as SidebarItem[],
+          }),
         },
         {
           text: "Composables",
-          items: generateSidebar({
+          items: sidebarSection({
             documentRootPath: "/docs",
             scanStartPath: "/composables",
             useTitleFromFrontmatter: true,
             useTitleFromFileHeading: true,
             collapseDepth: 1,
             capitalizeFirst: true,
-          }) as SidebarItem[],
+          }),
         },
         {
           text: "Utils",
-          items: generateSidebar({
+          items: sidebarSection({
             documentRootPath: "/docs",
             scanStartPath: "/utils",
             useTitleFromFrontmatter: true,
             useTitleFromFileHeading: true,
             collapseDepth: 1,
             capitalizeFirst: true,
-          }) as SidebarItem[],
+          }),
         },
       ],
     },

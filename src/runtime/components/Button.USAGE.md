@@ -27,6 +27,9 @@ often used standalone.
 - **Icon-only mode is auto-detected.** When an icon is present and the
   default slot is empty, `.icon-only` is applied → `aspect-ratio: 1`,
   `line-height: 0`. No need to pass a prop.
+- **`pill` prop**: `false` by default. When `true`, swaps the button's
+  `border-radius` to `var(--border-radius-pill)` (fully rounded),
+  overriding the size-driven `--control-radius`. No effect when omitted.
 - **`disabled` blocks `click` and `mousedown` emits.** `mouseup` and
   `mouseleave` always fire (so press-and-hold callers can release
   state).
@@ -67,6 +70,8 @@ often used standalone.
   </orio-button>
 
   <orio-button variant="subdued" icon="close" aria-label="Close" />
+
+  <orio-button pill icon="plus" aria-label="Add" />
 </template>
 ```
 

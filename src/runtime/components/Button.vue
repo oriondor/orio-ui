@@ -6,6 +6,7 @@ interface Props extends ControlProps {
   variant?: "primary" | "secondary" | "subdued";
   icon?: string;
   loading?: boolean;
+  pill?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -52,7 +53,7 @@ function onMouseleave(event: MouseEvent) {
   <orio-control-element v-slot="{ control }" v-bind="props">
     <button
       v-bind="{ ...$attrs, ...control }"
-      :class="[variant, 'gradient-hover', { 'icon-only': isIconOnly }]"
+      :class="[variant, 'gradient-hover', { 'icon-only': isIconOnly, pill }]"
       @click="click"
       @mousedown="onMousedown"
       @mouseup="onMouseup"
@@ -90,6 +91,10 @@ button {
     // padding: 0;
     line-height: 0;
     aspect-ratio: 1;
+  }
+
+  &.pill {
+    border-radius: var(--border-radius-pill);
   }
 
   &:disabled,
