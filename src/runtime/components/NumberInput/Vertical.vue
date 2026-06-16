@@ -23,6 +23,8 @@ const { pressAndHold, stop } = usePressAndHold();
         appearance="minimal"
         icon="chevron-up"
         variant="subdued"
+        size="xs"
+        pill
         :disabled="isAtMax || disabled"
         @mousedown="pressAndHold(increase)"
         @mouseup="stop"
@@ -32,6 +34,8 @@ const { pressAndHold, stop } = usePressAndHold();
         appearance="minimal"
         icon="chevron-down"
         variant="subdued"
+        size="xs"
+        pill
         :disabled="isAtMin || disabled"
         @mousedown="pressAndHold(decrease)"
         @mouseup="stop"
@@ -45,9 +49,14 @@ const { pressAndHold, stop } = usePressAndHold();
 .vertical {
   :deep(.controls) {
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
+    gap: 0;
     right: 3px;
     left: auto;
+  }
+
+  :deep(.controls button) {
+    padding-block: 0;
   }
 
   :deep(.slot-wrapper) {

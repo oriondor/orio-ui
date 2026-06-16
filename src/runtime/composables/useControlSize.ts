@@ -11,6 +11,18 @@ import type { ControlSize } from "../components/ControlElement.vue";
 const CONTROL_SIZE_KEY = Symbol("control-size");
 
 const sizeTokens: Record<ControlSize, Record<string, string>> = {
+  xs: {
+    "--control-font-size": "var(--font-sm)",
+    "--control-label-font-size": "var(--font-xs)",
+    "--control-py": "0.125rem",
+    "--control-px": "0.25rem",
+    "--control-gap": "0.125rem",
+    "--control-radius": "var(--border-radius-sm)",
+    "--control-icon-size": "0.625rem",
+    "--control-inner-block-start": "0.85rem",
+    "--control-inner-block-end": "0.1rem",
+    "--control-label-block-start": "0.15rem",
+  },
   sm: {
     "--control-font-size": "var(--font-sm)",
     "--control-label-font-size": "var(--font-xs)",

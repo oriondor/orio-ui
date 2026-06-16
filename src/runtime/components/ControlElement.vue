@@ -5,7 +5,7 @@ import { provideControlSize, sizeTokens } from "../composables/useControlSize";
 defineOptions({ inheritAttrs: false });
 
 export type ControlLayout = "vertical" | "horizontal";
-export type ControlSize = "sm" | "md" | "lg" | "xl";
+export type ControlSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 /**
  * A11y + form attrs that flow from the caller through ControlElement to the
