@@ -2,14 +2,14 @@
 kind: composable
 category: Composables
 purpose: control size tokens, sizing tokens for form controls, control variant sizing
-short: provide/inject `ControlSize` (sm/md/lg/xl) and read a CSS-var token bag for the active size
+short: provide/inject `ControlSize` (xs/sm/md/lg/xl) and read a CSS-var token bag for the active size
 invariants: true
 ---
 
 # useControlSize — agent-only invariants
 
 This composable owns the **CSS variable bag** that maps a `ControlSize`
-(`sm` / `md` / `lg` / `xl`) to concrete padding, font, gap, radius, and
+(`xs` / `sm` / `md` / `lg` / `xl`) to concrete padding, font, gap, radius, and
 icon-size tokens. Used internally by ControlElement and friends.
 
 ## Invariants

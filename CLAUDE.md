@@ -68,7 +68,7 @@ files; do not edit by hand.
 
 ### Composables
 - `useApi` — thin typed wrapper around ofetch's `$fetch` for GET/POST/PUT/DELETE/PATCH requests.
-- `useControlSize` — provide/inject `ControlSize` (sm/md/lg/xl) and read a CSS-var token bag for the active size. **Read USAGE.md first.**
+- `useControlSize` — provide/inject `ControlSize` (xs/sm/md/lg/xl) and read a CSS-var token bag for the active size. **Read USAGE.md first.**
 - `useDecimalFormatter` — parse numeric strings (US or EU separator) and format via Intl.NumberFormat with locale defaults. **Read USAGE.md first.**
 - `useFilter` — named filter group with v-bind bags, $-helpers, $active chips, $clearAll, optional URL sync via lazy import. **Read USAGE.md first.**
 - `useFuzzySearch` — typed Fuse.js wrapper that returns a computed list of matched items (strings or objects).

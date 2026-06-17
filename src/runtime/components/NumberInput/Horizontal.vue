@@ -23,6 +23,7 @@ const { pressAndHold, stop } = usePressAndHold();
         appearance="minimal"
         icon="minus"
         variant="subdued"
+        size="sm"
         :disabled="isAtMin || disabled"
         @mousedown="pressAndHold(decrease)"
         @mouseup="stop"
@@ -32,6 +33,7 @@ const { pressAndHold, stop } = usePressAndHold();
         appearance="minimal"
         icon="plus"
         variant="subdued"
+        size="sm"
         :disabled="isAtMax || disabled"
         @mousedown="pressAndHold(increase)"
         @mouseup="stop"
@@ -60,6 +62,10 @@ const { pressAndHold, stop } = usePressAndHold();
     left: 0;
     right: 0;
     text-align: center;
+  }
+
+  :deep(.control-group) {
+    z-index: 2;
   }
 }
 </style>

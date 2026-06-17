@@ -115,4 +115,34 @@ describe("Button", () => {
 
     expect(wrapper.find("button").classes()).toContain("secondary");
   });
+
+  it("applies pill class when pill is true", () => {
+    const wrapper = mount(Button, {
+      props: { pill: true, icon: "check" },
+      global: {
+        stubs: {
+          "orio-control-element": ControlStub,
+          "orio-icon": IconStub,
+          "orio-loading-spinner": LoadingStub,
+        },
+      },
+    });
+
+    expect(wrapper.find("button").classes()).toContain("pill");
+  });
+
+  it("does not apply pill class by default", () => {
+    const wrapper = mount(Button, {
+      props: { icon: "check" },
+      global: {
+        stubs: {
+          "orio-control-element": ControlStub,
+          "orio-icon": IconStub,
+          "orio-loading-spinner": LoadingStub,
+        },
+      },
+    });
+
+    expect(wrapper.find("button").classes()).not.toContain("pill");
+  });
 });
