@@ -7,11 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.28.1](https://github.com/oriondor/orio-ui/compare/v1.28.0...v1.28.1) (2026-06-17)
 
-
-### Bug Fixes
-
-* Fixed buttons on number inputs ([#164](https://github.com/oriondor/orio-ui/issues/164)) ([9ff064b](https://github.com/oriondor/orio-ui/commit/9ff064b481757a7b25c89b45597073deea72e7ed))
-
+Adds `"xs"` to the `ControlSize` union with a full CSS-variable token set in `useControlSize.ts`, introduces a `pill` boolean prop on `Button.vue` that applies `--border-radius-pill`, applies both to vertical `NumberInput` chevrons, pins horizontal `NumberInput` buttons to `size="sm"` with a `z-index` fix, and separately adds a `sidebarSection` helper to normalize VitePress sidebar links.
 ## [1.28.0](https://github.com/oriondor/orio-ui/compare/v1.27.0...v1.28.0) (2026-06-13)
 
 This PR introduces a comprehensive infrastructure for generating, organizing, and distributing AI agent documentation from USAGE.md frontmatter metadata. It includes entry discovery and routing generation scripts, build-time automation via git hooks, a consumer-facing CLI, updated agent instructions with a new usage-auditor subagent, and 85+ component and composable usage documentation files.
