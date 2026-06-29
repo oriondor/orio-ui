@@ -40,6 +40,10 @@ invariants: true
   prop bag.
 - **`$attrs` is spread before `control`** on the inner `<input>`, same as
   Input.
+- **`defineExpose({ input, focused })`** — `input` is the template ref to the
+  native `<input>`; `focused` is the **writable** `Ref<boolean>` from
+  `useFocus`. Reading reflects focus state; assigning `true`/`false` focuses or
+  blurs the element. Drive programmatic focus via `focused`, not `input.focus()`.
 
 ## Gotchas
 

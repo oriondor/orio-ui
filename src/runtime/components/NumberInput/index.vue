@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, toRefs } from "vue";
+import { computed, toRefs, useTemplateRef } from "vue";
+import { useFocus } from "@vueuse/core";
 import type { ControlProps } from "../ControlElement.vue";
 import type { InputLayout } from "../Input.vue";
 
@@ -21,11 +22,13 @@ const props = withDefaults(defineProps<NumberInputProps>(), {
 
 const { min, max, step, decimalPlaces } = toRefs(props);
 
-const modelValue = defineModel<number>({ default: 0 });
+const modelValue = defineModel<number | null>({ default: 0 });
 
-function setValidatedValue(value: number) {
-  let finalValue = value;
+const input = useTemplateRef("input");
+const { focused } = useFocus(input);
 
+function setValidatedValue(value: number | null) {
+  let finalValue = value ?? 0;
   if (Number.isFinite(max.value) && finalValue > (max.value as number)) {
     finalValue = max.value as number;
   }
@@ -44,19 +47,23 @@ function onBlur() {
 }
 
 function increase() {
-  setValidatedValue(modelValue.value + step.value);
+  setValidatedValue((modelValue.value ?? 0) + step.value);
 }
 
 function decrease() {
-  setValidatedValue(modelValue.value - step.value);
+  setValidatedValue((modelValue.value ?? 0) - step.value);
 }
 
 const isAtMax = computed(
-  () => Number.isFinite(max.value) && modelValue.value >= (max.value as number),
+  () =>
+    Number.isFinite(max.value) &&
+    (modelValue.value ?? 0) >= (max.value as number),
 );
 
 const isAtMin = computed(
-  () => Number.isFinite(min.value) && modelValue.value <= (min.value as number),
+  () =>
+    Number.isFinite(min.value) &&
+    (modelValue.value ?? 0) <= (min.value as number),
 );
 
 const controlProps = computed(() => {
@@ -76,6 +83,8 @@ const slotExpose = computed(() => ({
   isAtMax: isAtMax.value,
   isAtMin: isAtMin.value,
 }));
+
+defineExpose({ input, focused });
 </script>
 
 <template>
@@ -88,6 +97,7 @@ const slotExpose = computed(() => ({
     <div class="wrapper">
       <input
         v-bind="{ ...$attrs, ...control }"
+        ref="input"
         v-model="modelValue"
         type="number"
         class="number-input"

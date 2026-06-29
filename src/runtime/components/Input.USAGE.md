@@ -26,6 +26,10 @@ invariants: true
   on the underlying `<input>`.
 - **v-model is `string`** (default `""`). For numeric input use
   `<orio-number-input>` instead.
+- **`defineExpose({ input, focused })`** — `input` is the template ref to the
+  native `<input>`; `focused` is the **writable** `Ref<boolean>` from
+  `useFocus`. Reading reflects focus state; assigning `true`/`false` focuses or
+  blurs the element. Drive programmatic focus via `focused`, not `input.focus()`.
 
 ## Gotchas
 
