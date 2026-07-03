@@ -18,12 +18,12 @@ orio-ui's shipped, version-pinned agent docs. Details in
 
 ## Features
 
-✨ **58 Components** - Beautiful, accessible components ready to use
+✨ **59 Components** - Beautiful, accessible components ready to use
 🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great developer experience
-🧪 **Tested** - 36 test suites for reliability
+🧪 **Tested** - 38 test suites for reliability
 📱 **Responsive** - Mobile-first design approach
 ♿ **Accessible** - ARIA-compliant components
 🌐 **i18n** - Built-in vue-i18n support with English defaults
@@ -77,7 +77,7 @@ function handleClick() {
 
 ## What's Included
 
-### Components (58)
+### Components (59)
 
 #### Form Controls
 
@@ -269,7 +269,7 @@ npm run docs:dev
 orio-ui/
 ├── src/
 │   ├── runtime/
-│   │   ├── components/   # 58 Vue components
+│   │   ├── components/   # 59 Vue components
 │   │   ├── composables/  # 15 composables
 │   │   ├── assets/css/   # Theme CSS files
 │   │   └── utils/        # Icon registry

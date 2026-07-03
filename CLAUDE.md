@@ -34,6 +34,7 @@ files; do not edit by hand.
 - `NumberInput/Horizontal.vue` — number input variant with minus/plus buttons flanking the field and press-and-hold repeat. **Read USAGE.md first.**
 - `NumberInput/Vertical.vue` — number input variant with chevron up/down stacked on the right and press-and-hold repeat. **Read USAGE.md first.**
 - `RadioButton.vue` — single radio option wrapping ControlElement; group by sharing the same v-model. **Read USAGE.md first.**
+- `SegmentedInput.vue` — fixed-length code input split into auto-advancing per-character segments for OTP / PIN entry. **Read USAGE.md first.**
 - `Selector.vue` — button-triggered listbox in a popover; supports single and multi-select with string or object options. **Read USAGE.md first.**
 - `SwitchButton.vue` — boolean on/off pill button (not a sliding switch) wrapping ControlElement; click/Enter/Space toggle. **Read USAGE.md first.**
 - `TaggableSelector.vue` — multi-select Selector that renders chosen options as tag chips in the trigger. **Read USAGE.md first.**

@@ -52,6 +52,7 @@ not edit by hand.
 - **number input horizontal, minus-plus stepper, quantity stepper** → `NumberInput/Horizontal.vue` (read USAGE.md first)
 - **number input vertical, chevron stepper, stacked-arrow numeric input** → `NumberInput/Vertical.vue` (read USAGE.md first)
 - **radio, radio button, single-choice from group** → `RadioButton.vue` (read USAGE.md first)
+- **OTP input, one-time password, verification code, PIN code, segmented code boxes** → `SegmentedInput.vue` (read USAGE.md first)
 - **select, dropdown, combobox, listbox picker, single or multi-select** → `Selector.vue` (read USAGE.md first)
 - **toggle, on/off switch, pill toggle, boolean button** → `SwitchButton.vue` (read USAGE.md first)
 - **multi-select with tag chips, taggable selector, chip picker** → `TaggableSelector.vue` (read USAGE.md first)
