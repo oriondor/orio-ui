@@ -4,7 +4,7 @@ import {
   unflattenParams,
   topLevelKeys,
 } from "../utils/urlParams";
-import { computed, Ref, watch } from "vue";
+import { computed, type Ref, watch } from "vue";
 import { useRoute } from "#imports";
 
 /**

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useTemplateRef } from "vue";
+import { useFocus } from "@vueuse/core";
 import type { ControlLayout, ControlProps } from "./ControlElement.vue";
 
 export type InputLayout = ControlLayout | "inner";
@@ -10,8 +12,11 @@ interface Props extends Omit<ControlProps, "layout"> {
 const props = withDefaults(defineProps<Props>(), {
   layout: "vertical",
 });
+const input = useTemplateRef("input");
+const { focused } = useFocus(input);
 
 const modelValue = defineModel<string>({ default: "" });
+defineExpose({ input, focused });
 </script>
 
 <template>
@@ -23,6 +28,7 @@ const modelValue = defineModel<string>({ default: "" });
   >
     <slot name="before" />
     <input
+      ref="input"
       v-model="modelValue"
       type="text"
       v-bind="{ ...$attrs, ...control }"

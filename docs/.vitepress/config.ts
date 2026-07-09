@@ -1,5 +1,9 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitepress";
-import { generateSidebar, type VitePressSidebarOptions } from "vitepress-sidebar";
+import {
+  generateSidebar,
+  type VitePressSidebarOptions,
+} from "vitepress-sidebar";
 import { SidebarItem } from "vitepress-sidebar/types";
 
 // `vitepress-sidebar` emits root-relative links *without* a leading slash
@@ -171,19 +175,16 @@ export default defineConfig({
     resolve: {
       alias: {
         "vue-i18n": "vue-i18n/dist/vue-i18n.esm-bundler.js",
+        // Shim Nuxt's `#imports` virtual module. Works in dev *and* build,
+        // unlike `build.rollupOptions.external` which dev's import-analysis
+        // ignores. Lets composables like `useUrlSync` resolve `useRoute`.
+        "#imports": fileURLToPath(
+          new URL("./shims/imports.ts", import.meta.url),
+        ),
       },
     },
     ssr: {
       noExternal: ["vue-i18n", "@intlify/core-base", "@intlify/shared"],
-    },
-    build: {
-      // `useUrlSync` (transitively loaded by `useFilter` only when
-      // `{ url: true }` is passed) imports `useRoute` from Nuxt's `#imports`.
-      // The docs build never exercises that code path; mark `#imports` as
-      // external so Rollup does not try to bundle a Nuxt-only specifier.
-      rollupOptions: {
-        external: ["#imports"],
-      },
     },
   },
 });
