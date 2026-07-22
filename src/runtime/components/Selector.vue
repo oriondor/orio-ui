@@ -74,7 +74,10 @@ function isOptionSelected(option: SelectableOption): boolean {
   if (props.multiple) {
     const flatOption =
       typeof option === "string" ? option : (option as T)[key.value];
-    return (flatModalValue.value as string[]).includes(flatOption as string);
+    return (
+      Array.isArray(flatModalValue.value) &&
+      (flatModalValue.value as string[]).includes(flatOption as string)
+    );
   } else {
     if (typeof option === "string") return modelValue.value === option;
     return !!(
@@ -129,27 +132,102 @@ const {
   onClose: () => popoverToggleRef.value(false),
   initialIndex: () => props.options.findIndex(isOptionSelected),
 });
+
+const EDITABLE_KEY_ALLOWLIST = ["ArrowDown", "ArrowUp", "Escape"];
+
+function isEventFromEditableElement(event: KeyboardEvent): boolean {
+  const target = event.target as HTMLElement | null;
+  if (!target || target === event.currentTarget) return false;
+  if (target.matches("input, textarea, select")) return true;
+  return !!target.closest(
+    "[contenteditable=''], [contenteditable='true'], [contenteditable='plaintext-only']",
+  );
+}
+
+function onTriggerKeydown(
+  event: KeyboardEvent,
+  toggle: (force?: boolean | null) => void,
+  isOpen: boolean,
+) {
+  popoverToggleRef.value = toggle;
+  if (
+    isEventFromEditableElement(event) &&
+    !EDITABLE_KEY_ALLOWLIST.includes(event.key)
+  ) {
+    return;
+  }
+  onKeydown(event, isOpen);
+}
+
+function createTriggerKeydownHandler(
+  toggle: (force?: boolean | null) => void,
+  isOpen: boolean,
+) {
+  return (event: KeyboardEvent) => onTriggerKeydown(event, toggle, isOpen);
+}
+
+function selectHighlightedOption(
+  toggle: (force?: boolean | null) => void,
+): boolean {
+  popoverToggleRef.value = toggle;
+  const highlightedOption = props.options[highlightedIndex.value];
+  if (highlightedIndex.value < 0 || highlightedOption === undefined) {
+    return false;
+  }
+  toggleOption(highlightedOption, () => toggle(false));
+  return true;
+}
+
+function createSelectHighlightedHandler(
+  toggle: (force?: boolean | null) => void,
+) {
+  return () => selectHighlightedOption(toggle);
+}
+
+// Opening the list seeds the roving highlight so it is keyboard-navigable
+// from the first arrow press. This lives here — the one place that sees both
+// the popover's open event and owns the highlight — so triggers just "open"
+// and never touch the highlight themselves.
+function triggerToggle(
+  popoverToggle: (force?: boolean | null) => void,
+  isOpen: boolean,
+  force: boolean | null = null,
+) {
+  const willOpen = force === true || (force === null && !isOpen);
+  popoverToggle(force);
+  if (willOpen) resetHighlight();
+}
+
+function createTriggerToggle(
+  popoverToggle: (force?: boolean | null) => void,
+  isOpen: boolean,
+) {
+  return (force: boolean | null = null) =>
+    triggerToggle(popoverToggle, isOpen, force);
+}
 </script>
 
 <template>
   <orio-control-element v-slot="{ control }" v-bind="controlProps">
     <orio-popover position="bottom-right" :offset="5">
       <template #default="{ toggle, isOpen }">
-        <slot name="trigger" :toggle :control>
+        <slot
+          name="trigger"
+          :toggle="createTriggerToggle(toggle, isOpen)"
+          :control
+          :isOpen
+          :triggerKeydown="createTriggerKeydownHandler(toggle, isOpen)"
+          :selectHighlighted="createSelectHighlightedHandler(toggle)"
+          v-bind="selectorAttrs"
+        >
           <button
             v-bind="control"
             type="button"
             class="selector-trigger"
             aria-haspopup="listbox"
             :aria-expanded="isOpen"
-            @click="
-              toggle();
-              !isOpen && resetHighlight();
-            "
-            @keydown="
-              popoverToggleRef = toggle;
-              onKeydown($event, isOpen);
-            "
+            @click="triggerToggle(toggle, isOpen)"
+            @keydown="onTriggerKeydown($event, toggle, isOpen)"
           >
             <slot
               name="trigger-content"

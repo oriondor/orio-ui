@@ -1,7 +1,15 @@
+<script lang="ts">
+export type { CalendarMarker, MarkerVariant } from "../utils/calendar-markers";
+</script>
+
 <script setup lang="ts">
-import { computed, ref, useId, watch } from "vue";
+import { computed, ref, useId } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRovingGrid } from "../composables/useRovingGrid";
+import {
+  useRovingGrid,
+  type ArrowDirection,
+  type PageDirection,
+} from "../composables/useRovingGrid";
 import {
   addMonths,
   formatISO,
@@ -9,14 +17,13 @@ import {
   parseISO,
   startOfMonth,
 } from "../utils/date";
-
-export type MarkerVariant = "accent" | "success" | "alert" | "danger" | "muted";
-
-export interface CalendarMarker {
-  variant: MarkerVariant;
-  start: string;
-  end: string;
-}
+import {
+  createMarkerResolver,
+  type CalendarMarker,
+} from "../utils/calendar-markers";
+import CalendarGrid, {
+  type CalendarCell,
+} from "./date/components/CalendarGrid.vue";
 
 export interface CalendarProps {
   selected?: string | null;
@@ -97,70 +104,35 @@ const weekdayLabels = computed(() => {
   });
 });
 
-interface ResolvedMarker {
-  variant: MarkerVariant;
-  isStart: boolean;
-  isEnd: boolean;
-}
-
-interface Day {
-  iso: string;
-  label: number;
-  inMonth: boolean;
-  isToday: boolean;
-  isSelected: boolean;
-  isDisabled: boolean;
-  marker: ResolvedMarker | null;
-}
-
-function resolveMarker(
-  iso: string,
-  reversedMarkers: CalendarMarker[],
-): ResolvedMarker | null {
-  const matched =
-    props.getMarker?.(iso) ??
-    reversedMarkers.find(
-      (marker) => iso >= marker.start && iso <= marker.end,
-    ) ??
-    null;
-  if (!matched) return null;
-  return {
-    variant: matched.variant,
-    isStart: iso === matched.start,
-    isEnd: iso === matched.end,
-  };
-}
-
-const days = computed<Day[]>(() => {
+const cells = computed<CalendarCell[][]>(() => {
   const firstOfMonth = visibleMonth.value;
   const leadingOffset = (firstOfMonth.getDay() - props.weekStartsOn + 7) % 7;
   const gridStart = new Date(firstOfMonth);
   gridStart.setDate(gridStart.getDate() - leadingOffset);
 
   const selectedDate = parseISO(props.selected);
-  const reversedMarkers = [...props.markers].reverse();
+  const resolveMarker = createMarkerResolver(props.markers, props.getMarker);
 
-  return Array.from({ length: 42 }, (_, dayOffset) => {
+  const flat = Array.from({ length: 42 }, (_, dayOffset) => {
     const date = new Date(gridStart);
     date.setDate(gridStart.getDate() + dayOffset);
     const iso = formatISO(date);
     return {
       iso,
       label: date.getDate(),
-      inMonth: date.getMonth() === firstOfMonth.getMonth(),
+      ariaLabel: fullDateLabel(iso),
       isToday: isSameDay(date, today),
       isSelected: !!selectedDate && isSameDay(date, selectedDate),
       isDisabled: props.isDisabled?.(iso) ?? false,
-      marker: resolveMarker(iso, reversedMarkers),
-    };
+      outOfMonth: date.getMonth() !== firstOfMonth.getMonth(),
+      marker: resolveMarker(iso),
+    } satisfies CalendarCell;
   });
-});
 
-const weeks = computed<Day[][]>(() =>
-  Array.from({ length: 6 }, (_, weekIndex) =>
-    days.value.slice(weekIndex * 7, weekIndex * 7 + 7),
-  ),
-);
+  return Array.from({ length: 6 }, (_, weekIndex) =>
+    flat.slice(weekIndex * 7, weekIndex * 7 + 7),
+  );
+});
 
 function isInVisibleMonth(date: Date): boolean {
   return (
@@ -177,6 +149,63 @@ function initialActiveISO(): string {
   if (isInVisibleMonth(today)) return formatISO(today);
   return formatISO(visibleMonth.value);
 }
+
+const ARROW_DAY_DELTA: Record<ArrowDirection, number> = {
+  up: -7,
+  down: 7,
+  left: -1,
+  right: 1,
+};
+
+function onArrowOverflow(
+  direction: ArrowDirection,
+  currentKey: string,
+): string | null {
+  const date = parseISO(currentKey);
+  if (!date) return null;
+  const stepDays = ARROW_DAY_DELTA[direction];
+  // Loop past disabled days in the same direction; cap to a sane horizon
+  // (~2 years) so a fully-disabled future doesn't spin forever.
+  for (let attempt = 0; attempt < 750; attempt++) {
+    date.setDate(date.getDate() + stepDays);
+    const iso = formatISO(date);
+    if (!props.isDisabled?.(iso)) return iso;
+  }
+  return null;
+}
+
+function onPage(
+  direction: PageDirection,
+  bigJump: boolean,
+  currentKey: string,
+): string | null {
+  const date = parseISO(currentKey);
+  if (!date) return null;
+  const monthDelta = (direction === "down" ? 1 : -1) * (bigJump ? 12 : 1);
+  const target = new Date(date.getFullYear(), date.getMonth() + monthDelta, 1);
+  const lastDayOfTargetMonth = new Date(
+    target.getFullYear(),
+    target.getMonth() + 1,
+    0,
+  ).getDate();
+  target.setDate(Math.min(date.getDate(), lastDayOfTargetMonth));
+  return formatISO(target);
+}
+
+const roving = {
+  getInitialKey: initialActiveISO,
+  onArrowOverflow,
+  onPage,
+};
+
+function onActiveKeyChange(iso: string) {
+  const date = parseISO(iso);
+  if (date && !isInVisibleMonth(date)) {
+    anchor.value = formatISO(startOfMonth(date));
+  }
+}
+
+// --- month/year nav (roving toolbar) — stays local to the day calendar ---
 
 interface NavButton {
   key: string;
@@ -237,74 +266,6 @@ function onNavButtonClick(button: NavButton) {
   setActiveNav(button.key, false);
   button.action();
 }
-
-const ARROW_DAY_DELTA: Record<string, number> = {
-  up: -7,
-  down: 7,
-  left: -1,
-  right: 1,
-};
-
-const gridRef = ref<HTMLDivElement | null>(null);
-
-const { activeKey, setActive, tabindexFor, onKeydown } = useRovingGrid<Day>({
-  rows: weeks,
-  gridRef,
-  getKey: (day) => day.iso,
-  initial: initialActiveISO,
-  isNavigable: (day) => !day.isDisabled,
-  onActivate(day) {
-    if (day.isDisabled) return;
-    emit("select", day.iso);
-  },
-  onArrowOverflow(direction, currentKey) {
-    const date = parseISO(currentKey);
-    if (!date) return null;
-    const stepDays = ARROW_DAY_DELTA[direction]!;
-    // Loop past disabled days in the same direction; cap to a sane horizon
-    // (~2 years) so a fully-disabled future doesn't spin forever.
-    for (let attempt = 0; attempt < 750; attempt++) {
-      date.setDate(date.getDate() + stepDays);
-      const iso = formatISO(date);
-      if (!props.isDisabled?.(iso)) return iso;
-    }
-    return null;
-  },
-  onPage(direction, bigJump, currentKey) {
-    const date = parseISO(currentKey);
-    if (!date) return null;
-    const monthDelta = (direction === "down" ? 1 : -1) * (bigJump ? 12 : 1);
-    const target = new Date(
-      date.getFullYear(),
-      date.getMonth() + monthDelta,
-      1,
-    );
-    const lastDayOfTargetMonth = new Date(
-      target.getFullYear(),
-      target.getMonth() + 1,
-      0,
-    ).getDate();
-    target.setDate(Math.min(date.getDate(), lastDayOfTargetMonth));
-    return formatISO(target);
-  },
-});
-
-watch(activeKey, (iso) => {
-  const date = parseISO(iso);
-  if (date && !isInVisibleMonth(date)) {
-    anchor.value = formatISO(startOfMonth(date));
-  }
-});
-
-function onDayClick(day: Day) {
-  if (day.isDisabled) return;
-  setActive(day.iso, false);
-  emit("select", day.iso);
-}
-
-function onDayMouseenter(day: Day) {
-  emit("dayEnter", day.iso);
-}
 </script>
 
 <template>
@@ -341,51 +302,15 @@ function onDayMouseenter(day: Day) {
         {{ weekday }}
       </span>
     </div>
-    <div
-      ref="gridRef"
-      class="calendar-grid"
-      role="grid"
-      :aria-labelledby="titleId"
-      @keydown="onKeydown"
-    >
-      <div
-        v-for="(week, weekIndex) in weeks"
-        :key="weekIndex"
-        role="row"
-        class="calendar-week"
-      >
-        <button
-          v-for="day in week"
-          :key="day.iso"
-          type="button"
-          role="gridcell"
-          class="calendar-day"
-          :class="{
-            'out-of-month': !day.inMonth,
-            today: day.isToday,
-            selected: day.isSelected,
-            'has-marker': !!day.marker,
-            [`marker-${day.marker?.variant}`]: !!day.marker,
-            'marker-start': day.marker?.isStart,
-            'marker-end': day.marker?.isEnd,
-            active: day.iso === activeKey,
-          }"
-          :focus-key="day.iso"
-          :tabindex="tabindexFor(day.iso)"
-          :aria-selected="day.isSelected"
-          :aria-current="day.isToday ? 'date' : undefined"
-          :aria-label="fullDateLabel(day.iso)"
-          :disabled="day.isDisabled"
-          @click="onDayClick(day)"
-          @mouseenter="onDayMouseenter(day)"
-        >
-          <orio-badge v-if="day.isSelected" pill variant="primary">
-            {{ day.label }}
-          </orio-badge>
-          <template v-else>{{ day.label }}</template>
-        </button>
-      </div>
-    </div>
+    <CalendarGrid
+      type="day"
+      :cells="cells"
+      :labelled-by="titleId"
+      :roving="roving"
+      @select="emit('select', $event)"
+      @cell-enter="emit('dayEnter', $event)"
+      @update:active-key="onActiveKeyChange"
+    />
   </div>
 </template>
 
@@ -416,14 +341,9 @@ function onDayMouseenter(day: Day) {
   text-transform: capitalize;
 }
 
-.calendar-weekdays,
-.calendar-grid {
+.calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-}
-
-.calendar-week {
-  display: contents;
 }
 
 .calendar-weekday {
@@ -432,82 +352,5 @@ function onDayMouseenter(day: Day) {
   color: var(--color-muted);
   padding: 0.25rem 0;
   text-transform: uppercase;
-}
-
-.calendar-day {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: 0;
-  color: inherit;
-  cursor: pointer;
-  border-radius: var(--border-radius-sm);
-  font-size: inherit;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
-
-  &:hover:not(:disabled):not(.has-marker):not(.selected) {
-    background-color: var(--color-surface);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: -2px;
-  }
-
-  &.out-of-month {
-    color: var(--color-muted);
-    opacity: 0.45;
-  }
-
-  &.today {
-    box-shadow: inset 0 0 0 1px var(--color-accent);
-  }
-
-  &.has-marker {
-    background-color: var(--marker-bg);
-    color: var(--marker-color);
-    border-radius: 0;
-  }
-
-  &.has-marker.marker-start {
-    border-top-left-radius: var(--border-radius-sm);
-    border-bottom-left-radius: var(--border-radius-sm);
-  }
-
-  &.has-marker.marker-end {
-    border-top-right-radius: var(--border-radius-sm);
-    border-bottom-right-radius: var(--border-radius-sm);
-  }
-
-  &.marker-accent {
-    --marker-bg: var(--color-accent-soft);
-    --marker-color: var(--color-accent);
-  }
-  &.marker-success {
-    --marker-bg: var(--color-success-soft);
-    --marker-color: var(--color-success);
-  }
-  &.marker-alert {
-    --marker-bg: var(--color-alert-soft);
-    --marker-color: var(--color-alert);
-  }
-  &.marker-danger {
-    --marker-bg: var(--color-danger-soft);
-    --marker-color: var(--color-danger);
-  }
-  &.marker-muted {
-    --marker-bg: var(--color-surface);
-    --marker-color: var(--color-muted);
-  }
-
-  &:disabled {
-    color: var(--color-muted);
-    cursor: not-allowed;
-    opacity: 0.4;
-  }
 }
 </style>

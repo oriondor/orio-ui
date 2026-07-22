@@ -37,7 +37,7 @@ files; do not edit by hand.
 - `SegmentedInput.vue` — fixed-length code input split into auto-advancing per-character segments for OTP / PIN entry. **Read USAGE.md first.**
 - `Selector.vue` — button-triggered listbox in a popover; supports single and multi-select with string or object options. **Read USAGE.md first.**
 - `SwitchButton.vue` — boolean on/off pill button (not a sliding switch) wrapping ControlElement; click/Enter/Space toggle. **Read USAGE.md first.**
-- `TaggableSelector.vue` — multi-select Selector that renders chosen options as tag chips in the trigger. **Read USAGE.md first.**
+- `TaggableSelector.vue` — searchable, creatable multi-select Selector that renders chosen options as tag chips and can emit new tags. **Read USAGE.md first.**
 - `Textarea.vue` — multi-line text input wrapping ControlElement; supports inner-floating label and vertical resize. **Read USAGE.md first.**
 
 ### Date

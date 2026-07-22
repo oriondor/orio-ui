@@ -99,7 +99,6 @@ function hideTooltip() {
 
 // Update position on scroll
 useEventListener(
-  window,
   "scroll",
   () => {
     if (isVisible.value) calculatePosition();
@@ -108,7 +107,7 @@ useEventListener(
 );
 
 // Update position on resize
-useEventListener(window, "resize", () => {
+useEventListener("resize", () => {
   if (isVisible.value) calculatePosition();
 });
 

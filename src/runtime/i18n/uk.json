@@ -4,6 +4,11 @@
     "selected": "{count} обрано",
     "noOptions": "Опцій не знайдено"
   },
+  "taggableSelector": {
+    "placeholder": "Оберіть опції",
+    "create": "Створити \"{search}\"",
+    "noMatches": "Збігів не знайдено"
+  },
   "calendar": {
     "previousMonth": "Попередній місяць",
     "nextMonth": "Наступний місяць",
@@ -17,10 +22,17 @@
   "dateRangePicker": {
     "placeholder": "Оберіть діапазон дат"
   },
+  "dates": {
+    "present": "Дотепер"
+  },
   "validation": {
     "fieldError": "Помилка в цьому полі"
   },
   "canvas": {
     "toolbarLabel": "Панель інструментів полотна"
+  },
+  "modeSwitcher": {
+    "light": "Світла",
+    "dark": "Темна"
   }
 }

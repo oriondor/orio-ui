@@ -25,10 +25,17 @@ export {
   type CalendarProps,
 } from "./components/Calendar.vue";
 export { default as DatePicker } from "./components/date/Picker.vue";
+export {
+  default as DateMonthCalendar,
+  type MonthCalendarProps,
+} from "./components/date/MonthCalendar.vue";
 export { default as DateRangePicker } from "./components/date/RangePicker.vue";
 export { type DateRange, parseISO, formatISO, formatDate } from "./utils/date";
 export { default as Selector } from "./components/Selector.vue";
-export { default as TaggableSelector } from "./components/TaggableSelector.vue";
+export {
+  default as TaggableSelector,
+  type TaggableSelectorProps,
+} from "./components/TaggableSelector.vue";
 export { default as Tag } from "./components/Tag.vue";
 export { default as Badge } from "./components/Badge.vue";
 export { default as Banner } from "./components/Banner.vue";
@@ -51,13 +58,22 @@ export {
   default as ViewKeyBinds,
   type KeyBindsProps,
 } from "./components/view/KeyBinds.vue";
-export { default as ViewDates } from "./components/view/Dates.vue";
+export {
+  default as ViewDates,
+  type ViewDatesRange,
+} from "./components/view/Dates.vue";
 export { default as ViewSeparator } from "./components/view/Separator.vue";
 export { default as ListItem } from "./components/ListItem.vue";
 export {
   default as LocaleSwitcher,
   type LocaleOption,
 } from "./components/LocaleSwitcher.vue";
+export { default as ThemeSwitcher } from "./components/ThemeSwitcher.vue";
+export {
+  default as ModeSwitcher,
+  type ModeOption,
+} from "./components/ModeSwitcher.vue";
+export { THEMES, MODES } from "./constants/theme";
 
 // Export all composables
 export {

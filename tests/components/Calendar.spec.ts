@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import { defineComponent, h } from "vue";
 import Calendar from "../../src/runtime/components/Calendar.vue";
+// Day cells render inside the shared CalendarGrid as `.calendar-cell`
+// (renamed from `.calendar-cell` when the grid was extracted).
 import { i18n } from "../../src/runtime/i18n";
 
 const ButtonStub = defineComponent({
@@ -47,13 +49,13 @@ function mountCalendar(props: Record<string, unknown> = {}) {
 describe("Calendar", () => {
   it("renders 42 day cells", () => {
     const wrapper = mountCalendar({ anchor: "2024-06-01" });
-    expect(wrapper.findAll(".calendar-day")).toHaveLength(42);
+    expect(wrapper.findAll(".calendar-cell")).toHaveLength(42);
   });
 
   it("emits select with iso when a day is clicked", async () => {
     const wrapper = mountCalendar({ anchor: "2024-06-01" });
     const inMonth = wrapper
-      .findAll(".calendar-day")
+      .findAll(".calendar-cell")
       .filter((d) => !d.classes("out-of-month"));
     await inMonth[0]!.trigger("click");
     expect(wrapper.emitted("select")?.[0]).toEqual(["2024-06-01"]);
@@ -65,7 +67,7 @@ describe("Calendar", () => {
       isDisabled: (iso: string) => iso < "2024-06-15",
     });
     const disabled = wrapper
-      .findAll(".calendar-day")
+      .findAll(".calendar-cell")
       .filter((d) => d.attributes("disabled") !== undefined);
     expect(disabled.length).toBeGreaterThan(0);
     await disabled[0]!.trigger("click");
@@ -77,7 +79,7 @@ describe("Calendar", () => {
       anchor: "2024-06-01",
       selected: "2024-06-15",
     });
-    const selected = wrapper.findAll(".calendar-day.selected");
+    const selected = wrapper.findAll(".calendar-cell.selected");
     expect(selected).toHaveLength(1);
     expect(selected[0]!.find(".badge-stub").text()).toBe("15");
   });
@@ -87,10 +89,10 @@ describe("Calendar", () => {
       anchor: "2024-06-01",
       markers: [{ variant: "accent", start: "2024-06-10", end: "2024-06-15" }],
     });
-    expect(wrapper.findAll(".calendar-day.has-marker")).toHaveLength(6);
-    expect(wrapper.findAll(".calendar-day.marker-accent")).toHaveLength(6);
-    expect(wrapper.findAll(".calendar-day.marker-start")).toHaveLength(1);
-    expect(wrapper.findAll(".calendar-day.marker-end")).toHaveLength(1);
+    expect(wrapper.findAll(".calendar-cell.has-marker")).toHaveLength(6);
+    expect(wrapper.findAll(".calendar-cell.marker-accent")).toHaveLength(6);
+    expect(wrapper.findAll(".calendar-cell.marker-start")).toHaveLength(1);
+    expect(wrapper.findAll(".calendar-cell.marker-end")).toHaveLength(1);
   });
 
   it("single-day marker has both start and end caps", () => {
@@ -98,7 +100,7 @@ describe("Calendar", () => {
       anchor: "2024-06-01",
       markers: [{ variant: "danger", start: "2024-06-10", end: "2024-06-10" }],
     });
-    const cell = wrapper.find(".calendar-day.has-marker");
+    const cell = wrapper.find(".calendar-cell.has-marker");
     expect(cell.classes()).toContain("marker-start");
     expect(cell.classes()).toContain("marker-end");
     expect(cell.classes()).toContain("marker-danger");
@@ -112,8 +114,8 @@ describe("Calendar", () => {
         { variant: "danger", start: "2024-06-12", end: "2024-06-13" },
       ],
     });
-    expect(wrapper.findAll(".calendar-day.marker-danger")).toHaveLength(2);
-    expect(wrapper.findAll(".calendar-day.marker-accent")).toHaveLength(4);
+    expect(wrapper.findAll(".calendar-cell.marker-danger")).toHaveLength(2);
+    expect(wrapper.findAll(".calendar-cell.marker-accent")).toHaveLength(4);
   });
 
   it("getMarker overrides markers array", () => {
@@ -125,8 +127,8 @@ describe("Calendar", () => {
           ? { variant: "danger" as const, start: iso, end: iso }
           : null,
     });
-    expect(wrapper.findAll(".calendar-day.marker-danger")).toHaveLength(1);
-    expect(wrapper.findAll(".calendar-day.marker-accent")).toHaveLength(5);
+    expect(wrapper.findAll(".calendar-cell.marker-danger")).toHaveLength(1);
+    expect(wrapper.findAll(".calendar-cell.marker-accent")).toHaveLength(5);
   });
 
   it("emits update:anchor when navigating months", async () => {
@@ -164,7 +166,7 @@ describe("Calendar", () => {
   it("emits dayEnter on hover", async () => {
     const wrapper = mountCalendar({ anchor: "2024-06-01" });
     const inMonth = wrapper
-      .findAll(".calendar-day")
+      .findAll(".calendar-cell")
       .filter((d) => !d.classes("out-of-month"));
     await inMonth[0]!.trigger("mouseenter");
     expect(wrapper.emitted("dayEnter")?.[0]).toEqual(["2024-06-01"]);
@@ -173,9 +175,9 @@ describe("Calendar", () => {
   it("does not internally manage selection", async () => {
     const wrapper = mountCalendar({ anchor: "2024-06-01" });
     const inMonth = wrapper
-      .findAll(".calendar-day")
+      .findAll(".calendar-cell")
       .filter((d) => !d.classes("out-of-month"));
     await inMonth[0]!.trigger("click");
-    expect(wrapper.findAll(".calendar-day.selected")).toHaveLength(0);
+    expect(wrapper.findAll(".calendar-cell.selected")).toHaveLength(0);
   });
 });

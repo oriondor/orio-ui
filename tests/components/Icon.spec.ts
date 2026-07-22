@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import Icon from "../../src/runtime/components/Icon.vue";
+import { iconRegistry } from "../../src/runtime/utils/icon-registry";
 
 describe("Icon", () => {
   it("renders without errors", () => {
@@ -56,5 +57,19 @@ describe("Icon", () => {
       props: { name: "non-existent-icon" },
     });
     expect(wrapper.html()).not.toContain("svg");
+  });
+
+  it("ships the action glyphs added for resume-builder migration", () => {
+    [
+      "add",
+      "close-rounded",
+      "upload-file",
+      "upload-file-filled",
+      "wrench",
+    ].forEach((iconName) => {
+      expect(iconRegistry[iconName as keyof typeof iconRegistry]).toContain(
+        "<svg",
+      );
+    });
   });
 });

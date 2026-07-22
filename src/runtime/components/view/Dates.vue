@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
-import { formatDate, type DateRange } from "../../utils/date";
+import { formatDate } from "../../utils/date";
+
+export interface ViewDatesRange {
+  start: string | null;
+  /** null = ongoing (renders the present label); undefined = single date */
+  end?: string | null;
+}
 
 interface Props {
-  dates: DateRange;
+  dates: ViewDatesRange;
   month?: boolean;
+  presentText?: string;
   size?: "small" | "medium" | "large";
   type?: "text" | "title" | "subtitle" | "italics";
 }
@@ -16,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const { dates } = toRefs(props);
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 const formatOptions = computed<Intl.DateTimeFormatOptions>(() => ({
   day: props.month ? undefined : "numeric",
@@ -27,9 +34,13 @@ const formatOptions = computed<Intl.DateTimeFormatOptions>(() => ({
 const startText = computed(() =>
   formatDate(dates.value?.start, locale.value, formatOptions.value),
 );
-const endText = computed(() =>
-  formatDate(dates.value?.end, locale.value, formatOptions.value),
-);
+
+const isOngoing = computed(() => dates.value?.end === null);
+
+const endText = computed(() => {
+  if (isOngoing.value) return props.presentText ?? t("dates.present");
+  return formatDate(dates.value?.end, locale.value, formatOptions.value);
+});
 </script>
 
 <template>

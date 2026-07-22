@@ -18,6 +18,33 @@ setMode('light')   // light | dark (default)
 </script>
 ```
 
+## Ready-made Switchers
+
+Two preconfigured components wrap `useTheme` so you can drop a picker into any toolbar without wiring `v-model`:
+
+```vue
+<template>
+  <!-- accent theme picker (navy | teal | forest | wine | royal) -->
+  <orio-theme-switcher />
+
+  <!-- light / dark toggle with localized labels -->
+  <orio-mode-switcher />
+</template>
+```
+
+Both mutate `useTheme` on selection and persist to cookies. See [ThemeSwitcher](./components/theme-switcher.md) and [ModeSwitcher](./components/mode-switcher.md) for props and behavior.
+
+The available values are also exported as constants, handy for building custom pickers:
+
+```typescript
+import { THEMES, MODES } from 'orio-ui'
+
+THEMES // ['navy', 'teal', 'forest', 'wine', 'royal']
+MODES  // ['light', 'dark']
+```
+
+`<orio-theme-switcher>` defaults to `THEMES`; pass its `themes` prop to include custom accents like `normal`, `inverse`, or your own.
+
 ## How It Works
 
 Theme preferences are stored in **cookies** (`orio-theme` and `orio-mode`) for SSR compatibility. The composable sets `data-theme` and `data-mode` attributes on the `<html>` element, which CSS uses to apply the correct variables.

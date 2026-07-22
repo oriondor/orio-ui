@@ -18,12 +18,12 @@ orio-ui's shipped, version-pinned agent docs. Details in
 
 ## Features
 
-✨ **59 Components** - Beautiful, accessible components ready to use
+✨ **61 Components** - Beautiful, accessible components ready to use
 🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great developer experience
-🧪 **Tested** - 38 test suites for reliability
+🧪 **Tested** - 41 test suites for reliability
 📱 **Responsive** - Mobile-first design approach
 ♿ **Accessible** - ARIA-compliant components
 🌐 **i18n** - Built-in vue-i18n support with English defaults
@@ -77,7 +77,7 @@ function handleClick() {
 
 ## What's Included
 
-### Components (59)
+### Components (61)
 
 #### Form Controls
 
@@ -229,8 +229,8 @@ cp node_modules/orio-ui/dist/agents/component-worker.md .claude/agents/
 cp node_modules/orio-ui/dist/agents/component-finder.md .claude/agents/
 ```
 
-After that, requests like *"add a date range picker to the booking form"* or
-*"where is the toast component?"* are routed automatically to the right
+After that, requests like _"add a date range picker to the booking form"_ or
+_"where is the toast component?"_ are routed automatically to the right
 subagent, which already knows the orio-ui routing table and reads the matching
 `USAGE.md` before writing code.
 
@@ -269,7 +269,7 @@ npm run docs:dev
 orio-ui/
 ├── src/
 │   ├── runtime/
-│   │   ├── components/   # 59 Vue components
+│   │   ├── components/   # 61 Vue components
 │   │   ├── composables/  # 15 composables
 │   │   ├── assets/css/   # Theme CSS files
 │   │   └── utils/        # Icon registry

@@ -7,6 +7,7 @@ import { formatDate } from "../../utils/date";
 
 interface Props extends ControlProps {
   placeholder?: string;
+  month?: boolean;
   min?: string | null;
   max?: string | null;
   markers?: CalendarMarker[];
@@ -24,7 +25,15 @@ const value = defineModel<string | null>({ default: null });
 
 const { locale, t } = useI18n();
 
-const display = computed(() => formatDate(value.value, locale.value));
+const displayFormat = computed<Intl.DateTimeFormatOptions | undefined>(() =>
+  props.month ? { month: "short", year: "numeric" } : undefined,
+);
+
+const display = computed(() =>
+  displayFormat.value
+    ? formatDate(value.value, locale.value, displayFormat.value)
+    : formatDate(value.value, locale.value),
+);
 const placeholderText = computed(
   () => props.placeholder ?? t("datePicker.placeholder"),
 );
@@ -48,7 +57,16 @@ function pick(iso: string, toggle: (force?: boolean | null) => void) {
     :placeholder="placeholderText"
   >
     <template #default="{ toggle }">
+      <orio-date-month-calendar
+        v-if="month"
+        :selected="value"
+        :markers
+        :get-marker="getMarker"
+        :is-disabled="calendarIsDisabled"
+        @select="pick($event, toggle)"
+      />
       <orio-calendar
+        v-else
         :selected="value"
         :markers
         :get-marker="getMarker"

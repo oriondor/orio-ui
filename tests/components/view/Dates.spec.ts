@@ -10,10 +10,10 @@ const ViewTextStub = {
 };
 
 describe("view/Dates", () => {
-  it("renders only the start when end is null", () => {
+  it("renders only the start when end is undefined", () => {
     const wrapper = mount(Dates, {
       props: {
-        dates: { start: "2024-01-01", end: null },
+        dates: { start: "2024-01-01" },
       },
       global: {
         plugins: [i18n],
@@ -67,7 +67,7 @@ describe("view/Dates", () => {
   it("formats month and year when month is true", () => {
     const wrapper = mount(Dates, {
       props: {
-        dates: { start: "2024-01-15", end: null },
+        dates: { start: "2024-01-15" },
         month: true,
       },
       global: {
@@ -80,5 +80,37 @@ describe("view/Dates", () => {
 
     expect(wrapper.text()).toContain("2024");
     expect(wrapper.text()).not.toContain(",");
+  });
+
+  it("renders the present label when end is null", () => {
+    const wrapper = mount(Dates, {
+      props: { dates: { start: "2015-09-01", end: null } },
+      global: { plugins: [i18n], stubs: { "orio-view-text": ViewTextStub } },
+    });
+
+    expect(wrapper.text()).toContain("Present");
+    expect(wrapper.text()).toContain("-");
+  });
+
+  it("renders a single date when end is undefined", () => {
+    const wrapper = mount(Dates, {
+      props: { dates: { start: "2015-09-01" } },
+      global: { plugins: [i18n], stubs: { "orio-view-text": ViewTextStub } },
+    });
+
+    expect(wrapper.text()).not.toContain("Present");
+    expect(wrapper.text()).not.toContain("-");
+  });
+
+  it("honours the presentText override", () => {
+    const wrapper = mount(Dates, {
+      props: {
+        dates: { start: "2015-09-01", end: null },
+        presentText: "Ongoing",
+      },
+      global: { plugins: [i18n], stubs: { "orio-view-text": ViewTextStub } },
+    });
+
+    expect(wrapper.text()).toContain("Ongoing");
   });
 });

@@ -58,7 +58,7 @@ not edit by hand.
 - **OTP input, one-time password, verification code, PIN code, segmented code boxes** → `SegmentedInput.vue` (read USAGE.md first)
 - **select, dropdown, combobox, listbox picker, single or multi-select** → `Selector.vue` (read USAGE.md first)
 - **toggle, on/off switch, pill toggle, boolean button** → `SwitchButton.vue` (read USAGE.md first)
-- **multi-select with tag chips, taggable selector, chip picker** → `TaggableSelector.vue` (read USAGE.md first)
+- **searchable creatable multi-select with tag chips, taggable selector, chip picker, create option** → `TaggableSelector.vue` (read USAGE.md first)
 - **textarea, multi-line text, long text input** → `Textarea.vue` (read USAGE.md first)
 
 ### Date
