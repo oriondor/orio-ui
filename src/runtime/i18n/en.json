@@ -4,6 +4,11 @@
     "selected": "{count} selected",
     "noOptions": "No options found"
   },
+  "taggableSelector": {
+    "placeholder": "Select options",
+    "create": "Create \"{search}\"",
+    "noMatches": "No matches found"
+  },
   "calendar": {
     "previousMonth": "Previous month",
     "nextMonth": "Next month",
@@ -17,10 +22,17 @@
   "dateRangePicker": {
     "placeholder": "Select a date range"
   },
+  "dates": {
+    "present": "Present"
+  },
   "validation": {
     "fieldError": "Error on this field"
   },
   "canvas": {
     "toolbarLabel": "Canvas toolbar"
+  },
+  "modeSwitcher": {
+    "light": "Light",
+    "dark": "Dark"
   }
 }

@@ -16,6 +16,7 @@ export type { DateRange };
 
 interface Props extends ControlProps {
   placeholder?: string;
+  month?: boolean;
   min?: string | null;
   max?: string | null;
   markers?: CalendarMarker[];
@@ -35,9 +36,18 @@ const range = defineModel<DateRange>({
 
 const { locale, t } = useI18n();
 
+const displayFormat = computed<Intl.DateTimeFormatOptions | undefined>(() =>
+  props.month ? { month: "short", year: "numeric" } : undefined,
+);
+
 const display = computed(() => {
-  const start = formatDate(range.value?.start, locale.value);
-  const end = formatDate(range.value?.end, locale.value);
+  const format = displayFormat.value;
+  const start = format
+    ? formatDate(range.value?.start, locale.value, format)
+    : formatDate(range.value?.start, locale.value);
+  const end = format
+    ? formatDate(range.value?.end, locale.value, format)
+    : formatDate(range.value?.end, locale.value);
   if (start && end) return `${start} – ${end}`;
   return start || end || "";
 });
@@ -46,19 +56,31 @@ const placeholderText = computed(
   () => props.placeholder ?? t("dateRangePicker.placeholder"),
 );
 
-const seedMonth = startOfMonth(parseISO(range.value?.start) ?? new Date());
-const leftAnchor = ref<string | null>(formatISO(seedMonth));
-const rightAnchor = ref<string | null>(formatISO(addMonths(seedMonth, 1)));
+function anchorPairFor(startIso: string | null | undefined): [string, string] {
+  const startDate = parseISO(startIso) ?? new Date();
+  if (props.month) {
+    const firstOfYear = new Date(startDate.getFullYear(), 0, 1);
+    return [
+      formatISO(firstOfYear),
+      formatISO(new Date(startDate.getFullYear() + 1, 0, 1)),
+    ];
+  }
+  const firstOfMonth = startOfMonth(startDate);
+  return [formatISO(firstOfMonth), formatISO(addMonths(firstOfMonth, 1))];
+}
+
+const [seedLeft, seedRight] = anchorPairFor(range.value?.start);
+const leftAnchor = ref<string | null>(seedLeft);
+const rightAnchor = ref<string | null>(seedRight);
 
 watch(
   () => range.value?.start,
   (start) => {
-    const date = parseISO(start);
-    if (!date) return;
-    const monthIso = formatISO(startOfMonth(date));
-    if (leftAnchor.value === monthIso || rightAnchor.value === monthIso) return;
-    leftAnchor.value = monthIso;
-    rightAnchor.value = formatISO(addMonths(startOfMonth(date), 1));
+    if (!parseISO(start)) return;
+    const [nextLeft, nextRight] = anchorPairFor(start);
+    if (leftAnchor.value === nextLeft || rightAnchor.value === nextLeft) return;
+    leftAnchor.value = nextLeft;
+    rightAnchor.value = nextRight;
   },
 );
 
@@ -141,22 +163,42 @@ function clearHover() {
   >
     <template #default="{ toggle }">
       <div class="range-content" @mouseleave="clearHover">
-        <orio-calendar
-          v-model:anchor="leftAnchor"
-          :markers
-          :get-marker="calendarGetMarker"
-          :is-disabled="calendarIsDisabled"
-          @select="pick($event, toggle)"
-          @day-enter="onHover"
-        />
-        <orio-calendar
-          v-model:anchor="rightAnchor"
-          :markers
-          :get-marker="calendarGetMarker"
-          :is-disabled="calendarIsDisabled"
-          @select="pick($event, toggle)"
-          @day-enter="onHover"
-        />
+        <template v-if="month">
+          <orio-date-month-calendar
+            v-model:anchor="leftAnchor"
+            :markers
+            :get-marker="calendarGetMarker"
+            :is-disabled="calendarIsDisabled"
+            @select="pick($event, toggle)"
+            @month-enter="onHover"
+          />
+          <orio-date-month-calendar
+            v-model:anchor="rightAnchor"
+            :markers
+            :get-marker="calendarGetMarker"
+            :is-disabled="calendarIsDisabled"
+            @select="pick($event, toggle)"
+            @month-enter="onHover"
+          />
+        </template>
+        <template v-else>
+          <orio-calendar
+            v-model:anchor="leftAnchor"
+            :markers
+            :get-marker="calendarGetMarker"
+            :is-disabled="calendarIsDisabled"
+            @select="pick($event, toggle)"
+            @day-enter="onHover"
+          />
+          <orio-calendar
+            v-model:anchor="rightAnchor"
+            :markers
+            :get-marker="calendarGetMarker"
+            :is-disabled="calendarIsDisabled"
+            @select="pick($event, toggle)"
+            @day-enter="onHover"
+          />
+        </template>
       </div>
     </template>
   </orio-date-picker-trigger>

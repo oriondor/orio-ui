@@ -27,7 +27,7 @@ invariants: true
   navigate. Only one day cell is in the tab order at a time. Do not add
   manual `tabindex` to day cells from outside.
 - **42-cell grid (6 rows × 7 cols).** Leading/trailing days from neighbour
-  months are rendered with `inMonth: false`. Selection and disabled checks
+  months are marked `outOfMonth: true`. Selection and disabled checks
   apply to them too — `isDisabled` is called for every cell.
 - **Markers are matched in reverse order** — the last marker in the array
   wins on overlap. `getMarker` takes precedence over `markers[]` when both
@@ -41,7 +41,7 @@ invariants: true
 - Disabled-day logic should be reactive — `isDisabled` is called inside a
   computed. Wrap any external state it reads in `computed`/`ref` or it will
   not re-render on change.
-- The Calendar emits `@dayEnter` on hover/keyboard-focus, **not** on
+- The Calendar emits `@dayEnter` on pointer hover (`mouseenter`), **not** on
   selection. Use for range-picking previews; selection is only `@select`.
 - i18n keys used: `calendar.previousYear`, `calendar.previousMonth`,
   `calendar.nextMonth`, `calendar.nextYear`. Override these if you ship a

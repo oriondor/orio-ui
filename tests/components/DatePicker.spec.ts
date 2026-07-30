@@ -53,6 +53,7 @@ function mountDatePicker(props: Record<string, unknown> = {}) {
       stubs: {
         "orio-date-picker-trigger": TriggerStub,
         "orio-calendar": CalendarStub,
+        "orio-date-month-calendar": true,
       },
     },
   });
@@ -90,5 +91,33 @@ describe("DatePicker", () => {
     const wrapper = mountDatePicker({ modelValue: null });
     await wrapper.find(".calendar-stub").trigger("click");
     expect(wrapper.emitted("update:modelValue")?.[0]).toEqual(["2024-07-04"]);
+  });
+
+  it("renders a month grid and formats month values when month is set", async () => {
+    const MonthCalendarStub = defineComponent({
+      name: "MonthCalendarStub",
+      emits: ["select"],
+      template:
+        "<button class=\"month-calendar-stub\" @click=\"$emit('select', '2019-06-01')\" />",
+    });
+
+    const wrapper = mount(DatePicker, {
+      props: { modelValue: "2015-09-01", month: true },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          "orio-date-picker-trigger": TriggerStub,
+          "orio-calendar": CalendarStub,
+          "orio-date-month-calendar": MonthCalendarStub,
+        },
+      },
+    });
+
+    expect(wrapper.find(".month-calendar-stub").exists()).toBe(true);
+    expect(wrapper.find(".calendar-stub").exists()).toBe(false);
+    expect(wrapper.find(".trigger-text").text()).toBe("Sep 2015");
+
+    await wrapper.find(".month-calendar-stub").trigger("click");
+    expect(wrapper.emitted("update:modelValue")?.[0]).toEqual(["2019-06-01"]);
   });
 });

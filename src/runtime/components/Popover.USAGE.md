@@ -33,8 +33,9 @@ is the default slot; the panel content is the `#content` slot.
   resolved value. No way to disable the fallback.
 - **`offset` is gap in px between trigger and panel.** Default `10`.
 - **Click outside closes**, with `triggerRef` in the ignore list.
-- **Reposition on scroll/resize** uses capture-phase listeners on `window`,
-  so it catches nested scrolling ancestors. Panel resizes via
+- **Reposition on scroll/resize** uses capture-phase listeners that
+  default to `window` (SSR-safe — no explicit `window` target), so it
+  catches nested scrolling ancestors. Panel resizes via
   `useElementBounding` also trigger reposition.
 - **No keyboard support.** No Esc-to-close, no focus trap, no return-focus.
   If you need those, wire them at the consumer level on the `#content`

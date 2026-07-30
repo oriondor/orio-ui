@@ -249,8 +249,8 @@ function redrawPopover() {
 
 watch([popoverWidth, popoverHeight], redrawPopover);
 
-useEventListener(window, "scroll", redrawPopover, { capture: true });
-useEventListener(window, "resize", redrawPopover, { capture: true });
+useEventListener("scroll", redrawPopover, { capture: true });
+useEventListener("resize", redrawPopover, { capture: true });
 </script>
 <style lang="scss" scoped>
 .popover {

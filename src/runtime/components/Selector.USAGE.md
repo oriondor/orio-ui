@@ -52,7 +52,16 @@ combine with `useFuzzySearch` and slot `#options-addon`. Generic over
 
 ## Slots
 
-- `#trigger` — replaces the entire button. Receives `{ toggle, control }`.
+- `#trigger` — replaces the entire button. Receives `{ toggle, control,
+  isOpen, triggerKeydown, selectHighlighted, getOptionKey, getOptionLabel }`.
+  Wire `triggerKeydown` onto your element's `@keydown` to reuse the roving
+  list navigation (arrows/Home/End/Enter/Escape); it skips typing keys when
+  the event comes from an inner `<input>`/editable (only
+  ArrowUp/ArrowDown/Escape pass through). **`toggle` seeds the highlight
+  itself** — opening the list (`toggle(true)`, or `toggle()` from a closed
+  state) resets the roving highlight to the selected/first item, so a custom
+  trigger just opens and never manages the highlight. `selectHighlighted()`
+  toggles the currently highlighted option (returns `false` if none).
 - `#trigger-content` — replaces the *inside* of the default button.
   Receives `{ toggle, getOptionKey, getOptionLabel, attrs }`. Use to
   customize the label/chevron without rebuilding the button shell.
@@ -71,8 +80,11 @@ combine with `useFuzzySearch` and slot `#options-addon`. Generic over
   `<orio-input>` in `#options-addon` and pass a filtered array to
   `:options`.
 - **Multi-select trigger shows "N selected" by default.** Override via
-  `#trigger-label` to render tags — consider `<orio-tag>` chips. Removal
-  must call `toggleOption` (exposed via `#option` slot, not the trigger).
+  `#trigger-label` to render tags — consider `<orio-tag>` chips. No slot
+  exposes a selection-toggle function: to remove a chip you mutate the
+  `v-model` array yourself (e.g. splice the option out). The `toggle` prop
+  on the `#option`/`#content` slots only opens/closes the popover — it does
+  not add or remove a selection.
 - **String options bypass `field`/`optionName`.** Selection equality is
   `===`. Object options compare via `field`.
 - **`placeholder` falls back to `t("selector.placeholder")`**. Pass an

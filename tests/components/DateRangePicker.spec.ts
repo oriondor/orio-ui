@@ -65,6 +65,7 @@ function mountRangePicker(props: Record<string, unknown> = {}) {
       stubs: {
         "orio-date-picker-trigger": TriggerStub,
         "orio-calendar": CalendarStub,
+        "orio-date-month-calendar": true,
       },
     },
   });
@@ -177,5 +178,65 @@ describe("DateRangePicker", () => {
     expect(calendars[0]!.attributes("data-preview-end")).toBe("2024-06-20");
     expect(calendars[1]!.attributes("data-preview-start")).toBe("2024-06-10");
     expect(calendars[1]!.attributes("data-preview-end")).toBe("2024-06-20");
+  });
+
+  it("renders two month panels anchored a year apart when month is set", () => {
+    const anchors: (string | null)[] = [];
+    const MonthCalendarStub = defineComponent({
+      name: "MonthCalendarStub",
+      props: {
+        anchor: { type: String, default: null },
+        selected: { type: String, default: null },
+        markers: { type: Array, default: () => [] },
+        getMarker: { type: Function, default: undefined },
+        isDisabled: { type: Function, default: undefined },
+      },
+      emits: ["select", "monthEnter", "update:anchor"],
+      created() {
+        anchors.push(this.anchor);
+      },
+      template: '<div class="month-calendar-stub" />',
+    });
+
+    const wrapper = mount(DateRangePicker, {
+      props: {
+        modelValue: { start: "2015-09-01", end: "2019-06-01" },
+        month: true,
+      },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          "orio-date-picker-trigger": TriggerStub,
+          "orio-date-month-calendar": MonthCalendarStub,
+          "orio-calendar": CalendarStub,
+        },
+      },
+    });
+
+    expect(wrapper.findAll(".month-calendar-stub")).toHaveLength(2);
+    expect(wrapper.findAll(".calendar-stub")).toHaveLength(0);
+    expect(anchors).toEqual(["2015-01-01", "2016-01-01"]);
+  });
+
+  it("formats the range as months when month is set", () => {
+    const wrapper = mount(DateRangePicker, {
+      props: {
+        modelValue: { start: "2015-09-01", end: "2019-06-01" },
+        month: true,
+      },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          "orio-date-picker-trigger": TriggerStub,
+          "orio-date-month-calendar": true,
+          "orio-calendar": CalendarStub,
+        },
+      },
+    });
+
+    const text = wrapper.find(".trigger-text").text();
+    expect(text).toContain("Sep 2015");
+    expect(text).toContain("Jun 2019");
+    expect(text).toContain("–");
   });
 });
