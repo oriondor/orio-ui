@@ -304,4 +304,38 @@ describe("TaggableSelector", () => {
 
     wrapper.unmount();
   });
+
+  it("prevents Enter in the search field from submitting a parent form", () => {
+    const onSubmit = vi.fn();
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h("form", { onSubmit }, [
+            h(TaggableSelector, {
+              options: objectOptions,
+              modelValue: [],
+              optionName: "name",
+            }),
+          ]);
+      },
+    });
+
+    const wrapper = mount(Host, {
+      global: globalOptions,
+      attachTo: document.body,
+    });
+
+    const event = new KeyboardEvent("keydown", {
+      key: "Enter",
+      bubbles: true,
+      cancelable: true,
+    });
+    wrapper.find(".taggable-search").element.dispatchEvent(event);
+
+    // preventDefault on the keydown is what stops implicit form submission
+    expect(event.defaultPrevented).toBe(true);
+    expect(onSubmit).not.toHaveBeenCalled();
+
+    wrapper.unmount();
+  });
 });

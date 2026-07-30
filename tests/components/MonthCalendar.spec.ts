@@ -68,31 +68,43 @@ describe("MonthCalendar", () => {
   it("moves into the next year when ArrowRight overflows past December", async () => {
     const wrapper = mountMonthCalendar();
     await wrapper.findAll(".calendar-cell")[11].trigger("click"); // December 2019
-    await wrapper.find(".calendar-grid").trigger("keydown", { key: "ArrowRight" });
+    await wrapper
+      .find(".calendar-grid")
+      .trigger("keydown", { key: "ArrowRight" });
 
     expect(wrapper.emitted("update:anchor")?.at(-1)).toEqual(["2020-01-01"]);
     // January 2020 becomes the roving-focus target
-    expect(wrapper.findAll(".calendar-cell")[0].attributes("tabindex")).toBe("0");
+    expect(wrapper.findAll(".calendar-cell")[0].attributes("tabindex")).toBe(
+      "0",
+    );
   });
 
   it("moves into the previous year when ArrowLeft overflows past January", async () => {
     const wrapper = mountMonthCalendar();
     // January 2019 is the initial active cell for the anchored year
-    await wrapper.find(".calendar-grid").trigger("keydown", { key: "ArrowLeft" });
+    await wrapper
+      .find(".calendar-grid")
+      .trigger("keydown", { key: "ArrowLeft" });
 
     expect(wrapper.emitted("update:anchor")?.at(-1)).toEqual(["2018-01-01"]);
     // December 2018 becomes the roving-focus target
-    expect(wrapper.findAll(".calendar-cell")[11].attributes("tabindex")).toBe("0");
+    expect(wrapper.findAll(".calendar-cell")[11].attributes("tabindex")).toBe(
+      "0",
+    );
   });
 
   it("crosses the year boundary by three months on vertical arrow overflow", async () => {
     const wrapper = mountMonthCalendar();
     await wrapper.findAll(".calendar-cell")[10].trigger("click"); // November 2019
-    await wrapper.find(".calendar-grid").trigger("keydown", { key: "ArrowDown" });
+    await wrapper
+      .find(".calendar-grid")
+      .trigger("keydown", { key: "ArrowDown" });
 
     expect(wrapper.emitted("update:anchor")?.at(-1)).toEqual(["2020-01-01"]);
     // February 2020 becomes the roving-focus target
-    expect(wrapper.findAll(".calendar-cell")[1].attributes("tabindex")).toBe("0");
+    expect(wrapper.findAll(".calendar-cell")[1].attributes("tabindex")).toBe(
+      "0",
+    );
   });
 
   it("skips disabled months when overflowing across the year boundary", async () => {
@@ -100,21 +112,29 @@ describe("MonthCalendar", () => {
       isDisabled: (iso: string) => iso === "2020-01-01",
     });
     await wrapper.findAll(".calendar-cell")[11].trigger("click"); // December 2019
-    await wrapper.find(".calendar-grid").trigger("keydown", { key: "ArrowRight" });
+    await wrapper
+      .find(".calendar-grid")
+      .trigger("keydown", { key: "ArrowRight" });
 
     expect(wrapper.emitted("update:anchor")?.at(-1)).toEqual(["2020-01-01"]);
     // January 2020 is disabled, so February 2020 becomes the target
-    expect(wrapper.findAll(".calendar-cell")[1].attributes("tabindex")).toBe("0");
+    expect(wrapper.findAll(".calendar-cell")[1].attributes("tabindex")).toBe(
+      "0",
+    );
   });
 
   it("jumps a full year on PageDown keeping the same month", async () => {
     const wrapper = mountMonthCalendar();
     await wrapper.findAll(".calendar-cell")[5].trigger("click"); // June 2019
-    await wrapper.find(".calendar-grid").trigger("keydown", { key: "PageDown" });
+    await wrapper
+      .find(".calendar-grid")
+      .trigger("keydown", { key: "PageDown" });
 
     expect(wrapper.emitted("update:anchor")?.at(-1)).toEqual(["2020-01-01"]);
     // June 2020 becomes the roving-focus target
-    expect(wrapper.findAll(".calendar-cell")[5].attributes("tabindex")).toBe("0");
+    expect(wrapper.findAll(".calendar-cell")[5].attributes("tabindex")).toBe(
+      "0",
+    );
   });
 
   it("jumps back a full year on PageUp keeping the same month", async () => {
@@ -124,7 +144,27 @@ describe("MonthCalendar", () => {
 
     expect(wrapper.emitted("update:anchor")?.at(-1)).toEqual(["2018-01-01"]);
     // June 2018 becomes the roving-focus target
-    expect(wrapper.findAll(".calendar-cell")[5].attributes("tabindex")).toBe("0");
+    expect(wrapper.findAll(".calendar-cell")[5].attributes("tabindex")).toBe(
+      "0",
+    );
+  });
+
+  it("skips a disabled month when paging into another year", async () => {
+    const wrapper = mountMonthCalendar({
+      isDisabled: (iso: string) => iso === "2020-06-01",
+    });
+    await wrapper.findAll(".calendar-cell")[5].trigger("click"); // June 2019
+    await wrapper
+      .find(".calendar-grid")
+      .trigger("keydown", { key: "PageDown" });
+
+    expect(wrapper.emitted("update:anchor")?.at(-1)).toEqual(["2020-01-01"]);
+
+    await wrapper.setProps({ anchor: "2020-01-01" });
+    const cells = wrapper.findAll(".calendar-cell");
+    // June 2020 is disabled, so July 2020 takes the roving focus instead
+    expect(cells[5].attributes("tabindex")).toBe("-1");
+    expect(cells[6].attributes("tabindex")).toBe("0");
   });
 
   it("emits monthEnter on hover for range preview", async () => {

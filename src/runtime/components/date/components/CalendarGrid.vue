@@ -228,9 +228,12 @@ function onCellMouseenter(cell: CalendarCell) {
   padding: 0.5rem 0;
   text-transform: capitalize;
 
+  // wins over .has-marker on specificity; restore the radius the marker
+  // range flattens so a selected month keeps its filled badge shape
   &.selected {
     background-color: var(--color-accent);
     color: var(--color-bg);
+    border-radius: var(--border-radius-sm);
   }
 }
 </style>

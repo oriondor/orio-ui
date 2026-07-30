@@ -60,6 +60,7 @@ describe("ModeSwitcher", () => {
       wrapper.find(".selector-stub").attributes("data-selected")!,
     );
     expect(selected).toEqual({ code: "dark", label: "Dark" });
+    expect(document.documentElement.getAttribute("data-mode")).toBe("dark");
 
     document.cookie =
       "orio-mode=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";

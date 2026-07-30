@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "../composables/useTheme";
 import { MODES, THEME_DEFAULTS } from "../constants/theme";
@@ -22,6 +22,15 @@ const selected = computed({
     modeOptions.value.find((option) => option.code === THEME_DEFAULTS.mode) ??
     modeOptions.value[0]!,
   set: (option: ModeOption) => setMode(option.code),
+});
+
+// A stored mode outside MODES would leave the selector showing the fallback
+// while `data-mode` / the cookie keep the bogus value — normalize on mount so
+// all three agree.
+onMounted(() => {
+  if (!(MODES as readonly string[]).includes(mode.value)) {
+    setMode(selected.value.code);
+  }
 });
 </script>
 

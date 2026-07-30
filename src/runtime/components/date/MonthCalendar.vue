@@ -10,9 +10,7 @@ import {
   createMarkerResolver,
   type CalendarMarker,
 } from "../../utils/calendar-markers";
-import CalendarGrid, {
-  type CalendarCell,
-} from "./components/CalendarGrid.vue";
+import CalendarGrid, { type CalendarCell } from "./components/CalendarGrid.vue";
 
 export interface MonthCalendarProps {
   selected?: string | null;
@@ -124,6 +122,25 @@ function pageAnchorToYearOf(iso: string): string {
   return iso;
 }
 
+// Cap the disabled-month search to a sane horizon (~20 years) so a fully
+// disabled future doesn't spin forever.
+const SEARCH_HORIZON_MONTHS = 240;
+
+// Walk from `startIso` in `stepMonths` increments and return the first month
+// the consumer does not disable — the roving grid focuses whatever key we hand
+// back, and a disabled cell is an unfocusable button.
+function firstEnabledMonthFrom(
+  startIso: string,
+  stepMonths: number,
+): string | null {
+  const start = parseISO(startIso);
+  if (!start) return null;
+  const candidates = Array.from({ length: SEARCH_HORIZON_MONTHS }, (_, step) =>
+    monthISO(start.getFullYear(), start.getMonth() + step * stepMonths),
+  );
+  return candidates.find((iso) => !props.isDisabled?.(iso)) ?? null;
+}
+
 function onArrowOverflow(
   direction: ArrowDirection,
   currentKey: string,
@@ -131,14 +148,11 @@ function onArrowOverflow(
   const date = parseISO(currentKey);
   if (!date) return null;
   const stepMonths = ARROW_MONTH_DELTA[direction];
-  // Loop past disabled months in the same direction; cap to a sane
-  // horizon (~20 years) so a fully-disabled future doesn't spin forever.
-  for (let attempt = 0; attempt < 240; attempt++) {
-    date.setMonth(date.getMonth() + stepMonths);
-    const iso = monthISO(date.getFullYear(), date.getMonth());
-    if (!props.isDisabled?.(iso)) return pageAnchorToYearOf(iso);
-  }
-  return null;
+  const target = firstEnabledMonthFrom(
+    monthISO(date.getFullYear(), date.getMonth() + stepMonths),
+    stepMonths,
+  );
+  return target ? pageAnchorToYearOf(target) : null;
 }
 
 function onPage(
@@ -149,9 +163,13 @@ function onPage(
   const date = parseISO(currentKey);
   if (!date) return null;
   const yearDelta = direction === "down" ? 1 : -1;
-  return pageAnchorToYearOf(
+  // Same month one year away is the starting point; from there step month by
+  // month in the paging direction until an enabled month turns up.
+  const target = firstEnabledMonthFrom(
     monthISO(date.getFullYear() + yearDelta, date.getMonth()),
+    yearDelta,
   );
+  return target ? pageAnchorToYearOf(target) : null;
 }
 
 const roving = {

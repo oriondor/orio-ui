@@ -42,6 +42,7 @@ files; do not edit by hand.
 
 ### Date
 - `Calendar.vue` — month grid with roving-focus keyboard a11y. **Read USAGE.md first.**
+- `date/MonthCalendar.vue` — 3×4 month grid for one year with roving-focus keyboard a11y, the month-granularity sibling of Calendar. **Read USAGE.md first.**
 - `date/Picker.vue` — single date picker built from Calendar plus PickerTrigger. **Read USAGE.md first.**
 - `date/PickerTrigger.vue` — shared button + popover trigger used by date Picker and RangePicker; default slot renders the picker body. **Read USAGE.md first.**
 - `date/RangePicker.vue` — two-month range picker with hover-preview, min/max bounds, and ISO `{ start, end }` model. **Read USAGE.md first.**
@@ -61,6 +62,8 @@ files; do not edit by hand.
 - `gallery/CarouselPreview.vue` — horizontal thumbnail strip for the Carousel; clicking a thumb updates the shared `activeImage` model. **Read USAGE.md first.**
 - `ListItem.vue` — `<li>` row with start/end slots and optional selectable checkbox-style behavior. **Read USAGE.md first.**
 - `LocaleSwitcher.vue` — preconfigured Selector that mutates vue-i18n's locale; defaults to English + Ukrainian with flag emojis. **Read USAGE.md first.**
+- `ModeSwitcher.vue` — preconfigured Selector that mutates useTheme's light/dark mode with translated labels. **Read USAGE.md first.**
+- `ThemeSwitcher.vue` — preconfigured Selector that mutates useTheme's accent theme; defaults to the five bundled themes. **Read USAGE.md first.**
 - `upload/` — headless file upload — provides drop-zone state and file-dialog opener via slot props; consumer renders the UI. **Read USAGE.md first.**
 - `view/Dates.vue` — locale-aware read-only date or date range display; inline `<orio-view-text>` for start/end. **Read USAGE.md first.**
 - `view/KeyBinds.vue` — parses a backtick-delimited shortcut string and renders each key as `<kbd>` with separators inline. **Read USAGE.md first.**

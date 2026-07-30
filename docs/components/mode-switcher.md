@@ -22,6 +22,7 @@ Modes are fixed to the exported `MODES` constant (`light`, `dark`). To customize
 
 - **Mutates `useTheme().mode` on selection.** The side effect is the API — there is no `v-model`.
 - Falls back to the default mode (`dark`), then the first option, if the current mode is not in the list.
+- Normalizes an invalid stored mode on mount — the fallback is written back, so the trigger, the cookie and `data-mode` stay in sync.
 - Persists to the `orio-mode` cookie for SSR-safe first paint.
 - Requires both a `useTheme` context and a vue-i18n context.
 

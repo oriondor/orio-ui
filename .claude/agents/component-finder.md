@@ -63,6 +63,7 @@ not edit by hand.
 
 ### Date
 - **month calendar, date grid, day picker UI** → `Calendar.vue` (read USAGE.md first)
+- **month picker, month grid, "pick a month", year view** → `date/MonthCalendar.vue` (read USAGE.md first)
 - **date input, single date picker, "pick a date"** → `date/Picker.vue` (read USAGE.md first)
 - **date picker trigger button, date input button, popover-anchored date trigger** → `date/PickerTrigger.vue` (read USAGE.md first)
 - **date range, from-to picker, date range input, calendar range** → `date/RangePicker.vue` (read USAGE.md first)
@@ -82,6 +83,8 @@ not edit by hand.
 - **carousel preview, thumbnails strip, image picker strip, gallery thumbnails** → `gallery/CarouselPreview.vue` (read USAGE.md first)
 - **list row, list item, selectable row, list entry** → `ListItem.vue` (read USAGE.md first)
 - **locale switcher, language toggle, i18n switcher** → `LocaleSwitcher.vue` (read USAGE.md first)
+- **dark mode toggle, light dark switcher, color scheme picker** → `ModeSwitcher.vue` (read USAGE.md first)
+- **theme switcher, accent picker, brand color toggle** → `ThemeSwitcher.vue` (read USAGE.md first)
 - **upload, file picker, drop-to-upload, file input, headless file upload** → `upload/` (read USAGE.md first)
 - **read-only date display, formatted date range, date range view** → `view/Dates.vue` (read USAGE.md first)
 - **keyboard bindings hint display, shortcut display, kbd renderer** → `view/KeyBinds.vue` (read USAGE.md first)
