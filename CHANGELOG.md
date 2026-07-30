@@ -7,11 +7,80 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.30.0](https://github.com/oriondor/orio-ui/compare/v1.29.0...v1.30.0) (2026-07-30)
 
+### Added
 
-### Features
+- **`<orio-date-month-calendar>`** — 12-month (3×4) grid picker with year
+  navigation, roving-focus keyboard a11y, markers and disabled-month support.
+  Exported as `DateMonthCalendar` with `MonthCalendarProps`.
+- **`month` prop on `<orio-date-picker>` and `<orio-date-range-picker>`** —
+  swaps the day calendar for the month calendar and switches the trigger
+  display to `MMM yyyy`. The range picker seeds its two panels to
+  consecutive years instead of consecutive months in month mode.
+- **`<orio-theme-switcher>` / `<orio-mode-switcher>`** — preconfigured
+  `Selector` wrappers over `useTheme`; select to persist accent theme or
+  light/dark mode to cookies. `ModeSwitcher` labels come from i18n.
+- **`THEMES` / `MODES` constants** exported from the package root, for
+  building custom pickers.
+- **`TaggableSelector` is now searchable and creatable** — fuzzy search over
+  string or object options (`v-model:search`), tag chips in the trigger, a
+  `create` event fired from the "Create …" affordance or Enter when nothing
+  matches, plus `allowCreate` and `tagVariant` props. Exported
+  `TaggableSelectorProps`.
+- **New `Selector` `#trigger` slot props** — `isOpen`, `triggerKeydown`,
+  `selectHighlighted`, `getOptionKey`, `getOptionLabel`. `triggerKeydown`
+  reuses the built-in roving list navigation and passes only
+  ArrowUp/ArrowDown/Escape through when the event originates in an inner
+  `<input>` or contenteditable, so a custom trigger can host a text field
+  without hijacking typing.
+- **`icon` and default slots on `<orio-dashed-container>`**, falling back to
+  the existing `icon`/`text` props.
+- **`presentText` / ongoing ranges in `<orio-view-dates>`** — `end: null` now
+  renders a "Present" label (i18n `dates.present`); `end: undefined` still
+  means a single date. Exported `ViewDatesRange`.
+- **Icons**: `add`, `close-rounded`, `upload-file`, `upload-file-filled`,
+  `wrench`.
+- **Docs** for MonthCalendar, ThemeSwitcher, ModeSwitcher; theming guide
+  section on the ready-made switchers.
+- **Tests**: new suites for CalendarGrid, MonthCalendar, DatePicker,
+  DateRangePicker, DashedContainer, Icon, ThemeSwitcher, ModeSwitcher and
+  TaggableSelector; expanded Selector, Calendar and ViewDates coverage.
 
-* Implemented components from the old consumer project, fixed errors and improved accessibility ([#168](https://github.com/oriondor/orio-ui/issues/168)) ([63858cf](https://github.com/oriondor/orio-ui/commit/63858cfb8238690dfe821d011da3afaeb9d080c4))
+### Changed
 
+- **Calendar internals extracted** — the day grid markup, cell states and
+  marker classes moved into a shared `date/components/CalendarGrid.vue`
+  (`CalendarCell`), now used by both `Calendar` and `MonthCalendar`. Marker
+  resolution moved to `utils/calendar-markers.ts` (`createMarkerResolver`),
+  with a `normalize` hook so month cells match day-precision marker bounds.
+- `CalendarMarker` / `MarkerVariant` now live in
+  `utils/calendar-markers.ts`; still re-exported from `Calendar.vue` and the
+  package root.
+- Calendar cells report `outOfMonth: true` instead of `inMonth: false`.
+- Calendar arrow-key overflow now skips disabled days in the travel
+  direction (capped at ~2 years) and PageUp/PageDown jumps a month, or a
+  year with Shift.
+- Opening a `Selector` list always seeds the roving highlight, so the first
+  arrow press moves from the selected item rather than nowhere. Custom
+  triggers no longer need to touch the highlight.
+
+### Fixed
+
+- `Selector` no longer throws in multi-select when the model value is not
+  yet an array — `isOptionSelected` guards with `Array.isArray`.
+- `Popover` and `Tooltip` scroll/resize listeners drop the explicit `window`
+  target, making them SSR-safe.
+- `<orio-view-dates>` no longer formats a `null` end date as an empty string
+  when the range is ongoing.
+
+### Accessibility
+
+- `MonthCalendar` and `CalendarGrid` ship `role="grid"`, per-cell
+  `aria-label` from a locale-aware long format, `aria-selected`, and a
+  single tab stop with roving focus.
+- The `TaggableSelector` trigger is a proper `role="combobox"` with
+  `aria-haspopup="listbox"` / `aria-expanded`, keyboard-navigable via the
+  shared `triggerKeydown` handler.
+- Empty search results render `<orio-empty-state>` instead of a bare string.
 ## [1.29.0](https://github.com/oriondor/orio-ui/compare/v1.28.1...v1.29.0) (2026-07-09)
 
 
