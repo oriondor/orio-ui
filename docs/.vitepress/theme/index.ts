@@ -10,6 +10,16 @@ import "../../../src/runtime/assets/css/main.css";
 // Import i18n
 import { i18n } from "../../../src/runtime/i18n";
 
+// Experiments live outside `components/` so the Nuxt module never auto-imports
+// them; they ship as the `orio-ui/experiments` subpath and are registered here
+// under an `OrioX` prefix purely so the docs demos can render them.
+const experiments = import.meta.glob(
+  "../../../src/runtime/experiments/**/*.vue",
+  {
+    eager: true,
+  },
+);
+
 // Auto-import all components
 const components = import.meta.glob(
   "../../../src/runtime/components/**/*.vue",
@@ -56,6 +66,27 @@ export default {
       if (componentName && component.default) {
         // Register with Orio prefix (e.g., OrioButton, OrioGalleryCarousel)
         app.component(`Orio${componentName}`, component.default);
+      }
+    }
+
+    // Register experiments under the OrioX prefix so they can never shadow a
+    // shipped component. e.g. "experiments/popover/index.vue" -> OrioXPopover
+    for (const path in experiments) {
+      const component = experiments[path];
+
+      const componentName = (
+        path.split("src/runtime/experiments/")[1]?.replace(".vue", "") || ""
+      )
+        .split("/")
+        .map((part) => {
+          if (part === "index" || part === "components") return "";
+          return part.charAt(0).toUpperCase() + part.slice(1);
+        })
+        .filter(Boolean)
+        .join("");
+
+      if (componentName && component.default) {
+        app.component(`OrioX${componentName}`, component.default);
       }
     }
   },

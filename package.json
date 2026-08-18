@@ -17,6 +17,10 @@
       "types": "./dist/runtime/canvas.d.ts",
       "import": "./dist/runtime/canvas.js"
     },
+    "./experiments": {
+      "types": "./dist/runtime/experiments.d.ts",
+      "import": "./dist/runtime/experiments.js"
+    },
     "./styles": "./dist/runtime/assets/css/main.css",
     "./theme": "./dist/runtime/assets/css/colors.css"
   },
