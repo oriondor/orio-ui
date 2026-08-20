@@ -93,7 +93,7 @@ the same component.
 | ---------- | ----------------- | ---------- | ---------------------------------------------- |
 | `id`       | `string`          | `useId()`  | Id shared by trigger and panel; keep it unique |
 | `position` | `PopoverPosition` | `'bottom'` | Placement, as a CSS `position-area` value      |
-| `gap`      | `number`          | `1`        | Distance between trigger and panel, in rem     |
+| `gap`      | `number`          | `0.25`     | Distance between trigger and panel, in rem     |
 | `flip`     | `PopoverFlip`     | `'auto'`   | How hard the panel works to stay in the viewport |
 
 ### Position Values

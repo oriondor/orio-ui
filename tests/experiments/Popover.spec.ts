@@ -181,6 +181,57 @@ describe("experiments/Popover", () => {
     });
   });
 
+  describe("CSS injection", () => {
+    // The props land inside a live <style> tag, and TS unions are erased at
+    // runtime, so a consumer can hand any string to any of them.
+    it("escapes a hostile id instead of letting it close the rule", () => {
+      const hostileId = 'x"] { color: red } body { display: none } [z="';
+      const wrapper = mount(Popover, { props: { id: hostileId } });
+
+      const css = injectedCss();
+      expect(css).not.toContain("body { display: none }");
+      expect(css).not.toContain(`[popovertarget="${hostileId}"]`);
+      // The raw value still reaches the DOM — only the CSS copy is escaped.
+      expect(
+        wrapper.find("button[popovertarget]").attributes("popovertarget"),
+      ).toBe(hostileId);
+
+      wrapper.unmount();
+    });
+
+    it("falls back to bottom for a position outside the union", () => {
+      const wrapper = mount(Popover, {
+        props: {
+          id: "pop-bad-position",
+          position: "bottom } body { display: none } .x {" as never,
+        },
+      });
+
+      const css = injectedCss();
+      expect(css).toContain("position-area: bottom;");
+      expect(css).not.toContain("body { display: none }");
+
+      wrapper.unmount();
+    });
+
+    it("falls back to the default gap for a non-finite or injected value", () => {
+      const injected = mount(Popover, {
+        props: { id: "pop-bad-gap", gap: "0; background: url(evil)" as never },
+      });
+
+      expect(injectedCss()).toContain("margin: 0.25rem");
+      expect(injectedCss()).not.toContain("url(evil)");
+      injected.unmount();
+
+      const notANumber = mount(Popover, {
+        props: { id: "pop-nan-gap", gap: Number.NaN },
+      });
+
+      expect(injectedCss()).toContain("margin: 0.25rem");
+      notANumber.unmount();
+    });
+  });
+
   describe("Silent recalculation", () => {
     it("emits a transition-killing class rule for the silent reopen", () => {
       const wrapper = mount(Popover, { props: { id: "pop-j" } });

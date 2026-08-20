@@ -1,7 +1,10 @@
 <script setup lang="ts" generic="T extends object">
 import { computed, ref, toRef, toRefs, useId, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
-import type { ControlProps } from "../../components/ControlElement.vue";
+import type {
+  ControlProps,
+  ControlSlotAttrs,
+} from "../../components/ControlElement.vue";
 import { useControlTokens } from "../../composables/useControlSize";
 import { useListKeyboard } from "../../composables/useListKeyboard";
 import Popover from "../popover/index.vue";
@@ -36,8 +39,10 @@ const resolvedPlaceholder = computed(
 const key = computed(() => field.value as Extract<keyof T, string>);
 const label = computed(() => optionName.value as Extract<keyof T, string>);
 
+// `null` / `undefined` mean "nothing selected"; an empty string is a real
+// option, so the checks below are explicit rather than falsy.
 function getOptionLabel(option: SelectOption | undefined | null): string {
-  if (!option) return resolvedPlaceholder.value;
+  if (option === null || option === undefined) return resolvedPlaceholder.value;
   if (typeof option === "string") return option;
   if (optionName.value) return String((option as T)[label.value]);
   return JSON.stringify(option);
@@ -49,7 +54,7 @@ function getOptionKey(option: SelectOption): string | number {
 }
 
 function isOptionSelected(option: SelectOption): boolean {
-  if (!modelValue.value) return false;
+  if (modelValue.value === null || modelValue.value === undefined) return false;
   if (typeof option === "string") return modelValue.value === option;
   if (typeof modelValue.value === "string") return false;
 
@@ -84,7 +89,11 @@ const {
   reset: resetHighlight,
 } = useListKeyboard({
   count: () => props.options.length,
-  onSelect: (index) => selectOption(props.options[index]!),
+  onSelect: (index) => {
+    const option = props.options[index];
+    if (option === undefined) return;
+    selectOption(option);
+  },
   onOpen: openList,
   onClose: closeList,
   initialIndex: () => props.options.findIndex(isOptionSelected),
@@ -102,6 +111,26 @@ function onPanelToggle(event: Event) {
   if (isOpen.value) {
     resetHighlight();
   }
+}
+
+/**
+ * Everything a trigger needs, in one bag: the Popover pairing, ControlElement's
+ * a11y attrs, the listbox ARIA state, and the keyboard handler. The default
+ * button and any custom `#trigger` bind the same object, so replacing the
+ * button cannot silently drop the ARIA wiring or the keyboard support.
+ */
+function getTriggerBindings(
+  popoverProps: Record<string, unknown>,
+  control: ControlSlotAttrs,
+) {
+  return {
+    ...control,
+    ...popoverProps,
+    type: "button" as const,
+    "aria-haspopup": "listbox" as const,
+    "aria-expanded": isOpen.value,
+    onKeydown: (event: KeyboardEvent) => onKeydown(event, isOpen.value),
+  };
 }
 
 const { tokens: controlTokens } = useControlTokens(toRef(props, "size"));
@@ -124,22 +153,18 @@ const controlProps = computed(() => {
   <orio-control-element v-slot="{ control }" v-bind="controlProps">
     <!-- Placement is the Popover's concern; the listbox just picks a side. -->
     <Popover :id="popoverId" position="bottom span-right">
-      <template #trigger="triggerProps">
+      <template #trigger="popoverProps">
         <slot
           name="trigger"
-          v-bind="triggerProps"
+          :trigger="getTriggerBindings(popoverProps, control)"
           :control
           :isOpen
           :getOptionKey
           :getOptionLabel
         >
           <button
-            v-bind="{ ...control, ...triggerProps }"
-            type="button"
+            v-bind="getTriggerBindings(popoverProps, control)"
             class="select-trigger"
-            aria-haspopup="listbox"
-            :aria-expanded="isOpen"
-            @keydown="onKeydown($event, isOpen)"
           >
             <slot name="trigger-label" :getOptionKey :getOptionLabel>
               <span class="trigger-label">

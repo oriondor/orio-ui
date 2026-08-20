@@ -14,23 +14,27 @@ import { useStyleTag, useEventListener, useDebounceFn } from "@vueuse/core";
  * runs right — the equivalent of the shipped Popover's `bottom-left`.
  * `bottom right` pins the panel to the corner tile.
  */
-export type PopoverPosition =
-  | "top"
-  | "bottom"
-  | "left"
-  | "right"
-  | "top span-left"
-  | "top span-right"
-  | "bottom span-left"
-  | "bottom span-right"
-  | "left span-top"
-  | "left span-bottom"
-  | "right span-top"
-  | "right span-bottom"
-  | "top left"
-  | "top right"
-  | "bottom left"
-  | "bottom right";
+// Not exported: `<script setup>` allows only type exports.
+const POPOVER_POSITIONS = [
+  "top",
+  "bottom",
+  "left",
+  "right",
+  "top span-left",
+  "top span-right",
+  "bottom span-left",
+  "bottom span-right",
+  "left span-top",
+  "left span-bottom",
+  "right span-top",
+  "right span-bottom",
+  "top left",
+  "top right",
+  "bottom left",
+  "bottom right",
+] as const;
+
+export type PopoverPosition = (typeof POPOVER_POSITIONS)[number];
 
 /**
  * Flip strategy. `"initial"` is the plain CSS behaviour — the browser resolves
@@ -65,12 +69,41 @@ export interface PopoverProps {
   flip?: PopoverFlip;
 }
 
+const DEFAULT_POSITION: PopoverPosition = "bottom";
+const DEFAULT_GAP = 0.25;
+
 const {
   id = useId(),
-  position = "bottom",
-  gap = 0.25,
+  position = DEFAULT_POSITION,
+  gap = DEFAULT_GAP,
   flip = "auto",
 } = defineProps<PopoverProps>();
+
+/**
+ * The props below are interpolated into a live `<style>` tag, and types are
+ * erased at runtime: a `position` carrying `}` would close the rule and let
+ * the rest of the string author arbitrary CSS, and an `id` does the same
+ * through the selectors. Each one is narrowed here to what its CSS slot can
+ * actually hold.
+ */
+
+/**
+ * Backslash-escapes everything outside the CSS ident grammar — valid both in
+ * an id selector and inside the quoted `popovertarget` value. Hand-rolled
+ * because `CSS.escape` does not exist during SSR.
+ */
+function escapeForCss(value: string) {
+  return String(value).replace(/[^\w-]/g, (character) => `\\${character}`);
+}
+
+/** `id` as it may appear in a selector; the DOM attributes still use it raw. */
+const cssId = computed(() => escapeForCss(id));
+
+const safePosition = computed(() =>
+  POPOVER_POSITIONS.includes(position) ? position : DEFAULT_POSITION,
+);
+
+const safeGap = computed(() => (Number.isFinite(gap) ? gap : DEFAULT_GAP));
 
 // Two root nodes (trigger + panel), so there is nowhere sensible for fallthrough
 // attrs to land. Consumers put attrs on their own slot content instead.
@@ -97,10 +130,10 @@ const bodyProps = computed(() => ({
 // guard keeps the anchor off wrapper elements that the attribute may also
 // fall through to (e.g. `<orio-button>`'s outer div), which would otherwise
 // reintroduce duplicate anchor names.
-const anchorName = computed(() => `--popover-trigger-${id}`);
+const anchorName = computed(() => `--popover-trigger-${cssId.value}`);
 
 /** Main axis of the requested position; the cross axis is the second keyword. */
-const mainAxis = computed(() => position.split(" ")[0]);
+const mainAxis = computed(() => safePosition.value.split(" ")[0]);
 
 /**
  * Flip the block axis first for top/bottom placements and the inline axis first
@@ -257,19 +290,19 @@ const enterTransform = computed(() => {
 // Comments stay out of the template literal — it ships into a live style tag.
 const styles = computed(
   () => `
-  :is(button, input)[popovertarget="${id}"] {
+  :is(button, input)[popovertarget="${cssId.value}"] {
     anchor-name: ${anchorName.value};
   }
 
-  .popover-body#${id} {
+  .popover-body#${cssId.value} {
     position-anchor: ${anchorName.value};
     position: fixed;
-    position-area: ${position};
-    margin: ${gap}rem;
+    position-area: ${safePosition.value};
+    margin: ${safeGap.value}rem;
     ${flip === "off" ? "" : `position-try-fallbacks: ${positionTryFallbacks.value};`}
   }
 
-  :where(.popover-body#${id}) {
+  :where(.popover-body#${cssId.value}) {
     --popover-enter-distance: 0.5rem;
 
     box-sizing: border-box;
@@ -289,28 +322,28 @@ const styles = computed(
       display var(--motion-duration-medium) allow-discrete;
   }
 
-  :where(.popover-body#${id}):popover-open {
+  :where(.popover-body#${cssId.value}):popover-open {
     opacity: 1;
     transform: none;
   }
 
   /* Entry side of the discrete transition — without this the panel pops in. */
   @starting-style {
-    :where(.popover-body#${id}):popover-open {
+    :where(.popover-body#${cssId.value}):popover-open {
       opacity: 0;
       transform: ${enterTransform.value};
     }
   }
 
   /* Applied only while a silent reopen is in flight. */
-  .popover-body#${id}.${INSTANT_CLASS} {
+  .popover-body#${cssId.value}.${INSTANT_CLASS} {
     transition: none;
     opacity: 1;
     transform: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :where(.popover-body#${id}) {
+    :where(.popover-body#${cssId.value}) {
       transition-duration: 0s;
       transform: none;
     }

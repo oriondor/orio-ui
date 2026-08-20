@@ -188,10 +188,10 @@ describe("experiments/Select", () => {
       stubPopoverApi();
       const wrapper = mountSelect({ options: stringOptions, modelValue: null });
 
-      // Mimic the native toggle event the panel fires when it opens.
+      // Mimic the native toggle event the panel fires when it opens; the
+      // component reads `newState`, which is the only open-state signal.
       const panel = wrapper.find(".select-content");
-      await panel.trigger("toggle");
-      Object.defineProperty(wrapper.vm, "isOpen", { value: true });
+      await panel.trigger("toggle", { newState: "open" });
       await nextTick();
 
       const trigger = wrapper.find(".select-trigger");
@@ -199,6 +199,22 @@ describe("experiments/Select", () => {
       await trigger.trigger("keydown", { key: "Enter" });
 
       expect(wrapper.emitted("update:modelValue")).toBeTruthy();
+    });
+
+    it("ignores Enter when there are no options", async () => {
+      const { hidePopover } = stubPopoverApi();
+      const wrapper = mountSelect({ options: [], modelValue: null });
+
+      const panel = wrapper.find(".select-content");
+      await panel.trigger("toggle", { newState: "open" });
+      await nextTick();
+
+      await wrapper
+        .find(".select-trigger")
+        .trigger("keydown", { key: "Enter" });
+
+      expect(wrapper.emitted("update:modelValue")).toBeFalsy();
+      expect(hidePopover).not.toHaveBeenCalled();
     });
   });
 
@@ -229,6 +245,24 @@ describe("experiments/Select", () => {
         "Option 1:true",
         "Option 2:false",
       ]);
+    });
+  });
+
+  describe("Empty-string options", () => {
+    // "" is a real option, not "nothing selected" — falsy checks used to turn
+    // it into the placeholder and drop its selected state.
+    it("renders an empty option and keeps its row selected", () => {
+      const wrapper = mountSelect({
+        options: ["", "Option 2"],
+        modelValue: "",
+      });
+
+      expect(wrapper.find(".select-trigger").text()).not.toContain(
+        "Select an option",
+      );
+      expect(
+        wrapper.findAll("[role='option']")[0]!.attributes("aria-selected"),
+      ).toBe("true");
     });
   });
 

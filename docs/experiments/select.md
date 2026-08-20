@@ -63,6 +63,7 @@ const country = ref(null);
 const countries = [
   { id: "uk", name: "United Kingdom" },
   { id: "fi", name: "Finland" },
+  { id: "ua", name: "Ukraine" },
 ];
 </script>
 
@@ -111,18 +112,22 @@ identities keeps its selection.
 
 | Slot            | Props                                                       | Description                    |
 | --------------- | ----------------------------------------------------------- | ------------------------------ |
-| `trigger`       | popover bag + `{ control, isOpen, getOptionKey, getOptionLabel }` | Replaces the whole button |
+| `trigger`       | `{ trigger, control, isOpen, getOptionKey, getOptionLabel }` | Replaces the whole button |
 | `trigger-label` | `{ getOptionKey, getOptionLabel }`                           | Replaces just the label text   |
 | `option`        | `{ option, selected, getOptionKey, getOptionLabel }`         | Replaces a row's content       |
 | `no-options`    | —                                                            | Replaces the empty state       |
 | `options-addon` | —                                                            | Extra content after the list   |
 
-A custom `#trigger` must spread the popover bag onto a `<button>`, otherwise
-there is nothing to open the panel:
+`trigger` is the complete binding bag: the popover pairing (`popovertarget`),
+ControlElement's a11y attrs (`id`, `aria-*`, `disabled`, …), `type="button"`,
+the listbox ARIA state (`aria-haspopup`, `aria-expanded`) and the keyboard
+handler. A custom `#trigger` must spread it onto a `<button>` — without it
+there is nothing to open the panel, and the listbox loses its ARIA and
+keyboard support:
 
 ```vue
-<template #trigger="triggerProps">
-  <button v-bind="triggerProps">Open</button>
+<template #trigger="{ trigger }">
+  <button v-bind="trigger">Open</button>
 </template>
 ```
 
