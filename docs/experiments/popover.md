@@ -140,7 +140,7 @@ class of your own overrides any of it, no `!important` needed:
 
 <style scoped>
 .my-panel {
-  background: var(--color-accent-bg);
+  background: var(--color-accent-soft);
   padding: 1.5rem;
   --popover-enter-distance: 0; /* kill the slide, keep the fade */
 }

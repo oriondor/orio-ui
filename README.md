@@ -23,7 +23,7 @@ orio-ui's shipped, version-pinned agent docs. Details in
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great developer experience
-🧪 **Tested** - 45 test suites for reliability
+🧪 **Tested** - 46 test suites for reliability
 📱 **Responsive** - Mobile-first design approach
 ♿ **Accessible** - ARIA-compliant components
 🌐 **i18n** - Built-in vue-i18n support with English defaults

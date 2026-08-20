@@ -9,7 +9,7 @@ A delightful, lightweight component library for Nuxt 3 applications.
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great DX
-🧪 **Tested** - 45 test suites for reliability
+🧪 **Tested** - 46 test suites for reliability
 🌐 **i18n** - Built-in vue-i18n support with English defaults
 
 ## Quick Start

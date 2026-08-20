@@ -11,3 +11,8 @@ export {
   type PopoverPosition,
   type PopoverFlip,
 } from "./experiments/popover/index.vue";
+export {
+  default as Select,
+  type SelectProps,
+  type SelectOption,
+} from "./experiments/select/index.vue";
