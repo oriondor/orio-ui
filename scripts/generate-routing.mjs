@@ -1,7 +1,7 @@
 /**
  * Generates the in-repo agent artifacts from their single sources of truth:
  *
- *   - CLAUDE.md routing block            ← USAGE.md frontmatter
+ *   - CLAUDE.md routing block            ← agent-doc frontmatter
  *   - .claude/agents/component-worker.md ← scripts/templates/bodies/component-worker.md
  *   - .claude/agents/component-finder.md ← scripts/templates/bodies/component-finder.md
  *   - README.md onboarding snippet       ← scripts/templates/consumer-snippet.md
@@ -12,11 +12,12 @@
  * `scripts/lib/` so the two can never drift.
  *
  * ============================================================================
- * USAGE.md frontmatter spec
+ * Agent-doc frontmatter spec
  * ============================================================================
  *
- * Every reusable component and composable must ship a USAGE.md file with
- * YAML frontmatter at the top:
+ * Every reusable component and composable must have an agent doc under
+ * `agents/`, mirroring its path under `src/runtime/`, with YAML frontmatter
+ * at the top:
  *
  *   ---
  *   kind: component                   # "component" | "composable"
@@ -34,16 +35,20 @@
  *               Used by component-worker / component-finder.
  *   short       One-sentence description used by the CLAUDE.md routing index.
  *               No trailing period — the renderer adds it.
- *   invariants  true if the USAGE.md body documents gotchas worth reading
- *               before integration; false for trivial wrappers (LoadingSpinner,
- *               view/Separator, useApi). Drives the "read USAGE.md first"
- *               marker — every entry ships a USAGE.md either way.
+ *   invariants  true if the doc body documents gotchas worth reading before
+ *               integration; false for trivial wrappers (LoadingSpinner,
+ *               view/Separator, useApi). Drives the "read the agent doc first"
+ *               marker — every entry has a doc either way.
  *
- * File location → derived path:
- *   src/runtime/components/Modal.USAGE.md         → Modal.vue
- *   src/runtime/components/Canvas/USAGE.md        → Canvas/
- *   src/runtime/components/date/Picker.USAGE.md   → date/Picker.vue
- *   src/runtime/composables/useFilter.USAGE.md    → useFilter
+ * File location → derived source path:
+ *   agents/components/Modal.md              → Modal.vue
+ *   agents/components/Canvas.md             → Canvas/          (folder component)
+ *   agents/components/NumberInput/index.md  → NumberInput/     (folder, many docs)
+ *   agents/components/date/Picker.md        → date/Picker.vue
+ *   agents/composables/useFilter.md         → useFilter
+ *
+ * Folder components keep a directory under `agents/` only when they have more
+ * than one doc; otherwise the doc is flattened to `<Folder>.md`.
  *
  * Stability: entries are emitted in a deterministic order (category order
  * fixed in load-entries, alphabetical by path inside each category). This
@@ -62,6 +67,8 @@ import { renderTemplate } from "./lib/render-template.mjs";
 const REPO_VARS = {
   componentsRoot: "src/runtime/components/",
   composablesRoot: "src/runtime/composables/",
+  docsComponentsRoot: "agents/components/",
+  docsComposablesRoot: "agents/composables/",
 };
 
 const AGENT_BODIES = [

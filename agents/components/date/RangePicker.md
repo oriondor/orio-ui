@@ -11,7 +11,7 @@ invariants: true
 `<orio-date-range-picker>` is the date range picker: a
 `<orio-date-picker-trigger>` opens a popover containing **two side-by-side
 calendars** (left = start month, right = start month + 1). Read
-`Calendar.USAGE.md` and `date/Picker.USAGE.md` first.
+`../Calendar.md` and `Picker.md` first.
 
 ## Invariants
 

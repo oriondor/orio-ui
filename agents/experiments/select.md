@@ -87,10 +87,12 @@ case, but renders its listbox inside the experimental native-popover
 
 ## Slots
 
-- `#trigger` — replaces the whole button. Receives the Popover's trigger bag
-  (`popovertarget`, `class`) plus `{ control, isOpen, getOptionKey,
-  getOptionLabel }`. You **must** spread the popover bag onto a `<button>` or
-  the panel cannot open.
+- `#trigger` — replaces the whole button. Receives `{ trigger, control, isOpen,
+  getOptionKey, getOptionLabel }`. `trigger` is the complete binding bag —
+  popover pairing (`popovertarget`, `class`), ControlElement's `control` attrs,
+  `type="button"`, `aria-haspopup="listbox"`, `aria-expanded`, and `onKeydown`.
+  You **must** spread `trigger` onto a `<button>`: without it the panel cannot
+  open and the listbox loses its ARIA and keyboard support.
 - `#trigger-label` — replaces just the label text inside the default button.
 - `#option` — replaces a row's content. Receives `{ option, selected,
   getOptionKey, getOptionLabel }`.
@@ -99,21 +101,20 @@ case, but renders its listbox inside the experimental native-popover
 
 ## Quick reference
 
+Lifted from the object-options demo on `docs/experiments/select.md` (there it
+is `<orio-x-select>`, the docs-only alias; consumers import `Select`):
+
 ```vue
 <script setup lang="ts">
 import { ref } from "vue";
 import { Select } from "orio-ui/experiments";
 
-interface Country {
-  id: string;
-  name: string;
-}
-
-const countries: Country[] = [
+const country = ref(null);
+const countries = [
   { id: "uk", name: "United Kingdom" },
   { id: "fi", name: "Finland" },
+  { id: "ua", name: "Ukraine" },
 ];
-const country = ref<Country | null>(null);
 </script>
 
 <template>

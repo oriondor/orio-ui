@@ -9,7 +9,7 @@ invariants: true
 # Input — agent-only invariants
 
 `<orio-input>` is the text input wrapping `ControlElement`. Read
-`ControlElement.USAGE.md` first — most of the contract lives there.
+`ControlElement.md` first — most of the contract lives there.
 
 ## Invariants
 

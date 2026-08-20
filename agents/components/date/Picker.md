@@ -16,7 +16,7 @@ button that opens a popover containing `<orio-calendar>`. For ranges use
 
 - **Extends `ControlProps`.** Pass `label`, `error`, `size`, `disabled`,
   `required` straight through — they reach the trigger via ControlElement.
-  See `ControlElement.USAGE.md`.
+  See `../ControlElement.md`.
 - **v-model is `string | null`** in ISO `YYYY-MM-DD` form. `null` means
   unpicked.
 - **`min` / `max`** are ISO strings. They merge with the consumer's
@@ -25,7 +25,7 @@ button that opens a popover containing `<orio-calendar>`. For ranges use
 - **Selecting a day closes the popover** automatically (`toggle(false)` is
   called inside the `@select` handler). Do not wire your own close.
 - **Markers + getMarker** are forwarded to the inner Calendar unchanged.
-  See `Calendar.USAGE.md` for the matching rules.
+  See `../Calendar.md` for the matching rules.
 - **Placeholder text** falls back to the i18n key `datePicker.placeholder`
   if no `placeholder` prop is given.
 

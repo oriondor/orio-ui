@@ -140,21 +140,23 @@ with the browser's native Popover API.
 
 ## Quick reference
 
+Lifted from the first live demo on `docs/experiments/popover.md` (there it is
+`<orio-x-popover>`, the docs-only alias; consumers import `Popover`):
+
 ```vue
 <script setup lang="ts">
 import { Popover } from "orio-ui/experiments";
 </script>
 
 <template>
-  <Popover position="bottom span-right" :gap="0.5">
+  <Popover position="bottom span-right">
     <template #trigger="triggerProps">
-      <orio-button v-bind="triggerProps">Menu</orio-button>
+      <orio-button variant="secondary" v-bind="triggerProps">Bottom</orio-button>
     </template>
-
     <template #body="bodyProps">
-      <div v-bind="bodyProps" class="menu-panel">
-        <button>Edit</button>
-        <button>Delete</button>
+      <div v-bind="bodyProps" style="min-width: 200px;">
+        <p>Native popover content.</p>
+        <p>Click outside or press Esc to dismiss.</p>
       </div>
     </template>
   </Popover>
@@ -163,9 +165,9 @@ import { Popover } from "orio-ui/experiments";
 
 ## Graduating
 
-Move `index.vue` to `src/runtime/components/Popover.vue`, move this file beside
-it as `Popover.USAGE.md`, move the demo page to `docs/components/`, export it
-from `src/runtime/index.ts`, and drop the entry from
+Move `index.vue` to `src/runtime/components/Popover.vue`, move this file to
+`agents/components/Popover.md`, move the demo page to `docs/components/`,
+export it from `src/runtime/index.ts`, and drop the entry from
 `src/runtime/experiments.ts`. Auto-import and the generated routing index pick
 it up automatically at that point.
 

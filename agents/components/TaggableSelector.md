@@ -11,7 +11,7 @@ invariants: true
 `<orio-taggable-selector>` is a thin wrapper over `<orio-selector>` that
 forces `multiple` mode, adds a fuzzy-search input inside the trigger, and
 renders the selection as a row of `<orio-tag>` chips. Read
-`Selector.USAGE.md` for the underlying contract.
+`Selector.md` for the underlying contract.
 
 ## Invariants
 

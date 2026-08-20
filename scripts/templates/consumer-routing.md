@@ -33,7 +33,7 @@ cp node_modules/orio-ui/dist/agents/component-finder.md .claude/agents/
 ```
 
 - `component-worker.md` — picks the right component for a vague request, reads
-  its USAGE.md, then implements the integration in your app.
+  its agent doc, then implements the integration in your app.
 - `component-finder.md` — read-only; locates a component and returns paths
   without writing code.
 
@@ -47,10 +47,12 @@ installed version.
 - Paths below are relative to `node_modules/orio-ui/dist/runtime/components/`
   for components and `node_modules/orio-ui/dist/runtime/composables/` for
   composables.
-- Every entry ships an agent-only USAGE.md next to its compiled source, named
-  `<Name>.USAGE.md` (or `<Folder>/USAGE.md` for folder components). Entries
-  marked **Read USAGE.md first.** document non-trivial invariants/gotchas —
-  read them before integrating.
+- Every entry ships an agent-only doc, in a mirror tree under
+  `node_modules/orio-ui/dist/agents/`: `Modal.vue` →
+  `dist/agents/components/Modal.md`, `useFilter` →
+  `dist/agents/composables/useFilter.md`. Entries marked **Read the agent doc
+  first.** document non-trivial invariants/gotchas — read them before
+  integrating.
 
 ## Components & composables
 

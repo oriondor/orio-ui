@@ -1,14 +1,16 @@
 /**
- * Postbuild step: emits the consumer-facing agent bundle into `dist/agents/`
- * and mirrors every USAGE.md file into `dist/runtime/` alongside the compiled
- * component / composable sources.
+ * Postbuild step: emits the consumer-facing agent bundle into `dist/agents/`,
+ * including the per-entry agent docs mirrored from the repo's `agents/` tree.
+ * The docs ship under `dist/agents/`, not next to the compiled sources, so
+ * everything an agent reads lives at one root.
  *
  * Shipped files:
  *   - dist/agents/ROUTING.md          ← scripts/templates/consumer-routing.md
  *   - dist/agents/component-worker.md ← scripts/templates/bodies/component-worker.md
  *   - dist/agents/component-finder.md ← scripts/templates/bodies/component-finder.md
  *   - dist/agents/snippet.md          ← scripts/templates/consumer-snippet.md
- *   - dist/runtime/.../<name>.USAGE.md ← copied from src/runtime/
+ *   - dist/agents/components/<path>.md ← copied from agents/components/
+ *   - dist/agents/composables/<name>.md ← copied from agents/composables/
  *
  * Consumers wire it up with `npx orio-ui agents` (see bin/orio-ui.mjs), which
  * appends `dist/agents/snippet.md` to their CLAUDE.md.
@@ -26,7 +28,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { dirname, join } from "node:path";
-import { loadEntries, groupAndSort, ROOTS } from "./lib/load-entries.mjs";
+import { loadEntries, groupAndSort, DOC_ROOTS } from "./lib/load-entries.mjs";
 import {
   renderShortIndex,
   renderPurposeIndex,
@@ -41,6 +43,8 @@ const DIST_RUNTIME = "dist/runtime";
 const CONSUMER_VARS = {
   componentsRoot: "node_modules/orio-ui/dist/runtime/components/",
   composablesRoot: "node_modules/orio-ui/dist/runtime/composables/",
+  docsComponentsRoot: "node_modules/orio-ui/dist/agents/components/",
+  docsComposablesRoot: "node_modules/orio-ui/dist/agents/composables/",
 };
 
 const AGENT_BODIES = [
@@ -80,16 +84,19 @@ function emitAgents(groups, snippet) {
   console.log(`  emitted ${DIST_AGENTS}/snippet.md`);
 }
 
-function copyUsageFiles(entries) {
+function copyAgentDocs(entries) {
   let copied = 0;
   entries.forEach((entry) => {
-    const targetRoot = ROOTS[entry.kind].replace(/^src\//, "dist/");
-    const out = join(targetRoot, entry.usagePath);
+    const targetRoot = DOC_ROOTS[entry.kind].replace(
+      /^agents\//,
+      "dist/agents/",
+    );
+    const out = join(targetRoot, entry.docPath);
     mkdirSync(dirname(out), { recursive: true });
     copyFileSync(entry.file, out);
     copied += 1;
   });
-  console.log(`  copied ${copied} USAGE.md file(s) into dist/runtime/`);
+  console.log(`  copied ${copied} agent doc(s) into ${DIST_AGENTS}/`);
 }
 
 function main() {
@@ -107,7 +114,7 @@ function main() {
   ).trimEnd();
   mkdirSync(DIST_AGENTS, { recursive: true });
   emitAgents(groups, snippet);
-  copyUsageFiles(entries);
+  copyAgentDocs(entries);
   console.log(`Consumer agents: ${entries.length} entries`);
 }
 

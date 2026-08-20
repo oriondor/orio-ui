@@ -10,7 +10,7 @@ invariants: true
 
 `<orio-number-input-horizontal>` is a pre-styled wrapper around
 `<orio-number-input>` that renders minus/plus buttons on either side of the
-field. Read `NumberInput/USAGE.md` first — this variant inherits all of its
+field. Read `index.md` first — this variant inherits all of its
 contract.
 
 ## Invariants

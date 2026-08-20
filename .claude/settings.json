@@ -8,7 +8,7 @@
             "type": "command",
             "command": "node scripts/hooks/usage-audit-reminder.mjs",
             "timeout": 10,
-            "statusMessage": "Checking whether USAGE.md audit is needed"
+            "statusMessage": "Checking whether an agent-doc audit is needed"
           }
         ]
       }

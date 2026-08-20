@@ -1,14 +1,14 @@
 /**
- * Shared renderers for the routing index generated from USAGE.md frontmatter.
+ * Shared renderers for the routing index generated from agent-doc frontmatter.
  * Used by `generate-routing.mjs` (in-repo targets) and
  * `emit-consumer-agents.mjs` (shipped `dist/agents/` targets) so the two can
  * never drift.
  *
- * Marker semantics: every component/composable ships a USAGE.md. Entries
- * whose frontmatter has `invariants: true` get a "read USAGE.md first"
- * marker — their USAGE.md documents non-trivial invariants/gotchas that must
- * be read before integrating. Unmarked entries still have a USAGE.md, it is
- * just a thin summary.
+ * Marker semantics: every component/composable has an agent doc under
+ * `agents/`. Entries whose frontmatter has `invariants: true` get a "read the
+ * agent doc first" marker — theirs documents non-trivial invariants/gotchas
+ * that must be read before integrating. Unmarked entries still have a doc, it
+ * is just a thin summary.
  */
 
 /** CLAUDE.md / ROUTING.md style: `path` — short description. */
@@ -18,7 +18,7 @@ export function renderShortIndex(groups) {
     if (list.length === 0) continue;
     const lines = [`### ${category}`];
     for (const entry of list) {
-      const marker = entry.invariants ? " **Read USAGE.md first.**" : "";
+      const marker = entry.invariants ? " **Read the agent doc first.**" : "";
       lines.push(`- \`${entry.path}\` — ${entry.short}.${marker}`);
     }
     sections.push(lines.join("\n"));
@@ -33,7 +33,7 @@ export function renderPurposeIndex(groups) {
     if (list.length === 0) continue;
     const lines = [`### ${category}`];
     for (const entry of list) {
-      const marker = entry.invariants ? " (read USAGE.md first)" : "";
+      const marker = entry.invariants ? " (read the agent doc first)" : "";
       lines.push(`- **${entry.purpose}** → \`${entry.path}\`${marker}`);
     }
     sections.push(lines.join("\n"));
