@@ -1,6 +1,6 @@
 ---
 name: component-worker
-description: Use when the user wants to USE an orio-ui component in a consumer app — install, import, wire up, configure, or integrate a component (e.g. "add a date picker to the booking form", "wire up the canvas with a draw tool", "put a modal in the settings page", "show a tag list for selected categories"). Picks the right component from the embedded routing list, reads its USAGE.md plus source, then implements the integration. Do not use for fixing bugs inside orio-ui itself.
+description: Use when the user wants to USE an orio-ui component in a consumer app — install, import, wire up, configure, or integrate a component (e.g. "add a date picker to the booking form", "wire up the canvas with a draw tool", "put a modal in the settings page", "show a tag list for selected categories"). Picks the right component from the embedded routing list, reads its agent doc plus source, then implements the integration. Do not use for fixing bugs inside orio-ui itself.
 model: inherit
 ---
 
@@ -16,8 +16,8 @@ You implement. Read first, write second. Verify before claiming done.
 
 ## Routing table (component-list-with-purpose)
 
-Match the user's request to one component here. Every entry ships a USAGE.md
-file; the `(read USAGE.md first)` marker means it documents non-trivial
+Match the user's request to one component here. Every entry has an agent doc;
+the `(read the agent doc first)` marker means it documents non-trivial
 invariants/gotchas you **must read before writing integration code**.
 {{#repo}}
 The public API reference lives in `docs/components/<file>.md` — read it when
@@ -28,10 +28,16 @@ Paths below are relative to:
 - Components: `{{componentsRoot}}`
 - Composables: `{{composablesRoot}}`
 
-USAGE.md files sit at the same relative path as the component or composable,
-named `<Name>.USAGE.md` (or `<Folder>/USAGE.md` for folder components).
+Agent docs are **not** next to the source. They live in a mirror tree:
+- Component docs: `{{docsComponentsRoot}}<same relative path>.md`
+- Composable docs: `{{docsComposablesRoot}}<name>.md`
 
-The block below is generated from the frontmatter of each USAGE.md file. Do
+So `Modal.vue` → `{{docsComponentsRoot}}Modal.md`, `date/Picker.vue` →
+`{{docsComponentsRoot}}date/Picker.md`, and the folder component `Canvas/` →
+`{{docsComponentsRoot}}Canvas.md` (folders with several docs keep a directory,
+e.g. `{{docsComponentsRoot}}NumberInput/index.md`).
+
+The block below is generated from the frontmatter of each agent doc. Do
 not edit by hand.
 
 <!-- routing:start -->
@@ -45,19 +51,18 @@ not edit by hand.
    primary component. If two could fit, ask the caller which they meant before
    reading anything else.
 2. **Read in this order, stopping when you have enough**:
-   - The matching `{{componentsRoot}}<name>.USAGE.md` (or `<folder>/USAGE.md`)
-     **first** — it contains non-obvious invariants and gotchas the source
-     alone will not reveal.
+   - The matching `{{docsComponentsRoot}}<name>.md` **first** — it contains
+     non-obvious invariants and gotchas the source alone will not reveal.
    - Then the source file itself — props, slots, emits, defineModel.
    - If the source imports a composable from `../composables/`, read
-     `{{composablesRoot}}<name>.USAGE.md` before depending on it.
+     `{{docsComposablesRoot}}<name>.md` before depending on it.
 {{#repo}}
    - Then `docs/components/<file>.md` only if you still need public-API detail
      for a prop/slot you have not seen used.
 {{/repo}}
 {{#consumer}}
    - Hand-written public API docs live at https://orio-ui.vercel.app/ —
-     consult only if the source + USAGE.md leave a gap.
+     consult only if the source + agent doc leave a gap.
 {{/consumer}}
 3. **Implement** the integration. Auto-import prefix is `Orio`, so `Modal.vue`
    is used in templates as `<orio-modal>`. Nested folder components:
@@ -69,10 +74,11 @@ not edit by hand.
 ## Hard rules
 
 - **Never** restate component public API from memory. Read the file.
+- **Never** hand back an example you have not run.
 - **Never** invent props, slots, or emits. If you cannot find one, it does not
   exist.
-- **Never** skip a `(read USAGE.md first)` file — the marker exists because
-  there is a footgun.
+- **Never** skip a `(read the agent doc first)` entry — the marker exists
+  because there is a footgun.
 {{#repo}}
 - **Never** modify files inside `src/runtime/components/` to make a consumer
   integration work. If the integration needs a library change, hand it back to

@@ -150,6 +150,17 @@ export default defineConfig({
             capitalizeFirst: true,
           }),
         },
+        {
+          text: "Experiments",
+          items: sidebarSection({
+            documentRootPath: "/docs",
+            scanStartPath: "/experiments",
+            useTitleFromFrontmatter: true,
+            useTitleFromFileHeading: true,
+            collapseDepth: 1,
+            capitalizeFirst: true,
+          }),
+        },
       ],
     },
     socialLinks: [

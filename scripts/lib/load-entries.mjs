@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import fg from "fast-glob";
 
 export const CATEGORY_ORDER = [
@@ -10,9 +10,16 @@ export const CATEGORY_ORDER = [
   "Composables",
 ];
 
+/** Where the sources live. */
 export const ROOTS = {
   component: "src/runtime/components/",
   composable: "src/runtime/composables/",
+};
+
+/** Where the agent docs live — a mirror of ROOTS, one `.md` per entry. */
+export const DOC_ROOTS = {
+  component: "agents/components/",
+  composable: "agents/composables/",
 };
 
 export function parseFrontmatter(content) {
@@ -30,25 +37,34 @@ export function parseFrontmatter(content) {
   return data;
 }
 
+/**
+ * Agent doc path → source path.
+ *
+ * `index.md` always means a folder component (`NumberInput/index.md` →
+ * `NumberInput/`). A flat `<Name>.md` is ambiguous on its own — `Button.md` is
+ * `Button.vue`, but `Canvas.md` is the folder component `Canvas/` — so the
+ * folder form is confirmed against the filesystem rather than guessed.
+ */
 export function derivePath(file, kind) {
-  const root = ROOTS[kind];
-  const rel = file.slice(file.indexOf(root) + root.length);
-  if (rel.endsWith("/USAGE.md")) {
-    return rel.replace(/USAGE\.md$/, "");
+  const rel = deriveDocPath(file, kind);
+  if (rel.endsWith("/index.md")) {
+    return rel.replace(/index\.md$/, "");
   }
-  const stem = rel.replace(/\.USAGE\.md$/, "");
-  return kind === "component" ? `${stem}.vue` : stem;
+  const stem = rel.replace(/\.md$/, "");
+  if (kind !== "component") return stem;
+  return existsSync(`${ROOTS[kind]}${stem}/`) ? `${stem}/` : `${stem}.vue`;
 }
 
-export function deriveUsagePath(file, kind) {
-  const root = ROOTS[kind];
+/** Agent doc path relative to its doc root — the layout mirrored into dist/. */
+export function deriveDocPath(file, kind) {
+  const root = DOC_ROOTS[kind];
   return file.slice(file.indexOf(root) + root.length);
 }
 
 export function loadEntries() {
   const files = fg.sync([
-    "src/runtime/components/**/*USAGE.md",
-    "src/runtime/composables/**/*USAGE.md",
+    `${DOC_ROOTS.component}**/*.md`,
+    `${DOC_ROOTS.composable}**/*.md`,
   ]);
   const entries = [];
   for (const file of files) {
@@ -65,7 +81,7 @@ export function loadEntries() {
       console.warn(`  skip (missing ${missing.join(", ")}): ${file}`);
       continue;
     }
-    if (!ROOTS[fm.kind]) {
+    if (!DOC_ROOTS[fm.kind]) {
       console.warn(`  skip (bad kind "${fm.kind}"): ${file}`);
       continue;
     }
@@ -73,7 +89,7 @@ export function loadEntries() {
       ...fm,
       file,
       path: derivePath(file, fm.kind),
-      usagePath: deriveUsagePath(file, fm.kind),
+      docPath: deriveDocPath(file, fm.kind),
     });
   }
   return entries;

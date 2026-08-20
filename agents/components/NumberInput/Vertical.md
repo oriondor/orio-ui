@@ -10,7 +10,7 @@ invariants: true
 
 `<orio-number-input-vertical>` is a pre-styled wrapper around
 `<orio-number-input>` that renders stacked chevron up/down buttons on the
-right edge. Read `NumberInput/USAGE.md` first — this variant inherits all
+right edge. Read `index.md` first — this variant inherits all
 of its contract.
 
 ## Invariants

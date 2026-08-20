@@ -32,6 +32,13 @@ export function useListKeyboard(options: ListKeyboardOptions) {
   }
 
   function reset() {
+    // Nothing to highlight in an empty list, and index 0 would make Enter
+    // "select" an option that does not exist.
+    if (options.count() === 0) {
+      highlightedIndex.value = -1;
+      return;
+    }
+
     const initial = options.initialIndex?.() ?? 0;
     highlightedIndex.value = Math.max(initial, 0);
     nextTick(scrollIntoView);

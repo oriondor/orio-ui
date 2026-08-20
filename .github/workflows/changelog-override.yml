@@ -30,21 +30,16 @@ jobs:
             const comment = context.payload.comment.body;
             const prNumber = context.payload.issue.number;
 
-            const walkthroughMatch = comment.match(
-              /<!-- walkthrough_start -->([\s\S]*?)<!-- walkthrough_end -->/
-            );
-
-            if (!walkthroughMatch) {
-              console.log('No walkthrough section found — skipping.');
-              return;
-            }
-
-            const summaryMatch = walkthroughMatch[1].match(
-              /## Walkthrough\s*([\s\S]*?)(?=\n## )/
+            // CodeRabbit wraps its release-note summary (formatted by the
+            // high_level_summary_instructions in .coderabbit.yaml) in these
+            // markers. Anchor on them — the surrounding heading levels have
+            // changed before and broke this workflow silently.
+            const summaryMatch = comment.match(
+              /<!-- This is an auto-generated comment: release notes by coderabbit\.ai -->([\s\S]*?)<!-- end of auto-generated comment: release notes by coderabbit\.ai -->/
             );
 
             if (!summaryMatch || !summaryMatch[1].trim()) {
-              console.log('No summary text found in walkthrough — skipping.');
+              console.log('No release notes block found — skipping.');
               return;
             }
 

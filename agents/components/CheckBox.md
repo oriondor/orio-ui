@@ -10,7 +10,7 @@ invariants: true
 
 `<orio-check-box>` is a single boolean checkbox. The native `<input
 type="checkbox">` is visually hidden; the rendered tick lives in a sibling
-`<span class="checkbox-box">`. Read `ControlElement.USAGE.md` first.
+`<span class="checkbox-box">`. Read `ControlElement.md` first.
 
 ## Invariants
 

@@ -23,7 +23,7 @@ orio-ui's shipped, version-pinned agent docs. Details in
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great developer experience
-🧪 **Tested** - 44 test suites for reliability
+🧪 **Tested** - 46 test suites for reliability
 📱 **Responsive** - Mobile-first design approach
 ♿ **Accessible** - ARIA-compliant components
 🌐 **i18n** - Built-in vue-i18n support with English defaults
@@ -186,14 +186,14 @@ the agent sees the new API automatically.
 - `agents/ROUTING.md` — full routing index (every component and composable,
   grouped by category, with a one-line purpose).
 - `agents/component-worker.md` — optional subagent definition. Picks the right
-  component for a vague request, reads its `USAGE.md`, then implements the
+  component for a vague request, reads its agent doc, then implements the
   integration in your app.
 - `agents/component-finder.md` — optional read-only subagent. Locates a
   component for a vague request and returns paths without writing code.
 - `agents/snippet.md` — the CLAUDE.md snippet appended by `npx orio-ui agents`.
-- `runtime/components/<Name>.USAGE.md` and
-  `runtime/composables/<name>.USAGE.md` — per-component invariants, gotchas,
-  and a quick-reference snippet, sitting next to the compiled source.
+- `agents/components/<Name>.md` and `agents/composables/<name>.md` —
+  per-entry invariants, gotchas, and a quick-reference snippet, in a mirror of
+  the source tree.
 
 ### Wire it into your project
 
@@ -214,7 +214,7 @@ It appends the snippet below to your `CLAUDE.md`, creating the file if missing
 orio-ui ships agent-ready docs inside the package itself. Before answering
 anything about orio-ui components/composables, read
 `node_modules/orio-ui/dist/agents/ROUTING.md` — it routes to per-component
-USAGE.md files and optional subagents. Don't explore the package source blindly.
+agent docs and optional subagents. Don't explore the package source blindly.
 ```
 <!-- snippet:end -->
 
@@ -232,7 +232,7 @@ cp node_modules/orio-ui/dist/agents/component-finder.md .claude/agents/
 After that, requests like _"add a date range picker to the booking form"_ or
 _"where is the toast component?"_ are routed automatically to the right
 subagent, which already knows the orio-ui routing table and reads the matching
-`USAGE.md` before writing code.
+agent doc before writing code.
 
 > **Re-copy after `orio-ui` upgrades** so the routing table in the subagent
 > definition tracks the installed version. (Pin this to your project's

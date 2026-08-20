@@ -10,7 +10,7 @@ invariants: true
 
 `<orio-textarea>` is the multi-line counterpart to `<orio-input>`. Same
 ControlElement wrapping, same layout modes, same slot-bag flow. Read
-`ControlElement.USAGE.md` and `Input.USAGE.md` first — most of the contract
+`ControlElement.md` and `Input.md` first — most of the contract
 lives there.
 
 ## Invariants

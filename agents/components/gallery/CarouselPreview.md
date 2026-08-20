@@ -42,7 +42,7 @@ thumbnails for `<orio-gallery-carousel>`. Bind both components to the same
 
 ## Quick reference
 
-See `<orio-gallery-carousel>` USAGE.md.
+See `Carousel.md`.
 
 ## Related
 
