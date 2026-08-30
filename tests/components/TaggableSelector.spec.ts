@@ -338,4 +338,15 @@ describe("TaggableSelector", () => {
 
     wrapper.unmount();
   });
+  it("forwards fallthrough attrs to the trigger", () => {
+    const wrapper = mount(TaggableSelector, {
+      props: { options: ["one"], modelValue: [] },
+      attrs: { "data-testid": "tags", title: "Pick tags" },
+      global: globalOptions,
+    });
+
+    const trigger = wrapper.find(".taggable-trigger");
+    expect(trigger.attributes("data-testid")).toBe("tags");
+    expect(trigger.attributes("title")).toBe("Pick tags");
+  });
 });

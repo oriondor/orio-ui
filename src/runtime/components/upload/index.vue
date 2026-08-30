@@ -27,11 +27,11 @@ const modelValue = defineModel<File[]>({ default: () => [] });
 function onDrop(files: File[] | null) {
   if (disabled.value) return;
   if (files && files.length > 0) {
-    const finalFiles = [...modelValue.value, ...files].slice(
-      0,
-      maxFiles.value ?? -1,
-    );
-    modelValue.value = finalFiles;
+    const merged = [...modelValue.value, ...files];
+    // maxFiles undefined means unlimited — slicing with -1 here would eat the
+    // last file on every append.
+    modelValue.value =
+      maxFiles.value === undefined ? merged : merged.slice(0, maxFiles.value);
   }
 }
 

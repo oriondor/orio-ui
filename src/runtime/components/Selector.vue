@@ -218,10 +218,11 @@ function createTriggerToggle(
           :isOpen
           :triggerKeydown="createTriggerKeydownHandler(toggle, isOpen)"
           :selectHighlighted="createSelectHighlightedHandler(toggle)"
+          :attrs="$attrs"
           v-bind="selectorAttrs"
         >
           <button
-            v-bind="control"
+            v-bind="{ ...$attrs, ...control }"
             type="button"
             class="selector-trigger"
             aria-haspopup="listbox"

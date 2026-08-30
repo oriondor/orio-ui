@@ -107,10 +107,11 @@ const selectorProps = computed(() => {
         selectHighlighted,
         getOptionKey,
         getOptionLabel,
+        attrs,
       }"
     >
       <div
-        v-bind="control"
+        v-bind="{ ...attrs, ...control }"
         class="taggable-trigger"
         role="combobox"
         aria-haspopup="listbox"
