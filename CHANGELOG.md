@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.31.1](https://github.com/oriondor/orio-ui/compare/v1.31.0...v1.31.1) (2026-08-31)
 
+fix: fixed the file upload that stripped the only one file; and attributes bind on the selectors
 
-### Bug Fixes
-
-* fixed the file upload that stripped the only one file; and attributes bind on the selectors ([#172](https://github.com/oriondor/orio-ui/issues/172)) ([a4c59dd](https://github.com/oriondor/orio-ui/commit/a4c59dd159ee0292adfb4d1918cd6943db816582))
-
+- Preserve all dropped files when `maxFiles` is undefined.
+- Truncate files only when `maxFiles` is configured.
+- Forward fallthrough attributes to `Selector` and `TaggableSelector` trigger elements.
+- Update upload documentation to use `File[]` with an empty-array default.
+- Add tests for upload behavior and selector attribute forwarding.
 ## [1.31.0](https://github.com/oriondor/orio-ui/compare/v1.30.0...v1.31.0) (2026-08-20)
 
 
