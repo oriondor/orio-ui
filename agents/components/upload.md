@@ -21,12 +21,21 @@ default slot. There is no built-in look.
     zone (and the component is not disabled).
   - `openDialog: () => void` — opens the native file picker.
 - **v-model is `File[]`** (default `[]`). Drops and dialog selections
-  **append** to it; the array is then sliced to `maxFiles` if set.
+  **append** to it, then the array is trimmed to `maxFiles` **from the
+  front** (`merged.slice(-maxFiles)`) — the newest picks always survive
+  and the oldest files shift out. An unset `maxFiles` keeps everything
+  (do not reintroduce `slice(0, maxFiles ?? -1)`, which silently dropped
+  the last file of every append).
 - **`maxFiles`**:
   - `undefined` (default) → unlimited.
-  - `> 1` → multi-select mode (drop & dialog).
-  - `1` → single-file mode; new selections replace the array (capped to
-    length 1 by the slice).
+  - `> 1` → multi-select mode (drop & dialog). 4 files in the model,
+    `maxFiles: 5`, 4 more picked → the model holds the last of the old
+    four plus all four new ones.
+  - `1` → the shift rule reduces to plain replacement: each pick becomes
+    the model. Drop and dialog also run in single-select mode.
+- **File count** is just `modelValue.length` — there is no separate
+  count slot prop or emit. Consumers render it themselves
+  (`{{ files.length }} file(s) selected`).
 - **`allowedTypes`** is forwarded as `dataTypes` to `useDropZone`
   (drop filter) and as `accept` (comma-joined) to the native dialog.
   Be explicit — passing MIME-type strings (`"image/png"`) vs.
@@ -46,7 +55,10 @@ default slot. There is no built-in look.
   again; dedupe in the consumer if needed.
 - **`maxFiles` only enforces on append**. If the model is pre-populated
   with more files than `maxFiles`, they stick around until the next
-  drop / dialog truncates them.
+  drop / dialog trims them.
+- **Overflowing `maxFiles` drops the oldest files silently.** There is
+  no emit or warning when files shift out — surface the count
+  (`files.length`) in the slot UI if that matters.
 - **`useFileDialog` uses native input.** It's not styleable. The "dialog"
   is the OS chooser; styling lives on the trigger element you render in
   the slot.
@@ -79,13 +91,11 @@ const files = ref<File[]>([]);
     </template>
   </orio-upload>
 
-  <ul>
-    <li v-for="(file, index) in files" :key="index">{{ file.name }}</li>
-  </ul>
+  <p>{{ files.length }} file(s) selected</p>
 </template>
 ```
 
 ## Related
 
 - `<orio-dashed-container>` — common UI shell for upload tiles.
-- Public API reference: `docs/components/upload.md` (if present).
+- Public API reference: `docs/components/upload/upload.md`.

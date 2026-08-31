@@ -9,36 +9,25 @@ import { ref } from "vue";
 
 const uploadedFiles = ref([]);
 const imageFiles = ref([]);
-
-function handleFiles(files) {
-  uploadedFiles.value = files ? Array.from(files) : [];
-}
-
-function handleImageFiles(files) {
-  imageFiles.value = files ? Array.from(files) : [];
-}
-
-function formatFileSize(bytes) {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-}
+const cappedFiles = ref([]);
 </script>
 
 <div class="demo-container">
   <h3>Basic Upload (Any File Type)</h3>
-  <orio-upload v-slot="{ isOverDropZone, openDialog }">
+  <orio-upload v-model="uploadedFiles" v-slot="{ isOverDropZone, openDialog }">
     <orio-dashed-container
       :icon="isOverDropZone ? 'download' : 'upload'"
       :text="isOverDropZone ? 'Drop files here' : 'Drag & drop or click to browse'"
       @click="openDialog"
     />
   </orio-upload>
+  <orio-view-text size="small">
+    {{ uploadedFiles.length }} file(s) selected
+  </orio-view-text>
 
   <h3 style="margin-top: 2rem">Images Only</h3>
   <orio-upload
+    v-model="imageFiles"
     :allowed-types="['image/*']"
     v-slot="{ isOverDropZone, openDialog }"
   >
@@ -48,21 +37,36 @@ function formatFileSize(bytes) {
       @click="openDialog"
     />
   </orio-upload>
+  <orio-view-text size="small">
+    {{ imageFiles.length }} image(s) selected
+  </orio-view-text>
+
+  <h3 style="margin-top: 2rem">Max 2 Files</h3>
+  <orio-upload v-model="cappedFiles" :max-files="2" v-slot="{ isOverDropZone, openDialog }">
+    <orio-dashed-container
+      :icon="isOverDropZone ? 'download' : 'upload'"
+      :text="isOverDropZone ? 'Drop files here' : 'Pick up to 2 files'"
+      @click="openDialog"
+    />
+  </orio-upload>
+  <orio-view-text size="small">
+    {{ cappedFiles.length }} of 2 file(s) selected
+  </orio-view-text>
 </div>
 
 ## Props
 
-| Prop           | Type       | Default     | Description                                                       |
-| -------------- | ---------- | ----------- | ----------------------------------------------------------------- |
-| `maxFiles`     | `number`   | `undefined` | Maximum number of files (undefined = unlimited, 1 = single file)  |
-| `allowedTypes` | `string[]` | `undefined` | Array of allowed MIME types (e.g., `['image/*']`)                 |
-| `disabled`     | `boolean`  | `false`     | Disable file uploads                                              |
+| Prop           | Type       | Default     | Description                                                      |
+| -------------- | ---------- | ----------- | ---------------------------------------------------------------- |
+| `maxFiles`     | `number`   | `undefined` | Maximum number of files (`undefined` = unlimited). New picks are appended and the oldest files shift out once the cap is reached, so `1` behaves as a plain replace |
+| `allowedTypes` | `string[]` | `undefined` | Array of allowed MIME types (e.g., `['image/*']`)                |
+| `disabled`     | `boolean`  | `false`     | Disable file uploads                                             |
 
 ## Model
 
-| Model        | Type             | Description                            |
-| ------------ | ---------------- | -------------------------------------- |
-| `modelValue` | `File[] \| null` | Selected/dropped files (v-model ready) |
+| Model        | Type                    | Description                                                                        |
+| ------------ | ----------------------- | ---------------------------------------------------------------------------------- |
+| `modelValue` | `File[]` (default `[]`) | Selected/dropped files (v-model ready). Read `files.length` for the current count. |
 
 ## Slot Props
 
@@ -79,7 +83,7 @@ function formatFileSize(bytes) {
 <script setup>
 import { ref } from "vue";
 
-const files = ref(null);
+const files = ref([]);
 </script>
 
 <template>
@@ -90,7 +94,7 @@ const files = ref(null);
     </div>
   </orio-upload>
 
-  <div v-if="files">
+  <div v-if="files.length">
     <p>Selected {{ files.length }} file(s)</p>
   </div>
 </template>
@@ -102,7 +106,7 @@ const files = ref(null);
 <script setup>
 import { ref, watch } from "vue";
 
-const imageFiles = ref(null);
+const imageFiles = ref([]);
 
 watch(imageFiles, (files) => {
   if (files) {
@@ -128,7 +132,7 @@ watch(imageFiles, (files) => {
 <script setup>
 import { ref } from "vue";
 
-const singleFile = ref(null);
+const singleFile = ref([]);
 </script>
 
 <template>
@@ -142,7 +146,7 @@ const singleFile = ref(null);
       :class="{ 'is-over': isOverDropZone }"
       @click="openDialog"
     >
-      {{ singleFile ? singleFile[0].name : "Upload a single file" }}
+      {{ singleFile.length ? singleFile[0].name : "Upload a single file" }}
     </div>
   </orio-upload>
 </template>
@@ -154,7 +158,7 @@ const singleFile = ref(null);
 <script setup>
 import { ref } from "vue";
 
-const pdfFiles = ref(null);
+const pdfFiles = ref([]);
 </script>
 
 <template>
@@ -176,7 +180,7 @@ const pdfFiles = ref(null);
 <script setup>
 import { ref } from "vue";
 
-const files = ref(null);
+const files = ref([]);
 </script>
 
 <template>
@@ -189,7 +193,7 @@ const files = ref(null);
   </orio-upload>
 
   <!-- Display selected files -->
-  <div v-if="files" class="file-list">
+  <div v-if="files.length" class="file-list">
     <p v-for="file in files" :key="file.name">
       {{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)
     </p>
@@ -215,7 +219,7 @@ The Upload component uses **v-model** to provide easy access to selected files:
 <script setup>
 import { ref, watch } from "vue";
 
-const files = ref(null);
+const files = ref([]);
 
 // React to file changes
 watch(files, (newFiles) => {
@@ -236,7 +240,7 @@ watch(files, (newFiles) => {
   </orio-upload>
 
   <!-- Display selected files -->
-  <ul v-if="files">
+  <ul v-if="files.length">
     <li v-for="file in files" :key="file.name">
       {{ file.name }}
     </li>
@@ -250,7 +254,7 @@ watch(files, (newFiles) => {
 <script setup>
 import { ref, watch } from "vue";
 
-const files = ref(null);
+const files = ref([]);
 const fileContents = ref([]);
 
 watch(files, async (newFiles) => {
@@ -296,11 +300,11 @@ watch(files, async (newFiles) => {
 <script setup>
 import { ref, watch } from "vue";
 
-const files = ref(null);
+const files = ref([]);
 const uploading = ref(false);
 
 async function uploadFiles() {
-  if (!files.value) return;
+  if (!files.value.length) return;
 
   uploading.value = true;
 
@@ -317,7 +321,7 @@ async function uploadFiles() {
 
     if (response.ok) {
       console.log("Upload successful!");
-      files.value = null; // Clear files
+      files.value = []; // Clear files
     }
   } catch (error) {
     console.error("Upload failed:", error);
@@ -328,7 +332,8 @@ async function uploadFiles() {
 
 // Auto-upload when files are selected
 watch(files, (newFiles) => {
-  if (newFiles) {
+  // Clearing the array below re-triggers this watcher — bail on empty.
+  if (newFiles.length) {
     uploadFiles();
   }
 });

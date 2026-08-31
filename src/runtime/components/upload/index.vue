@@ -26,13 +26,16 @@ const modelValue = defineModel<File[]>({ default: () => [] });
 
 function onDrop(files: File[] | null) {
   if (disabled.value) return;
-  if (files && files.length > 0) {
-    const finalFiles = [...modelValue.value, ...files].slice(
-      0,
-      maxFiles.value ?? -1,
-    );
-    modelValue.value = finalFiles;
+  if (!files || files.length === 0) return;
+  const merged = [...modelValue.value, ...files];
+  // The newest picks always win: the cap trims from the front, so selecting
+  // over the limit pushes the oldest files out instead of silently ignoring
+  // what the user just chose. maxFiles 1 therefore plainly replaces.
+  if (maxFiles.value === undefined) {
+    modelValue.value = merged;
+    return;
   }
+  modelValue.value = maxFiles.value > 0 ? merged.slice(-maxFiles.value) : [];
 }
 
 // Since we want to have more control over disabled upload - rename the isOverDropZone to overwrite it as a computed

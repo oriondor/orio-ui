@@ -355,4 +355,30 @@ describe("Selector", () => {
 
     wrapper.unmount();
   });
+  it("forwards fallthrough attrs to the default trigger button", () => {
+    const wrapper = mount(Selector, {
+      props: { options: stringOptions, modelValue: null },
+      attrs: {
+        "data-testid": "country-selector",
+        title: "Pick a country",
+        "aria-describedby": "country-hint",
+      },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          "orio-control-element": ControlStub,
+          "orio-popover": PopoverStub,
+          "orio-empty-state": EmptyStateStub,
+          "orio-icon": true,
+          "orio-list-item": ListItem,
+          "orio-check-box": true,
+        },
+      },
+    });
+
+    const trigger = wrapper.find("button.selector-trigger");
+    expect(trigger.attributes("data-testid")).toBe("country-selector");
+    expect(trigger.attributes("title")).toBe("Pick a country");
+    expect(trigger.attributes("aria-describedby")).toBe("country-hint");
+  });
 });
