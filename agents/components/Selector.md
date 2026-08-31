@@ -46,6 +46,17 @@ combine with `useFuzzySearch` and slot `#options-addon`. Generic over
   references `selector.placeholder`, `selector.selected` ({count}), and
   `selector.noOptions`. Consumers must have these keys in their locale
   files.
+- **Fallthrough attrs reach the default trigger button.** The button
+  binds `{ ...$attrs, ...control }` (same order as Input and Button), so
+  `data-*`, `title`, `aria-describedby` etc. land on the `<button>` and
+  `control` always wins on conflicts. `class`/`style` additionally reach
+  the `.control` wrapper — ControlElement has `inheritAttrs: false` and
+  renders `$attrs.class` / `$attrs.style` itself — so a class passed to
+  `<orio-selector>` appears in both places.
+- **A custom `#trigger` replaces the button, so it must bind attrs
+  itself.** The slot exposes `attrs` (the raw `$attrs` bag) alongside
+  `control`; spread `{ ...attrs, ...control }` on your root element, the
+  way TaggableSelector does. Without that, `data-*`/`title` are dropped.
 - **`useControlTokens(size)`** injects CSS vars (`--control-py`,
   `--control-px`, etc.) onto the popover content — size prop on the
   Selector flows through to dropdown padding.
@@ -53,7 +64,8 @@ combine with `useFuzzySearch` and slot `#options-addon`. Generic over
 ## Slots
 
 - `#trigger` — replaces the entire button. Receives `{ toggle, control,
-  isOpen, triggerKeydown, selectHighlighted, getOptionKey, getOptionLabel }`.
+  isOpen, triggerKeydown, selectHighlighted, getOptionKey, getOptionLabel,
+  attrs }`.
   Wire `triggerKeydown` onto your element's `@keydown` to reuse the roving
   list navigation (arrows/Home/End/Enter/Escape); it skips typing keys when
   the event comes from an inner `<input>`/editable (only

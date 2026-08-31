@@ -58,7 +58,7 @@ const cappedFiles = ref([]);
 
 | Prop           | Type       | Default     | Description                                                      |
 | -------------- | ---------- | ----------- | ---------------------------------------------------------------- |
-| `maxFiles`     | `number`   | `undefined` | Maximum number of files (undefined = unlimited, 1 = single file) |
+| `maxFiles`     | `number`   | `undefined` | Maximum number of files (`undefined` = unlimited). New picks are appended and the oldest files shift out once the cap is reached, so `1` behaves as a plain replace |
 | `allowedTypes` | `string[]` | `undefined` | Array of allowed MIME types (e.g., `['image/*']`)                |
 | `disabled`     | `boolean`  | `false`     | Disable file uploads                                             |
 
@@ -304,7 +304,7 @@ const files = ref([]);
 const uploading = ref(false);
 
 async function uploadFiles() {
-  if (!files.value) return;
+  if (!files.value.length) return;
 
   uploading.value = true;
 
@@ -332,7 +332,8 @@ async function uploadFiles() {
 
 // Auto-upload when files are selected
 watch(files, (newFiles) => {
-  if (newFiles) {
+  // Clearing the array below re-triggers this watcher — bail on empty.
+  if (newFiles.length) {
     uploadFiles();
   }
 });

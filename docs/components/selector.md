@@ -158,12 +158,39 @@ const users = [
 
 | Slot | Props | Description |
 |------|-------|-------------|
-| `trigger` | `{ toggle }` | Custom trigger element |
-| `trigger-content` | `{ toggle, getOptionKey, getOptionLabel }` | Custom trigger content |
-| `trigger-label` | `{ toggle, getOptionKey, getOptionLabel }` | Custom trigger label text |
+| `trigger` | `{ toggle, control, isOpen, triggerKeydown, selectHighlighted, getOptionKey, getOptionLabel, attrs }` | Custom trigger element |
+| `trigger-content` | `{ toggle, getOptionKey, getOptionLabel, attrs }` | Custom trigger content |
+| `trigger-label` | `{ toggle, getOptionKey, getOptionLabel, attrs }` | Custom trigger label text |
 | `option` | `{ option, toggle, selected, getOptionKey, getOptionLabel }` | Custom option rendering |
 | `no-options` | - | Custom empty state when no options |
 | `options-addon` | - | Additional content at bottom of dropdown |
+
+## Attributes
+
+Attributes that are not props (`data-*`, `title`, `aria-describedby`, …) are
+forwarded to the trigger `<button>`; `class` and `style` also apply to the
+`.control` wrapper.
+
+```vue
+<orio-selector
+  v-model="country"
+  :options="countries"
+  data-testid="country-selector"
+  title="Pick a country"
+/>
+```
+
+A custom `#trigger` replaces that button, so bind the attrs yourself:
+
+```vue
+<orio-selector v-model="country" :options="countries" data-testid="country">
+  <template #trigger="{ toggle, control, attrs, triggerKeydown }">
+    <button v-bind="{ ...attrs, ...control }" @click="toggle()" @keydown="triggerKeydown">
+      {{ country ?? "Pick a country" }}
+    </button>
+  </template>
+</orio-selector>
+```
 
 ## TypeScript
 
