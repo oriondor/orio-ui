@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.32.1](https://github.com/oriondor/orio-ui/compare/v1.32.0...v1.32.1) (2026-09-15)
+
+
+### Bug Fixes
+
+* fixed changelog ([#176](https://github.com/oriondor/orio-ui/issues/176)) ([51ca90c](https://github.com/oriondor/orio-ui/commit/51ca90ccbadf0bd73af726f0916ded23fd2efbe6))
+
 ## [1.32.0](https://github.com/oriondor/orio-ui/compare/v1.31.1...v1.32.0) (2026-09-15)
 
 feat: Implemented toast component
