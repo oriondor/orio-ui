@@ -23,6 +23,9 @@ the answer is nowhere — call `showToast()`.
   queue up and never render.
 - **The host renders one `<Teleport>` per target and one stack per
   position inside it.** Stacks only exist while they hold toasts.
+- **A hovered stack pauses whatever lands in it.** The host re-pauses a
+  paused stack's toasts whenever its contents change, so a toast queued
+  mid-hover does not keep counting down behind a frozen bar.
 - **`variant`** is `"info"` (default), `"success"`, `"alert"`, `"danger"`
   — the same soft-background + border token families as `<orio-banner>`,
   plus a solid 3px inline-start rail in the full-strength color.

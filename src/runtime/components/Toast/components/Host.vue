@@ -53,7 +53,17 @@ function targetKey(target?: ToastTarget): string {
 
 function resolveTarget(target?: ToastTarget): string | HTMLElement {
   if (!target) return "body";
-  if (typeof target === "string") return target;
+
+  // Selectors are resolved here rather than handed to <teleport> as-is, so a
+  // scoped stack can anchor to its element before it renders.
+  if (typeof target === "string") {
+    if (typeof document === "undefined") return "body";
+
+    const element = document.querySelector<HTMLElement>(target);
+    if (!element || element === document.body) return "body";
+
+    return element;
+  }
 
   return unref(target) ?? "body";
 }
@@ -109,6 +119,18 @@ function pauseStack(group: ToastGroup, stack: ToastStack) {
   pausedStacks.add(stackKey(group, stack));
   stack.toasts.forEach((toast) => pauseToast(toast.id));
 }
+
+// A toast can arrive into a stack the pointer is already resting on. Its card
+// renders frozen, so its timer has to be frozen too.
+watchEffect(() => {
+  groups.value.forEach((group) => {
+    group.stacks.forEach((stack) => {
+      if (!pausedStacks.has(stackKey(group, stack))) return;
+
+      stack.toasts.forEach((toast) => pauseToast(toast.id));
+    });
+  });
+});
 
 function resumeStack(group: ToastGroup, stack: ToastStack) {
   pausedStacks.delete(stackKey(group, stack));

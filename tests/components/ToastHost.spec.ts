@@ -88,16 +88,37 @@ describe("Toast Host", () => {
     expect(wrapper.findAll("teleport-stub")).toHaveLength(2);
   });
 
-  it("resolves a target given as a selector", async () => {
+  it("resolves a selector target to its element and teleports into it", async () => {
     const panel = document.createElement("div");
     panel.id = "panel";
     document.body.appendChild(panel);
 
-    const wrapper = mountHost();
+    mount(Host, { global: { plugins: [i18n] }, attachTo: document.body });
     useToast().showToast({ message: "Panel", timeout: 0, target: "#panel" });
     await nextTick();
 
-    expect(wrapper.find("teleport-stub").attributes("to")).toBe("#panel");
+    expect(panel.querySelector(".toast-stack")).not.toBeNull();
+  });
+
+  it("anchors a selector target that is statically positioned", async () => {
+    const panel = document.createElement("div");
+    panel.id = "panel";
+    document.body.appendChild(panel);
+
+    mountHost();
+    useToast().showToast({ message: "Panel", timeout: 0, target: "#panel" });
+    await nextTick();
+
+    expect(panel.style.position).toBe("relative");
+  });
+
+  it("keeps sending body-targeted toasts to body", async () => {
+    const wrapper = mountHost();
+    useToast().showToast({ message: "Body", timeout: 0, target: "body" });
+    await nextTick();
+
+    expect(wrapper.find("teleport-stub").attributes("to")).toBe("body");
+    expect(document.body.style.position).toBe("");
   });
 
   it("positions a static target so its toasts can anchor to it", async () => {
@@ -178,6 +199,38 @@ describe("Toast Host", () => {
     expect(useToast().toasts.value).toHaveLength(1);
 
     await wrapper.find(".toast-stack").trigger("focusout");
+    vi.advanceTimersByTime(3000);
+    expect(useToast().toasts.value).toHaveLength(0);
+
+    vi.useRealTimers();
+  });
+
+  it("pauses a toast that joins a stack already held by the pointer", async () => {
+    vi.useFakeTimers();
+    const wrapper = mountHost();
+    useToast().showToast({ message: "First", timeout: 3000 });
+    await nextTick();
+
+    await wrapper.find(".toast-stack").trigger("mouseenter");
+    useToast().showToast({ message: "Second", timeout: 3000 });
+    await nextTick();
+
+    vi.advanceTimersByTime(60000);
+    expect(useToast().toasts.value).toHaveLength(2);
+
+    await wrapper.find(".toast-stack").trigger("mouseleave");
+    vi.advanceTimersByTime(3000);
+    expect(useToast().toasts.value).toHaveLength(0);
+
+    vi.useRealTimers();
+  });
+
+  it("leaves an unpaused stack's newcomers counting down", async () => {
+    vi.useFakeTimers();
+    mountHost();
+    useToast().showToast({ message: "Saved", timeout: 3000 });
+    await nextTick();
+
     vi.advanceTimersByTime(3000);
     expect(useToast().toasts.value).toHaveLength(0);
 

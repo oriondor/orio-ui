@@ -139,19 +139,24 @@ toast on screen until it resolves, so a slow undo stays visible while it works.
 <script setup>
 const { showToast } = useToast();
 
-showToast({
-  message: "File deleted",
-  timeout: 0,
-  actions: [
-    // closes once restore() resolves
-    { label: "Undo", onClick: () => restore() },
+function deleteFile(file) {
+  showToast({
+    message: "File deleted",
+    timeout: 0,
+    actions: [
+      // closes once restore() resolves
+      { label: "Undo", onClick: () => restore(file) },
 
-    // stays open
-    { label: "Details", keepOpen: true, onClick: ({ close }) => openModal() },
-  ],
-});
+      // stays open
+      { label: "Details", keepOpen: true, onClick: ({ close }) => openModal() },
+    ],
+  });
+}
 </script>
 ```
+
+Queue toasts from event handlers or `onMounted` — never from the setup body,
+which also runs on the server.
 
 ## Scoping to an element
 
@@ -160,16 +165,26 @@ showToast({
 const panel = ref(null);
 const { showToast } = useToast();
 
-showToast({ message: "Saved to this panel", target: panel, position: "top-end" });
+function notifyInPanel() {
+  showToast({
+    message: "Saved to this panel",
+    target: panel,
+    position: "top-end",
+  });
+}
 </script>
 
 <template>
-  <section ref="panel">...</section>
+  <section ref="panel">
+    <orio-button @click="notifyInPanel">Notify</orio-button>
+  </section>
 </template>
 ```
 
 A `static` target is switched to `position: relative` so its toasts anchor to
-it. Selectors (`"#sidebar"`) and elements work the same way.
+it. Selectors (`"#sidebar"`) are resolved to their element, so they behave
+exactly like passing that element; a selector that matches nothing falls back
+to the viewport corner.
 
 ## Defaults
 

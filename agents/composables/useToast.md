@@ -51,7 +51,9 @@ shares one queue, one timer map and one defaults object — that is what lets
   change. Do not push into it; that bypasses the limit and the timers.
 - **`target` is resolved at render time, not at show time.** A ref that is
   still `null` falls back to `body` and moves into the element once it
-  resolves.
+  resolves. Selector strings are resolved to their element too (so they
+  get anchored like any other target); `"body"` and a selector matching
+  nothing both stay on `body`.
 
 ## Quick reference
 
@@ -60,31 +62,42 @@ shares one queue, one timer map and one defaults object — that is what lets
 <script setup>
 const { showToast } = useToast();
 
-showToast({
-  message: "File deleted",
-  timeout: 0,
-  actions: [
-    // closes once restore() resolves
-    { label: "Undo", onClick: () => restore() },
+function deleteFile(file) {
+  showToast({
+    message: "File deleted",
+    timeout: 0,
+    actions: [
+      // closes once restore() resolves
+      { label: "Undo", onClick: () => restore(file) },
 
-    // stays open
-    { label: "Details", keepOpen: true, onClick: ({ close }) => openModal() },
-  ],
-});
+      // stays open
+      { label: "Details", keepOpen: true, onClick: ({ close }) => openModal() },
+    ],
+  });
+}
 </script>
 ```
 
 Scoped to an element:
 
 ```vue
+<!-- from docs/composables/use-toast.md -->
 <script setup>
 const panel = ref(null);
 const { showToast } = useToast();
 
-showToast({ message: "Saved to this panel", target: panel, position: "top-end" });
+function notifyInPanel() {
+  showToast({
+    message: "Saved to this panel",
+    target: panel,
+    position: "top-end",
+  });
+}
 </script>
 
 <template>
-  <section ref="panel">...</section>
+  <section ref="panel">
+    <orio-button @click="notifyInPanel">Notify</orio-button>
+  </section>
 </template>
 ```
