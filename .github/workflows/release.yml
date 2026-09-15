@@ -147,8 +147,13 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: npm run test:unit
 
+      # Trusted Publishing (OIDC) needs npm >= 11.5.1; setup-node's Node 22 ships npm 10.
+      - name: Upgrade npm for trusted publishing
+        if: ${{ steps.release.outputs.release_created }}
+        run: npm install -g npm@latest
+
+      # No NODE_AUTH_TOKEN: npm verifies this run via GitHub OIDC.
+      # Provenance is attached automatically under trusted publishing.
       - name: Publish to npm
         if: ${{ steps.release.outputs.release_created }}
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
