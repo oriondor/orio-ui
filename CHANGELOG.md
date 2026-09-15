@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.32.0](https://github.com/oriondor/orio-ui/compare/v1.31.1...v1.32.0) (2026-09-15)
 
+feat: Implemented toast component
 
-### Features
-
-* Implemented toast component ([#174](https://github.com/oriondor/orio-ui/issues/174)) ([bb49a5d](https://github.com/oriondor/orio-ui/commit/bb49a5d5ef75c45117489b5ecf10c5299f078d0f))
-
+- Add the `Toast` component with variants, actions, slots, accessibility roles, timeout progress, and close controls.
+- Add `useToast` with shared queues, targets, positions, limits, auto-dismiss, pause/resume, sticky toasts, and action handling.
+- Add automatic client-side host mounting through the Nuxt plugin.
+- Add English and Ukrainian close-label translations.
+- Add component and composable documentation.
+- Add agent routing and implementation guidance for `Toast` and `useToast`.
+- Update feature and test-suite counts.
+- Add comprehensive component, host, mounting, and composable tests.
+- Update the pre-commit hook to initialize NVM before routing generation.
 ## [1.31.1](https://github.com/oriondor/orio-ui/compare/v1.31.0...v1.31.1) (2026-08-31)
 
 fix: fixed the file upload that stripped the only one file; and attributes bind on the selectors
