@@ -4,6 +4,7 @@ import NumberInput from "../src/runtime/components/NumberInput/index.vue";
 import ControlElement from "../src/runtime/components/ControlElement.vue";
 import Icon from "../src/runtime/components/Icon.vue";
 import LoadingSpinner from "../src/runtime/components/LoadingSpinner.vue";
+import ViewText from "../src/runtime/components/view/Text.vue";
 
 // Register components globally for all tests
 config.global.components = {
@@ -12,4 +13,5 @@ config.global.components = {
   "orio-control-element": ControlElement,
   "orio-icon": Icon,
   "orio-loading-spinner": LoadingSpinner,
+  "orio-view-text": ViewText,
 };
