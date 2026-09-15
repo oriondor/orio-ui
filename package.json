@@ -88,7 +88,7 @@
     "vue-tsc": "^3.2.1"
   },
   "simple-git-hooks": {
-    "pre-commit": "node scripts/generate-routing.mjs && git add CLAUDE.md .claude/agents/component-worker.md .claude/agents/component-finder.md"
+    "pre-commit": "export NVM_DIR=\"$HOME/.nvm\"; [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" --no-use && nvm use --silent default; node scripts/generate-routing.mjs && git add README.md CLAUDE.md .claude/agents/component-worker.md .claude/agents/component-finder.md"
   },
   "peerDependencies": {
     "nuxt": "^3.0.0 || ^4.0.0",

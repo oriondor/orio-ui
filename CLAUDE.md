@@ -30,6 +30,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `DashedContainer.vue` — clickable dashed-border tile with icon and label, used for add/upload affordances. **Read the agent doc first.**
 - `Modal.vue` — teleported overlay dialog with open-from-origin animation. **Read the agent doc first.**
 - `Popover.vue` — anchored floating panel teleported to body with auto-flip placement and click-outside dismissal. **Read the agent doc first.**
+- `Toast/` — notification card drawn by the auto-mounted toast host; queue it with `useToast`, never place it by hand. **Read the agent doc first.**
 - `Tooltip.vue` — hover/focus-triggered tooltip teleported to body, with delay, arrow, and four placements. **Read the agent doc first.**
 - `ZoomableContainer.vue` — pan + pinch/wheel zoom viewport with inertia, momentum, space-to-grab and bounds clamping. **Read the agent doc first.**
 
@@ -93,6 +94,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `useRovingGrid` — 2D arrow-key roving focus for grid-like UIs; handles arrows, Home/End, PageUp/Down, Enter/Space, and edge-overflow callbacks. **Read the agent doc first.**
 - `useSound` — low-latency Web Audio playback with a shared module-level AudioContext and per-URL buffer cache. **Read the agent doc first.**
 - `useTheme` — cookie-backed theme and mode (light/dark) accessor that writes `data-theme` and `data-mode` on `<html>`. **Read the agent doc first.**
+- `useToast` — shared toast queue with per-toast position, target, timeout and actions; the module mounts the host that draws it. **Read the agent doc first.**
 - `useUrlSync` — bidirectional sync between a reactive object and URL query params; SSR-safe initial read, client-only writes. **Read the agent doc first.**
 - `useValidation` — declarative rule-based form validation with reactive errors keyed by field id and auto scroll-to-first-error. **Read the agent doc first.**
 <!-- routing:end -->

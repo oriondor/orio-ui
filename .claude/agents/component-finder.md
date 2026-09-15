@@ -48,6 +48,7 @@ not edit by hand.
 - **dashed empty/drop zone, add-item card, upload tile, empty state with action** → `DashedContainer.vue` (read the agent doc first)
 - **modal, dialog, popup overlay, lightbox** → `Modal.vue` (read the agent doc first)
 - **popover, anchored floating panel, dropdown menu base, contextual menu** → `Popover.vue` (read the agent doc first)
+- **toast, notification, snackbar, flash message, transient alert, undo bar** → `Toast/` (read the agent doc first)
 - **tooltip, hover hint, focus hint, label-on-hover** → `Tooltip.vue` (read the agent doc first)
 - **pinch/scroll zoom viewport, pan-zoom canvas, infinite board, image inspector** → `ZoomableContainer.vue` (read the agent doc first)
 
@@ -111,6 +112,7 @@ not edit by hand.
 - **roving-focus tabindex for 2D grids, grid keyboard navigation, calendar keyboard, table arrow nav** → `useRovingGrid` (read the agent doc first)
 - **audio cue playback, sound effect, UI click sound, beep** → `useSound` (read the agent doc first)
 - **theme tokens, light/dark, theme switcher, color theme** → `useTheme` (read the agent doc first)
+- **show toast, notify user, flash message, snackbar queue, undo notification, transient alert** → `useToast` (read the agent doc first)
 - **sync state to URL query params, URL-backed state, persist state in URL, shareable URL state** → `useUrlSync` (read the agent doc first)
 - **form validation, declarative form rules, field validation, error state** → `useValidation` (read the agent doc first)
 <!-- routing:end -->

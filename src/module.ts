@@ -62,5 +62,11 @@ export default defineNuxtModule({
     // Register i18n auto-import and plugin
     addImports({ name: "useI18n", from: "vue-i18n" });
     addPlugin(resolver.resolve("./runtime/plugins/i18n"));
+
+    // Mounts the single toast host so consumers never place one by hand
+    addPlugin({
+      src: resolver.resolve("./runtime/plugins/toast.client"),
+      mode: "client",
+    });
   },
 });
