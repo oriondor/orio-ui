@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.32.0](https://github.com/oriondor/orio-ui/compare/v1.31.1...v1.32.0) (2026-09-15)
+
+
+### Features
+
+* Implemented toast component ([#174](https://github.com/oriondor/orio-ui/issues/174)) ([bb49a5d](https://github.com/oriondor/orio-ui/commit/bb49a5d5ef75c45117489b5ecf10c5299f078d0f))
+
 ## [1.31.1](https://github.com/oriondor/orio-ui/compare/v1.31.0...v1.31.1) (2026-08-31)
 
 fix: fixed the file upload that stripped the only one file; and attributes bind on the selectors
