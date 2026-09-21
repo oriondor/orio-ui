@@ -99,6 +99,49 @@ from the frontmatter of those docs; do not edit by hand.
 - `useValidation` — declarative rule-based form validation with reactive errors keyed by field id and auto scroll-to-first-error. **Read the agent doc first.**
 <!-- routing:end -->
 
+## Using the library
+
+Preferred ways to build with orio-ui, in order of preference.
+
+### 1. Get it out of the box, don't restyle
+
+Reach for a component before writing markup. Props, slots and the
+component's own variants cover most cases — check the agent doc before
+concluding something is missing.
+
+- Do **not** put a component's internal class names (`.control-label`,
+  `.slot-wrapper`, `.orio-*`, …) on your own elements. They are private
+  implementation detail and move without a major version.
+- To match the look on custom markup, use the design tokens instead — the
+  CSS custom properties in `src/runtime/assets/css/variables.css` and
+  `colors.css` (`var(--font-md)`, `var(--border-radius-md)`, …). See
+  `.cheatsheets/design-system.md`.
+- If a capability is genuinely missing, add it to the component (a prop or
+  slot) rather than reimplementing the component in the consumer app.
+- Composition over raw HTML in our own templates too: `<orio-view-text>`,
+  `<orio-tag>`, `<orio-icon>` instead of `<p>`, `<span class="tag">`, inline
+  `<svg>`.
+
+### 2. Nuxt-native or VueUse before anything bespoke
+
+When a problem is fiddly or ambiguous, use the platform.
+
+- Nuxt first: `useState`, `useRoute`/`useRouter`, `navigateTo`, `useCookie`,
+  `useRuntimeConfig`, `<ClientOnly>`, `definePageMeta`.
+- Then VueUse — `@vueuse/core` and `@vueuse/integrations` are already
+  dependencies, so importing from them costs nothing:
+  `useEventListener`, `onClickOutside`, `useElementSize`, `useDebounceFn`,
+  `useLocalStorage`, `useMediaQuery`.
+- Hand-rolled listeners, timers, resize observers and storage wrappers are a
+  last resort; if one is unavoidable, it belongs in a composable under
+  `src/runtime/composables/`, not inline in a component.
+
+### 3. kebab-case for auto-imported components
+
+Templates use the kebab-case tag: `<orio-button>`, `<orio-date-picker>`,
+`<orio-number-input-vertical>`. Not `<OrioButton>`. The only exception is an
+agent doc or example that explicitly shows a different form.
+
 ## Writing examples
 
 **Every example must be code that actually runs in this repo.** Never invent a
