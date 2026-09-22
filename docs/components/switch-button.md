@@ -115,6 +115,16 @@ const showCancelled = ref(false)
 - **Space** or **Enter** - Toggle the button state
 - **Tab** - Navigate between switch buttons
 
+## Accessibility
+
+The inner `<button>` carries `aria-pressed` mirroring `modelValue`, so screen
+readers announce the toggle state. Pass `aria-pressed` yourself only to say
+something the boolean cannot (`aria-pressed="mixed"`); it overrides the
+default.
+
+Give the button an accessible name: either a visible `label`, text in the
+default slot, or `aria-label` when the slot holds only an icon.
+
 ## Styling
 
 The switch button uses these CSS variables:

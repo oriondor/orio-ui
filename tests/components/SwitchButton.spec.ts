@@ -40,6 +40,37 @@ describe("SwitchButton", () => {
     expect(emissions[1]).toEqual([false]);
   });
 
+  it("exposes the toggle state as aria-pressed", async () => {
+    const wrapper = mount(SwitchButton, {
+      props: { modelValue: false },
+      global: {
+        stubs: {
+          "orio-control-element": ControlStub,
+        },
+      },
+    });
+
+    expect(wrapper.find("button").attributes("aria-pressed")).toBe("false");
+
+    await wrapper.setProps({ modelValue: true });
+
+    expect(wrapper.find("button").attributes("aria-pressed")).toBe("true");
+  });
+
+  it("lets the caller override aria-pressed", () => {
+    const wrapper = mount(SwitchButton, {
+      props: { modelValue: false },
+      attrs: { "aria-pressed": "mixed" },
+      global: {
+        stubs: {
+          "orio-control-element": ControlStub,
+        },
+      },
+    });
+
+    expect(wrapper.find("button").attributes("aria-pressed")).toBe("mixed");
+  });
+
   it("does not toggle when disabled", async () => {
     const wrapper = mount(SwitchButton, {
       props: { modelValue: false, disabled: true },

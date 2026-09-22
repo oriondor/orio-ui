@@ -40,10 +40,13 @@ to give users a language toggle.
   app saves locale to cookies / localStorage / API, hook into
   `useI18n().locale` from elsewhere — this component does not call
   any side effect beyond the i18n update.
-- **Flag emojis depend on font support.** macOS / iOS render them
-  correctly; Windows often shows letter pairs (e.g. "GB", "UA"). For
-  cross-platform consistency, swap to icons via a custom `locales`
-  prop with icon names + a custom `#option`/`#trigger-label`.
+- **Flag emojis depend on font support.** `.locale-flag` names an emoji
+  stack (`Apple Color Emoji`, `Segoe UI Emoji`, `Noto Color Emoji`), which
+  covers macOS / iOS / Windows / most Linux desktops. A machine with no
+  emoji font still shows letter pairs (e.g. "GB", "UA"); if you must
+  guarantee the glyph, swap to icons via a custom `locales` prop with icon
+  names + a custom `#option`/`#trigger-label`. A custom `#trigger-label`
+  drops the class, so re-declare the font stack there.
 - **No client/server hydration story.** If the locale is mutated
   before vue-i18n is hydrated on the client, mismatches can occur.
   Best to initialize locale in your app setup and let this switcher

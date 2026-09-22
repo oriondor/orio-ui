@@ -48,16 +48,23 @@ export interface ControlProps extends ControlPassthroughProps {
 
 /**
  * Bag the consumer spreads onto the inner interactive element via the `control`
- * slot prop: `<input v-bind="control" />`. Extends the caller-facing
- * passthrough props with attrs derived from ControlElement state
+ * slot prop: `<input v-bind="control" />`. Every key is written exactly as the
+ * DOM attribute it becomes — camelCase keys would be lowercased by
+ * `setAttribute` into `arialabel` / `focuskey` and mean nothing. Carries the
+ * caller-facing passthrough props plus attrs derived from ControlElement state
  * (`aria-invalid` from `error`, `aria-describedby` pointing at the error span,
  * etc.) and the required `id`.
  */
-export interface ControlSlotAttrs extends ControlPassthroughProps {
+export interface ControlSlotAttrs extends Omit<
+  ControlPassthroughProps,
+  "focusKey" | "ariaLabel"
+> {
   id: string;
-  ariaDescribedby?: string;
-  ariaInvalid?: boolean;
-  ariaRequired?: boolean;
+  "focus-key"?: string;
+  "aria-label"?: string;
+  "aria-describedby"?: string;
+  "aria-invalid"?: "true";
+  "aria-required"?: true;
 }
 
 const props = withDefaults(defineProps<ControlProps>(), {
@@ -78,14 +85,14 @@ const errorId = computed(() => (props.error ? `${props.id}-error` : undefined));
 const control = computed<ControlSlotAttrs>(() => ({
   id: props.id,
   tabindex: props.tabindex,
-  focusKey: props.focusKey,
   disabled: props.disabled || undefined,
   required: props.required || undefined,
   name: props.name,
-  ariaLabel: props.ariaLabel,
-  ariaDescribedby: errorId.value,
-  ariaInvalid: props.error ? true : undefined,
-  ariaRequired: props.required || undefined,
+  "focus-key": props.focusKey,
+  "aria-label": props.ariaLabel || undefined,
+  "aria-describedby": errorId.value,
+  "aria-invalid": props.error ? "true" : undefined,
+  "aria-required": props.required || undefined,
 }));
 </script>
 

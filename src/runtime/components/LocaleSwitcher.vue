@@ -60,6 +60,10 @@ const selected = computed({
 }
 
 .locale-flag {
+  /* Windows has no flag glyphs in its default UI font — it falls back to the
+     two-letter region pair unless an emoji font is asked for by name. */
+  font-family:
+    "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
   font-size: 1.25em;
   line-height: 1;
 }
