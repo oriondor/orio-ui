@@ -64,6 +64,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `EmptyState.vue` — centered empty-list placeholder with optional icon, title, description, and action slot. **Read the agent doc first.**
 - `Icon.vue` — SVG icon renderer that pulls from `utils/icon-registry` and renders via v-html. **Read the agent doc first.**
 - `LoadingSpinner.vue` — thin wrapper that renders the bundled `loading-loop` icon; no props.
+- `LongPress.vue` — wrapper that scales its child down while held and emits `trigger` after a delay or on Safari force click. **Read the agent doc first.**
 - `NavButton.vue` — bare nav-styled button with `active` state and `aria-current="page"` for the current route. **Read the agent doc first.**
 - `Tag.vue` — small text chip with neutral or accent variant; static display only (no remove behavior). **Read the agent doc first.**
 
@@ -88,6 +89,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `useFuzzySearch` — typed Fuse.js wrapper that returns a computed list of matched items (strings or objects).
 - `useInertia` — post-drag momentum loop that calls a tick callback with decaying velocity each frame. **Read the agent doc first.**
 - `useListKeyboard` — arrow / Home / End / Enter / Space / Esc handling for a flat indexable list with auto scroll-into-view. **Read the agent doc first.**
+- `useLongPress` — long-press detection on any element with move/cancel handling, Safari force click, and click swallow after trigger. **Read the agent doc first.**
 - `useModal` — returns a `modalProps` bag (show, origin, update handler) plus `openModal(event?)` that derives origin from a click target. **Read the agent doc first.**
 - `usePinchZoom` — touch-only pinch handler that tracks up to 2 pointers and exposes scale factor, midpoint, and midpoint delta. **Read the agent doc first.**
 - `usePressAndHold` — fires a callback once immediately, then repeats every 50 ms after a 500 ms hold. **Read the agent doc first.**
