@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { defineComponent, h, nextTick, ref, type Ref } from "vue";
+import { defineComponent, h, nextTick, ref, shallowRef, type Ref } from "vue";
 import {
   useLongPress,
   type LongPressOptions,
@@ -12,6 +12,7 @@ interface PointerInit {
   button?: number;
   isPrimary?: boolean;
   ctrlKey?: boolean;
+  pointerId?: number;
 }
 
 function pointer(type: string, init: PointerInit = {}) {
@@ -24,6 +25,7 @@ function pointer(type: string, init: PointerInit = {}) {
     ctrlKey: init.ctrlKey ?? false,
   });
   Object.defineProperty(event, "isPrimary", { value: init.isPrimary ?? true });
+  Object.defineProperty(event, "pointerId", { value: init.pointerId ?? 1 });
   return event;
 }
 
@@ -544,6 +546,62 @@ describe("useLongPress", () => {
       element.dispatchEvent(menu);
 
       expect(menu.defaultPrevented).toBe(false);
+    });
+  });
+
+  describe("pointer tracking", () => {
+    it("ignores a second finger moving, lifting or cancelling", async () => {
+      const { element, onTrigger, onCancel, isHolding } = await setup();
+
+      element.dispatchEvent(pointer("pointerdown", { pointerId: 1 }));
+      element.dispatchEvent(
+        pointer("pointermove", { pointerId: 2, x: 100, y: 100 }),
+      );
+      element.dispatchEvent(pointer("pointerup", { pointerId: 2 }));
+      element.dispatchEvent(pointer("pointercancel", { pointerId: 2 }));
+      document.body.dispatchEvent(pointer("pointerup", { pointerId: 2 }));
+
+      expect(onCancel).not.toHaveBeenCalled();
+      expect(isHolding()).toBe(true);
+
+      vi.advanceTimersByTime(500);
+      expect(onTrigger).toHaveBeenCalledTimes(1);
+    });
+
+    it("cancels an unfinished hold released outside the target", async () => {
+      const { element, onTrigger, onCancel } = await setup();
+
+      element.dispatchEvent(pointer("pointerdown"));
+      document.body.dispatchEvent(pointer("pointerup"));
+
+      expect(onCancel).toHaveBeenCalledTimes(1);
+      vi.advanceTimersByTime(1000);
+      expect(onTrigger).not.toHaveBeenCalled();
+    });
+
+    it("cancels when the target is replaced mid-press", async () => {
+      const onTrigger = vi.fn();
+      const onCancel = vi.fn();
+      const target = shallowRef<HTMLElement | null>(null);
+
+      const Harness = defineComponent({
+        setup() {
+          useLongPress(target, { onTrigger, onCancel });
+          return () => h("div", { class: "first" });
+        },
+      });
+
+      const wrapper = mount(Harness, { attachTo: document.body });
+      target.value = wrapper.element as HTMLElement;
+      await nextTick();
+
+      wrapper.element.dispatchEvent(pointer("pointerdown"));
+      target.value = null;
+      await nextTick();
+      vi.advanceTimersByTime(1000);
+
+      expect(onTrigger).not.toHaveBeenCalled();
+      expect(onCancel).toHaveBeenCalledTimes(1);
     });
   });
 

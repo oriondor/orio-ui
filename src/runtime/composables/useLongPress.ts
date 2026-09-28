@@ -37,6 +37,8 @@ export function useLongPress(
   const isHolding = ref(false);
   let timer: ReturnType<typeof setTimeout> | undefined;
   let startPosition: { x: number; y: number } | null = null;
+  // Only the pointer that started the press may move, lift or cancel it.
+  let activePointerId: number | undefined;
   let swallowNextClick = false;
 
   const isDisabled = () => toValue(options.disabled) ?? false;
@@ -86,6 +88,7 @@ export function useLongPress(
     claimedEvents.add(event);
     clearTimer();
     startPosition = { x: event.clientX, y: event.clientY };
+    activePointerId = event.pointerId;
     isPressing.value = true;
     isHolding.value = true;
     options.onStart?.(event);
@@ -95,8 +98,11 @@ export function useLongPress(
     );
   }
 
+  const isActivePointer = (event: PointerEvent) =>
+    event.pointerId === activePointerId;
+
   function handlePointerMove(event: PointerEvent) {
-    if (!startPosition) return;
+    if (!startPosition || !isActivePointer(event)) return;
     const distance = Math.hypot(
       event.clientX - startPosition.x,
       event.clientY - startPosition.y,
@@ -122,10 +128,17 @@ export function useLongPress(
     event.preventDefault();
   }
 
+  function handlePointerEnd(event: PointerEvent) {
+    if (isActivePointer(event)) cancel();
+  }
+
   // Window-level so a release outside the target (e.g. over a modal overlay
-  // the trigger opened) still ends the hold.
-  function handleRelease() {
-    isHolding.value = false;
+  // the trigger opened) still ends the hold — and cancels it if the hold
+  // has not triggered yet.
+  function handleRelease(event: PointerEvent) {
+    if (!isHolding.value || !isActivePointer(event)) return;
+    if (isPressing.value) cancel();
+    else isHolding.value = false;
   }
 
   // Touch browsers send the click in a later task than touchend, or not at
@@ -148,7 +161,7 @@ export function useLongPress(
   useEventListener(
     target,
     ["pointerup", "pointerleave", "pointercancel"],
-    cancel,
+    handlePointerEnd,
   );
   // Safari-only (Force Touch trackpad); never dispatched elsewhere.
   useEventListener<MouseEvent>(
@@ -169,6 +182,9 @@ export function useLongPress(
   watch(isDisabled, (disabled) => {
     if (disabled) cancel();
   });
+
+  // A swapped or removed target must not fire the old press's timer.
+  watch(() => toValue(target), cancel);
 
   onScopeDispose(clearTimer);
 

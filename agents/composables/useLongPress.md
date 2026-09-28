@@ -33,6 +33,12 @@ per press. Use `<orio-long-press>` unless you need no scale feedback.
   release over an overlay counts). While holding, `selectstart` and
   `contextmenu` on `target` are prevented; trigger clears any selection
   inside `target`.
+- **One pointer per press.** The starting `pointerId` owns the press; a
+  second finger's move / up / cancel is ignored.
+- **Release anywhere ends it.** A window-level pointerup of that pointer
+  cancels an untriggered press (no stray trigger later) and ends the hold.
+- **Target swap cancels.** Changing `target` (or setting it to `null`)
+  mid-press cancels, so the old element's timer never fires.
 - **Not `usePressAndHold`** — that one fires immediately and repeats.
 
 ## Quick reference
