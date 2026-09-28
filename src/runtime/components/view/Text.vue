@@ -59,7 +59,7 @@ div {
     color: var(--view-text-color, var(--color-text));
   }
   &.subtitle {
-    font-weight: semi-bold;
+    font-weight: 600;
     color: var(--view-text-color, var(--color-muted));
   }
   &.italics {

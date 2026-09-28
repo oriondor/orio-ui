@@ -17,22 +17,30 @@ one, pass `ControlProps` straight through — they are usually re-exported.
 
 - **`inheritAttrs: false`.** Attrs do **not** auto-flow onto the wrapper or
   the inner element. The component exposes a `control` slot prop containing
-  the a11y/form attr bag (`id`, `ariaDescribedby`, `ariaInvalid`,
-  `ariaRequired`, plus passthrough `tabindex`, `focusKey`, `disabled`,
-  `required`, `name`, `ariaLabel`). The inner element **must** spread it:
+  the a11y/form attr bag. The inner element **must** spread it:
   ```vue
   <orio-control-element v-slot="{ control }" v-bind="props">
     <input v-bind="control" />
   </orio-control-element>
   ```
+- **Every bag key is spelled as the DOM attribute it becomes** —
+  `id`, `tabindex`, `disabled`, `required`, `name`, `focus-key`,
+  `aria-label`, `aria-describedby`, `aria-invalid`, `aria-required`. The
+  caller-facing props stay camelCase (`focusKey`, `ariaLabel`);
+  ControlElement translates them. Never add a camelCase key to the bag: Vue
+  hands unknown keys to `setAttribute()` verbatim and HTML lowercases them,
+  so `ariaLabel` lands in the markup as `arialabel` and names nothing.
+  Assert on serialized HTML when testing this — ARIA reflection makes three
+  of the four cases *look* fine in a live-DOM assertion
+  (`tests/components/ControlElementAria.spec.ts`).
 - **`group` prop changes the semantic root.** When `true`, the wrapper gets
   `role="group"` + `aria-labelledby`, and the label renders as `<span>`
   (still id-linked) instead of `<label>`. Use this for `CheckboxGroup`,
   radio groups, anything where the "control" is multiple inputs.
 - **Error wiring is automatic.** Setting `error` to a non-null string:
   - Renders a `.control-error` span below the slot.
-  - Sets `aria-invalid` and `aria-describedby` on the inner element via the
-    `control` slot prop.
+  - Sets `aria-invalid="true"` and `aria-describedby="<id>-error"` on the
+    inner element via the `control` slot prop.
   - Adds a red border to `.slot-wrapper` (unless the wrapper contains a
     `:deep(.error-fields)` element, in which case the inner component owns
     error styling — see TaggableSelector).

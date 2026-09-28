@@ -16,6 +16,7 @@ function toggle() {
 <template>
   <orio-control-element v-slot="{ control }" v-bind="props">
     <button
+      :aria-pressed="modelValue ?? false"
       v-bind="{ ...$attrs, ...control }"
       class="switch-button"
       :class="{ active: modelValue, disabled: props.disabled }"

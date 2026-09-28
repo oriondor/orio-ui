@@ -232,6 +232,34 @@ Input and Textarea support `layout="inner"`, which floats the label inside the c
 | --------- | -------------------- |
 | `default` | Form control element |
 
+The default slot exposes a `control` prop — the attribute bag your inner
+element must spread. Every key is already written as the DOM attribute it
+becomes, so `v-bind` is all that is needed:
+
+```vue
+<orio-control-element v-slot="{ control }" label="Email" :error="emailError">
+  <input v-bind="control" type="email" />
+</orio-control-element>
+```
+
+## Accessibility
+
+| Bag key            | Source                                    |
+| ------------------ | ----------------------------------------- |
+| `id`               | `id` prop, or `useId()` — the `<label for>` target |
+| `tabindex`         | `tabindex` prop                           |
+| `disabled`         | `disabled` prop                           |
+| `required`         | `required` prop                           |
+| `name`             | `name` prop                               |
+| `focus-key`        | `focusKey` prop — the attr `useRovingGrid` queries |
+| `aria-label`       | `ariaLabel` prop — for controls with no visible `label` |
+| `aria-describedby` | id of the `.control-error` span, when `error` is set |
+| `aria-invalid`     | `"true"` when `error` is set              |
+| `aria-required`    | `required` prop                           |
+
+Keys are omitted when there is nothing to say, so no empty `aria-label=""`
+reaches the markup.
+
 ## CSS Variables
 
 ControlElement sets the following CSS custom properties based on `size`, which child components consume:

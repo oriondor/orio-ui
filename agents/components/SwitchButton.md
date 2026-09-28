@@ -15,7 +15,8 @@ button that flips between active and inactive states.
 ## Invariants
 
 - **Renders a `<button type=...>` element**, not a checkbox or sliding
-  knob. The "switch" is purely visual state via the `.active` class.
+  knob. The state is the `.active` class visually and `aria-pressed` in the
+  accessibility tree.
 - **v-model is `boolean`** (not required — renders as off when unbound).
 - **Click, Enter, and Space all toggle.** `Enter` and `Space` use
   `.prevent` to avoid form submit / page scroll.
@@ -33,9 +34,9 @@ button that flips between active and inactive states.
 - **The component name is misleading.** If you want a sliding toggle
   switch (knob that animates), this is not it. Build that yourself or
   pick another primitive.
-- **No `aria-pressed`.** The active state is visual only. For correct
-  screen reader semantics, pass `:aria-pressed="modelValue"` via
-  `$attrs`.
+- **`aria-pressed` reflects `modelValue` automatically** (`"false"` when
+  unbound). Do not pass it by hand — only do so to say something the
+  boolean cannot, e.g. `aria-pressed="mixed"`, which wins over the default.
 - **`@keydown.enter.prevent`** swallows form-submit Enter inside a
   `<form>`. If the SwitchButton is inside a form, Enter on it will
   toggle but not submit.
@@ -47,7 +48,6 @@ button that flips between active and inactive states.
   <orio-switch-button
     v-model="notifications"
     :label="$t('settings.notifications')"
-    :aria-pressed="notifications"
   >
     <orio-icon :name="notifications ? 'bell' : 'bell-off'" />
     {{ notifications ? $t("common.on") : $t("common.off") }}
