@@ -38,6 +38,10 @@ export {
 } from "./components/TaggableSelector.vue";
 export { default as Tag } from "./components/Tag.vue";
 export { default as Badge } from "./components/Badge.vue";
+export {
+  default as LongPress,
+  type LongPressProps,
+} from "./components/LongPress.vue";
 export { default as Banner } from "./components/Banner.vue";
 export { default as Icon } from "./components/Icon.vue";
 export { default as LoadingSpinner } from "./components/LoadingSpinner.vue";
@@ -91,6 +95,11 @@ export {
 export { useTheme } from "./composables/useTheme";
 export { useDecimalFormatter } from "./composables/useDecimalFormatter";
 export { usePressAndHold } from "./composables/usePressAndHold";
+export {
+  useLongPress,
+  type LongPressOptions,
+  type LongPressSource,
+} from "./composables/useLongPress";
 export { useSound, type SoundOptions } from "./composables/useSound";
 export {
   useValidation,

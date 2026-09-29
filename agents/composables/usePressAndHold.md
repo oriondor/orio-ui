@@ -1,7 +1,7 @@
 ---
 kind: composable
 category: Composables
-purpose: long-press detection, press-and-hold, auto-repeat, mousedown-hold ramp
+purpose: press-and-hold auto-repeat, repeat while held, spinner ramp, mousedown-hold ramp
 short: fires a callback once immediately, then repeats every 50 ms after a 500 ms hold
 invariants: true
 ---

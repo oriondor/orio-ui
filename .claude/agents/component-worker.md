@@ -79,6 +79,7 @@ not edit by hand.
 - **empty state, no-results placeholder, blank slate, empty list** → `EmptyState.vue` (read the agent doc first)
 - **icon, SVG renderer, glyph, symbol** → `Icon.vue` (read the agent doc first)
 - **spinner, loading indicator, loading icon, busy indicator** → `LoadingSpinner.vue`
+- **long press, press and hold to open, haptic touch, 3d touch, force click, hold for context menu, hidden action on hold** → `LongPress.vue` (read the agent doc first)
 - **nav button, link-styled button, navigation item, sidebar item** → `NavButton.vue` (read the agent doc first)
 - **tag, chip, label, removable chip, category pill** → `Tag.vue` (read the agent doc first)
 
@@ -103,9 +104,10 @@ not edit by hand.
 - **fuzzy search, client-side filter, in-memory search, search-as-you-type** → `useFuzzySearch`
 - **inertia, momentum decay for gestures, fling-and-decelerate, momentum scroll** → `useInertia` (read the agent doc first)
 - **arrow-key flat list navigation, listbox keyboard, dropdown keys** → `useListKeyboard` (read the agent doc first)
+- **long press detection, hold to trigger, force click, haptic touch, press and hold once** → `useLongPress` (read the agent doc first)
 - **programmatic modal control, open modal from code, modal binding bag** → `useModal` (read the agent doc first)
 - **pinch-to-zoom, two-finger touch zoom, pinch gesture** → `usePinchZoom` (read the agent doc first)
-- **long-press detection, press-and-hold, auto-repeat, mousedown-hold ramp** → `usePressAndHold` (read the agent doc first)
+- **press-and-hold auto-repeat, repeat while held, spinner ramp, mousedown-hold ramp** → `usePressAndHold` (read the agent doc first)
 - **roving-focus tabindex for 2D grids, grid keyboard navigation, calendar keyboard, table arrow nav** → `useRovingGrid` (read the agent doc first)
 - **audio cue playback, sound effect, UI click sound, beep** → `useSound` (read the agent doc first)
 - **theme tokens, light/dark, theme switcher, color theme** → `useTheme` (read the agent doc first)

@@ -91,7 +91,7 @@
   },
   "peerDependencies": {
     "nuxt": "^3.0.0 || ^4.0.0",
-    "vue": "^3.3.0"
+    "vue": "^3.4.0"
   },
   "keywords": [
     "nuxt",
