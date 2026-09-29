@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.33.0](https://github.com/oriondor/orio-ui/compare/v1.32.3...v1.33.0) (2026-09-29)
+
+
+### Features
+
+* long press component wrapper that you can use around any component to add some hidden features ([#183](https://github.com/oriondor/orio-ui/issues/183)) ([6c00d5d](https://github.com/oriondor/orio-ui/commit/6c00d5d36f1271fc209c1f8f56e69952ad1fa80c))
+
 ## [1.32.3](https://github.com/oriondor/orio-ui/compare/v1.32.2...v1.32.3) (2026-09-28)
 
 
