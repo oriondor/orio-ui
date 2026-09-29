@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.33.0](https://github.com/oriondor/orio-ui/compare/v1.32.3...v1.33.0) (2026-09-29)
 
+feat: Add a long-press wrapper for components
 
-### Features
-
-* long press component wrapper that you can use around any component to add some hidden features ([#183](https://github.com/oriondor/orio-ui/issues/183)) ([6c00d5d](https://github.com/oriondor/orio-ui/commit/6c00d5d36f1271fc209c1f8f56e69952ad1fa80c))
-
+- Add the `LongPress` component and `useLongPress` composable. The composable triggers after a configurable hold delay or Safari force input, and cancels when the pointer is released, leaves, is cancelled, or moves beyond the configured tolerance.
+- Add `trigger`, `pressStart`, and `pressCancel` component events, plus press-state and disabled styling. Respect reduced-motion preferences.
+- Suppress the next non-keyboard click after a trigger. Handle nested targets so only the innermost long-press handler starts.
+- Export the component, composable, and their public types from the runtime entry point.
+- Add component and composable documentation, agent references, and tests.
+- Update `usePressAndHold` descriptions to focus on auto-repeat and ramp behavior.
 ## [1.32.3](https://github.com/oriondor/orio-ui/compare/v1.32.2...v1.32.3) (2026-09-28)
 
 
