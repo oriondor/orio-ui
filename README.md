@@ -19,7 +19,7 @@ orio-ui's shipped, version-pinned agent docs. Details in
 ## Features
 
 ✨ **67 Components** - Beautiful, accessible components ready to use
-🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
+🎨 **Themeable** - 6 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great developer experience
@@ -149,6 +149,7 @@ Built-in themes:
 - **Forest** - Natural green
 - **Wine** - Deep burgundy
 - **Royal** - Rich purple-blue
+- **Violet** - Glowing electric violet
 - **Normal** - Neutral gray
 - **Inverse** - High contrast (adapts to mode)
 
@@ -158,7 +159,7 @@ All themes support light and dark modes. Fully customizable via CSS variables.
 <script setup>
 const { setTheme, setMode } = useTheme();
 
-setTheme("ocean");
+setTheme("violet");
 setMode("dark");
 </script>
 ```

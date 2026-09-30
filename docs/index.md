@@ -5,7 +5,7 @@ A delightful, lightweight component library for Nuxt 3 applications.
 ## Features
 
 ✨ **67 Components** - Beautiful, accessible components ready to use
-🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
+🎨 **Themeable** - 6 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great DX
@@ -54,7 +54,7 @@ Start using components:
 
 ### Theming
 
-Built-in themes: Navy (default), Ocean, Sunset, Forest, Purple
+Built-in themes: Navy (default), Teal, Forest, Wine, Royal, Violet
 Modes: Light & Dark
 
 All customizable via CSS variables.
