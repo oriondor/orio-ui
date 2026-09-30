@@ -69,6 +69,33 @@ function navigate(page) {
   </div>
 </div>
 
+## As a Link
+
+Pass `to` for real navigation: the nav button renders an `<a href>`, so crawlers
+and "open in new tab" work, and internal paths go through the Vue router (no reload). `active` still controls the highlight
+and `aria-current`. While `disabled` it falls back to a `<button>`.
+
+<div class="demo-container">
+  <div class="demo-row">
+    <orio-nav-button to="#as-a-link" :active="true">Menu</orio-nav-button>
+    <orio-nav-button to="#as-a-link">About</orio-nav-button>
+    <orio-nav-button to="#as-a-link" disabled>Soon</orio-nav-button>
+  </div>
+</div>
+
+```vue
+<script setup lang="ts">
+const route = useRoute();
+</script>
+
+<template>
+  <nav>
+    <orio-nav-button to="/menu" :active="route.path === '/menu'">Menu</orio-nav-button>
+    <orio-nav-button to="/about" :active="route.path === '/about'">About</orio-nav-button>
+  </nav>
+</template>
+```
+
 ## Usage
 
 ### Basic Navigation
@@ -195,6 +222,7 @@ function navigate(page) {
 | `icon` | `string` | `undefined` | Icon name from icon registry |
 | `disabled` | `boolean` | `false` | Disables button interaction |
 | `active` | `boolean` | `false` | Indicates current/active page or section |
+| `to` | `RouteLocationRaw` | `undefined` | Render as a real `<a href>` (router navigation for internal paths); ignored while `disabled` |
 
 **Note:** The native HTML `type` attribute (e.g., `type="button"`) can be used normally via `v-bind` and will be passed through to the underlying `<button>` element.
 

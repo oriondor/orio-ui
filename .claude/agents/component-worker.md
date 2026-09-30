@@ -75,12 +75,12 @@ not edit by hand.
 ### Buttons & indicators
 - **badge, small status pill, notification dot, count indicator, corner badge** → `Badge.vue` (read the agent doc first)
 - **banner, page-level notice, alert strip, inline notification, info bar** → `Banner.vue` (read the agent doc first)
-- **button, primary action, CTA, icon button, action button** → `Button.vue` (read the agent doc first)
+- **button, primary action, CTA, icon button, action button, link button** → `Button.vue` (read the agent doc first)
 - **empty state, no-results placeholder, blank slate, empty list** → `EmptyState.vue` (read the agent doc first)
 - **icon, SVG renderer, glyph, symbol** → `Icon.vue` (read the agent doc first)
 - **spinner, loading indicator, loading icon, busy indicator** → `LoadingSpinner.vue`
 - **long press, press and hold to open, haptic touch, 3d touch, force click, hold for context menu, hidden action on hold** → `LongPress.vue` (read the agent doc first)
-- **nav button, link-styled button, navigation item, sidebar item** → `NavButton.vue` (read the agent doc first)
+- **nav button, nav link, link-styled button, navigation item, sidebar item, menu link** → `NavButton.vue` (read the agent doc first)
 - **tag, chip, label, removable chip, category pill** → `Tag.vue` (read the agent doc first)
 
 ### Media & misc

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
+import { createMemoryHistory, createRouter } from "vue-router";
 import Button from "../../src/runtime/components/Button.vue";
 
 const ControlStub = {
@@ -144,5 +145,127 @@ describe("Button", () => {
     });
 
     expect(wrapper.find("button").classes()).not.toContain("pill");
+  });
+});
+
+describe("Button as a link", () => {
+  const stubs = {
+    "orio-control-element": ControlStub,
+    "orio-icon": IconStub,
+    "orio-loading-spinner": LoadingStub,
+  };
+
+  it("renders a real anchor with href when `to` is set", () => {
+    const wrapper = mount(Button, {
+      props: { to: "/reserve" },
+      slots: { default: "Book" },
+      global: { stubs },
+    });
+
+    const link = wrapper.find("a");
+    expect(link.exists()).toBe(true);
+    expect(link.attributes("href")).toBe("/reserve");
+    expect(link.classes()).toContain("primary");
+    expect(link.text()).toBe("Book");
+    expect(wrapper.find("button").exists()).toBe(false);
+  });
+
+  it("passes protocol links like tel: through untouched", () => {
+    const wrapper = mount(Button, {
+      props: { to: "tel:+31165564090" },
+      global: { stubs },
+    });
+
+    expect(wrapper.find("a").attributes("href")).toBe("tel:+31165564090");
+  });
+
+  it("still emits click from the link", async () => {
+    const onClick = vi.fn();
+    const wrapper = mount(Button, {
+      props: { to: "/menu", onClick },
+      global: { stubs },
+    });
+
+    await wrapper.find("a").trigger("click");
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to a disabled button when disabled or loading", () => {
+    for (const props of [
+      { to: "/menu", disabled: true },
+      { to: "/menu", loading: true },
+    ]) {
+      const wrapper = mount(Button, { props, global: { stubs } });
+      expect(wrapper.find("a").exists()).toBe(false);
+      expect(wrapper.find("button").exists()).toBe(true);
+    }
+  });
+});
+
+describe("Button link navigation", () => {
+  const stubs = {
+    "orio-control-element": ControlStub,
+    "orio-icon": IconStub,
+    "orio-loading-spinner": LoadingStub,
+  };
+
+  async function mountWithRouter(to: string) {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: "/", component: { template: "<div />" } },
+        { path: "/menu", component: { template: "<div />" } },
+      ],
+    });
+    await router.push("/");
+    const push = vi.spyOn(router, "push");
+    const wrapper = mount(Button, {
+      props: { to },
+      global: { stubs, plugins: [router] },
+    });
+    return { wrapper, push };
+  }
+
+  it("navigates internal links through the router without a reload", async () => {
+    const { wrapper, push } = await mountWithRouter("/menu");
+    const event = new MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+    });
+    wrapper.find("a").element.dispatchEvent(event);
+    expect(push).toHaveBeenCalledWith("/menu");
+    expect(event.defaultPrevented).toBe(true);
+  });
+
+  it("leaves modifier-clicks to the browser (new tab)", async () => {
+    const { wrapper, push } = await mountWithRouter("/menu");
+    const event = new MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+      metaKey: true,
+    });
+    wrapper.find("a").element.dispatchEvent(event);
+    expect(push).not.toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  it.each([
+    ["https://example.com"],
+    ["tel:+31165564090"],
+    ["mailto:a@b.nl"],
+    ["#section"],
+  ])("leaves %s to the browser", async (to) => {
+    const { wrapper, push } = await mountWithRouter(to);
+    const event = new MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+    });
+    wrapper.find("a").element.dispatchEvent(event);
+    expect(push).not.toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(false);
   });
 });

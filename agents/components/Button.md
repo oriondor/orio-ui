@@ -1,8 +1,8 @@
 ---
 kind: component
 category: Buttons & indicators
-purpose: button, primary action, CTA, icon button, action button
-short: primary action button with variants, loading, icon slots, and auto icon-only sizing
+purpose: button, primary action, CTA, icon button, action button, link button
+short: primary action button with variants, loading, icon slots, auto icon-only sizing, and `to` for link rendering
 invariants: true
 ---
 
@@ -35,6 +35,12 @@ often used standalone.
   state).
 - **Emits**: `click`, `mousedown`, `mouseup`, `mouseleave`. Only `click`
   and `mousedown` honor the loading/disabled gates.
+- **`to` prop → link.** When set (and not `disabled`/`loading`) the inner
+  element is a real `<a href>` with the same variant classes; internal paths
+  go through the Vue router when installed (no reload), modifier-clicks stay
+  native (`utils/link.ts`). Internal routes, external URLs and `tel:`/`mailto:`
+  all work. `disabled`/`loading` fall back to a `<button>` (anchors can't be
+  disabled). `click` still emits from the link.
 - **Wraps ControlElement** — supports `label`, `error`, `size`, `layout`,
   etc. The control bag is spread on the inner `<button>` along with
   `$attrs`.
@@ -64,6 +70,9 @@ often used standalone.
   <orio-button @click="onSave" :loading="saving">
     {{ $t("common.save") }}
   </orio-button>
+
+  <!-- from docs/components/button.md ("As a Link") -->
+  <orio-button to="/reserve">Book a table</orio-button>
 
   <orio-button variant="secondary" icon="trash" @click="onDelete">
     {{ $t("common.delete") }}

@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { computed, toRefs, useSlots } from "vue";
+import type { RouteLocationRaw } from "vue-router";
+import { useLinkNavigation } from "../utils/link";
 import type { ControlProps } from "./ControlElement.vue";
 
 interface Props extends ControlProps {
   icon?: string;
   active?: boolean;
+  /** Renders a real `<a href>` instead of a `<button>`; internal paths navigate through the Vue router when one is installed (no reload). `active` still drives styling and `aria-current`. Ignored while `disabled`. */
+  to?: RouteLocationRaw;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -14,6 +18,9 @@ const props = withDefaults(defineProps<Props>(), {
 const { disabled, active } = toRefs(props);
 
 const slots = useSlots();
+
+const asLink = computed(() => props.to !== undefined && !disabled.value);
+const { hrefFor, navigate } = useLinkNavigation();
 
 const isIconOnly = computed(() => {
   const hasIcon = !!props.icon || !!slots.icon;
@@ -28,14 +35,17 @@ const emit = defineEmits<{
 function click(event: PointerEvent) {
   if (disabled.value) return;
   emit("click", event);
+  if (asLink.value) navigate(event, props.to!);
 }
 </script>
 
 <template>
   <orio-control-element v-slot="{ control }" v-bind="props">
-    <button
+    <component
+      :is="asLink ? 'a' : 'button'"
       v-bind="{ ...$attrs, ...control }"
-      :class="{ 'icon-only': isIconOnly, active }"
+      :href="asLink ? hrefFor(to!) : undefined"
+      :class="['orio-nav-button-el', { 'icon-only': isIconOnly, active }]"
       :aria-current="active ? 'page' : undefined"
       @click="click"
     >
@@ -43,12 +53,14 @@ function click(event: PointerEvent) {
         <orio-icon v-if="icon" :name="icon" />
       </slot>
       <slot />
-    </button>
+    </component>
   </orio-control-element>
 </template>
 
 <style lang="scss" scoped>
-button {
+.orio-nav-button-el {
+  text-decoration: none;
+  box-sizing: border-box;
   background-color: transparent;
   color: var(--color-text);
   border: none;
