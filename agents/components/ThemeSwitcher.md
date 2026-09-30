@@ -18,7 +18,7 @@ picker; pair with `<orio-mode-switcher>` for light/dark.
   rewrites `data-theme` on `<html>`. No model is exposed — the side effect
   is the API. There is no `update:modelValue` to listen to.
 - **Options are plain strings.** `themes` defaults to `[...THEMES]` =
-  `["navy", "teal", "forest", "wine", "royal"]`. Pass the prop to ship a
+  `["navy", "teal", "forest", "wine", "royal", "violet"]`. Pass the prop to ship a
   different set (e.g. add `"normal"` / `"inverse"` or your own accents) —
   the value is written to the cookie verbatim, so it must match a theme
   your CSS defines.

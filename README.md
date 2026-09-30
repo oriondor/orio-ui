@@ -18,12 +18,12 @@ orio-ui's shipped, version-pinned agent docs. Details in
 
 ## Features
 
-✨ **66 Components** - Beautiful, accessible components ready to use
-🎨 **Themeable** - 5 built-in accent themes with light/dark mode support
+✨ **67 Components** - Beautiful, accessible components ready to use
+🎨 **Themeable** - 6 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great developer experience
-🧪 **Tested** - 53 test suites for reliability
+🧪 **Tested** - 56 test suites for reliability
 📱 **Responsive** - Mobile-first design approach
 ♿ **Accessible** - ARIA-compliant components
 🌐 **i18n** - Built-in vue-i18n support with English defaults
@@ -77,7 +77,7 @@ function handleClick() {
 
 ## What's Included
 
-### Components (66)
+### Components (67)
 
 #### Form Controls
 
@@ -129,7 +129,7 @@ function handleClick() {
 
 - **Upload** - File upload component
 
-### Composables (17)
+### Composables (18)
 
 - **useTheme** - Theme and color mode management
 - **useModal** - Modal state with animation origin tracking
@@ -149,6 +149,7 @@ Built-in themes:
 - **Forest** - Natural green
 - **Wine** - Deep burgundy
 - **Royal** - Rich purple-blue
+- **Violet** - Glowing electric violet
 - **Normal** - Neutral gray
 - **Inverse** - High contrast (adapts to mode)
 
@@ -158,7 +159,7 @@ All themes support light and dark modes. Fully customizable via CSS variables.
 <script setup>
 const { setTheme, setMode } = useTheme();
 
-setTheme("ocean");
+setTheme("violet");
 setMode("dark");
 </script>
 ```
@@ -269,8 +270,8 @@ npm run docs:dev
 orio-ui/
 ├── src/
 │   ├── runtime/
-│   │   ├── components/   # 66 Vue components
-│   │   ├── composables/  # 17 composables
+│   │   ├── components/   # 67 Vue components
+│   │   ├── composables/  # 18 composables
 │   │   ├── assets/css/   # Theme CSS files
 │   │   └── utils/        # Icon registry
 │   └── module.ts         # Nuxt Module definition

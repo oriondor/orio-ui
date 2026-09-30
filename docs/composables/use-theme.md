@@ -17,6 +17,7 @@ const themes = [
   { label: 'Forest', value: 'forest' },
   { label: 'Wine', value: 'wine' },
   { label: 'Royal', value: 'royal' },
+  { label: 'Violet', value: 'violet' },
 ]
 
 const isDark = computed({
@@ -72,6 +73,9 @@ const { theme, mode, setTheme, setMode } = useTheme();
     </orio-button>
     <orio-button variant="secondary" @click="setTheme('royal')">
       Royal
+    </orio-button>
+    <orio-button variant="secondary" @click="setTheme('violet')">
+      Violet
     </orio-button>
 
     <p>Current theme: {{ theme }}</p>
@@ -164,6 +168,7 @@ The composable handles SSR gracefully:
       <option value="forest">Forest</option>
       <option value="wine">Wine</option>
       <option value="royal">Royal</option>
+      <option value="violet">Violet</option>
     </select>
 
     <orio-button variant="secondary" @click="toggleDarkMode">
@@ -246,6 +251,7 @@ const themes = [
   { label: "Forest", value: "forest" },
   { label: "Wine", value: "wine" },
   { label: "Royal", value: "royal" },
+  { label: "Violet", value: "violet" },
 ];
 </script>
 ```

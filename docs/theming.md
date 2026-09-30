@@ -11,7 +11,7 @@ Use the `useTheme` composable to switch themes:
 const { theme, setTheme, mode, setMode } = useTheme()
 
 // Change accent theme
-setTheme('navy')  // navy | teal | forest | wine | royal | normal | inverse
+setTheme('navy')  // navy | teal | forest | wine | royal | violet | normal | inverse
 
 // Change color mode
 setMode('light')   // light | dark (default)
@@ -24,7 +24,7 @@ Two preconfigured components wrap `useTheme` so you can drop a picker into any t
 
 ```vue
 <template>
-  <!-- accent theme picker (navy | teal | forest | wine | royal) -->
+  <!-- accent theme picker (navy | teal | forest | wine | royal | violet) -->
   <orio-theme-switcher />
 
   <!-- light / dark toggle with localized labels -->
@@ -39,7 +39,7 @@ The available values are also exported as constants, handy for building custom p
 ```typescript
 import { THEMES, MODES } from 'orio-ui'
 
-THEMES // ['navy', 'teal', 'forest', 'wine', 'royal']
+THEMES // ['navy', 'teal', 'forest', 'wine', 'royal', 'violet']
 MODES  // ['light', 'dark']
 ```
 
@@ -150,6 +150,10 @@ Controls the accent color. Set via `data-theme="themename"` on `<html>`:
   --color-accent: hsl(230, 60%, 40%);
 }
 
+[data-theme="violet"] {
+  --color-accent: hsl(258, 85%, 62%);
+}
+
 [data-theme="normal"] {
   --color-accent: #ced1d5;
   --color-accent-ink: #2a2a2b;
@@ -169,6 +173,7 @@ Controls the accent color. Set via `data-theme="themename"` on `<html>`:
 | **forest** | `hsl(153, 35%, 53%)` | Natural green |
 | **wine** | `hsl(350, 55%, 34%)` | Deep burgundy |
 | **royal** | `hsl(230, 60%, 40%)` | Rich purple-blue |
+| **violet** | `hsl(258, 85%, 62%)` | Glowing electric violet |
 | **normal** | `#ced1d5` | Neutral gray |
 | **inverse** | black/white | High contrast, adapts to mode |
 

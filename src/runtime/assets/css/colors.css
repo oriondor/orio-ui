@@ -144,3 +144,7 @@
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 5%, #fff);
   --color-accent-soft-darker: var(--color-accent-soft);
 }
+
+:root[data-theme="violet"] {
+  --color-accent: hsl(258 85% 62%);
+}

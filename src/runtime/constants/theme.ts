@@ -8,6 +8,13 @@ export const COOKIE_NAMES = {
   mode: "orio-mode",
 } as const;
 
-export const THEMES = ["navy", "teal", "forest", "wine", "royal"] as const;
+export const THEMES = [
+  "navy",
+  "teal",
+  "forest",
+  "wine",
+  "royal",
+  "violet",
+] as const;
 
 export const MODES = ["light", "dark"] as const;

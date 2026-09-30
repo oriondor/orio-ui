@@ -34,7 +34,14 @@ describe("ThemeSwitcher", () => {
     const options = JSON.parse(
       wrapper.find(".selector-stub").attributes("data-options")!,
     );
-    expect(options).toEqual(["navy", "teal", "forest", "wine", "royal"]);
+    expect(options).toEqual([
+      "navy",
+      "teal",
+      "forest",
+      "wine",
+      "royal",
+      "violet",
+    ]);
 
     await wrapper.find(".selector-stub").trigger("click");
     expect(document.documentElement.getAttribute("data-theme")).toBe("wine");
