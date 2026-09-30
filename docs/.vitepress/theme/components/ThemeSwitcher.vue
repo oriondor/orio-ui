@@ -11,6 +11,7 @@ const THEME_OPTIONS = [
   "forest",
   "wine",
   "royal",
+  "violet",
 ] as const;
 </script>
 

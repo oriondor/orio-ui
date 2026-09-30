@@ -73,6 +73,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `gallery/CarouselPreview.vue` — horizontal thumbnail strip for the Carousel; clicking a thumb updates the shared `activeImage` model. **Read the agent doc first.**
 - `ListItem.vue` — `<li>` row with start/end slots and optional selectable checkbox-style behavior. **Read the agent doc first.**
 - `LocaleSwitcher.vue` — preconfigured Selector that mutates vue-i18n's locale; defaults to English + Ukrainian with flag emojis. **Read the agent doc first.**
+- `Map.vue` — pannable/zoomable MapLibre map showing one point with a customizable pin; free OpenFreeMap tiles, themed to mode and accent. **Read the agent doc first.**
 - `ModeSwitcher.vue` — preconfigured Selector that mutates useTheme's light/dark mode with translated labels. **Read the agent doc first.**
 - `ThemeSwitcher.vue` — preconfigured Selector that mutates useTheme's accent theme; defaults to the five bundled themes. **Read the agent doc first.**
 - `upload/` — headless file upload — provides drop-zone state and file-dialog opener via slot props; consumer renders the UI. **Read the agent doc first.**
@@ -90,6 +91,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `useInertia` — post-drag momentum loop that calls a tick callback with decaying velocity each frame. **Read the agent doc first.**
 - `useListKeyboard` — arrow / Home / End / Enter / Space / Esc handling for a flat indexable list with auto scroll-into-view. **Read the agent doc first.**
 - `useLongPress` — long-press detection on any element with move/cancel handling, Safari force click, and click swallow after trigger. **Read the agent doc first.**
+- `useMapStyle` — picks the OpenFreeMap style for light/dark mode and tints water/roads with the accent on an attached MapLibre map. **Read the agent doc first.**
 - `useModal` — returns a `modalProps` bag (show, origin, update handler) plus `openModal(event?)` that derives origin from a click target. **Read the agent doc first.**
 - `usePinchZoom` — touch-only pinch handler that tracks up to 2 pointers and exposes scale factor, midpoint, and midpoint delta. **Read the agent doc first.**
 - `usePressAndHold` — fires a callback once immediately, then repeats every 50 ms after a 500 ms hold. **Read the agent doc first.**

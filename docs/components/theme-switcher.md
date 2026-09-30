@@ -18,7 +18,7 @@ Pick a theme — the accent color of this page updates live.
 </template>
 ```
 
-By default it lists every theme in the exported `THEMES` constant (`navy`, `teal`, `forest`, `wine`, `royal`). Pass `themes` to restrict or extend the list — the strings are used verbatim as `data-theme` values, so any theme you register in CSS is valid:
+By default it lists every theme in the exported `THEMES` constant (`navy`, `teal`, `forest`, `wine`, `royal`, `violet`). Pass `themes` to restrict or extend the list — the strings are used verbatim as `data-theme` values, so any theme you register in CSS is valid:
 
 ```vue
 <template>
