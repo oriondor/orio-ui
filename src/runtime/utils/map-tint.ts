@@ -26,24 +26,54 @@ export function tintWeightFor(layerId: string): number | undefined {
   return TINT_RULES.find((rule) => rule.pattern.test(layerId))?.weight;
 }
 
-/** Parses the `rgb()` / `rgba()` strings that `getComputedStyle` returns. */
+/**
+ * Parses byte-range `rgb()` / `rgba()` strings only. Other serializations
+ * (`color(srgb 1 0 0)`, `oklch(…)`) use different channel ranges, so their
+ * numbers must never be read as RGB bytes.
+ */
 export function parseRgba(color: string): RgbaColor | undefined {
+  if (!/^rgba?\(/i.test(color.trim())) return undefined;
   const channels = color.match(/[\d.]+/g)?.map(Number);
   if (!channels || channels.length < 3) return undefined;
   const [red, green, blue, alpha = 1] = channels;
   return { red, green, blue, alpha };
 }
 
-/** Resolves any CSS colour (tokens, hsl, named) to rgba via the browser. */
+let pixelContext: CanvasRenderingContext2D | null | undefined;
+
+/**
+ * Paints the colour into a 1px canvas and reads it back, which yields sRGB
+ * bytes for any colour space the browser supports (gamut-clipped).
+ */
+function rasterizeColor(color: string): RgbaColor | undefined {
+  if (pixelContext === undefined) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    pixelContext = canvas.getContext("2d", { willReadFrequently: true });
+  }
+  if (!pixelContext) return undefined;
+  pixelContext.clearRect(0, 0, 1, 1);
+  pixelContext.fillStyle = color;
+  pixelContext.fillRect(0, 0, 1, 1);
+  const [red, green, blue, alpha] = pixelContext.getImageData(0, 0, 1, 1).data;
+  return { red, green, blue, alpha: alpha / 255 };
+}
+
+/** Resolves any CSS colour (tokens, hsl, oklch, color-mix…) to sRGB bytes. */
 export function resolveCssColor(color: string): RgbaColor | undefined {
   if (typeof document === "undefined") return undefined;
   const probe = document.createElement("span");
   probe.style.display = "none";
   probe.style.color = color;
+  // The style setter drops values the browser cannot parse
+  if (!probe.style.color) return undefined;
   document.body.appendChild(probe);
+  // Resolves var() and validates; legacy colours already come back as rgb()
   const resolved = getComputedStyle(probe).color;
   probe.remove();
-  return parseRgba(resolved);
+  if (!resolved) return undefined;
+  return parseRgba(resolved) ?? rasterizeColor(resolved);
 }
 
 export function mixColors(
