@@ -15,15 +15,24 @@ export function useLinkNavigation() {
   const router = inject<Router | null>(routerKey, null);
 
   function hrefFor(to: RouteLocationRaw): string {
-    if (typeof to === "string") return to;
+    if (typeof to === "string" && (!router || isBrowserHandledHref(to)))
+      return to;
     return router ? router.resolve(to).href : "";
+  }
+
+  /** Anchors with a foreign `target` or `download` are left to the browser. */
+  function opensOutsideRouter(anchor: Element | null): boolean {
+    if (!anchor) return false;
+    const target = anchor.getAttribute("target");
+    return (!!target && target !== "_self") || anchor.hasAttribute("download");
   }
 
   function navigate(event: MouseEvent, to: RouteLocationRaw) {
     if (!router || event.defaultPrevented || event.button !== 0) return;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
       return;
-    if (isBrowserHandledHref(hrefFor(to))) return;
+    if (opensOutsideRouter(event.currentTarget as Element | null)) return;
+    if (typeof to === "string" && isBrowserHandledHref(to)) return;
     event.preventDefault();
     router.push(to);
   }
