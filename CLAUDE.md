@@ -65,7 +65,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `Icon.vue` — SVG icon renderer that pulls from `utils/icon-registry` and renders via v-html. **Read the agent doc first.**
 - `LoadingSpinner.vue` — thin wrapper that renders the bundled `loading-loop` icon; no props.
 - `LongPress.vue` — wrapper that scales its child down while held and emits `trigger` after a delay or on Safari force click. **Read the agent doc first.**
-- `NavButton.vue` — bare nav-styled button or link (`to` → `<a href>` + router push) with `active` state and `aria-current="page"` for the current route. **Read the agent doc first.**
+- `NavButton.vue` — bare nav-styled single `<a>` — `role="button"` without `to`, real href + router push with it — with `active` state and `aria-current="page"`. **Read the agent doc first.**
 - `Tag.vue` — small text chip with neutral or accent variant; static display only (no remove behavior). **Read the agent doc first.**
 
 ### Media & misc

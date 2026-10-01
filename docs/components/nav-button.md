@@ -71,9 +71,9 @@ function navigate(page) {
 
 ## As a Link
 
-Pass `to` for real navigation: the nav button renders an `<a href>`, so crawlers
+Pass `to` for real navigation: the nav button gets a real `href`, so crawlers
 and "open in new tab" work, and internal paths go through the Vue router (no reload). `active` still controls the highlight
-and `aria-current`. While `disabled` it falls back to a `<button>`.
+and `aria-current`. While `disabled` the `href` is dropped and the link is marked `aria-disabled`.
 
 <div class="demo-container">
   <div class="demo-row">
@@ -220,11 +220,11 @@ function navigate(page) {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `icon` | `string` | `undefined` | Icon name from icon registry |
-| `disabled` | `boolean` | `false` | Disables button interaction |
+| `disabled` | `boolean` | `false` | Disables interaction: `aria-disabled`, no `href`, out of tab order |
 | `active` | `boolean` | `false` | Indicates current/active page or section |
 | `to` | `RouteLocationRaw` | `undefined` | Render as a real `<a href>` (router navigation for internal paths); ignored while `disabled` |
 
-**Note:** The native HTML `type` attribute (e.g., `type="button"`) can be used normally via `v-bind` and will be passed through to the underlying `<button>` element.
+**Note:** NavButton always renders a single `<a>`. Without `to` it is a `role="button"` anchor, so it never submits a form — use `<orio-button>` for that.
 
 ## Events
 
@@ -251,10 +251,10 @@ The NavButton uses these CSS variables:
 
 ## Accessibility
 
-- **Keyboard Support**: Full support for Space and Enter keys
+- **Keyboard Support**: Enter and Space activate it when it has no `to`; with `to`, Enter follows the link natively
 - **Focus Visible**: 2px outline appears on keyboard focus
-- **ARIA**: Automatically sets `aria-current="page"` when `active` prop is true
-- **Semantic HTML**: Uses proper `<button>` element
+- **ARIA**: `role="button"` without `to`, `aria-disabled="true"` when disabled, `aria-current="page"` when `active` is true
+- **Semantic HTML**: One `<a>` element — a real link with `to`, a button-role anchor without
 
 ## Use Cases
 
