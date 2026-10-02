@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.34.0](https://github.com/oriondor/orio-ui/compare/v1.33.0...v1.34.0) (2026-10-02)
+
+
+### Features
+
+* `to` prop on Button and NavButton renders a real link with router navigation ([#186](https://github.com/oriondor/orio-ui/issues/186)) ([72c6599](https://github.com/oriondor/orio-ui/commit/72c6599c24ea72a982ff1d4c3c9b07bb02f4bcb9))
+* map component + violet theme ([#185](https://github.com/oriondor/orio-ui/issues/185)) ([bd3e0fa](https://github.com/oriondor/orio-ui/commit/bd3e0fa71bbda4849a0a2f2e43585791bbbe2d92))
+
 ## [1.33.0](https://github.com/oriondor/orio-ui/compare/v1.32.3...v1.33.0) (2026-09-29)
 
 feat: Add a long-press wrapper for components
