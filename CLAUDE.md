@@ -60,12 +60,12 @@ from the frontmatter of those docs; do not edit by hand.
 ### Buttons & indicators
 - `Badge.vue` — small status pill or dot indicator; optionally positioned in the top-right corner of a wrapped element. **Read the agent doc first.**
 - `Banner.vue` — page-level notice strip with danger/alert/success/info variants; default slot for content. **Read the agent doc first.**
-- `Button.vue` — primary action button with variants, loading, icon slots, and auto icon-only sizing. **Read the agent doc first.**
+- `Button.vue` — primary action button with variants, loading, icon slots, auto icon-only sizing, and `to` for link rendering. **Read the agent doc first.**
 - `EmptyState.vue` — centered empty-list placeholder with optional icon, title, description, and action slot. **Read the agent doc first.**
 - `Icon.vue` — SVG icon renderer that pulls from `utils/icon-registry` and renders via v-html. **Read the agent doc first.**
 - `LoadingSpinner.vue` — thin wrapper that renders the bundled `loading-loop` icon; no props.
 - `LongPress.vue` — wrapper that scales its child down while held and emits `trigger` after a delay or on Safari force click. **Read the agent doc first.**
-- `NavButton.vue` — bare nav-styled button with `active` state and `aria-current="page"` for the current route. **Read the agent doc first.**
+- `NavButton.vue` — bare nav-styled single `<a>` — `role="button"` without `to`, real href + router push with it — with `active` state and `aria-current="page"`. **Read the agent doc first.**
 - `Tag.vue` — small text chip with neutral or accent variant; static display only (no remove behavior). **Read the agent doc first.**
 
 ### Media & misc

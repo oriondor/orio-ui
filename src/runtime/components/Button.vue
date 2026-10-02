@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, toRefs, useSlots } from "vue";
+import type { RouteLocationRaw } from "vue-router";
+import { useLinkNavigation } from "../utils/link";
 import type { ControlProps } from "./ControlElement.vue";
 
 interface Props extends ControlProps {
@@ -7,6 +9,8 @@ interface Props extends ControlProps {
   icon?: string;
   loading?: boolean;
   pill?: boolean;
+  /** Renders a real `<a href>` instead of a `<button>`; internal paths navigate through the Vue router when one is installed (no reload). External URLs, `tel:`/`mailto:` and `#hash` are left to the browser. Ignored while `disabled` or `loading`. */
+  to?: RouteLocationRaw;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -16,6 +20,11 @@ const props = withDefaults(defineProps<Props>(), {
 const { loading, disabled } = toRefs(props);
 
 const slots = useSlots();
+
+const asLink = computed(
+  () => props.to !== undefined && !loading.value && !disabled.value,
+);
+const { hrefFor, navigate } = useLinkNavigation();
 
 const isIconOnly = computed(() => {
   const hasIcon = !!props.icon || !!slots.icon;
@@ -33,6 +42,7 @@ const emit = defineEmits<{
 function click(event: PointerEvent) {
   if (loading.value || disabled.value) return;
   emit("click", event);
+  if (asLink.value) navigate(event, props.to!);
 }
 
 function onMousedown(event: MouseEvent) {
@@ -51,9 +61,16 @@ function onMouseleave(event: MouseEvent) {
 
 <template>
   <orio-control-element v-slot="{ control }" v-bind="props">
-    <button
+    <component
+      :is="asLink ? 'a' : 'button'"
       v-bind="{ ...$attrs, ...control }"
-      :class="[variant, 'gradient-hover', { 'icon-only': isIconOnly, pill }]"
+      :href="asLink ? hrefFor(to!) : undefined"
+      :class="[
+        variant,
+        'gradient-hover',
+        'orio-button-el',
+        { 'icon-only': isIconOnly, pill },
+      ]"
       @click="click"
       @mousedown="onMousedown"
       @mouseup="onMouseup"
@@ -69,12 +86,14 @@ function onMouseleave(event: MouseEvent) {
 
         <slot name="icon-right" />
       </template>
-    </button>
+    </component>
   </orio-control-element>
 </template>
 
 <style lang="scss" scoped>
-button {
+.orio-button-el {
+  text-decoration: none;
+  box-sizing: border-box;
   background-color: var(--color-accent);
   color: var(--color-accent-ink);
   border: 1px solid transparent;

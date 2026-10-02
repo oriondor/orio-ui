@@ -1,22 +1,22 @@
 ---
 kind: component
 category: Buttons & indicators
-purpose: nav button, link-styled button, navigation item, sidebar item
-short: bare nav-styled button with `active` state and `aria-current="page"` for the current route
+purpose: nav button, nav link, link-styled button, navigation item, sidebar item, menu link
+short: bare nav-styled single `<a>` — `role="button"` without `to`, real href + router push with it — with `active` state and `aria-current="page"`
 invariants: true
 ---
 
 # NavButton — agent-only invariants
 
 `<orio-nav-button>` is a transparent, text-styled button for navigation
-menus and tab bars. It is not a `<router-link>` — wrap it or wire
-navigation in the `click` handler yourself.
+menus and tab bars. It always renders one `<a>`: pass `to` and it gets a real
+`href`; without `to` it is a `role="button"` anchor.
 
 ## Invariants
 
 - **`active` prop is the "is this the current item" flag.** When true:
   - Text becomes accent color, font-weight 600.
-  - `aria-current="page"` is set on the inner `<button>`.
+  - `aria-current="page"` is set on the inner `<a>`.
   - `undefined` (not removed) otherwise — so it doesn't appear in the
     DOM at all when inactive.
 - **`icon` prop OR `#icon` slot** — same pattern as `<orio-button>`.
@@ -24,52 +24,53 @@ navigation in the `click` handler yourself.
   `border-radius: 50%`, `aspect-ratio: 1`, `padding: var(--control-py)`.
 - **No `variant` prop.** One look only — transparent background, text
   color, no border.
-- **`disabled` blocks click** and applies 0.5 opacity + `cursor:
-  not-allowed`.
+- **Always one `<a>`, never a `<button>`.** Without `href` it gets
+  `role="button"`, `tabindex="0"` and native-button keys: Enter clicks on
+  keydown, Space clicks once on keyup (held-Space repeats are swallowed, no
+  page scroll). Both go through `element.click()`, so `click` emits.
+- **`disabled`** sets `aria-disabled="true"`, drops the `href`, sets
+  `tabindex="-1"` and blocks click; styled via `[aria-disabled="true"]`
+  (0.5 opacity + `cursor: not-allowed`). No native `disabled` attribute.
 - **Only emits `click`.** No mousedown/mouseup like `<orio-button>`.
+- **`to` prop → link.** When set (and not `disabled`) the inner element is a
+  plain `<a href>` (`utils/link.ts`), so crawlers, middle-click and "open in
+  new tab" work. If a Vue router is installed, a plain left-click on an
+  internal path calls `router.push` instead of reloading; modifier-clicks,
+  external URLs, `tel:`/`mailto:` and `#hash` stay native. `active` still drives the class and
+  `aria-current`; the component does not detect the current route itself.
+  Enter on a link stays native (no `preventDefault`).
 - **Focus ring**: `outline: 2px solid var(--color-accent)` with
   `outline-offset: 2px`. Keyboard-only via `:focus-visible`.
 
 ## Gotchas
 
-- **Not a router link.** No `to`, no `href`. Wire navigation in
-  `@click`. If a real anchor is needed for a11y / right-click-to-open,
-  fall back to your router's link component.
+- **Prefer `to` over `@click` + `router.push` for navigation.** A click
+  handler gives no `href`, so prerender crawlers and SEO never see the
+  route. Use `@click` only for non-navigation actions.
+- **No Nuxt dependency.** Works in plain Vue/VitePress: without a router the
+  anchor simply navigates.
 - **Same `$attrs` duplication caveat as `<orio-button>`** — attrs may
-  land on both the wrapper and the inner `<button>`.
+  land on both the wrapper and the inner `<a>`.
 - **Active state is purely visual + ARIA**; the component does not
   detect the current route. Compute `active` from `useRoute()` or your
   router state.
-- **`type` defaults to `submit`** (native default). Pass `type="button"`
-  if mounted inside a form to avoid accidental submits.
+- **Never submits a form.** It is an anchor, so `type="submit"` does
+  nothing. Use `<orio-button>` for form submission.
+- **Font is inherited** from the parent (anchors don't get the UA button
+  font).
 
 ## Quick reference
 
 ```vue
+<!-- from docs/components/nav-button.md ("As a Link") -->
 <script setup lang="ts">
-import { useRoute, useRouter } from "vue-router";
-
 const route = useRoute();
-const router = useRouter();
 </script>
 
 <template>
   <nav>
-    <orio-nav-button
-      icon="home"
-      :active="route.path === '/'"
-      @click="router.push('/')"
-    >
-      {{ $t("nav.home") }}
-    </orio-nav-button>
-
-    <orio-nav-button
-      icon="settings"
-      :active="route.path === '/settings'"
-      @click="router.push('/settings')"
-    >
-      {{ $t("nav.settings") }}
-    </orio-nav-button>
+    <orio-nav-button to="/menu" :active="route.path === '/menu'">Menu</orio-nav-button>
+    <orio-nav-button to="/about" :active="route.path === '/about'">About</orio-nav-button>
   </nav>
 </template>
 ```

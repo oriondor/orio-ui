@@ -51,6 +51,29 @@ function handleClick() {
   </div>
 </div>
 
+## As a Link
+
+Pass `to` and the button renders a real `<a href>`, so crawlers, middle-click and
+"open in new tab" work. Internal paths navigate through the Vue router when one is
+installed (always in Nuxt), without a page reload. External URLs, `tel:` / `mailto:`
+and `#hash` links are left to the browser. While `disabled` or `loading` it falls back to a
+`<button>`.
+
+<div class="demo-container">
+  <div class="demo-row">
+    <orio-button to="#as-a-link">Internal link</orio-button>
+    <orio-button to="mailto:hello@example.com" variant="secondary">Email us</orio-button>
+    <orio-button to="#as-a-link" disabled>Disabled link</orio-button>
+  </div>
+</div>
+
+```vue
+<template>
+  <orio-button to="/reserve">Book a table</orio-button>
+  <orio-button to="tel:+31165564090" variant="secondary">Call us</orio-button>
+</template>
+```
+
 ## Usage
 
 ### Basic
@@ -115,6 +138,7 @@ async function save() {
 | `icon` | `string` | `undefined` | Icon name from icon registry |
 | `loading` | `boolean` | `false` | Shows loading spinner, prevents clicks |
 | `disabled` | `boolean` | `false` | Disables button interaction |
+| `to` | `RouteLocationRaw` | `undefined` | Render as a real `<a href>` (router navigation for internal paths); ignored while `disabled`/`loading` |
 
 **Note:** The native HTML `type` attribute (e.g., `type="submit"`) can be used normally via `v-bind` and will be passed through to the underlying `<button>` element.
 
