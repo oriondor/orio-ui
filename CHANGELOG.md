@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.34.0](https://github.com/oriondor/orio-ui/compare/v1.33.0...v1.34.0) (2026-10-02)
+
+### feat: `to` prop on Button and NavButton renders a real link with router navigation ([#186](https://github.com/oriondor/orio-ui/pull/186))
+
+feat: `to` prop on Button and NavButton renders a real link with router navigation
+
+- Add a `to` prop to `Button` and `NavButton`. Enabled `Button` components render anchors with `href` values and retain their styling.
+- Route eligible internal clicks through Vue Router when available. Keep modifier-clicks, external URLs, protocol URLs, and fragment links under native browser behavior. Skip router navigation for links with a non-`_self` target or a `download` attribute.
+- Keep disabled or loading `Button` components as buttons. Keep disabled `NavButton` components as disabled anchors without link behavior.
+- Preserve `NavButton`’s caller-provided `active` state for styling and `aria-current`.
+- Add tests for link rendering, click handling, navigation, and disabled or loading behavior.
+- Update component documentation and agent guidance with link usage and examples.
+
+### feat: map component + violet theme ([#185](https://github.com/oriondor/orio-ui/pull/185))
+
+feat: map component + violet theme
+
+- Add `<orio-map>` with pannable, zoomable MapLibre maps that display one coordinate and update the view when coordinates change.
+- Load MapLibre and its CSS on mount. Use OpenFreeMap light or dark styles by default, with no API key.
+- Add `markerIcon`, `markerColor`, and `#marker` slot options for marker customization.
+- Add `useMapStyle` to select styles by mode and tint eligible water and road layers with the accent color.
+- When `mapStyle` provides a custom style URL, use that style instead of automatic mode styles and tinting.
+- Add the `violet` theme to runtime theme options, theme switching, and theme documentation.
+- Add map translations, component and composable guidance, and a map documentation page with examples.
+- Add Map component tests and update ThemeSwitcher tests for the `violet` theme.
+
 ## [1.33.0](https://github.com/oriondor/orio-ui/compare/v1.32.3...v1.33.0) (2026-09-29)
 
 feat: Add a long-press wrapper for components
