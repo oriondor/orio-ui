@@ -34,11 +34,20 @@ invariants: true
 - Multiple modals stacked at once will all lock body scroll; closing one
   releases the lock for all. If you nest modals, manage the lock yourself.
 - `origin`'s `width` / `height` should be the trigger's rendered size, not
-  the modal's. The animation derives the inverse scale from
-  `width / modalWidth` — wrong size = visible jump.
-- The component uses inline styles via direct `.style.transform`
-  assignment on the wrapper ref. Do not animate `transform` from outside;
-  the component will overwrite it on the next open.
+  the modal's. Open is a FLIP: the modal measures its own laid-out rect,
+  jumps onto `origin` (translate + non-uniform scale, `transform-origin:
+  top left`), then transitions to `transform: none`. Close reverses it:
+  shrinks back onto `origin` and fades at the tail, so keep `origin` set
+  until the modal has closed. Wrong size = visible jump.
+- The overlay transition fades only the backdrop (`background`,
+  `backdrop-filter`), never `opacity` — fading the overlay would hide the
+  modal mid-morph. Leave completes on the overlay's own `transitionend`.
+- `prefers-reduced-motion: reduce` skips the morph (plain 0.15s fade).
+  The transition has `appear`, so mounting with `show` already true
+  still plays the enter hook.
+- The component writes `style.transform`, `style.transition` and
+  `style.opacity` inline on the wrapper. Do not animate them from outside;
+  the component overwrites them on every open.
 
 ## Quick reference
 

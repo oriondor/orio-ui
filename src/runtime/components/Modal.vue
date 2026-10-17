@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, nextTick, watch, computed } from "vue";
-import { useWindowSize, useTimeoutFn, useScrollLock } from "@vueuse/core";
+import { ref, watch, computed } from "vue";
+import { useScrollLock } from "@vueuse/core";
 
 import { useSlots } from "vue";
 
@@ -26,40 +26,54 @@ const isLocked = import.meta.client ? useScrollLock(document.body) : ref(false);
 
 const wrapper = ref<HTMLDivElement | null>(null);
 
-const { width: windowWidth, height: windowHeight } = useWindowSize();
-
-function animateToCenter(el: HTMLDivElement) {
-  useTimeoutFn(() => {
-    requestAnimationFrame(() => {
-      el.style.transform = "translate(0, 0) scale(1)";
-      el.style.opacity = "1";
-    });
-  }, 100);
+// translate + scale that lays the modal exactly over the trigger rect
+function originTransform(el: HTMLElement, origin: OriginRect) {
+  const final = el.getBoundingClientRect();
+  return `translate(${origin.x - final.left}px, ${origin.y - final.top}px) scale(${origin.width / final.width}, ${origin.height / final.height})`;
 }
 
-async function animateOpen() {
-  await nextTick();
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
+function animateOpen() {
   const el = wrapper.value;
   if (!el) return;
-  if (!props.origin) {
-    animateToCenter(el);
-    return;
+
+  // FLIP: jump onto the trigger without transition, then play to identity
+  if (props.origin && !prefersReducedMotion()) {
+    el.style.transition = "none";
+    el.style.transform = originTransform(el, props.origin);
+    // force reflow so the start transform is committed before transitioning
+    void el.offsetWidth;
   }
+  el.style.transition = "";
+  el.style.transform = "none";
+  el.style.opacity = "1";
+}
 
-  const { x, y, width, height } = props.origin;
+function animateClose(overlay: Element, done: () => void) {
+  // wrapper ref is already cleared during leave, so query the element
+  const el = overlay.querySelector<HTMLElement>(".modal");
+  if (!el) return done();
 
-  el.style.transform = `
-        translate(${x - windowWidth.value / 2}px, ${y - windowHeight.value / 2}px)
-        scale(${width / el.offsetWidth}, ${height / el.offsetHeight})
-      `;
-  el.style.opacity = "0.5";
+  // backdrop fade is the longest leg; modal transitions bubble here too
+  overlay.addEventListener("transitionend", (event) => {
+    if (event.target === overlay) done();
+  });
+  // fallback when transitionend never fires (hidden tab)
+  setTimeout(done, 500);
 
-  animateToCenter(el);
+  if (props.origin && !prefersReducedMotion()) {
+    // fade only at the tail so it visibly shrinks back into the trigger
+    el.style.transition =
+      "transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.15s ease-in 0.25s";
+    el.style.transform = originTransform(el, props.origin);
+  }
+  el.style.opacity = "0";
 }
 
 watch(show, (open) => {
-  if (open) animateOpen();
   isLocked.value = open as boolean;
 });
 
@@ -73,8 +87,13 @@ const hasFooter = computed(() => {
 </script>
 
 <template>
-  <transition name="overlay-fade">
-    <teleport to="body">
+  <teleport to="body">
+    <transition
+      appear
+      name="overlay-fade"
+      @enter="animateOpen"
+      @leave="animateClose"
+    >
       <div v-if="show" class="overlay" @click.self="show = false">
         <div ref="wrapper" class="modal">
           <header v-if="hasHeader" class="modal-header">
@@ -100,8 +119,8 @@ const hasFooter = computed(() => {
           </footer>
         </div>
       </div>
-    </teleport>
-  </transition>
+    </transition>
+  </teleport>
 </template>
 
 <style scoped>
@@ -115,7 +134,6 @@ const hasFooter = computed(() => {
   justify-content: center;
   align-items: center;
 
-  transition: opacity 0.25s ease;
   z-index: 99;
 }
 
@@ -137,8 +155,8 @@ const hasFooter = computed(() => {
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
 
   transition:
-    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 0.3s ease;
+    transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.15s ease-out;
 
   color: var(--color-text);
   opacity: 0;
@@ -163,12 +181,28 @@ const hasFooter = computed(() => {
   padding: 0.5rem 1rem;
 }
 
+/* fade only the backdrop so the modal stays visible while it morphs */
 .overlay-fade-enter-from,
 .overlay-fade-leave-to {
-  opacity: 0;
+  background: transparent;
+  backdrop-filter: blur(0);
 }
 .overlay-fade-enter-active,
 .overlay-fade-leave-active {
-  transition: opacity 0.25s ease;
+  transition:
+    background 0.4s ease,
+    backdrop-filter 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal {
+    transition: opacity 0.15s ease-out;
+  }
+  .overlay-fade-enter-active,
+  .overlay-fade-leave-active {
+    transition:
+      background 0.15s ease,
+      backdrop-filter 0.15s ease;
+  }
 }
 </style>
