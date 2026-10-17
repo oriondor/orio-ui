@@ -32,12 +32,16 @@ function originTransform(el: HTMLElement, origin: OriginRect) {
   return `translate(${origin.x - final.left}px, ${origin.y - final.top}px) scale(${origin.width / final.width}, ${origin.height / final.height})`;
 }
 
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 function animateOpen() {
   const el = wrapper.value;
   if (!el) return;
 
   // FLIP: jump onto the trigger without transition, then play to identity
-  if (props.origin) {
+  if (props.origin && !prefersReducedMotion()) {
     el.style.transition = "none";
     el.style.transform = originTransform(el, props.origin);
     // force reflow so the start transform is committed before transitioning
@@ -53,13 +57,14 @@ function animateClose(overlay: Element, done: () => void) {
   const el = overlay.querySelector<HTMLElement>(".modal");
   if (!el) return done();
 
-  el.addEventListener("transitionend", (event) => {
-    if (event.propertyName === "opacity") done();
+  // backdrop fade is the longest leg; modal transitions bubble here too
+  overlay.addEventListener("transitionend", (event) => {
+    if (event.target === overlay) done();
   });
-  // fallback when transitionend never fires (reduced motion, hidden tab)
+  // fallback when transitionend never fires (hidden tab)
   setTimeout(done, 500);
 
-  if (props.origin) {
+  if (props.origin && !prefersReducedMotion()) {
     // fade only at the tail so it visibly shrinks back into the trigger
     el.style.transition =
       "transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.15s ease-in 0.25s";
@@ -84,6 +89,7 @@ const hasFooter = computed(() => {
 <template>
   <teleport to="body">
     <transition
+      appear
       name="overlay-fade"
       @enter="animateOpen"
       @leave="animateClose"
@@ -186,5 +192,17 @@ const hasFooter = computed(() => {
   transition:
     background 0.4s ease,
     backdrop-filter 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal {
+    transition: opacity 0.15s ease-out;
+  }
+  .overlay-fade-enter-active,
+  .overlay-fade-leave-active {
+    transition:
+      background 0.15s ease,
+      backdrop-filter 0.15s ease;
+  }
 }
 </style>

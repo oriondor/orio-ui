@@ -41,7 +41,10 @@ invariants: true
   until the modal has closed. Wrong size = visible jump.
 - The overlay transition fades only the backdrop (`background`,
   `backdrop-filter`), never `opacity` — fading the overlay would hide the
-  modal mid-morph.
+  modal mid-morph. Leave completes on the overlay's own `transitionend`.
+- `prefers-reduced-motion: reduce` skips the morph (plain 0.15s fade).
+  The transition has `appear`, so mounting with `show` already true
+  still plays the enter hook.
 - The component writes `style.transform`, `style.transition` and
   `style.opacity` inline on the wrapper. Do not animate them from outside;
   the component overwrites them on every open.
