@@ -73,3 +73,9 @@
   border-radius: 4px;
   font-size: 0.9em;
 }
+
+/* The Orio locale switcher in the nav replaces VitePress' own language menu. */
+.VPNavBarTranslations,
+.VPNavScreenTranslations {
+  display: none;
+}
