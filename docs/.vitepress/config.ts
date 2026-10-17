@@ -23,6 +23,59 @@ function withAbsoluteLinks(items: SidebarItem[]): SidebarItem[] {
 const sidebarSection = (options: VitePressSidebarOptions): SidebarItem[] =>
   withAbsoluteLinks(generateSidebar(options) as SidebarItem[]);
 
+const SIDEBAR_LABELS = {
+  en: {
+    gettingStarted: "Getting Started",
+    introduction: "Introduction",
+    installation: "Installation",
+    theming: "Theming",
+    components: "Components",
+    composables: "Composables",
+    utils: "Utils",
+    experiments: "Experiments",
+  },
+  uk: {
+    gettingStarted: "Початок роботи",
+    introduction: "Вступ",
+    installation: "Встановлення",
+    theming: "Теми",
+    components: "Компоненти",
+    composables: "Композабли",
+    utils: "Утиліти",
+    experiments: "Експерименти",
+  },
+};
+
+// English pages live at the docs root, Ukrainian ones mirror them under /uk/.
+function sidebar(locale: keyof typeof SIDEBAR_LABELS): SidebarItem[] {
+  const labels = SIDEBAR_LABELS[locale];
+  const base = locale === "en" ? "" : `/${locale}`;
+  const scan = (folder: string) =>
+    sidebarSection({
+      documentRootPath: "/docs",
+      scanStartPath: `${base}/${folder}`,
+      useTitleFromFrontmatter: true,
+      useTitleFromFileHeading: true,
+      collapseDepth: 1,
+      capitalizeFirst: true,
+    });
+
+  return [
+    {
+      text: labels.gettingStarted,
+      items: [
+        { text: labels.introduction, link: `${base}/` },
+        { text: labels.installation, link: `${base}/getting-started` },
+        { text: labels.theming, link: `${base}/theming` },
+      ],
+    },
+    { text: labels.components, items: scan("components") },
+    { text: labels.composables, items: scan("composables") },
+    { text: labels.utils, items: scan("utils") },
+    { text: labels.experiments, items: scan("experiments") },
+  ];
+}
+
 export default defineConfig({
   title: "Orio UI",
   description: "A delightful component library for Nuxt 3",
@@ -98,71 +151,65 @@ export default defineConfig({
     ],
   ],
 
+  locales: {
+    root: { label: "English", lang: "en" },
+    uk: {
+      label: "Українська",
+      lang: "uk",
+      description: "Бібліотека компонентів для Nuxt 3",
+      themeConfig: {
+        nav: [
+          { text: "Посібник", link: "/uk/getting-started" },
+          { text: "Журнал змін", link: "/uk/changelog" },
+        ],
+        sidebar: { "/uk/": sidebar("uk") },
+        outline: { label: "На цій сторінці" },
+        docFooter: { prev: "Попередня сторінка", next: "Наступна сторінка" },
+        lastUpdated: { text: "Оновлено" },
+        returnToTopLabel: "Повернутися нагору",
+        sidebarMenuLabel: "Меню",
+        darkModeSwitchLabel: "Тема",
+        lightModeSwitchTitle: "Світла тема",
+        darkModeSwitchTitle: "Темна тема",
+        notFound: {
+          title: "СТОРІНКУ НЕ ЗНАЙДЕНО",
+          quote: "Схоже, такої сторінки тут немає.",
+          linkLabel: "На головну",
+          linkText: "На головну",
+        },
+      },
+    },
+  },
+
   themeConfig: {
     search: {
       provider: "local",
+      options: {
+        locales: {
+          uk: {
+            translations: {
+              button: { buttonText: "Пошук", buttonAriaLabel: "Пошук" },
+              modal: {
+                displayDetails: "Показати деталі",
+                resetButtonTitle: "Скинути пошук",
+                backButtonTitle: "Закрити пошук",
+                noResultsText: "Нічого не знайдено",
+                footer: {
+                  selectText: "вибрати",
+                  navigateText: "перейти",
+                  closeText: "закрити",
+                },
+              },
+            },
+          },
+        },
+      },
     },
     nav: [
       { text: "Guide", link: "/getting-started" },
       { text: "Changelog", link: "/changelog" },
     ],
-
-    sidebar: {
-      "/": [
-        {
-          text: "Getting Started",
-          items: [
-            { text: "Introduction", link: "/" },
-            { text: "Installation", link: "/getting-started" },
-            { text: "Theming", link: "/theming" },
-          ],
-        },
-        {
-          text: "Components",
-          items: sidebarSection({
-            documentRootPath: "/docs",
-            scanStartPath: "/components",
-            useTitleFromFrontmatter: true,
-            useTitleFromFileHeading: true,
-            collapseDepth: 1,
-            capitalizeFirst: true,
-          }),
-        },
-        {
-          text: "Composables",
-          items: sidebarSection({
-            documentRootPath: "/docs",
-            scanStartPath: "/composables",
-            useTitleFromFrontmatter: true,
-            useTitleFromFileHeading: true,
-            collapseDepth: 1,
-            capitalizeFirst: true,
-          }),
-        },
-        {
-          text: "Utils",
-          items: sidebarSection({
-            documentRootPath: "/docs",
-            scanStartPath: "/utils",
-            useTitleFromFrontmatter: true,
-            useTitleFromFileHeading: true,
-            collapseDepth: 1,
-            capitalizeFirst: true,
-          }),
-        },
-        {
-          text: "Experiments",
-          items: sidebarSection({
-            documentRootPath: "/docs",
-            scanStartPath: "/experiments",
-            useTitleFromFrontmatter: true,
-            useTitleFromFileHeading: true,
-            collapseDepth: 1,
-            capitalizeFirst: true,
-          }),
-        },
-      ],
-    },
+    sidebar: { "/": sidebar("en") },
     socialLinks: [
       { icon: "github", link: "https://github.com/oriondor/orio-ui" },
     ],
