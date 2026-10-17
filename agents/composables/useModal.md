@@ -27,9 +27,11 @@ no `:origin` wiring.
   `"onUpdate:show"` listener is wired internally so the modal's close
   button / backdrop click syncs back to the bag.
 - **`OriginRect`** (exported): `{ x, y, width, height }` — derived from
-  `getBoundingClientRect()` of the event target.
+  `getBoundingClientRect()` of `event.currentTarget` (falls back to
+  `event.target`).
 - **`openModal(event?)`**:
-  - With an event: reads `event.target.getBoundingClientRect()` and
+  - With an event: reads the `currentTarget` rect (the element the
+    listener is on, not a child icon) and
     sets `origin` so the modal animates from the target. Sets `show`
     to true.
   - Without an event: clears `origin` to `null` and opens with a plain
@@ -39,18 +41,9 @@ no `:origin` wiring.
 
 ## Gotchas
 
-- **`event.target` is the clicked DOM node**, which may be a child of
-  the actual button (e.g. an icon inside). The rect then comes from
-  the icon, not the button — the animation origin will be tiny. To
-  capture the button itself, use `event.currentTarget` semantics by
-  reading the rect manually before calling `openModal`:
-  ```ts
-  function onClick(event: MouseEvent) {
-    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    modalProps.value.origin = rect;
-    modalProps.value.show = true;
-  }
-  ```
+- **Call `openModal` synchronously in the click handler.**
+  `currentTarget` is `null` after dispatch (e.g. after an `await`); it
+  then falls back to `target`, which may be a child icon.
 - **Only one modal per call site.** For multiple modals, call
   `useModal()` once per modal — they don't share state.
 - **No `v-model:show`** on the returned bag — the bag uses the explicit

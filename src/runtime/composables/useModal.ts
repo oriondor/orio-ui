@@ -30,7 +30,7 @@ export function useModal() {
       modalProps.value.show = true;
       return;
     }
-    const target = event.target as HTMLElement;
+    const target = (event.currentTarget ?? event.target) as HTMLElement;
     const rect = target.getBoundingClientRect();
 
     modalProps.value.origin = {
