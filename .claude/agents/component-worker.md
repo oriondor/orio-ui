@@ -61,6 +61,7 @@ not edit by hand.
 - **radio, radio button, single-choice from group** → `RadioButton.vue` (read the agent doc first)
 - **OTP input, one-time password, verification code, PIN code, segmented code boxes** → `SegmentedInput.vue` (read the agent doc first)
 - **select, dropdown, combobox, listbox picker, single or multi-select** → `Selector.vue` (read the agent doc first)
+- **range slider, range input, value slider** → `Slider.vue` (read the agent doc first)
 - **toggle, on/off switch, pill toggle, boolean button** → `SwitchButton.vue` (read the agent doc first)
 - **searchable creatable multi-select with tag chips, taggable selector, chip picker, create option** → `TaggableSelector.vue` (read the agent doc first)
 - **textarea, multi-line text, long text input** → `Textarea.vue` (read the agent doc first)

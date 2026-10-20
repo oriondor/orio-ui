@@ -46,6 +46,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `RadioButton.vue` — single radio option wrapping ControlElement; group by sharing the same v-model. **Read the agent doc first.**
 - `SegmentedInput.vue` — fixed-length code input split into auto-advancing per-character segments for OTP / PIN entry. **Read the agent doc first.**
 - `Selector.vue` — button-triggered listbox in a popover; supports single and multi-select with string or object options. **Read the agent doc first.**
+- `Slider.vue` — single-value range slider over a native `<input type="range">` wrapping ControlElement; accent fill via CSS `v-bind(percent)`. **Read the agent doc first.**
 - `SwitchButton.vue` — boolean on/off pill button (not a sliding switch) wrapping ControlElement; click/Enter/Space toggle. **Read the agent doc first.**
 - `TaggableSelector.vue` — searchable, creatable multi-select Selector that renders chosen options as tag chips and can emit new tags. **Read the agent doc first.**
 - `Textarea.vue` — multi-line text input wrapping ControlElement; supports inner-floating label and vertical resize. **Read the agent doc first.**
