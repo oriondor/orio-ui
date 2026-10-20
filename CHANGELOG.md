@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.36.0](https://github.com/oriondor/orio-ui/compare/v1.35.0...v1.36.0) (2026-10-20)
+
+feat: Implemented slider component
+
+- Add the `Slider` Vue component with range input support, value clamping, step normalization, model updates, slots, attribute forwarding, and filled-track styling.
+- Add slider thumb and track size tokens for all control sizes.
+- Add English and Ukrainian Slider documentation with usage examples, props, events, slots, keyboard support, and styling variables.
+- Add Slider component routing entries and agent documentation.
+- Add tests for attributes, value normalization, fractional steps, fill percentage, disabled state, labels, and form binding.
+- Update component and test-suite counts to 68 components and 57 test suites.
 ## [1.35.0](https://github.com/oriondor/orio-ui/compare/v1.34.0...v1.35.0) (2026-10-17)
 
 feat: modal opens and closes from the trigger like an iOS app launch
