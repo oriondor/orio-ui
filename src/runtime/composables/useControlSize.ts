@@ -22,6 +22,8 @@ const sizeTokens: Record<ControlSize, Record<string, string>> = {
     "--control-inner-block-start": "0.85rem",
     "--control-inner-block-end": "0.1rem",
     "--control-label-block-start": "0.15rem",
+    "--control-slider-thumb": "0.875rem",
+    "--control-slider-track": "2px",
   },
   sm: {
     "--control-font-size": "var(--font-sm)",
@@ -34,6 +36,8 @@ const sizeTokens: Record<ControlSize, Record<string, string>> = {
     "--control-inner-block-start": "1rem",
     "--control-inner-block-end": "0.1rem",
     "--control-label-block-start": "0.2rem",
+    "--control-slider-thumb": "1.125rem",
+    "--control-slider-track": "3px",
   },
   md: {
     "--control-font-size": "var(--font-md)",
@@ -46,6 +50,8 @@ const sizeTokens: Record<ControlSize, Record<string, string>> = {
     "--control-inner-block-start": "1.25rem",
     "--control-inner-block-end": "0.2rem",
     "--control-label-block-start": "0.25rem",
+    "--control-slider-thumb": "1.375rem",
+    "--control-slider-track": "4px",
   },
   lg: {
     "--control-font-size": "var(--font-lg)",
@@ -58,6 +64,8 @@ const sizeTokens: Record<ControlSize, Record<string, string>> = {
     "--control-inner-block-start": "1.1rem",
     "--control-inner-block-end": "0.2rem",
     "--control-label-block-start": "0.25rem",
+    "--control-slider-thumb": "1.625rem",
+    "--control-slider-track": "5px",
   },
   xl: {
     "--control-font-size": "var(--font-xl)",
@@ -70,6 +78,8 @@ const sizeTokens: Record<ControlSize, Record<string, string>> = {
     "--control-inner-block-start": "1.5rem",
     "--control-inner-block-end": "0",
     "--control-label-block-start": "0.25rem",
+    "--control-slider-thumb": "1.875rem",
+    "--control-slider-track": "6px",
   },
 };
 
