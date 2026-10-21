@@ -267,6 +267,38 @@ The system uses `color-mix()` to automatically derive related colors from `--col
 
 This means for most custom themes, you only need to set `--color-accent` and the rest will be derived.
 
+## Control Overrides
+
+Every control (`<orio-input>`, `<orio-button>`, `<orio-selector>`, …) sizes itself from `--control-*` tokens picked by its `size` prop. Each token first reads a public `--orio-control-*` variable, so any ancestor or theme can override it in plain CSS — no `:deep()`, no `!important`:
+
+```css
+.actions {
+  --orio-control-radius: 60px;
+}
+
+:root[data-theme="mytheme"] {
+  --orio-control-radius: 60px;
+  --orio-control-px: 1.5rem;
+}
+```
+
+An override applies to every size. Unset, each size keeps its default. A `--control-*` value in a control's own `style` still wins over both.
+
+| Variable | Controls |
+|----------|----------|
+| `--orio-control-radius` | Border radius |
+| `--orio-control-px` | Horizontal padding |
+| `--orio-control-py` | Vertical padding |
+| `--orio-control-gap` | Gap between inner items (icon, text) |
+| `--orio-control-font-size` | Control text size |
+| `--orio-control-label-font-size` | Label and error text size |
+| `--orio-control-icon-size` | Icon size |
+| `--orio-control-inner-block-start` | Top padding with `layout="inner"` |
+| `--orio-control-inner-block-end` | Bottom padding with `layout="inner"` |
+| `--orio-control-label-block-start` | Inner label offset with `layout="inner"` |
+| `--orio-control-slider-thumb` | Slider thumb diameter |
+| `--orio-control-slider-track` | Slider track height |
+
 ## Persistence
 
 Theme preferences are stored in **cookies**:

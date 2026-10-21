@@ -45,8 +45,14 @@ one, pass `ControlProps` straight through — they are usually re-exported.
     `:deep(.error-fields)` element, in which case the inner component owns
     error styling — see TaggableSelector).
 - **`size` is provided to descendants** via `provideControlSize`. Children
-  that use `useControlSize()` (e.g. inner buttons, icons) inherit it
+  that call `useControlTokens()` (e.g. inner buttons, icons) inherit it
   automatically — do not re-pass `size` down manually.
+- **Size tokens are an inline `style` on the wrapper**, but each reads a
+  public `--orio-control-*` variable first (see `useControlSize.md`). To
+  restyle controls from a parent or theme, set `--orio-control-radius`,
+  `--orio-control-px`, … in plain CSS on any ancestor. Never override
+  `--control-*` with `:deep(...)` + `!important`. A `--control-*` value in
+  the control's own `style` attr still wins.
 - **`appearance="minimal"`** zeros margin and strips border + box-shadow from
   the first slot child. Use for inputs embedded in a row with their own
   surrounding chrome.

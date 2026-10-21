@@ -28,9 +28,17 @@ icon-size tokens. Used internally by ControlElement and friends.
 - **Token keys** include `--control-font-size`, `--control-label-font-size`,
   `--control-py`, `--control-px`, `--control-gap`, `--control-radius`,
   `--control-icon-size`, `--control-inner-block-start`, `--control-inner-block-end`,
-  `--control-label-block-start`. Adding new tokens requires extending
-  every size in `sizeTokens`.
-- **`sizeTokens` is exported** as the raw record — useful for previews or
+  `--control-label-block-start`, `--control-slider-thumb`,
+  `--control-slider-track`. Adding new tokens requires extending
+  every size in `sizeDefaults` (`sizeTokens` is derived from it).
+- **Every token value is `var(--orio-control-<token>, <size default>)`.**
+  `--control-radius` in `md` is
+  `var(--orio-control-radius, var(--border-radius-md))`. Unset, the size
+  default applies; set on any ancestor or theme, it wins for every size.
+  Overrides go through `--orio-control-*` in plain CSS — never `:deep(...)`
+  with `!important` on `--control-*`. Components keep reading `--control-*`.
+  Public name = token name with `--control-` → `--orio-control-`.
+- **`sizeTokens` is exported** as the wrapped record — useful for previews or
   ad-hoc lookups outside Vue.
 
 ## Gotchas
@@ -70,4 +78,4 @@ const { tokens } = useControlTokens(toRef(props, "size"));
 - `<orio-control-element>` — provides and consumes this composable.
 - `<orio-selector>` — uses `useControlTokens(size)` to size the
   dropdown popover content.
-- Public API reference: `docs/composables/use-control-size.md`.
+- Full `--orio-control-*` list: `docs/theming.md` → "Control Overrides".

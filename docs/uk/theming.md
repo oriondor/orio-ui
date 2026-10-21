@@ -267,6 +267,38 @@ setTheme('coral')
 
 Тож для більшості власних тем достатньо задати `--color-accent`, а решта обчислиться сама.
 
+## Перевизначення контролів
+
+Кожен контрол (`<orio-input>`, `<orio-button>`, `<orio-selector>`, …) бере розміри з токенів `--control-*`, вибраних пропом `size`. Кожен токен спершу читає публічну змінну `--orio-control-*`, тож будь-який предок чи тема може перевизначити його звичайним CSS — без `:deep()` і без `!important`:
+
+```css
+.actions {
+  --orio-control-radius: 60px;
+}
+
+:root[data-theme="mytheme"] {
+  --orio-control-radius: 60px;
+  --orio-control-px: 1.5rem;
+}
+```
+
+Перевизначення діє на всі розміри. Без нього кожен розмір лишає своє значення за замовчуванням. Значення `--control-*` у власному `style` контролу все одно має пріоритет.
+
+| Змінна | Що змінює |
+|--------|-----------|
+| `--orio-control-radius` | Радіус заокруглення |
+| `--orio-control-px` | Горизонтальний відступ |
+| `--orio-control-py` | Вертикальний відступ |
+| `--orio-control-gap` | Проміжок між внутрішніми елементами (іконка, текст) |
+| `--orio-control-font-size` | Розмір тексту контролу |
+| `--orio-control-label-font-size` | Розмір тексту мітки й помилки |
+| `--orio-control-icon-size` | Розмір іконки |
+| `--orio-control-inner-block-start` | Верхній відступ при `layout="inner"` |
+| `--orio-control-inner-block-end` | Нижній відступ при `layout="inner"` |
+| `--orio-control-label-block-start` | Зсув внутрішньої мітки при `layout="inner"` |
+| `--orio-control-slider-thumb` | Діаметр повзунка Slider |
+| `--orio-control-slider-track` | Висота доріжки Slider |
+
 ## Збереження
 
 Налаштування теми зберігаються в **cookies**:
