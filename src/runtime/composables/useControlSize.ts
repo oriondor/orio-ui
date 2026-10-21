@@ -10,7 +10,7 @@ import type { ControlSize } from "../components/ControlElement.vue";
 
 const CONTROL_SIZE_KEY = Symbol("control-size");
 
-const sizeTokens: Record<ControlSize, Record<string, string>> = {
+const sizeDefaults: Record<ControlSize, Record<string, string>> = {
   xs: {
     "--control-font-size": "var(--font-sm)",
     "--control-label-font-size": "var(--font-xs)",
@@ -82,6 +82,23 @@ const sizeTokens: Record<ControlSize, Record<string, string>> = {
     "--control-slider-track": "6px",
   },
 };
+
+/**
+ * Every `--control-<token>` reads `--orio-control-<token>` first, so any
+ * ancestor (or theme) can override it in plain CSS through inheritance.
+ * Unset, the size default applies unchanged.
+ */
+const sizeTokens = Object.fromEntries(
+  Object.entries(sizeDefaults).map(([size, tokens]) => [
+    size,
+    Object.fromEntries(
+      Object.entries(tokens).map(([name, value]) => [
+        name,
+        `var(${name.replace("--control-", "--orio-control-")}, ${value})`,
+      ]),
+    ),
+  ]),
+) as Record<ControlSize, Record<string, string>>;
 
 export function provideControlSize(
   size: Ref<ControlSize> | ComputedRef<ControlSize>,
