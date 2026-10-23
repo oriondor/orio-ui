@@ -66,7 +66,7 @@ function holdSpace(event: KeyboardEvent) {
       :tabindex="elementTabindex"
       :disabled="undefined"
       :aria-disabled="disabled || undefined"
-      :class="['orio-nav-button-el', { 'icon-only': isIconOnly, active }]"
+      :class="['nav-button-element', { 'icon-only': isIconOnly, active }]"
       :aria-current="active ? 'page' : undefined"
       @click="click"
       @keydown.enter="activate"
@@ -82,7 +82,7 @@ function holdSpace(event: KeyboardEvent) {
 </template>
 
 <style lang="scss" scoped>
-.orio-nav-button-el {
+.nav-button-element {
   text-decoration: none;
   box-sizing: border-box;
   background-color: transparent;

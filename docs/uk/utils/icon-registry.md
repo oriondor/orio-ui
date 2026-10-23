@@ -15,7 +15,7 @@ const icons = Object.keys(iconRegistry)
 
 <div :style="{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem', padding: '1rem 0' }">
   <div v-for="name in icons" :key="name" :style="{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--vp-c-divider)', textAlign: 'center' }">
-    <OrioIcon :name="name" size="24" />
+    <orio-icon :name="name" size="24" />
     <code :style="{ fontSize: '0.7rem', wordBreak: 'break-all' }">{{ name }}</code>
   </div>
 </div>
