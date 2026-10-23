@@ -68,7 +68,7 @@ function onMouseleave(event: MouseEvent) {
       :class="[
         variant,
         'gradient-hover',
-        'orio-button-el',
+        'button-element',
         { 'icon-only': isIconOnly, pill },
       ]"
       @click="click"
@@ -91,7 +91,7 @@ function onMouseleave(event: MouseEvent) {
 </template>
 
 <style lang="scss" scoped>
-.orio-button-el {
+.button-element {
   text-decoration: none;
   box-sizing: border-box;
   background-color: var(--color-accent);

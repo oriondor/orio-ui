@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="orio-map" role="region" :aria-label="t('map.label')">
+  <div class="map" role="region" :aria-label="t('map.label')">
     <div ref="container" class="map-canvas" />
     <div class="marker-holder">
       <div ref="markerElement" class="map-marker">
@@ -102,7 +102,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.orio-map {
+.map {
   position: relative;
   width: 100%;
   height: 20rem;

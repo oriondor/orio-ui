@@ -33,12 +33,10 @@ floating bubble on hover or focus. It is not for click-driven menus — use
   listeners catch nested scrollers).
 - **`pointer-events: none` on the bubble.** It never intercepts the cursor —
   so leaving the trigger always closes it.
-- **Has a CSS-triangle arrow** (`.orio-tooltip-arrow-{placement}`) anchored
-  on the appropriate edge.
-- **Styles are intentionally unscoped** in the second `<style>` block,
-  because teleported nodes escape scoped CSS. Class names use the
-  `orio-tooltip-` prefix to avoid collisions. Consumers **can** override
-  them globally — useful for theming, dangerous if not namespaced.
+- **Has a CSS-triangle arrow** (`.tooltip-arrow` plus the placement class)
+  anchored on the appropriate edge.
+- **Styles are scoped.** Teleported nodes keep the component's scope
+  attribute, so scoped CSS applies. Class names carry no `orio-` prefix.
 - **`white-space: nowrap`** on the bubble. Long `text` does not wrap. For
   multi-line, render `#content` with your own line-breaking CSS.
 - **A11y is partial.** The bubble has `role="tooltip"` and `aria-hidden`,

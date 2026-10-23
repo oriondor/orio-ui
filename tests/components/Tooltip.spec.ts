@@ -24,17 +24,17 @@ describe("Tooltip", () => {
     });
 
     await wrapper.find(".trigger").trigger("mouseenter");
-    expect(wrapper.find(".orio-tooltip").exists()).toBe(false);
+    expect(wrapper.find(".tooltip").exists()).toBe(false);
 
     vi.advanceTimersByTime(200);
     await nextTick();
 
-    expect(wrapper.find(".orio-tooltip").exists()).toBe(true);
+    expect(wrapper.find(".tooltip").exists()).toBe(true);
 
     await wrapper.find(".trigger").trigger("mouseleave");
     await nextTick();
 
-    expect(wrapper.find(".orio-tooltip").exists()).toBe(false);
+    expect(wrapper.find(".tooltip").exists()).toBe(false);
 
     wrapper.unmount();
   });
@@ -52,7 +52,7 @@ describe("Tooltip", () => {
     await wrapper.find(".trigger").trigger("mouseenter");
     await nextTick();
 
-    expect(wrapper.find(".orio-tooltip").exists()).toBe(false);
+    expect(wrapper.find(".tooltip").exists()).toBe(false);
 
     wrapper.unmount();
   });
@@ -70,9 +70,9 @@ describe("Tooltip", () => {
     await wrapper.find(".trigger").trigger("mouseenter");
     await nextTick();
 
-    const arrow = wrapper.find(".orio-tooltip-arrow");
+    const arrow = wrapper.find(".tooltip-arrow");
     expect(arrow.exists()).toBe(true);
-    expect(arrow.classes()).toContain("orio-tooltip-arrow-right");
+    expect(arrow.classes()).toContain("right");
 
     wrapper.unmount();
   });
