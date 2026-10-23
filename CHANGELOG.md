@@ -7,11 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.36.1](https://github.com/oriondor/orio-ui/compare/v1.36.0...v1.36.1) (2026-10-23)
 
+### fix: allow size overwrites ([#193](https://github.com/oriondor/orio-ui/pull/193))
 
-### Bug Fixes
+fix: allow size overwrites
 
-* allow size overwrites ([#193](https://github.com/oriondor/orio-ui/issues/193)) ([5acbef6](https://github.com/oriondor/orio-ui/commit/5acbef6a8b4decee2fc15104ef6a15647635fec7))
-* removed unneccessary orio classes from the components ([#195](https://github.com/oriondor/orio-ui/issues/195)) ([a9f0e80](https://github.com/oriondor/orio-ui/commit/a9f0e80ae671a6ca9b2224383ac2422a2f619b23))
+- Add inherited `--orio-control-*` variables for control and slider size tokens.
+- Keep control-local `--control-*` styles higher priority than inherited overrides.
+- Document global and local control overrides.
+- Update `useControlSize` documentation and token definitions.
+- Add tests for defaults, ancestor overrides, and precedence.
+- Update the documented test-suite count from 57 to 58.
+
+### fix: removed unneccessary orio classes from the components ([#195](https://github.com/oriondor/orio-ui/pull/195))
+
+fix: remove unnecessary Orio classes from components
+
+- Replace the Button class `orio-button-el` with `button-element`.
+- Replace the NavButton class `orio-nav-button-el` with `nav-button-element`.
+- Replace the Map class `orio-map` with `map`.
+- Replace Tooltip’s prefixed classes with `tooltip`, `tooltip-content`, and `tooltip-arrow`. Move tooltip styles into the scoped style block.
+- Update Tooltip documentation to describe scoped styles and the new arrow classes.
+- Change the icon-registry examples to use the kebab-case `<orio-icon>` tag.
+- Update Tooltip tests to query the new class names.
 
 ## [1.36.0](https://github.com/oriondor/orio-ui/compare/v1.35.0...v1.36.0) (2026-10-20)
 
