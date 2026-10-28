@@ -168,10 +168,11 @@ function openModal(event) {
 
 ## Props
 
-| Prop     | Type                 | Default | Description                     |
-| -------- | -------------------- | ------- | ------------------------------- |
-| `show`   | `Boolean`            | -       | Modal visibility (v-model:show) |
-| `origin` | `OriginRect \| null` | `null`  | Animation origin point          |
+| Prop       | Type                 | Default                  | Description                                                      |
+| ---------- | -------------------- | ------------------------ | ---------------------------------------------------------------- |
+| `show`     | `Boolean`            | -                        | Modal visibility (v-model:show)                                  |
+| `origin`   | `OriginRect \| null` | `null`                   | Animation origin point                                           |
+| `duration` | `number`             | `500` open / `400` close | Open and close animation length in ms. Reduced motion ignores it |
 
 ### OriginRect Type
 
@@ -196,3 +197,18 @@ interface OriginRect {
 - Backdrop blur effect
 - Morphing animation from origin element
 - Smooth fade-in when no origin provided
+- Locks page scroll while open without layout shift: `<body>` is padded by the
+  scrollbar width
+
+### Fixed-position elements
+
+Body padding does not reach `position: fixed` elements, so a fixed header
+still shifts when the scrollbar disappears. While a modal is open, the
+scrollbar width is exposed on `<html>` as `--orio-scrollbar-gap`:
+
+```css
+.site-header {
+  position: fixed;
+  padding-right: var(--orio-scrollbar-gap, 0px);
+}
+```
