@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
-import { useScrollLock } from "@vueuse/core";
+import { ref, computed, watch } from "vue";
+import { usePageScrollLock } from "../composables/usePageScrollLock";
 
 import { useSlots } from "vue";
 
@@ -16,13 +16,36 @@ export interface OriginRect {
 interface Props {
   title?: string;
   origin: OriginRect | null;
+  /** open and close animation length in ms; unset keeps 500 open / 400 close */
+  duration?: number;
 }
 
 const props = defineProps<Props>();
 
+const openDuration = computed(() => props.duration ?? 500);
+const closeDuration = computed(() => props.duration ?? 400);
+
+const durationVars = computed(() => ({
+  "--modal-open-duration": `${openDuration.value}ms`,
+  "--modal-close-duration": `${closeDuration.value}ms`,
+}));
+
 const show = defineModel<boolean>("show");
 
-const isLocked = import.meta.client ? useScrollLock(document.body) : ref(false);
+// keep the page locked through the close animation so the scrollbar
+// doesn't pop back while the modal is still shrinking. after-leave also fires
+// when reopening mid-leave, hence `visible = Boolean(show)` there, not false.
+const visible = ref(false);
+
+watch(
+  show,
+  (open) => {
+    if (open) visible.value = true;
+  },
+  { immediate: true },
+);
+
+usePageScrollLock(visible);
 
 const wrapper = ref<HTMLDivElement | null>(null);
 
@@ -62,20 +85,16 @@ function animateClose(overlay: Element, done: () => void) {
     if (event.target === overlay) done();
   });
   // fallback when transitionend never fires (hidden tab)
-  setTimeout(done, 500);
+  setTimeout(done, closeDuration.value + 100);
 
   if (props.origin && !prefersReducedMotion()) {
     // fade only at the tail so it visibly shrinks back into the trigger
-    el.style.transition =
-      "transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.15s ease-in 0.25s";
+    const fadeDelay = Math.max(0, closeDuration.value - 150);
+    el.style.transition = `transform ${closeDuration.value}ms cubic-bezier(0.32, 0.72, 0, 1), opacity 150ms ease-in ${fadeDelay}ms`;
     el.style.transform = originTransform(el, props.origin);
   }
   el.style.opacity = "0";
 }
-
-watch(show, (open) => {
-  isLocked.value = open as boolean;
-});
 
 const hasHeader = computed(() => {
   return Boolean(props.title || slots.header);
@@ -93,8 +112,14 @@ const hasFooter = computed(() => {
       name="overlay-fade"
       @enter="animateOpen"
       @leave="animateClose"
+      @after-leave="visible = Boolean(show)"
     >
-      <div v-if="show" class="overlay" @click.self="show = false">
+      <div
+        v-if="show"
+        class="overlay"
+        :style="durationVars"
+        @click.self="show = false"
+      >
         <div ref="wrapper" class="modal">
           <header v-if="hasHeader" class="modal-header">
             <slot name="header">
@@ -155,7 +180,7 @@ const hasFooter = computed(() => {
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
 
   transition:
-    transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+    transform var(--modal-open-duration) cubic-bezier(0.32, 0.72, 0, 1),
     opacity 0.15s ease-out;
 
   color: var(--color-text);
@@ -187,11 +212,16 @@ const hasFooter = computed(() => {
   background: transparent;
   backdrop-filter: blur(0);
 }
-.overlay-fade-enter-active,
+/* backdrop runs as long as the modal leg; leave waits on its transitionend */
+.overlay-fade-enter-active {
+  transition:
+    background var(--modal-open-duration) ease,
+    backdrop-filter var(--modal-open-duration) ease;
+}
 .overlay-fade-leave-active {
   transition:
-    background 0.4s ease,
-    backdrop-filter 0.4s ease;
+    background var(--modal-close-duration) ease,
+    backdrop-filter var(--modal-close-duration) ease;
 }
 
 @media (prefers-reduced-motion: reduce) {

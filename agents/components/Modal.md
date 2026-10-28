@@ -22,17 +22,21 @@ invariants: true
 - **`v-model:show`** controls visibility. Backdrop click closes (`@click.self`
   on the overlay). The default close button (rendered when no `header`
   slot is supplied) also toggles `show`.
-- **Body scroll lock** is applied automatically while `show` is true, via
-  `useScrollLock` from `@vueuse/core`. SSR-safe: ref defaults to `false`
-  on the server.
+- **Page scroll lock** from open until the close animation finishes
+  (`visible` ref: set on open, reset to `show` in `@after-leave` — that hook
+  also fires when reopening mid-leave), via
+  `usePageScrollLock`
+  (ref-counted, so stacked modals don't unlock each other; pads `<body>`
+  by the scrollbar width and sets `--orio-scrollbar-gap`). Fixed-position
+  consumer elements opt in with
+  `padding-right: var(--orio-scrollbar-gap, 0px)`. See
+  `agents/composables/usePageScrollLock.md`.
 - **Header/footer are auto-hidden** when no `title` prop and no
   `#header`/`#footer` slot is present. The content section (`#default`)
   always renders.
 
 ## Gotchas
 
-- Multiple modals stacked at once will all lock body scroll; closing one
-  releases the lock for all. If you nest modals, manage the lock yourself.
 - `origin`'s `width` / `height` should be the trigger's rendered size, not
   the modal's. Open is a FLIP: the modal measures its own laid-out rect,
   jumps onto `origin` (translate + non-uniform scale, `transform-origin:
@@ -42,7 +46,14 @@ invariants: true
 - The overlay transition fades only the backdrop (`background`,
   `backdrop-filter`), never `opacity` — fading the overlay would hide the
   modal mid-morph. Leave completes on the overlay's own `transitionend`.
-- `prefers-reduced-motion: reduce` skips the morph (plain 0.15s fade).
+- **`duration` (ms)** sets open and close length together. Unset keeps
+  500 ms open / 400 ms close. It drives `--modal-open-duration` /
+  `--modal-close-duration` on the overlay (modal transform + backdrop) and
+  the JS close transition + its fallback timeout. The backdrop must match
+  the close leg: leave completes on the overlay's `transitionend`, so a
+  shorter backdrop would cut the morph off.
+- `prefers-reduced-motion: reduce` skips the morph (plain 0.15s fade) and
+  ignores `duration`.
   The transition has `appear`, so mounting with `show` already true
   still plays the enter hook.
 - The component writes `style.transform`, `style.transition` and

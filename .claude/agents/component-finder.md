@@ -112,6 +112,7 @@ not edit by hand.
 - **long press detection, hold to trigger, force click, haptic touch, press and hold once** → `useLongPress` (read the agent doc first)
 - **map style, map theming, dark mode map, accent-tinted map, maplibre style url** → `useMapStyle` (read the agent doc first)
 - **programmatic modal control, open modal from code, modal binding bag** → `useModal` (read the agent doc first)
+- **body scroll lock, prevent page scroll under overlay, scrollbar layout shift, stacked modals lock** → `usePageScrollLock` (read the agent doc first)
 - **pinch-to-zoom, two-finger touch zoom, pinch gesture** → `usePinchZoom` (read the agent doc first)
 - **press-and-hold auto-repeat, repeat while held, spinner ramp, mousedown-hold ramp** → `usePressAndHold` (read the agent doc first)
 - **roving-focus tabindex for 2D grids, grid keyboard navigation, calendar keyboard, table arrow nav** → `useRovingGrid` (read the agent doc first)

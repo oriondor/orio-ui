@@ -94,6 +94,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `useLongPress` — long-press detection on any element with move/cancel handling, Safari force click, and click swallow after trigger. **Read the agent doc first.**
 - `useMapStyle` — picks the OpenFreeMap style for light/dark mode and tints water/roads with the accent on an attached MapLibre map. **Read the agent doc first.**
 - `useModal` — returns a `modalProps` bag (show, origin, update handler) plus `openModal(event?)` that derives origin from a click target. **Read the agent doc first.**
+- `usePageScrollLock` — ref-counted page scroll lock shared by all callers, with scrollbar-width padding and `--orio-scrollbar-gap`. **Read the agent doc first.**
 - `usePinchZoom` — touch-only pinch handler that tracks up to 2 pointers and exposes scale factor, midpoint, and midpoint delta. **Read the agent doc first.**
 - `usePressAndHold` — fires a callback once immediately, then repeats every 50 ms after a 500 ms hold. **Read the agent doc first.**
 - `useRovingGrid` — 2D arrow-key roving focus for grid-like UIs; handles arrows, Home/End, PageUp/Down, Enter/Space, and edge-overflow callbacks. **Read the agent doc first.**
@@ -140,6 +141,10 @@ When a problem is fiddly or ambiguous, use the platform.
 - Hand-rolled listeners, timers, resize observers and storage wrappers are a
   last resort; if one is unavoidable, it belongs in a composable under
   `src/runtime/composables/`, not inline in a component.
+- Page-global state (`<body>`/`<html>` styles, `window`/`document`
+  listeners, scroll lock) is shared by every instance. Design the fix as a
+  composable that owns it — ref-counted, released on unmount — from the
+  start, not as a patch inside one component (see `usePageScrollLock`).
 
 ### 3. kebab-case for auto-imported components
 
