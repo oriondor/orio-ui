@@ -92,7 +92,7 @@ function handleClick() {
 
 ## Features
 
-- Dashed border styling
-- Hover effect with gradient
-- Icon size adapts to container size
-- Clickable with cursor pointer
+- Native `<button>`: keyboard and focus-visible ring out of the box
+- Dashed border that turns accent on hover, with a soft accent wash
+- Icon in a round accent chip; icon size adapts to `size`
+- Press feedback; respects `prefers-reduced-motion`

@@ -67,4 +67,13 @@ describe("DashedContainer", () => {
     expect(wrapper.find(".custom-text").exists()).toBe(true);
     expect(wrapper.text()).not.toContain("fallback text");
   });
+
+  it("renders a native non-submit button", () => {
+    const wrapper = mount(DashedContainer, {
+      global: { stubs: { "orio-icon": true } },
+    });
+
+    expect(wrapper.element.tagName).toBe("BUTTON");
+    expect(wrapper.attributes("type")).toBe("button");
+  });
 });
