@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.36.2](https://github.com/oriondor/orio-ui/compare/v1.36.1...v1.36.2) (2026-10-28)
 
+fix: Improve modal UX
 
-### Bug Fixes
-
-* Improved UX of modal ([#196](https://github.com/oriondor/orio-ui/issues/196)) ([cca18ab](https://github.com/oriondor/orio-ui/commit/cca18abe1ae2d457541583930e0ce9110826124f))
-
+- Add a ref-counted page scroll lock that keeps the page locked through the modal close animation and prevents stacked modals from unlocking each other.
+- Compensate for the scrollbar width with body padding and expose the gap through `--orio-scrollbar-gap` for fixed-position elements.
+- Add a `duration` prop for modal animations. It defaults to 500 ms when opening and 400 ms when closing; reduced-motion settings override it.
+- Update modal documentation and component-agent routing guidance for the scroll-lock composable.
 ## [1.36.1](https://github.com/oriondor/orio-ui/compare/v1.36.0...v1.36.1) (2026-10-23)
 
 ### fix: allow size overwrites ([#193](https://github.com/oriondor/orio-ui/pull/193))
