@@ -1,11 +1,24 @@
 <script setup lang="ts">
-import { ref, computed, watch, useId, useSlots } from "vue";
+import { ref, computed, watch, useAttrs, useId, useSlots, provide } from "vue";
+import { useEventListener } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import { usePageScrollLock } from "../composables/usePageScrollLock";
+import { modalTeleportTarget } from "../utils/modal";
 
 const slots = useSlots();
 const { t } = useI18n();
 const titleId = useId();
+const attrs = useAttrs();
+const generatedId = useId();
+// caller's id wins; nested popovers teleport to whichever id the dialog has
+const dialogId = computed(
+  () => (attrs.id as string | undefined) || generatedId,
+);
+
+provide(
+  modalTeleportTarget,
+  computed(() => `#${dialogId.value}`),
+);
 
 export interface OriginRect {
   x: number;
@@ -102,6 +115,23 @@ function closeOnEscape(event: KeyboardEvent) {
 
 usePageScrollLock(visible);
 
+// focused control unmounted → focus fell to <body>, outside the overlay's
+// key handlers. The topmost open modal takes Tab / Esc back from the window.
+useEventListener("keydown", (event: KeyboardEvent) => {
+  const dialog = wrapper.value;
+  if (!dialog || document.activeElement !== document.body) return;
+  // a closing modal stays in the DOM until its leave transition ends
+  const openDialogs = document.querySelectorAll(
+    '.overlay:not(.overlay-fade-leave-active) > [aria-modal="true"]',
+  );
+  if (openDialogs[openDialogs.length - 1] !== dialog) return;
+  if (event.key === "Escape") closeOnEscape(event);
+  else if (event.key === "Tab") {
+    event.preventDefault();
+    dialog.focus();
+  }
+});
+
 const wrapper = ref<HTMLDivElement | null>(null);
 
 // translate + scale that lays the modal exactly over the trigger rect
@@ -184,13 +214,14 @@ const hasFooter = computed(() => {
         @keydown.tab="trapTab"
       >
         <div
+          v-bind="$attrs"
+          :id="dialogId"
           ref="wrapper"
           class="modal"
           role="dialog"
           aria-modal="true"
           tabindex="-1"
           :aria-labelledby="labelledBy"
-          v-bind="$attrs"
         >
           <header v-if="hasHeader" class="modal-header">
             <slot name="header">

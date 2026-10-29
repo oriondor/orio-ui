@@ -43,5 +43,9 @@
   },
   "modal": {
     "close": "Закрити"
+  },
+  "segmentedInput": {
+    "digit": "Цифра {index} з {total}",
+    "character": "Символ {index} з {total}"
   }
 }

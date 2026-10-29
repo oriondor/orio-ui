@@ -41,7 +41,16 @@ invariants: true
   `afterLeave` refocuses the element active before open, unless focus is
   already inside another `[aria-modal]`. `Tab`/`Shift+Tab` wrap inside
   `.modal` over visible controls (`trapTab`, `checkVisibility`; no
-  library: `focus-trap` would block teleported popovers).
+  library: popovers teleport into `.modal`, so the trap covers them).
+- **Provides `modalTeleportTarget`** (computed `#<id>`: the caller's `id`
+  attr if passed, else `useId()`; `:id` is bound after `$attrs`): nested Popovers
+  teleport into `.modal`, not `<body>`, so VoiceOver can reach them.
+  They re-measure on `transitionend` (capture), so a popover open during
+  the open morph settles once the transform ends.
+- **Focus fell to `<body>`** (focused control unmounted): a window
+  `keydown` listener lets the topmost open `[aria-modal]` (last in DOM)
+  take Tab (refocus `.modal`) and Esc (close). Modals in their leave
+  transition (`.overlay-fade-leave-active`) don't count as topmost.
 - **Esc closes** via `@keydown.esc` on the overlay, so only the modal
   holding focus closes (stacked modals are separate teleports). Skipped
   when `event.defaultPrevented` — a child that handles Esc (open

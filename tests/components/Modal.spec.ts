@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import { config, enableAutoUnmount, mount } from "@vue/test-utils";
 import Modal from "../../src/runtime/components/Modal.vue";
+import Popover from "../../src/runtime/components/Popover.vue";
 import { i18n } from "../../src/runtime/i18n";
 import { nextTick, ref } from "vue";
 
-vi.mock("@vueuse/core", () => ({
+vi.mock("@vueuse/core", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@vueuse/core")>()),
   useWindowSize: () => ({ width: { value: 800 }, height: { value: 600 } }),
   useTimeoutFn: (fn: () => void) => {
     fn();
@@ -317,6 +319,84 @@ describe("Modal", () => {
       field.focus();
       expect(press(field, "Tab").defaultPrevented).toBe(true);
       expect(document.activeElement).toBe(close);
+    });
+
+    it("takes Tab and Esc back when focus fell to body", () => {
+      const onUpdateShow = vi.fn();
+      mountModal({ "onUpdate:show": onUpdateShow });
+      (document.activeElement as HTMLElement | null)?.blur();
+      expect(document.activeElement).toBe(document.body);
+
+      expect(press(document.body, "Tab").defaultPrevented).toBe(true);
+      expect(document.activeElement).toBe(dialog());
+
+      dialog().blur();
+      press(document.body, "Escape");
+      expect(onUpdateShow).toHaveBeenCalledWith(false);
+    });
+
+    it("lets only the topmost open modal take Esc from body", async () => {
+      vi.useFakeTimers();
+      const onLower = vi.fn();
+      const onUpper = vi.fn();
+      mountModal({ "onUpdate:show": onLower });
+      const upper = mountModal({ "onUpdate:show": onUpper });
+      (document.activeElement as HTMLElement | null)?.blur();
+
+      press(document.body, "Escape");
+      expect(onUpper).toHaveBeenCalledWith(false);
+      expect(onLower).not.toHaveBeenCalled();
+
+      // upper is still in its leave transition: the lower one is topmost now
+      await upper.setProps({ show: false });
+      (document.activeElement as HTMLElement | null)?.blur();
+      press(document.body, "Escape");
+      expect(onLower).toHaveBeenCalledWith(false);
+      // let the leave finish so the closing dialog leaves the DOM
+      await vi.advanceTimersByTimeAsync(500);
+      vi.useRealTimers();
+    });
+
+    it("keeps a caller id on the dialog", () => {
+      mountModal({ id: "settings-dialog" });
+      expect(dialog().id).toBe("settings-dialog");
+    });
+
+    it("renders a nested popover inside the dialog", async () => {
+      const onUpdateShow = vi.fn();
+      mount(Modal, {
+        props: { show: true, origin: null, "onUpdate:show": onUpdateShow },
+        // caller id doubles as the popover teleport target
+        attrs: { id: "picker-dialog" },
+        slots: {
+          default: `<orio-popover>
+            <template #default="{ toggle }">
+              <button class="trigger" @click="toggle()">Open</button>
+            </template>
+            <template #content><button class="inside">Pick</button></template>
+          </orio-popover>`,
+        },
+        global: {
+          stubs: { transition: false },
+          components: { OrioPopover: Popover },
+        },
+      });
+      await nextTick();
+      document.querySelector<HTMLElement>(".trigger")!.click();
+      await nextTick();
+      await nextTick();
+      const content = document.querySelector(".inside");
+      expect(content?.closest('[role="dialog"]')).toBe(dialog());
+
+      // Esc in the popover closes it, not the modal, and refocuses the trigger
+      (content as HTMLElement).focus();
+      const escape = press(content!, "Escape");
+      // popover leave transition finishes on the next frames
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(escape.defaultPrevented).toBe(true);
+      expect(document.querySelector(".inside")).toBeNull();
+      expect(document.activeElement).toBe(document.querySelector(".trigger"));
+      expect(onUpdateShow).not.toHaveBeenCalled();
     });
 
     it("wraps Tab inside the dialog", () => {

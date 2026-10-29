@@ -1,8 +1,10 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { mount, enableAutoUnmount } from "@vue/test-utils";
+import { config, mount, enableAutoUnmount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import SegmentedInput from "../../src/runtime/components/SegmentedInput.vue";
+import { i18n } from "../../src/runtime/i18n";
 
+config.global.plugins = [i18n];
 enableAutoUnmount(afterEach);
 
 describe("SegmentedInput", () => {
@@ -175,5 +177,79 @@ describe("SegmentedInput", () => {
     });
     outsideInput.dispatchEvent(event);
     expect(event.defaultPrevented).toBe(false);
+  });
+
+  it("spreads a whole code autofilled into the first segment", async () => {
+    const wrapper = mount(SegmentedInput, {
+      props: { modelValue: "", segments: 6 },
+      attachTo: document.body,
+    });
+    const first = wrapper.findAll("input")[0];
+    expect(first.attributes("maxlength")).toBeUndefined();
+    await first.setValue("123456");
+    await nextTick();
+    const values = wrapper.findAll("input").map((input) => input.element.value);
+    expect(values).toEqual(["1", "2", "3", "4", "5", "6"]);
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["123456"]);
+    expect(wrapper.emitted("end")).toHaveLength(1);
+  });
+
+  it("emits end only after the last character is in the model", async () => {
+    const wrapper = mount(SegmentedInput, {
+      props: { modelValue: "12345", segments: 6 },
+      "onUpdate:modelValue": (value: string | number) =>
+        wrapper.setProps({ modelValue: value }),
+    });
+    expect(wrapper.emitted("end")).toBeFalsy();
+    await wrapper.findAll("input")[5].setValue("6");
+    await nextTick();
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["123456"]);
+    expect(wrapper.emitted("end")).toHaveLength(1);
+  });
+
+  it("does not emit end when the parent writes a full value", async () => {
+    const wrapper = mount(SegmentedInput, {
+      props: { modelValue: "", segments: 6 },
+    });
+    await wrapper.setProps({ modelValue: "123456" });
+    await nextTick();
+    expect(wrapper.emitted("end")).toBeFalsy();
+  });
+
+  it("names every segment and groups them", () => {
+    const wrapper = mount(SegmentedInput, {
+      props: { segments: 6 },
+      attrs: { "aria-label": "Verification code" },
+    });
+    const root = wrapper.find(".segmented-input");
+    expect(root.attributes("role")).toBe("group");
+    expect(root.attributes("aria-label")).toBe("Verification code");
+    const labels = wrapper
+      .findAll("input")
+      .map((input) => input.attributes("aria-label"));
+    expect(labels[0]).toBe("Digit 1 of 6");
+    expect(labels[5]).toBe("Digit 6 of 6");
+  });
+
+  it("takes a custom segment label", () => {
+    const wrapper = mount(SegmentedInput, {
+      props: {
+        segments: 4,
+        segmentLabel: (index: number, total: number) => `Box ${index}/${total}`,
+      },
+    });
+    expect(wrapper.findAll("input")[1].attributes("aria-label")).toBe(
+      "Box 2/4",
+    );
+  });
+
+  it("exposes focus() that lands on the first open segment", async () => {
+    const wrapper = mount(SegmentedInput, {
+      props: { modelValue: "12", segments: 6 },
+      attachTo: document.body,
+    });
+    wrapper.vm.focus();
+    await nextTick();
+    expect(document.activeElement).toBe(wrapper.findAll("input")[2].element);
   });
 });

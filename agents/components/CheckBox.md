@@ -31,11 +31,11 @@ type="checkbox">` is visually hidden; the rendered tick lives in a sibling
 
 ## Gotchas
 
-- **The native input has `tabindex="-1"`** in the template, but the
-  styles target `:focus-visible` on it. Keyboard focus for the checkbox
-  may not behave the way an a11y audit expects — confirm tab order
-  before shipping critical forms. If you need keyboard-focusable
-  checkboxes, override `tabindex` via `$attrs`.
+- **The native input is the tab stop.** It is visually hidden
+  (`opacity: 0`) but focusable; `:focus-visible` on it rings the box.
+  `tabindex` is a `ControlProps` prop and reaches the input via the
+  `control` bag. Decorative uses inside another focusable widget pass
+  `:tabindex="-1"` + `aria-hidden` (see `ListItem` selectable).
 - **`required` from `ControlProps` flows through**, but native checkbox
   required validation only fires inside a `<form>` that calls
   `reportValidity`.
