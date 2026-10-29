@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.36.3](https://github.com/oriondor/orio-ui/compare/v1.36.2...v1.36.3) (2026-10-29)
 
+fix: Improved modal accessibility
 
-### Bug Fixes
-
-* Improved modal accessibility ([#198](https://github.com/oriondor/orio-ui/issues/198)) ([a20af62](https://github.com/oriondor/orio-ui/commit/a20af629b722f95004639a19784ddf805d4eb567))
-
+- Add dialog semantics and title-based labeling to `Modal`.
+- Move focus into the modal when it opens, trap `Tab` and `Shift+Tab`, and restore focus after it closes.
+- Close the focused modal with `Esc` unless a child handles the event and calls `preventDefault`.
+- Add a localized accessible label to the modal close button.
+- Ignore `Esc` on a closed list without preventing the event or dispatching its close action.
+- Document modal accessibility behavior in English and Ukrainian.
+- Add modal accessibility tests and update the README composable count to 19.
 ## [1.36.2](https://github.com/oriondor/orio-ui/compare/v1.36.1...v1.36.2) (2026-10-28)
 
 fix: Improve modal UX
