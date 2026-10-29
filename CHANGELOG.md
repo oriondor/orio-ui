@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.36.4](https://github.com/oriondor/orio-ui/compare/v1.36.3...v1.36.4) (2026-10-29)
 
+fix: improve keyboard and screen reader support
 
-### Bug Fixes
-
-* keyboard and screen reader fixes for form controls, Modal and Popover ([#200](https://github.com/oriondor/orio-ui/issues/200)) ([d79ace3](https://github.com/oriondor/orio-ui/commit/d79ace383f8b63657b998ae8d9b85036ebb9c010))
-
+- Keep `CheckBox` inputs keyboard-reachable by default. Set decorative checkboxes in `ListItem` to `tabindex="-1"` and `aria-hidden="true"`.
+- Preserve caller-provided ARIA attributes in `ControlElement`. Combine `aria-describedby` with the error ID, omit unset control-bag values, and announce errors with `role="alert"`.
+- Let the topmost open `Modal` handle Escape and Tab when focus falls to `<body>`.
+- Teleport `Popover` content into its parent modal when present. On Escape, close the popover and return focus to the first focusable element in its trigger.
+- Improve `SegmentedInput` labels and autofill handling. Distribute pasted, autofilled, and overflow input across segments, emit `end` when all segments are filled, and expose `focus(index?)`.
+- Update component guidance and segmented-input documentation in English and Ukrainian for the revised keyboard, ARIA, focus, and autofill behavior.
+- Add English and Ukrainian translations for indexed digit and character labels.
 ## [1.36.3](https://github.com/oriondor/orio-ui/compare/v1.36.2...v1.36.3) (2026-10-29)
 
 fix: Improved modal accessibility
