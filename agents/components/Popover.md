@@ -17,8 +17,11 @@ is the default slot; the panel content is the `#content` slot.
   trigger; `#content` is the floating panel. You **must** call `toggle`
   yourself — the component does not auto-attach a click handler to the
   trigger.
-- **Panel is teleported to `<body>`**. Parent CSS scoping does not reach
-  it. Use `:deep()` from a parent, global styles, or scope the panel via
+- **Panel is teleported to `<body>`** — or, inside `<orio-modal>`, into
+  the modal's dialog element (`modalTeleportTarget` from
+  `utils/modal.ts`, `<Teleport defer>`), so it stays inside the
+  `aria-modal` subtree for screen readers and the modal's Tab trap.
+  Parent CSS scoping does not reach it. Use `:deep()` from a parent, global styles, or scope the panel via
   classes you control.
 - **`toggle(force?)`** — `toggle(true)` forces open, `toggle(false)` forces
   close, `toggle()` flips. While `disabled` is true, all three are no-ops.
@@ -36,10 +39,12 @@ is the default slot; the panel content is the `#content` slot.
 - **Reposition on scroll/resize** uses capture-phase listeners that
   default to `window` (SSR-safe — no explicit `window` target), so it
   catches nested scrolling ancestors. Panel resizes via
-  `useElementBounding` also trigger reposition.
-- **No keyboard support.** No Esc-to-close, no focus trap, no return-focus.
-  If you need those, wire them at the consumer level on the `#content`
-  slot.
+  `useElementBounding` also trigger reposition, as does any capture-phase
+  `transitionend` (a parent modal's open morph settles the position).
+- **Esc inside the panel closes it** (`preventDefault`s, so a parent
+  modal stays open) and refocuses the trigger's first enabled focusable
+  (`button`, `a[href]`, `input`, `[tabindex]` not `-1`). No focus
+  trap and no move-focus-in on open.
 - **No visual chrome.** The wrapper is `background: transparent; border: 0;
   position: fixed; z-index: 999999`. The `#content` slot must render its
   own surface (card, panel, menu).
@@ -58,8 +63,9 @@ is the default slot; the panel content is the `#content` slot.
 - **`appear` transition fires only on first paint.** Reopening the same
   popover does not re-trigger `appear` — only the standard enter
   transition. Make sure your `animate-fade-slide` styles cover both.
-- **z-index is hard-coded to `999999`.** Stacking with other body-teleports
-  (Modal at the same z-index) is order-dependent — the later-mounted
+- **z-index is hard-coded to `999999`.** Above Modal (overlay 99 /
+  dialog 100; inside a modal it stacks within `.modal`). Other
+  body-teleports (Tooltip, Toast) are order-dependent — the later-mounted
   element wins. Mount-order is not stable across HMR.
 - **No `v-model:show`.** State is internal. Drive it through `toggle` (via
   the slot prop) or by mounting/unmounting the component with `v-if`.

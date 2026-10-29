@@ -4,13 +4,14 @@
       <slot :toggle="togglePopover" :is-open="showPopover" />
     </div>
 
-    <Teleport to="body">
+    <Teleport :to="teleportTarget" defer>
       <Transition name="animate-fade-slide" appear>
         <div
           v-if="showPopover"
           ref="containerRef"
           class="popover"
           :style="popoverStyle"
+          @keydown.esc="closeOnEscape"
         >
           <slot name="content" :toggle="togglePopover" :is-open="showPopover" />
         </div>
@@ -20,7 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, useTemplateRef, watch } from "vue";
+import { ref, computed, inject, nextTick, useTemplateRef, watch } from "vue";
+import { modalTeleportTarget } from "../utils/modal";
 import {
   useElementBounding,
   onClickOutside,
@@ -71,6 +73,22 @@ const { width: popoverWidth, height: popoverHeight } =
   useElementBounding(containerRef);
 
 const showPopover = ref(false);
+
+// inside a modal, stay in its dialog so screen readers can reach the content
+const modalTarget = inject(modalTeleportTarget, null);
+const teleportTarget = computed(() => modalTarget?.value ?? "body");
+
+function closeOnEscape(event: KeyboardEvent) {
+  if (event.defaultPrevented) return;
+  event.preventDefault();
+  showPopover.value = false;
+  // focus was inside the content that is about to unmount
+  triggerRef.value
+    ?.querySelector<HTMLElement>(
+      'button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )
+    ?.focus();
+}
 const triggerRect = ref<DOMRect | null>(null);
 const popoverRect = ref<DOMRect | null>(null);
 
@@ -251,6 +269,8 @@ watch([popoverWidth, popoverHeight], redrawPopover);
 
 useEventListener("scroll", redrawPopover, { capture: true });
 useEventListener("resize", redrawPopover, { capture: true });
+// a parent modal's open morph moves the trigger; re-measure once it settles
+useEventListener("transitionend", redrawPopover, { capture: true });
 </script>
 <style lang="scss" scoped>
 .popover {

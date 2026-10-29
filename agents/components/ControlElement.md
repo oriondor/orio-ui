@@ -40,7 +40,12 @@ one, pass `ControlProps` straight through — they are usually re-exported.
 - **Error wiring is automatic.** Setting `error` to a non-null string:
   - Renders a `.control-error` span below the slot.
   - Sets `aria-invalid="true"` and `aria-describedby="<id>-error"` on the
-    inner element via the `control` slot prop.
+    inner element via the `control` slot prop. A caller's own
+    `aria-describedby` attr (hint text) is kept: `"hint <id>-error"`.
+  - The error span is `role="alert"`, so it is announced when it appears.
+- **The `control` bag omits unset keys.** Wrappers spread
+  `{ ...$attrs, ...control }`; an `undefined` value would wipe the
+  caller's attr (`aria-invalid`, `aria-describedby`, …).
   - Adds a red border to `.slot-wrapper` (unless the wrapper contains a
     `:deep(.error-fields)` element, in which case the inner component owns
     error styling — see TaggableSelector).

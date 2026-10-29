@@ -36,7 +36,11 @@ function onKeydown(event: KeyboardEvent) {
   >
     <div v-if="!!slots.start || selectable" class="boundary">
       <slot name="start">
-        <orio-check-box :model-value="selected" />
+        <orio-check-box
+          :model-value="selected"
+          :tabindex="-1"
+          aria-hidden="true"
+        />
       </slot>
     </div>
     <div class="content">

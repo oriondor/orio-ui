@@ -30,11 +30,21 @@ them into a single v-model string. Built for OTP / verification-code entry.
   and sets `inputmode="numeric"` on every segment. Modifier shortcuts
   (Cmd/Ctrl/Alt) and navigation keys pass through. `type="string"` accepts
   anything.
-- **`start` / `end` events** fire when focus would step before the first
-  segment (Backspace) or past the last one (typed into the final full
-  segment). Use `end` for auto-submit.
-- The first segment has `autocomplete="one-time-code"`; the rest are
-  `autocomplete="off"`.
+- **`start`** fires when Backspace in an empty segment moves focus to
+  the first segment or keeps it there (`focusMove(-1)` landing on 0).
+  **`end`** fires once the model holds every character — from the
+  joined-value watcher when the user typed (not on a parent model write),
+  or from `fillValue` on paste / autofill. Safe for auto-submit.
+- The first segment has `autocomplete="one-time-code"` and **no
+  `maxlength`**; the rest are `autocomplete="off"` + `maxlength`. An
+  over-long segment value (autofill, IME) goes through `onSegmentInput`
+  → `fillValue`, the same path as paste, then the DOM value is reset
+  (`input.value`) because an unchanged prop would not re-render.
+- **Accessible names:** each box gets `aria-label` from `segmentLabel(index,
+  total)` (1-based) or i18n `segmentedInput.digit` / `.character`. The
+  wrapper is `role="group"`; consumers name it via `aria-label`.
+- **`defineExpose({ focus })`** — `focus(index?)` defaults to the first
+  segment that isn't full.
 - **Paste is intercepted** (`@paste.prevent` on the wrapper): the pasted
   text replaces `modelValue` wholesale — digits-only filtered for
   `type="number"`, trimmed for `type="string"`, truncated to
@@ -45,12 +55,13 @@ them into a single v-model string. Built for OTP / verification-code entry.
 - **Paste replaces the whole value**, regardless of which segment is
   focused — it does not insert at the focused position.
 - **SMS autofill** (`one-time-code`) inserts via the input value setter, not
-  a paste event — it still lands in segment 0 and is truncated by
-  `maxlength`.
+  a paste event — it lands in segment 0 and is spread by `onSegmentInput`.
+  Not verified on a real iOS/macOS device.
 - `segments` / `segmentSize` accept `number | string` (loose HTML-attr
   usage) and are `Number()`-coerced internally.
-- Programmatic focus of a segment goes through the exposed `focused` ref of
-  `Input.vue` (`inputComponent.focused = true`), not `element.focus()`.
+- Consumers focus via the exposed `focus()`. Internally a segment is
+  focused through `Input.vue`'s exposed `focused` ref, not
+  `element.focus()`.
 - Multiple instances on one page are safe — each window listener no-ops
   unless one of its own segments is focused.
 

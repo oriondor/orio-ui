@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef, useId } from "vue";
+import { computed, toRef, useAttrs, useId } from "vue";
 import { provideControlSize, sizeTokens } from "../composables/useControlSize";
 
 defineOptions({ inheritAttrs: false });
@@ -80,20 +80,36 @@ const props = withDefaults(defineProps<ControlProps>(), {
 provideControlSize(toRef(props, "size"));
 const sizeStyle = computed(() => sizeTokens[props.size]);
 
+const attrs = useAttrs();
+
 const errorId = computed(() => (props.error ? `${props.id}-error` : undefined));
 
-const control = computed<ControlSlotAttrs>(() => ({
-  id: props.id,
-  tabindex: props.tabindex,
-  disabled: props.disabled || undefined,
-  required: props.required || undefined,
-  name: props.name,
-  "focus-key": props.focusKey,
-  "aria-label": props.ariaLabel || undefined,
-  "aria-describedby": errorId.value,
-  "aria-invalid": props.error ? "true" : undefined,
-  "aria-required": props.required || undefined,
-}));
+// keep a caller's own description (hint text) next to the error
+const describedBy = computed(
+  () =>
+    [attrs["aria-describedby"], errorId.value].filter(Boolean).join(" ") ||
+    undefined,
+);
+
+// unset keys are left out: wrappers spread `{ ...$attrs, ...control }`, and an
+// `undefined` here would wipe an attr the caller passed
+const control = computed<ControlSlotAttrs>(() => {
+  const bag = {
+    id: props.id,
+    tabindex: props.tabindex,
+    disabled: props.disabled || undefined,
+    required: props.required || undefined,
+    name: props.name,
+    "focus-key": props.focusKey,
+    "aria-label": props.ariaLabel || undefined,
+    "aria-describedby": describedBy.value,
+    "aria-invalid": props.error ? ("true" as const) : undefined,
+    "aria-required": props.required || undefined,
+  };
+  return Object.fromEntries(
+    Object.entries(bag).filter(([, value]) => value !== undefined),
+  ) as ControlSlotAttrs;
+});
 </script>
 
 <template>
@@ -125,7 +141,9 @@ const control = computed<ControlSlotAttrs>(() => ({
       <div class="slot-wrapper">
         <slot :id :control />
       </div>
-      <span v-if="error" :id="errorId" class="control-error">{{ error }}</span>
+      <span v-if="error" :id="errorId" class="control-error" role="alert">
+        {{ error }}
+      </span>
     </div>
   </div>
 </template>

@@ -1,15 +1,33 @@
 <script setup lang="ts">
-import { ref, computed, watch, watchEffect } from "vue";
+import { ref, computed, nextTick, watch, watchEffect } from "vue";
 import Input from "./Input.vue";
 import { useTemplateRef } from "vue";
 import { onKeyDown } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
 
 interface Props {
   segments?: number | string;
   segmentSize?: number | string;
   type?: "number" | "string";
+  /** accessible name per box; defaults to translated "Digit 1 of 6" */
+  segmentLabel?: (index: number, total: number) => string;
 }
-const { segments = 6, segmentSize = 1, type = "number" } = defineProps<Props>();
+const {
+  segments = 6,
+  segmentSize = 1,
+  type = "number",
+  segmentLabel,
+} = defineProps<Props>();
+
+const { t } = useI18n();
+
+function labelFor(index: number) {
+  const total = Number(segments);
+  if (segmentLabel) return segmentLabel(index + 1, total);
+  const key =
+    type === "number" ? "segmentedInput.digit" : "segmentedInput.character";
+  return t(key, { index: index + 1, total });
+}
 
 const emit = defineEmits<{
   (e: "start"): void;
@@ -55,10 +73,7 @@ function focusMove(delta: 1 | -1) {
   let newIndex = focusState.value.currentIndex + delta;
   const maxIndex = inputComponents.value?.length ?? 0;
 
-  if (newIndex >= maxIndex - 1) {
-    emit("end");
-    newIndex = maxIndex - 1;
-  }
+  if (newIndex >= maxIndex - 1) newIndex = maxIndex - 1;
 
   if (newIndex <= 0) {
     emit("start");
@@ -89,22 +104,62 @@ onKeyDown(true, (event) => {
   if (currentValue.length >= Number(segmentSize)) focusMove(1);
 });
 
-function handlePaste(event: ClipboardEvent) {
-  const pastedText = event.clipboardData?.getData("text") ?? "";
+const capacity = computed(() => Number(segments) * Number(segmentSize));
+
+// replace the whole value (paste, autofill); returns the stored length
+function fillValue(text: string) {
   const sanitizedText =
-    type === "number" ? pastedText.replace(/\D/g, "") : pastedText.trim();
-  if (!sanitizedText) return;
-  const capacity = Number(segments) * Number(segmentSize);
-  modelValue.value = sanitizedText.slice(0, capacity);
-  if (sanitizedText.length >= capacity) emit("end");
+    type === "number" ? text.replace(/\D/g, "") : text.trim();
+  if (!sanitizedText) return 0;
+  modelValue.value = sanitizedText.slice(0, capacity.value);
+  if (sanitizedText.length >= capacity.value) emit("end");
+  return Math.min(sanitizedText.length, capacity.value);
+}
+
+function handlePaste(event: ClipboardEvent) {
+  fillValue(event.clipboardData?.getData("text") ?? "");
+}
+
+// one-time-code autofill (and IME) drops the whole code into one box,
+// segment 0 has no maxlength so it isn't cut to one character
+async function onSegmentInput(index: number, value: string) {
+  if (value.length <= Number(segmentSize)) {
+    inputComponentsModel.value[index] = value;
+    return;
+  }
+  const before = inputComponentsModel.value.slice(0, index).join("");
+  const filledLength = fillValue(before + value);
+  await nextTick();
+  // the box may keep its old value, so Vue won't re-render the overflow away
+  const element = inputComponents.value?.[index]?.input;
+  if (element) element.value = inputComponentsModel.value[index] ?? "";
+  focusSegment(
+    Math.min(
+      Math.ceil(filledLength / Number(segmentSize)),
+      Number(segments) - 1,
+    ),
+  );
 }
 
 watch(
   () => inputComponentsModel.value.join(""),
   (joinedValue) => {
+    // typed by the user, not a re-split of a model write (paste emits itself)
+    const typed = joinedValue !== String(modelValue.value);
     modelValue.value = joinedValue;
+    if (typed && joinedValue.length >= capacity.value) emit("end");
   },
 );
+
+/** focus a segment; defaults to the first one that isn't full */
+function focus(index?: number) {
+  const firstOpen = inputComponentsModel.value.findIndex(
+    (segment) => segment.length < Number(segmentSize),
+  );
+  focusSegment(index ?? (firstOpen === -1 ? Number(segments) - 1 : firstOpen));
+}
+
+defineExpose({ focus });
 
 watchEffect(() => {
   inputComponentsModel.value = setupValue();
@@ -112,15 +167,17 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="segmented-input" @paste.prevent="handlePaste">
+  <div class="segmented-input" role="group" @paste.prevent="handlePaste">
     <Input
       v-for="(segment, index) in inputComponentsModel"
       :key="index"
       ref="inputComponents"
-      v-model="inputComponentsModel[index]"
-      :maxlength="segmentSize"
+      :model-value="segment"
+      :maxlength="index === 0 ? undefined : segmentSize"
+      :aria-label="labelFor(index)"
       :inputmode="type === 'number' ? 'numeric' : undefined"
       :autocomplete="index === 0 ? 'one-time-code' : 'off'"
+      @update:model-value="onSegmentInput(index, $event)"
     />
   </div>
 </template>

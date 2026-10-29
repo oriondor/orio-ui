@@ -43,8 +43,8 @@ Two characters per segment, four segments:
 
 ### Boundary events
 
-`start` fires when Backspace steps before the first segment, `end` when focus
-moves past the last one:
+`start` fires when Backspace in an empty segment moves focus to the first
+segment (or keeps it there), `end` once the last character is in the model:
 
 <div class="demo-container">
   <orio-segmented-input
@@ -100,14 +100,21 @@ const code = ref("");
 | `segments`    | `number \| string`     | `6`        | Number of segment boxes                              |
 | `segmentSize` | `number \| string`     | `1`        | Characters per segment                               |
 | `type`        | `"number" \| "string"` | `"number"` | `"number"` rejects non-digit keys on typed input     |
+| `segmentLabel` | `(index, total) => string` | translated `Digit 1 of 6` | Accessible name for each box (`index` is 1-based) |
 
 ## Events
 
 | Event               | Payload  | Description                                              |
 | ------------------- | -------- | -------------------------------------------------------- |
 | `update:modelValue` | `string` | Emitted with the joined segment values on every change    |
-| `start`             | —        | Backspace pressed while the first segment is empty        |
-| `end`               | —        | Focus moved past the last segment (all segments consumed) |
+| `start`             | —        | Backspace in an empty segment lands on the first segment  |
+| `end`               | —        | Every segment is filled (typed, pasted or autofilled)     |
+
+## Exposed
+
+| Method           | Description                                                  |
+| ---------------- | ------------------------------------------------------------ |
+| `focus(index?)`  | Focus a segment; defaults to the first one that is not full  |
 
 ## Behavior notes
 
@@ -120,7 +127,10 @@ const code = ref("");
 - With `type="number"` each segment renders with `inputmode="numeric"`, so
   mobile devices show the digit keyboard.
 - The first segment carries `autocomplete="one-time-code"`, letting supported
-  browsers offer SMS code autofill.
+  browsers offer SMS code autofill. It has no `maxlength`, so an autofilled
+  code is spread across all segments.
+- The wrapper has `role="group"`; pass `aria-label` to name the whole code
+  (e.g. "Verification code").
 
 ## Styling
 

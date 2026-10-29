@@ -43,5 +43,9 @@
   },
   "modal": {
     "close": "Close"
+  },
+  "segmentedInput": {
+    "digit": "Digit {index} of {total}",
+    "character": "Character {index} of {total}"
   }
 }
