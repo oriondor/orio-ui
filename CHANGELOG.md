@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.36.4](https://github.com/oriondor/orio-ui/compare/v1.36.3...v1.36.4) (2026-10-29)
+
+
+### Bug Fixes
+
+* keyboard and screen reader fixes for form controls, Modal and Popover ([#200](https://github.com/oriondor/orio-ui/issues/200)) ([d79ace3](https://github.com/oriondor/orio-ui/commit/d79ace383f8b63657b998ae8d9b85036ebb9c010))
+
 ## [1.36.3](https://github.com/oriondor/orio-ui/compare/v1.36.2...v1.36.3) (2026-10-29)
 
 fix: Improved modal accessibility
