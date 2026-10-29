@@ -193,7 +193,10 @@ interface OriginRect {
 
 ## Features
 
-- Click outside to close
+- Click outside or press `Esc` to close
+- `role="dialog"` with `aria-modal`, labelled by `title`
+- Moves focus into the dialog, keeps `Tab` inside, returns focus to the
+  trigger on close
 - Backdrop blur effect
 - Morphing animation from origin element
 - Smooth fade-in when no origin provided

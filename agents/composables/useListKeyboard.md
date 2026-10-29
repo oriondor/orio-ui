@@ -22,8 +22,9 @@ item into view, and emits open/close/select callbacks. Used internally by
 - **`options.onOpen()`** fires when the user presses Arrow Down/Up,
   Enter, or Space while the list is closed. Optional — without it,
   closed-state key presses are no-ops.
-- **`options.onClose()`** fires on Escape (plus resets the highlight to
-  `-1`). Optional.
+- **`options.onClose()`** fires on Escape while open (plus resets the
+  highlight to `-1`) and `preventDefault`s it. Escape on a closed list is
+  ignored and not prevented, so a parent `<orio-modal>` can close. Optional.
 - **`options.initialIndex()`** is called by `reset()` to set the
   highlight on (re)open — typically returns the currently selected row.
   Defaults to `0` when not provided.

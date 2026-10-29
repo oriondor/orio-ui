@@ -31,6 +31,18 @@ invariants: true
   consumer elements opt in with
   `padding-right: var(--orio-scrollbar-gap, 0px)`. See
   `agents/composables/usePageScrollLock.md`.
+- **Dialog a11y.** `.modal` is `role="dialog"` + `aria-modal="true"` +
+  `tabindex="-1"`; `aria-labelledby` points at the title only when the
+  `title` prop is set (custom `#header` = unlabelled). `animateOpen`
+  focuses `.modal`; `afterLeave` refocuses the element active before
+  open. `Tab`/`Shift+Tab` wrap inside `.modal` (`trapTab`, no library:
+  `focus-trap` would block teleported popovers).
+- **Esc closes** via `@keydown.esc` on the overlay, so only the modal
+  holding focus closes (stacked modals are separate teleports). Skipped
+  when `event.defaultPrevented` — a child that handles Esc (open
+  Selector via `useListKeyboard`) must `preventDefault`; a closed list
+  lets Esc through.
+- Close button label comes from i18n `modal.close`.
 - **Header/footer are auto-hidden** when no `title` prop and no
   `#header`/`#footer` slot is present. The content section (`#default`)
   always renders.

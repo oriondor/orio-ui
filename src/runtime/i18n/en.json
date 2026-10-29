@@ -40,5 +40,8 @@
   },
   "map": {
     "label": "Map"
+  },
+  "modal": {
+    "close": "Close"
   }
 }
