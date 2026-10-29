@@ -220,10 +220,34 @@ describe("Modal", () => {
       expect(title?.textContent?.trim()).toBe("Settings");
     });
 
-    it("labels the icon-only close button", () => {
-      mountModal({ title: "Settings" });
-      const close = document.querySelector(".modal-close button");
-      expect(close?.getAttribute("aria-label")).toBe("Close");
+    it("drops aria-labelledby when a custom header replaces the title", () => {
+      mount(Modal, {
+        props: { show: true, origin: null, title: "Settings" },
+        slots: { header: "<h2>Custom</h2>" },
+        ...options,
+      });
+      expect(dialog().hasAttribute("aria-labelledby")).toBe(false);
+    });
+
+    it("puts consumer attrs on the dialog", () => {
+      mountModal({ "aria-label": "Custom name" });
+      expect(dialog().getAttribute("aria-label")).toBe("Custom name");
+    });
+
+    it.each([
+      ["en", "Close"],
+      ["uk", "Закрити"],
+    ])("labels the icon-only close button in %s", async (locale, label) => {
+      const previous = i18n.global.locale.value;
+      i18n.global.locale.value = locale;
+      try {
+        mountModal({ title: "Settings" });
+        await nextTick();
+        const close = document.querySelector(".modal-close button");
+        expect(close?.getAttribute("aria-label")).toBe(label);
+      } finally {
+        i18n.global.locale.value = previous;
+      }
     });
 
     it("closes on Escape", async () => {
@@ -258,6 +282,41 @@ describe("Modal", () => {
 
       trigger.remove();
       vi.useRealTimers();
+    });
+
+    it("leaves focus in another modal that opened meanwhile", async () => {
+      vi.useFakeTimers();
+      const trigger = document.createElement("button");
+      document.body.append(trigger);
+      trigger.focus();
+
+      const first = mountModal();
+      await first.setProps({ show: false });
+      mountModal();
+      const second = document.activeElement;
+      expect(second?.getAttribute("role")).toBe("dialog");
+
+      await vi.advanceTimersByTimeAsync(500);
+      expect(document.activeElement).toBe(second);
+
+      trigger.remove();
+      vi.useRealTimers();
+    });
+
+    it("skips hidden controls when wrapping Tab", () => {
+      mount(Modal, {
+        props: { show: true, origin: null, title: "Settings" },
+        slots: { default: '<input class="field" /><input class="hidden" />' },
+        ...options,
+      });
+      const hidden = document.querySelector<HTMLElement>(".hidden")!;
+      hidden.checkVisibility = () => false;
+      const field = document.querySelector<HTMLElement>(".field")!;
+      const close = document.querySelector<HTMLElement>(".modal-close button")!;
+
+      field.focus();
+      expect(press(field, "Tab").defaultPrevented).toBe(true);
+      expect(document.activeElement).toBe(close);
     });
 
     it("wraps Tab inside the dialog", () => {

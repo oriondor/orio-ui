@@ -23,6 +23,9 @@ interface Props {
 
 const props = defineProps<Props>();
 
+// root is a teleport, so attrs (aria-label, aria-labelledby, …) go on the dialog
+defineOptions({ inheritAttrs: false });
+
 const openDuration = computed(() => props.duration ?? 500);
 const closeDuration = computed(() => props.duration ?? 400);
 
@@ -56,7 +59,11 @@ watch(
 function afterLeave() {
   visible.value = Boolean(show.value);
   if (visible.value) return;
-  returnFocus?.focus({ preventScroll: true });
+  // another modal opened meanwhile and owns focus now
+  const active = document.activeElement;
+  if (!active?.closest('[aria-modal="true"]')) {
+    returnFocus?.focus({ preventScroll: true });
+  }
   returnFocus = null;
 }
 
@@ -67,7 +74,10 @@ const FOCUSABLE =
 function trapTab(event: KeyboardEvent) {
   const el = wrapper.value;
   if (!el) return;
-  const focusables = [...el.querySelectorAll<HTMLElement>(FOCUSABLE)];
+  // checkVisibility drops display:none / hidden controls (absent in jsdom)
+  const focusables = [...el.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
+    (element) => element.checkVisibility?.() !== false,
+  );
   const first = focusables[0];
   const last = focusables[focusables.length - 1];
   const active = document.activeElement;
@@ -146,6 +156,11 @@ const hasHeader = computed(() => {
   return Boolean(props.title || slots.header);
 });
 
+// default header renders the title; a custom #header has no titleId element
+const labelledBy = computed(() =>
+  props.title && !slots.header ? titleId : undefined,
+);
+
 const hasFooter = computed(() => {
   return Boolean(slots.footer);
 });
@@ -174,7 +189,8 @@ const hasFooter = computed(() => {
           role="dialog"
           aria-modal="true"
           tabindex="-1"
-          :aria-labelledby="title ? titleId : undefined"
+          :aria-labelledby="labelledBy"
+          v-bind="$attrs"
         >
           <header v-if="hasHeader" class="modal-header">
             <slot name="header">
@@ -241,7 +257,6 @@ const hasFooter = computed(() => {
 
   color: var(--color-text);
   opacity: 0;
-  outline: none;
 }
 
 .modal-header {

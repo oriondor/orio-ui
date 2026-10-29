@@ -33,10 +33,15 @@ invariants: true
   `agents/composables/usePageScrollLock.md`.
 - **Dialog a11y.** `.modal` is `role="dialog"` + `aria-modal="true"` +
   `tabindex="-1"`; `aria-labelledby` points at the title only when the
-  `title` prop is set (custom `#header` = unlabelled). `animateOpen`
-  focuses `.modal`; `afterLeave` refocuses the element active before
-  open. `Tab`/`Shift+Tab` wrap inside `.modal` (`trapTab`, no library:
-  `focus-trap` would block teleported popovers).
+  `title` prop is set and no `#header` slot replaces it. Root is a
+  teleport, so `inheritAttrs: false` + `v-bind="$attrs"` on `.modal`:
+  with a custom header pass `aria-label` / `aria-labelledby` on
+  `<orio-modal>` (also `class`/`style` land on `.modal`). `animateOpen`
+  focuses `.modal` (keyboard ring via the UA `:focus-visible` outline);
+  `afterLeave` refocuses the element active before open, unless focus is
+  already inside another `[aria-modal]`. `Tab`/`Shift+Tab` wrap inside
+  `.modal` over visible controls (`trapTab`, `checkVisibility`; no
+  library: `focus-trap` would block teleported popovers).
 - **Esc closes** via `@keydown.esc` on the overlay, so only the modal
   holding focus closes (stacked modals are separate teleports). Skipped
   when `event.defaultPrevented` — a child that handles Esc (open

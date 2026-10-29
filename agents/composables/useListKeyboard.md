@@ -34,8 +34,8 @@ item into view, and emits open/close/select callbacks. Used internally by
 - **`onKeydown(e, isOpen)`** is the handler to wire on the trigger or
   list. The caller passes `isOpen` because the composable does not own
   open state.
-- **Every matched key calls `e.preventDefault()`.** Unmatched keys
-  bubble. Space is registered as `" "` (single space string).
+- **Every matched key calls `e.preventDefault()`**, except Escape while
+  closed. Unmatched keys bubble. Space is registered as `" "` (single space string).
 - **Highlight clamps to `[0, count - 1]`.** `highlight(-1)` lands on 0,
   `highlight(99)` on `count - 1`.
 
