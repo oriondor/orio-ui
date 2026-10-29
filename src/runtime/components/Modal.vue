@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, useId, useSlots } from "vue";
+import { useI18n } from "vue-i18n";
 import { usePageScrollLock } from "../composables/usePageScrollLock";
 
-import { useSlots } from "vue";
-
 const slots = useSlots();
+const { t } = useI18n();
+const titleId = useId();
 
 export interface OriginRect {
   x: number;
@@ -22,6 +23,9 @@ interface Props {
 
 const props = defineProps<Props>();
 
+// root is a teleport, so attrs (aria-label, aria-labelledby, …) go on the dialog
+defineOptions({ inheritAttrs: false });
+
 const openDuration = computed(() => props.duration ?? 500);
 const closeDuration = computed(() => props.duration ?? 400);
 
@@ -37,13 +41,64 @@ const show = defineModel<boolean>("show");
 // when reopening mid-leave, hence `visible = Boolean(show)` there, not false.
 const visible = ref(false);
 
+// element focused before opening, refocused once the modal is gone
+let returnFocus: HTMLElement | null = null;
+
 watch(
   show,
   (open) => {
-    if (open) visible.value = true;
+    if (!open) return;
+    if (!visible.value && typeof document !== "undefined") {
+      returnFocus = document.activeElement as HTMLElement | null;
+    }
+    visible.value = true;
   },
   { immediate: true },
 );
+
+function afterLeave() {
+  visible.value = Boolean(show.value);
+  if (visible.value) return;
+  // another modal opened meanwhile and owns focus now
+  const active = document.activeElement;
+  if (!active?.closest('[aria-modal="true"]')) {
+    returnFocus?.focus({ preventScroll: true });
+  }
+  returnFocus = null;
+}
+
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+// keep Tab inside the dialog: wrap from last to first and back
+function trapTab(event: KeyboardEvent) {
+  const el = wrapper.value;
+  if (!el) return;
+  // checkVisibility drops display:none / hidden controls (absent in jsdom)
+  const focusables = [...el.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
+    (element) => element.checkVisibility?.() !== false,
+  );
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  const active = document.activeElement;
+  if (!first || !last) {
+    event.preventDefault();
+    el.focus();
+  } else if (event.shiftKey && (active === first || active === el)) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+// a child that handled Esc (open selector, nested popup) calls preventDefault
+function closeOnEscape(event: KeyboardEvent) {
+  if (event.defaultPrevented) return;
+  event.preventDefault();
+  show.value = false;
+}
 
 usePageScrollLock(visible);
 
@@ -73,6 +128,7 @@ function animateOpen() {
   el.style.transition = "";
   el.style.transform = "none";
   el.style.opacity = "1";
+  el.focus({ preventScroll: true });
 }
 
 function animateClose(overlay: Element, done: () => void) {
@@ -100,6 +156,11 @@ const hasHeader = computed(() => {
   return Boolean(props.title || slots.header);
 });
 
+// default header renders the title; a custom #header has no titleId element
+const labelledBy = computed(() =>
+  props.title && !slots.header ? titleId : undefined,
+);
+
 const hasFooter = computed(() => {
   return Boolean(slots.footer);
 });
@@ -112,24 +173,35 @@ const hasFooter = computed(() => {
       name="overlay-fade"
       @enter="animateOpen"
       @leave="animateClose"
-      @after-leave="visible = Boolean(show)"
+      @after-leave="afterLeave"
     >
       <div
         v-if="show"
         class="overlay"
         :style="durationVars"
         @click.self="show = false"
+        @keydown.esc="closeOnEscape"
+        @keydown.tab="trapTab"
       >
-        <div ref="wrapper" class="modal">
+        <div
+          ref="wrapper"
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          tabindex="-1"
+          :aria-labelledby="labelledBy"
+          v-bind="$attrs"
+        >
           <header v-if="hasHeader" class="modal-header">
             <slot name="header">
-              <orio-view-text type="title" class="modal-title">
+              <orio-view-text :id="titleId" type="title" class="modal-title">
                 {{ title }}
               </orio-view-text>
               <orio-button
                 icon="close"
                 variant="subdued"
                 class="modal-close"
+                :aria-label="t('modal.close')"
                 @click="show = false"
               />
             </slot>

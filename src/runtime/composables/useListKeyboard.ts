@@ -78,6 +78,8 @@ export function useListKeyboard(options: ListKeyboardOptions) {
   function onKeydown(e: KeyboardEvent, isOpen: boolean) {
     const action = keyActions[e.key];
     if (!action) return;
+    // closed list leaves Esc to the parent (e.g. a modal closing itself)
+    if (e.key === "Escape" && !isOpen) return;
     e.preventDefault();
     action(isOpen);
   }
