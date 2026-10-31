@@ -59,9 +59,9 @@ const { isPressing, isHolding } = useLongPress(target, {
 | `moveTolerance` | `MaybeRefOrGetter<number>` | `10` | Movement in px that cancels |
 | `forceTouch` | `MaybeRefOrGetter<boolean>` | `true` | Safari force click triggers immediately |
 | `disabled` | `MaybeRefOrGetter<boolean>` | `false` | Ignore presses; cancels an active one |
-| `onStart` | `(event: PointerEvent) => void` | — | Primary pointer went down |
+| `onStart` | `(event: PointerEvent \| KeyboardEvent) => void` | — | Primary pointer or Space went down |
 | `onCancel` | `() => void` | — | Press ended without triggering |
-| `onTrigger` | `(event, source: "hold" \| "force") => void` | required | Hold reached `delay`, or force click |
+| `onTrigger` | `(event, source: "hold" \| "force" \| "keyboard") => void` | required | Hold reached `delay`, or force click |
 
 ## Returns
 
@@ -75,6 +75,9 @@ const { isPressing, isHolding } = useLongPress(target, {
 - The click after a trigger is swallowed (capture phase on `window`, so it
   also covers a release over an overlay the trigger opened). Keyboard clicks
   pass through; Ctrl+click never starts a press.
+- Holding Space while focus is inside the target triggers with
+  `source: "keyboard"`; the Space click after that trigger is prevented.
+  Enter is ignored (buttons click on Enter keydown).
 - Nested targets: only the innermost handles a press.
 - While `isHolding`, `selectstart` and `contextmenu` on the target are
   prevented; on trigger any selection inside the target is cleared. Bind

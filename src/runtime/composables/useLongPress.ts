@@ -8,19 +8,17 @@ import {
 } from "vue";
 import { useEventListener } from "@vueuse/core";
 
-export type LongPressSource = "hold" | "force";
+export type LongPressSource = "hold" | "force" | "keyboard";
+export type LongPressEvent = PointerEvent | MouseEvent | KeyboardEvent;
 
 export interface LongPressOptions {
   delay?: MaybeRefOrGetter<number>;
   moveTolerance?: MaybeRefOrGetter<number>;
   forceTouch?: MaybeRefOrGetter<boolean>;
   disabled?: MaybeRefOrGetter<boolean>;
-  onStart?: (event: PointerEvent) => void;
+  onStart?: (event: PointerEvent | KeyboardEvent) => void;
   onCancel?: () => void;
-  onTrigger: (
-    event: PointerEvent | MouseEvent,
-    source: LongPressSource,
-  ) => void;
+  onTrigger: (event: LongPressEvent, source: LongPressSource) => void;
 }
 
 // A pointerdown bubbles through every nested wrapper; the first (innermost)
@@ -40,6 +38,8 @@ export function useLongPress(
   // Only the pointer that started the press may move, lift or cancel it.
   let activePointerId: number | undefined;
   let swallowNextClick = false;
+  // Space is down on the target; its keyup must not click after a trigger.
+  let isSpaceHeld = false;
 
   const isDisabled = () => toValue(options.disabled) ?? false;
   const isForceTouchEnabled = () =>
@@ -61,6 +61,7 @@ export function useLongPress(
     const wasPressing = isPressing.value;
     reset();
     isHolding.value = false;
+    isSpaceHeld = false;
     if (wasPressing) options.onCancel?.();
   }
 
@@ -71,7 +72,7 @@ export function useLongPress(
     if (element.contains(selection.anchorNode)) selection.removeAllRanges();
   }
 
-  function trigger(event: PointerEvent | MouseEvent, source: LongPressSource) {
+  function trigger(event: LongPressEvent, source: LongPressSource) {
     reset();
     clearSelectionInside();
     swallowNextClick = true;
@@ -128,6 +129,29 @@ export function useLongPress(
     event.preventDefault();
   }
 
+  // Space, not Enter: a button clicks on Enter keydown, so an Enter hold would
+  // click and trigger. Space clicks on keyup, which a trigger can cancel.
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key !== " " || event.repeat) return;
+    if (claimedEvents.has(event) || isDisabled()) return;
+    claimedEvents.add(event);
+    clearTimer();
+    isSpaceHeld = true;
+    isPressing.value = true;
+    options.onStart?.(event);
+    timer = setTimeout(
+      () => trigger(event, "keyboard"),
+      toValue(options.delay) ?? 500,
+    );
+  }
+
+  function handleKeyUp(event: KeyboardEvent) {
+    if (event.key !== " " || !isSpaceHeld) return;
+    // released after the trigger: stop the button's Space click
+    if (!isPressing.value) event.preventDefault();
+    cancel();
+  }
+
   function handlePointerEnd(event: PointerEvent) {
     if (isActivePointer(event)) cancel();
   }
@@ -176,6 +200,12 @@ export function useLongPress(
   useEventListener("click", handleClick, { capture: true });
   useEventListener(["pointerup", "pointercancel"], handleRelease);
   useEventListener("pointerdown", disarmSwallow, { capture: true });
+  useEventListener(target, "keydown", handleKeyDown);
+  useEventListener(target, "keyup", handleKeyUp);
+  // focus left mid-hold: the keyup will never reach the target
+  useEventListener(target, "focusout", () => {
+    if (isSpaceHeld) cancel();
+  });
   useEventListener(target, "contextmenu", handleContextMenu);
   useEventListener(target, "selectstart", handleSelectStart);
 
