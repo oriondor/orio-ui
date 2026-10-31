@@ -24,7 +24,7 @@ export function useModal() {
     modalProps.value.show = state;
   }
 
-  function openModal(event?: MouseEvent) {
+  function openModal(event?: Event) {
     modalProps.value.origin = null;
     if (!event) {
       modalProps.value.show = true;

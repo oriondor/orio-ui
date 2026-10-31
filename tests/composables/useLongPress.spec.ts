@@ -313,6 +313,72 @@ describe("useLongPress", () => {
     });
   });
 
+  describe("keyboard", () => {
+    const key = (type: string, init: KeyboardEventInit = {}) =>
+      new KeyboardEvent(type, {
+        key: " ",
+        bubbles: true,
+        cancelable: true,
+        ...init,
+      });
+
+    it("triggers when Space is held for the delay", async () => {
+      const { button, onTrigger, onStart, isPressing } = await setup();
+      const down = key("keydown");
+      button.dispatchEvent(down);
+      expect(onStart).toHaveBeenCalledWith(down);
+      expect(isPressing()).toBe(true);
+      // auto-repeat must not restart the timer
+      vi.advanceTimersByTime(300);
+      button.dispatchEvent(key("keydown", { repeat: true }));
+      vi.advanceTimersByTime(200);
+      expect(onTrigger).toHaveBeenCalledWith(down, "keyboard");
+    });
+
+    it("cancels on an early keyup and leaves the click alone", async () => {
+      const { button, onTrigger, onCancel } = await setup();
+      button.dispatchEvent(key("keydown"));
+      vi.advanceTimersByTime(200);
+      const up = key("keyup");
+      button.dispatchEvent(up);
+      vi.advanceTimersByTime(500);
+      expect(onTrigger).not.toHaveBeenCalled();
+      expect(onCancel).toHaveBeenCalledTimes(1);
+      expect(up.defaultPrevented).toBe(false);
+    });
+
+    it("prevents the Space click when released after a trigger", async () => {
+      const { button } = await setup();
+      button.dispatchEvent(key("keydown"));
+      vi.advanceTimersByTime(500);
+      const up = key("keyup");
+      button.dispatchEvent(up);
+      expect(up.defaultPrevented).toBe(true);
+    });
+
+    it("ignores Enter and other keys", async () => {
+      const { button, onStart } = await setup();
+      button.dispatchEvent(key("keydown", { key: "Enter" }));
+      button.dispatchEvent(key("keydown", { key: "a" }));
+      expect(onStart).not.toHaveBeenCalled();
+    });
+
+    it("cancels when focus leaves mid-hold", async () => {
+      const { button, onTrigger, onCancel } = await setup();
+      button.dispatchEvent(key("keydown"));
+      button.dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
+      vi.advanceTimersByTime(500);
+      expect(onTrigger).not.toHaveBeenCalled();
+      expect(onCancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("does nothing while disabled", async () => {
+      const { button, onStart } = await setup({ disabled: true });
+      button.dispatchEvent(key("keydown"));
+      expect(onStart).not.toHaveBeenCalled();
+    });
+  });
+
   describe("click swallow", () => {
     it("swallows the click that follows a trigger", async () => {
       const { element, button, childClick } = await setup();

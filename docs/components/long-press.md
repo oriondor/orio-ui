@@ -210,7 +210,8 @@ Click the card to open the profile; long press it to peek underneath first.
 
 ### Hold to confirm
 
-A longer `delay` and deeper `scale` for destructive actions. `press-cancel`
+A longer `delay` and deeper `scale` for destructive actions. `progress`
+draws a thin bar along the button's top edge that fills over `delay`. `press-cancel`
 explains what went wrong when the user lets go too early.
 
 <div class="demo-container">
@@ -218,6 +219,7 @@ explains what went wrong when the user lets go too early.
     <orio-long-press
       :delay="1500"
       :scale="0.85"
+      progress
       @trigger="deleteProject"
       @press-cancel="hintHoldLonger"
     >
@@ -320,6 +322,7 @@ const { modalProps, openModal } = useModal();
   <orio-long-press
     :delay="1500"
     :scale="0.85"
+    progress
     @trigger="deleteProject"
     @press-cancel="hintHoldLonger"
   >
@@ -337,13 +340,14 @@ const { modalProps, openModal } = useModal();
 | `forceTouch`    | `boolean` | `true`  | Safari force click triggers immediately and suppresses Look Up |
 | `disabled`      | `boolean` | `false` | No feedback, no events; normal clicks still work               |
 | `moveTolerance` | `number`  | `10`    | Pointer movement in px that cancels the press                  |
+| `progress`      | `boolean` | `false` | Thin bar on the child's top edge that fills over `delay`       |
 
 ## Events
 
 | Event          | Payload                                                          | Description                          |
 | -------------- | ---------------------------------------------------------------- | ------------------------------------ |
-| `trigger`      | `(event: PointerEvent \| MouseEvent, source: "hold" \| "force")` | Hold reached `delay`, or force click |
-| `press-start`  | `(event: PointerEvent)`                                          | Primary pointer went down            |
+| `trigger`      | `(event: PointerEvent \| MouseEvent \| KeyboardEvent, source: "hold" \| "force" \| "keyboard")` | Hold reached `delay`, or force click |
+| `press-start`  | `(event: PointerEvent \| KeyboardEvent)`                         | Primary pointer or Space went down   |
 | `press-cancel` | —                                                                | Press ended without triggering       |
 
 `trigger` passes the original event, so `@trigger="openModal"` animates the
@@ -353,7 +357,9 @@ modal from the pressed element.
 
 - The click that follows a trigger is swallowed — the wrapped button does not
   also activate. A short press is a normal click.
-- Keyboard activation (Enter / Space) is never swallowed.
+- Holding Space on the focused element triggers like a pointer hold
+  (`source: "keyboard"`); releasing Space after that does not click. A short
+  Space or Enter press is a normal click.
 - Only the left button / primary pointer counts. Ctrl+click (the macOS
   context-menu gesture) is ignored.
 - Moving past `moveTolerance`, leaving the element, or a touch scroll cancels.
@@ -370,5 +376,8 @@ screen pressure, so there it is a normal long press.
 
 ## Accessibility
 
-There is no keyboard equivalent of a long press. Make sure the action behind
-`trigger` is also reachable another way (a menu button, a shortcut).
+Hold Space on the focused element to trigger. Enter is left alone — a button
+clicks on Enter keydown, so holding it would click and trigger at once.
+Wrap a focusable element (a button); a plain `<div>` child needs
+`tabindex="0"`. A long press is hard to discover, so keep the action behind
+`trigger` reachable another way too (a menu button, a shortcut).
