@@ -222,29 +222,33 @@ const hasFooter = computed(() => {
           aria-modal="true"
           tabindex="-1"
           :aria-labelledby="labelledBy"
+          data-smooth-resize
         >
-          <header v-if="hasHeader" class="modal-header">
-            <slot name="header">
-              <orio-view-text :id="titleId" type="title" class="modal-title">
-                {{ title }}
-              </orio-view-text>
-              <orio-button
-                icon="close"
-                variant="subdued"
-                class="modal-close"
-                :aria-label="t('modal.close')"
-                @click="show = false"
-              />
-            </slot>
-          </header>
+          <!-- measured by the global smooth-resize watcher; .modal animates -->
+          <div class="modal-inner">
+            <header v-if="hasHeader" class="modal-header">
+              <slot name="header">
+                <orio-view-text :id="titleId" type="title" class="modal-title">
+                  {{ title }}
+                </orio-view-text>
+                <orio-button
+                  icon="close"
+                  variant="subdued"
+                  class="modal-close"
+                  :aria-label="t('modal.close')"
+                  @click="show = false"
+                />
+              </slot>
+            </header>
 
-          <section class="modal-content">
-            <slot />
-          </section>
+            <section class="modal-content">
+              <slot />
+            </section>
 
-          <footer v-if="hasFooter" class="modal-footer">
-            <slot name="footer" />
-          </footer>
+            <footer v-if="hasFooter" class="modal-footer">
+              <slot name="footer" />
+            </footer>
+          </div>
         </div>
       </div>
     </transition>
@@ -269,12 +273,8 @@ const hasFooter = computed(() => {
   position: absolute;
   z-index: 100;
 
-  display: flex;
-  flex-direction: column;
-
   min-width: 380px;
   max-width: 90vw;
-  max-height: 90vh;
 
   background: var(--color-surface);
   border-radius: var(--border-radius-lg);
@@ -290,6 +290,13 @@ const hasFooter = computed(() => {
   opacity: 0;
 }
 
+/* holds the natural height (capped) that the outer .modal animates to */
+.modal-inner {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -300,6 +307,8 @@ const hasFooter = computed(() => {
 
 .modal-content {
   padding: 0.5rem 1rem;
+  /* reserve the scrollbar's width so content doesn't shift when it appears */
+  scrollbar-gutter: stable;
   overflow-y: auto;
   max-height: 100%;
 }

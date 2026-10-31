@@ -56,6 +56,13 @@ invariants: true
   when `event.defaultPrevented` — a child that handles Esc (open
   Selector via `useListKeyboard`) must `preventDefault`; a closed list
   lets Esc through.
+- **Smooth content resize.** `.modal` has `data-smooth-resize`; the
+  page-wide watcher (`utils/smooth-resize.ts`, started by the
+  `smooth-resize.client` plugin / docs theme) animates `.modal` height
+  (WAAPI, 250 ms, skipped under reduced motion; not tied to `duration`)
+  when its first child `.modal-inner` resizes. Keep `.modal-inner` the
+  first child. It owns the flex column + `max-height: 90vh`; `.modal` has
+  no max-height. `.modal-content` has `scrollbar-gutter: stable`.
 - Close button label comes from i18n `modal.close`.
 - **Header/footer are auto-hidden** when no `title` prop and no
   `#header`/`#footer` slot is present. The content section (`#default`)
@@ -84,7 +91,8 @@ invariants: true
   still plays the enter hook.
 - The component writes `style.transform`, `style.transition` and
   `style.opacity` inline on the wrapper. Do not animate them from outside;
-  the component overwrites them on every open.
+  the component overwrites them on every open. Don't set a fixed
+  `height` on `.modal` either — the resize animation drives it.
 
 ## Quick reference
 

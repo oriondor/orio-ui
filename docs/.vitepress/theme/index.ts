@@ -9,6 +9,7 @@ import "../../../src/runtime/assets/css/main.css";
 
 // Import i18n
 import { i18n } from "../../../src/runtime/i18n";
+import { startSmoothResize } from "../../../src/runtime/utils/smooth-resize";
 
 // Experiments live outside `components/` so the Nuxt module never auto-imports
 // them; they ship as the `orio-ui/experiments` subpath and are registered here
@@ -33,6 +34,8 @@ export default {
   Layout,
   enhanceApp({ app }) {
     app.use(i18n);
+    // no-op during the SSR build
+    startSmoothResize();
     // Register all components globally with Orio prefix
     for (const path in components) {
       const component = components[path];
