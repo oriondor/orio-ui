@@ -210,7 +210,8 @@ function openProfile() {
 
 ### Утримання для підтвердження
 
-Довший `delay` і глибший `scale` для руйнівних дій. `press-cancel`
+Довший `delay` і глибший `scale` для руйнівних дій. `progress`
+малює тонку смужку вздовж верхнього краю кнопки, що заповнюється за `delay`. `press-cancel`
 пояснює, що пішло не так, коли користувач відпускає зарано.
 
 <div class="demo-container">
@@ -218,6 +219,7 @@ function openProfile() {
     <orio-long-press
       :delay="1500"
       :scale="0.85"
+      progress
       @trigger="deleteProject"
       @press-cancel="hintHoldLonger"
     >
@@ -320,6 +322,7 @@ const { modalProps, openModal } = useModal();
   <orio-long-press
     :delay="1500"
     :scale="0.85"
+    progress
     @trigger="deleteProject"
     @press-cancel="hintHoldLonger"
   >
@@ -337,13 +340,14 @@ const { modalProps, openModal } = useModal();
 | `forceTouch`    | `boolean` | `true`  | Force click у Safari спрацьовує одразу й блокує Look Up        |
 | `disabled`      | `boolean` | `false` | Без відгуку й подій; звичайні кліки працюють                   |
 | `moveTolerance` | `number`  | `10`    | Зсув вказівника в px, що скасовує натискання                   |
+| `progress`      | `boolean` | `false` | Тонка смужка на верхньому краї вмісту, що заповнюється за `delay` |
 
 ## Події
 
 | Подія          | Дані                                                             | Опис                                 |
 | -------------- | ---------------------------------------------------------------- | ------------------------------------ |
-| `trigger`      | `(event: PointerEvent \| MouseEvent, source: "hold" \| "force")` | Утримання досягло `delay` або стався force click |
-| `press-start`  | `(event: PointerEvent)`                                          | Основний вказівник натиснуто         |
+| `trigger`      | `(event: PointerEvent \| MouseEvent \| KeyboardEvent, source: "hold" \| "force" \| "keyboard")` | Утримання досягло `delay` або стався force click |
+| `press-start`  | `(event: PointerEvent \| KeyboardEvent)`                         | Натиснуто основний вказівник або Space |
 | `press-cancel` | —                                                                | Натискання завершилося без спрацювання |
 
 `trigger` передає оригінальну подію, тож `@trigger="openModal"` анімує
@@ -353,7 +357,9 @@ const { modalProps, openModal } = useModal();
 
 - Клік, що йде після спрацювання, поглинається — обгорнута кнопка не
   активується вдруге. Коротке натискання — це звичайний клік.
-- Активація з клавіатури (Enter / Space) ніколи не поглинається.
+- Утримання Space на елементі у фокусі спрацьовує як утримання вказівника
+  (`source: "keyboard"`); відпускання Space після цього не клікає. Коротке
+  натискання Space чи Enter — звичайний клік.
 - Враховується лише ліва кнопка / основний вказівник. Ctrl+клік (жест
   контекстного меню в macOS) ігнорується.
 - Зсув понад `moveTolerance`, вихід за межі елемента чи прокручування дотиком скасовують натискання.
@@ -370,5 +376,8 @@ const { modalProps, openModal } = useModal();
 
 ## Доступність
 
-Довге натискання не має клавіатурного відповідника. Переконайтеся, що дія за
-`trigger` доступна й іншим способом (кнопка меню, гаряча клавіша).
+Утримуйте Space на елементі у фокусі, щоб спрацювало. Enter не обробляється —
+кнопка клікає вже на keydown Enter, тож утримання клікнуло б і спрацювало разом.
+Обгортайте фокусований елемент (кнопку); звичайному дочірньому `<div>`
+потрібен `tabindex="0"`. Довге натискання важко помітити, тож залишайте дію за
+`trigger` доступною й іншим способом (кнопка меню, гаряча клавіша).

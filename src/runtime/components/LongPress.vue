@@ -2,6 +2,7 @@
 import { computed, ref } from "vue";
 import {
   useLongPress,
+  type LongPressEvent,
   type LongPressSource,
 } from "../composables/useLongPress";
 
@@ -11,6 +12,8 @@ export interface LongPressProps {
   forceTouch?: boolean;
   disabled?: boolean;
   moveTolerance?: number;
+  /** thin bar above the content that fills over `delay` */
+  progress?: boolean;
 }
 
 const props = withDefaults(defineProps<LongPressProps>(), {
@@ -19,11 +22,12 @@ const props = withDefaults(defineProps<LongPressProps>(), {
   forceTouch: true,
   disabled: false,
   moveTolerance: 10,
+  progress: false,
 });
 
 const emit = defineEmits<{
-  trigger: [event: PointerEvent | MouseEvent, source: LongPressSource];
-  pressStart: [event: PointerEvent];
+  trigger: [event: LongPressEvent, source: LongPressSource];
+  pressStart: [event: PointerEvent | KeyboardEvent];
   pressCancel: [];
 }>();
 
@@ -49,7 +53,7 @@ const style = computed(() => ({
   <div
     ref="root"
     class="long-press"
-    :class="{ pressing: isPressing, holding: isHolding, disabled }"
+    :class="{ pressing: isPressing, holding: isHolding, disabled, progress }"
     :style
   >
     <slot />
@@ -58,6 +62,7 @@ const style = computed(() => ({
 
 <style scoped>
 .long-press {
+  position: relative;
   display: inline-flex;
   touch-action: manipulation;
   transform: scale(1);
@@ -74,6 +79,34 @@ const style = computed(() => ({
   transform: scale(var(--long-press-scale));
   transition-duration: var(--long-press-duration);
   transition-timing-function: ease-in;
+}
+
+/* kept under reduced motion: it is the only cue for how long to hold.
+   Drawn on the child itself (the wrapper also spans the child's margin), over
+   its top edge and inset past the rounded corners; page text color reads on
+   both surface and accent fills. */
+.long-press.progress > :slotted(*) {
+  position: relative;
+}
+
+.long-press.progress > :slotted(*)::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 3px;
+  inset-inline: min(var(--control-radius, var(--border-radius-md)), 25%);
+  height: 3px;
+  border-radius: 2px;
+  background: var(--long-press-progress-color, currentColor);
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 150ms ease-out;
+}
+
+.long-press.progress.pressing > :slotted(*)::before {
+  transform: scaleX(1);
+  transition: transform var(--long-press-duration) linear;
 }
 
 @media (prefers-reduced-motion: reduce) {

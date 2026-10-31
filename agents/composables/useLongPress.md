@@ -24,7 +24,12 @@ per press. Use `<orio-long-press>` unless you need no scale feedback.
   disarmed by the next pointerdown anywhere on the page — never by a timer,
   because touch browsers send the click in a later task than touchend.
   Keyboard clicks (`detail === 0`) pass. Ctrl+click never starts a press.
-- **Nested targets:** first (innermost) handler claims the pointerdown.
+- **Keyboard:** Space `keydown` on `target` (bubbled from a focused child)
+  starts a press, auto-repeat ignored; early `keyup` / `focusout` cancels;
+  trigger fires with `source: "keyboard"` and the trigger-time Space `keyup`
+  is `preventDefault`ed (no button click). Enter is ignored on purpose.
+  `isHolding` stays pointer-only.
+- **Nested targets:** first (innermost) handler claims the pointerdown / keydown.
 - **Force:** `webkitmouseforcewillbegin` is `preventDefault`ed while
   `forceTouch` is on (suppresses Look Up); `webkitmouseforcedown` triggers
   with `source: "force"` only during an active press.
