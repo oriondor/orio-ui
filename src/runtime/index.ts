@@ -110,6 +110,7 @@ export {
 
 // Export utils
 export { iconRegistry, type IconName } from "./utils/icon-registry";
+export { startSmoothResize } from "./utils/smooth-resize";
 export {
   flattenParams,
   unflattenParams,
