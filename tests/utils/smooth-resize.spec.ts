@@ -16,6 +16,15 @@ class FakeResizeObserver {
   disconnect() {}
 }
 
+// each test starts a fresh module, so its page observer must not outlive it
+const mutationObservers: MutationObserver[] = [];
+class TrackedMutationObserver extends MutationObserver {
+  constructor(callback: MutationCallback) {
+    super(callback);
+    mutationObservers.push(this);
+  }
+}
+
 // MutationObserver callbacks run as microtasks
 const flush = () => new Promise((resolve) => setTimeout(resolve));
 
@@ -49,10 +58,13 @@ describe("startSmoothResize", () => {
     vi.resetModules();
     observed.clear();
     vi.stubGlobal("ResizeObserver", FakeResizeObserver);
+    vi.stubGlobal("MutationObserver", TrackedMutationObserver);
     vi.stubGlobal("matchMedia", () => ({ matches: false }));
   });
 
   afterEach(() => {
+    mutationObservers.forEach((observer) => observer.disconnect());
+    mutationObservers.length = 0;
     vi.unstubAllGlobals();
     document.body.innerHTML = "";
   });
@@ -103,5 +115,49 @@ describe("startSmoothResize", () => {
     resize(100);
     resize(200);
     expect(animate).not.toHaveBeenCalled();
+  });
+
+  it("keeps an emptied container tracked so its collapse animates", async () => {
+    const { animate, content, resize } = await setup();
+    resize(100);
+    content.remove();
+    await flush();
+    expect(observed.has(content)).toBe(true);
+    resize(20, content);
+    expect(animate).toHaveBeenCalledWith(
+      [
+        { height: "100px", overflow: "hidden" },
+        { height: "20px", overflow: "hidden" },
+      ],
+      expect.anything(),
+    );
+  });
+
+  it("cancels running animations when reduced motion turns on", async () => {
+    let onChange = () => {};
+    const media = {
+      matches: false,
+      addEventListener: (_type: string, listener: () => void) => {
+        onChange = listener;
+      },
+    };
+    vi.stubGlobal("matchMedia", () => media);
+    const { animate, resize } = await setup();
+    resize(100);
+    resize(200);
+    const animation = animate.mock.results[0].value;
+    media.matches = true;
+    onChange();
+    expect(animation.cancel).toHaveBeenCalled();
+  });
+
+  it("ignores mutations outside containers", async () => {
+    const { container } = await setup();
+    const querySpy = vi.spyOn(document, "querySelectorAll");
+    document.body.append(document.createElement("p"));
+    container.firstElementChild!.append(document.createElement("span"));
+    await flush();
+    expect(querySpy).not.toHaveBeenCalled();
+    querySpy.mockRestore();
   });
 });

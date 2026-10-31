@@ -25,6 +25,7 @@ export function startSmoothResize() {
   if (!("ResizeObserver" in window) || !("MutationObserver" in window)) return;
   started = true;
 
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const tracked = new Map<HTMLElement, Tracked>();
   const containerOf = new Map<Element, HTMLElement>();
 
@@ -32,7 +33,7 @@ export function startSmoothResize() {
     entries.forEach((entry) => {
       const container = containerOf.get(entry.target);
       const state = container && tracked.get(container);
-      if (container && state) animate(container, state);
+      if (container && state) animate(container, state, reducedMotion.matches);
     });
   });
 
@@ -45,8 +46,6 @@ export function startSmoothResize() {
     tracked.delete(container);
   }
 
-  // ponytail: full re-query per mutation batch; index added/removed nodes if
-  // pages with heavy DOM churn show it in profiles
   // match the tracked set to the DOM: new containers, swapped first
   // children (v-if remount) and removed containers
   function sync() {
@@ -58,7 +57,9 @@ export function startSmoothResize() {
     present.forEach((container) => {
       const content = container.firstElementChild;
       const state = tracked.get(container);
-      if (state?.content === content) return;
+      // emptied: keep observing the detached child, whose drop to zero size
+      // animates the container's collapse
+      if (state?.content === content || (state && !content)) return;
       untrack(container);
       if (!content) return;
       // a new content element's first size is not a change
@@ -68,16 +69,41 @@ export function startSmoothResize() {
     });
   }
 
-  new MutationObserver(sync).observe(document.documentElement, {
+  // only re-query when a mutation can touch a container or its first child
+  const isRelevant = (record: MutationRecord) =>
+    record.type === "attributes" ||
+    (record.target instanceof Element && record.target.matches(SELECTOR)) ||
+    [...record.addedNodes, ...record.removedNodes].some(
+      (node) =>
+        node instanceof Element &&
+        (node.matches(SELECTOR) || node.querySelector(SELECTOR) !== null),
+    );
+
+  new MutationObserver((records) => {
+    if (records.some(isRelevant)) sync();
+  }).observe(document.documentElement, {
     childList: true,
     subtree: true,
     attributes: true,
     attributeFilter: ["data-smooth-resize"],
   });
   sync();
+
+  // turned on mid-animation: jump to the final size
+  reducedMotion.addEventListener?.("change", () => {
+    if (!reducedMotion.matches) return;
+    tracked.forEach((state) => {
+      state.animation?.cancel();
+      state.animation = null;
+    });
+  });
 }
 
-function animate(container: HTMLElement, state: Tracked) {
+function animate(
+  container: HTMLElement,
+  state: Tracked,
+  reducedMotion: boolean,
+) {
   // mid-animation: continue from wherever the box is right now
   const from = state.animation ? container.offsetHeight : state.height;
   state.animation?.cancel();
@@ -87,7 +113,7 @@ function animate(container: HTMLElement, state: Tracked) {
   state.height = to;
 
   if (from === null || from === to) return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (reducedMotion) return;
 
   const animation = container.animate(
     [
