@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.36.5](https://github.com/oriondor/orio-ui/compare/v1.36.4...v1.36.5) (2026-11-03)
+
+### fix: accessibility of long press component ([#204](https://github.com/oriondor/orio-ui/pull/204))
+
+fix: accessibility of long press component
+
+- Add optional `progress` prop to `LongPress`. When enabled, a progress indicator fills during the configured delay.
+- Support Space-key long presses. A non-repeating Space keydown starts the delay, and a trigger reports `source: "keyboard"`.
+- Cancel an untriggered keyboard press on Space keyup or focus loss. After a keyboard trigger, prevent the resulting Space click.
+- Ignore Enter for long-press triggering. Short Space presses and Enter retain normal click behavior.
+- Expand event types and callback documentation to include `KeyboardEvent` and the `"keyboard"` trigger source.
+- Update accessibility guidance and examples in the component documentation.
+- Change `openModal` to accept an optional `Event`.
+- Add tests for the progress prop and keyboard long-press behavior.
+
+### fix: smooth height animation for [data-smooth-resize] elements ([#202](https://github.com/oriondor/orio-ui/pull/202))
+
+fix: smooth height animation for [data-smooth-resize] elements
+
+- Add `startSmoothResize()` to animate an element’s height when its first child resizes. The animation lasts 250 ms and does not run when reduced motion is preferred.
+- Start the resize watcher through a Nuxt client plugin. Export `startSmoothResize()` for use without Nuxt.
+- Update the modal layout to support smooth content resizing. Move flex layout and the height cap to `.modal-inner`, and add a stable scrollbar gutter to `.modal-content`.
+- Document setup and behavior in English and Ukrainian, and update the documented test suite count from 58 to 60.
+- Add tests for initial measurements, height changes, replaced content, dynamic elements, and reduced motion.
+
 ## [1.36.4](https://github.com/oriondor/orio-ui/compare/v1.36.3...v1.36.4) (2026-10-29)
 
 fix: improve keyboard and screen reader support
