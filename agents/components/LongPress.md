@@ -10,7 +10,8 @@ invariants: true
 
 `<orio-long-press>` wraps any element (default slot only — no `#wrapping`)
 and emits `trigger(event, source)` after a hold. Behavior lives in
-`useLongPress`; the component adds scale feedback.
+`useLongPress`; the component adds scale feedback and the optional
+`progress` bar.
 
 ## Invariants
 
@@ -18,13 +19,18 @@ and emits `trigger(event, source)` after a hold. Behavior lives in
   stops the release's `click` — even when it lands outside the wrapper
   (e.g. on a modal overlay the trigger opened) — so a wrapped
   `<orio-button @click>` does not also fire — on touch too, where the click
-  comes a task after touchend. Disarmed by the next pointerdown anywhere. Keyboard clicks (`detail === 0`) always pass.
+  comes a task after touchend. Disarmed by the next pointerdown anywhere. Keyboard clicks (`detail === 0`) pass this swallow.
   A short press is a normal click.
 - **`trigger` passes the original event.** `@trigger="openModal"` works with
   `useModal` — origin comes from `event.target`.
-- **`source` is `"hold"` or `"force"`.** `"force"` only in macOS Safari with a
-  Force Touch trackpad (`webkitmouseforce*` events). Everywhere else it is
-  always `"hold"`.
+- **`source` is `"hold"`, `"force"` or `"keyboard"`.** `"force"` only in
+  macOS Safari with a Force Touch trackpad (`webkitmouseforce*` events).
+- **Keyboard: Space hold only.** `keydown` Space (bubbling from the focused
+  child) starts the timer, auto-repeat ignored; early `keyup` or `focusout`
+  cancels. After a trigger the Space `keyup` is `preventDefault`ed, so the
+  button's Space click does not fire. Enter is deliberately ignored — buttons
+  click on Enter keydown, so a hold would click and trigger. `press-start`
+  receives the `KeyboardEvent`; `.holding` is pointer-only.
 - **Primary pointer + left button only.** Right-click-hold and Ctrl+click
   (macOS context menu) do nothing.
 - **Cancels** on pointerup/leave/cancel or movement ≥ `moveTolerance` before
@@ -37,11 +43,22 @@ and emits `trigger(event, source)` after a hold. Behavior lives in
   and any selection inside is cleared on trigger. Text is selectable otherwise.
 - **Two state classes:** `.pressing` (scale, ends at trigger) and `.holding`
   (selection block, ends on release).
-- **Reduced motion:** scale disabled, `trigger` still fires.
+- **`progress` bar** is a `:slotted(*)::before` on the child itself (the
+  child gets `position: relative`) — not on the wrapper, which also spans the
+  child's margin (ControlElement's `0.5rem`). 3px line 3px inside the top
+  edge, inset by the radius, `currentColor` (override with
+  `--long-press-progress-color`); `scaleX` 0→1 linear over `delay` while
+  `.pressing`, snaps back in 150ms. Needs a child that renders `::before`
+  (not `<img>`/`<input>`), and an absolutely positioned child gets
+  overridden to `relative`.
+- **Reduced motion:** scale disabled, progress bar kept (it is the hold-length
+  cue), `trigger` still fires.
 
 ## Gotchas
 
-- **No keyboard trigger.** Provide another path to the same action.
+- **Non-focusable child** (plain `<div>`, image) gets no keyboard hold; it
+  needs `tabindex="0"`. Long press is still hard to discover — offer another
+  path to the same action.
 - **Block-level children** stay shrink-wrapped by `inline-flex`; set
   `style="display: flex"` on the wrapper if the child must stretch.
 - **Don't wrap in another element that also handles long press**
@@ -106,5 +123,5 @@ More demos in the docs page: user card peek, toast quick action, hold to
 confirm (`:delay="1500"` + `@press-cancel` hint), reveal hidden value.
 
 Props: `delay` (500), `scale` (0.95), `forceTouch` (true), `disabled`
-(false), `moveTolerance` (10). Events: `trigger`, `press-start`,
+(false), `moveTolerance` (10), `progress` (false). Events: `trigger`, `press-start`,
 `press-cancel`.

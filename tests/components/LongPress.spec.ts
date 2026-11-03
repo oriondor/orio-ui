@@ -77,6 +77,13 @@ describe("LongPress", () => {
     expect(wrapper.classes()).not.toContain("holding");
   });
 
+  it("adds the progress class only when asked", async () => {
+    const plain = mount(LongPress);
+    expect(plain.classes()).not.toContain("progress");
+    const withBar = mount(LongPress, { props: { progress: true } });
+    expect(withBar.classes()).toContain("progress");
+  });
+
   it("adds the disabled class", async () => {
     const wrapper = mount(LongPress, { props: { disabled: true } });
 

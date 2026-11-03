@@ -59,9 +59,9 @@ const { isPressing, isHolding } = useLongPress(target, {
 | `moveTolerance` | `MaybeRefOrGetter<number>` | `10` | Зсув у px, що скасовує натискання |
 | `forceTouch` | `MaybeRefOrGetter<boolean>` | `true` | Force click у Safari спрацьовує одразу |
 | `disabled` | `MaybeRefOrGetter<boolean>` | `false` | Ігнорувати натискання; скасовує активне |
-| `onStart` | `(event: PointerEvent) => void` | — | Основний вказівник натиснуто |
+| `onStart` | `(event: PointerEvent \| KeyboardEvent) => void` | — | Натиснуто основний вказівник або Space |
 | `onCancel` | `() => void` | — | Натискання завершилося без спрацювання |
-| `onTrigger` | `(event, source: "hold" \| "force") => void` | обов'язкова | Утримання досягло `delay` або стався force click |
+| `onTrigger` | `(event, source: "hold" \| "force" \| "keyboard") => void` | обов'язкова | Утримання досягло `delay` або стався force click |
 
 ## Повертає
 
@@ -75,6 +75,9 @@ const { isPressing, isHolding } = useLongPress(target, {
 - Клік після спрацювання поглинається (фаза перехоплення на `window`, тож це
   охоплює й відпускання над оверлеєм, який відкрило спрацювання). Кліки з клавіатури
   проходять; Ctrl+клік ніколи не починає натискання.
+- Утримання Space, коли фокус усередині цілі, спрацьовує з
+  `source: "keyboard"`; клік Space після спрацювання блокується.
+  Enter ігнорується (кнопки клікають на keydown Enter).
 - Вкладені цілі: натискання обробляє лише найглибша.
 - Поки `isHolding`, `selectstart` і `contextmenu` на цілі блокуються; під час
   спрацювання будь-яке виділення всередині цілі знімається. Для iOS прив'яжіть
