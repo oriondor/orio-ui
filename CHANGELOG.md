@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.36.5](https://github.com/oriondor/orio-ui/compare/v1.36.4...v1.36.5) (2026-11-03)
+
+
+### Bug Fixes
+
+* accessibility of long press component ([#204](https://github.com/oriondor/orio-ui/issues/204)) ([666407c](https://github.com/oriondor/orio-ui/commit/666407cc1201c947e0f75f25744fb727d3606fe3))
+* smooth height animation for [data-smooth-resize] elements ([#202](https://github.com/oriondor/orio-ui/issues/202)) ([eaccfa1](https://github.com/oriondor/orio-ui/commit/eaccfa150409fe78221420a32155bd3058aa2db6))
+
 ## [1.36.4](https://github.com/oriondor/orio-ui/compare/v1.36.3...v1.36.4) (2026-10-29)
 
 fix: improve keyboard and screen reader support
