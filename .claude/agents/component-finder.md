@@ -46,6 +46,8 @@ not edit by hand.
 - **animation wrapper, fade/slide a slot, animated list, mount-stagger layout** → `AnimatedContainer.vue` (read the agent doc first)
 - **canvas, drawing board, whiteboard, sketch, freeform editor, pluggable tools** → `Canvas/` (read the agent doc first)
 - **dashed empty/drop zone, add-item card, upload tile, empty state with action** → `DashedContainer.vue` (read the agent doc first)
+- **drag and drop, draggable item, drag source, kanban card, drag to reorder between lists, drag to delete** → `Draggable.vue` (read the agent doc first)
+- **drop zone, drop target, accept dragged items, kanban column, trash bin, drag and drop** → `DropZone.vue` (read the agent doc first)
 - **modal, dialog, popup overlay, lightbox** → `Modal.vue` (read the agent doc first)
 - **popover, anchored floating panel, dropdown menu base, contextual menu** → `Popover.vue` (read the agent doc first)
 - **toast, notification, snackbar, flash message, transient alert, undo bar** → `Toast/` (read the agent doc first)
@@ -105,6 +107,7 @@ not edit by hand.
 - **fetch, API client, HTTP request, JSON fetch** → `useApi`
 - **control size tokens, sizing tokens for form controls, control variant sizing** → `useControlSize` (read the agent doc first)
 - **locale-aware number formatting, decimal parser, currency-safe parser** → `useDecimalFormatter` (read the agent doc first)
+- **drag and drop on any element, drag source, drop target, pointer-based dnd with touch support** → `useDragAndDrop` (read the agent doc first)
 - **named filter group, v-bind bags for pickers, active chips, URL-synced filters, filter state** → `useFilter` (read the agent doc first)
 - **fuzzy search, client-side filter, in-memory search, search-as-you-type** → `useFuzzySearch`
 - **inertia, momentum decay for gestures, fling-and-decelerate, momentum scroll** → `useInertia` (read the agent doc first)
