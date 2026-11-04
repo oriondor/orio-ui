@@ -5,6 +5,7 @@ import {
   toValue,
   watch,
   type MaybeRefOrGetter,
+  type Ref,
 } from "vue";
 import { useEventListener } from "@vueuse/core";
 
@@ -218,5 +219,9 @@ export function useLongPress(
 
   onScopeDispose(clearTimer);
 
-  return { isPressing: readonly(isPressing), isHolding: readonly(isHolding) };
+  // annotated: readonly(ref) otherwise emits as ReadonlyMap in the .d.ts
+  return {
+    isPressing: readonly(isPressing) as Readonly<Ref<boolean>>,
+    isHolding: readonly(isHolding) as Readonly<Ref<boolean>>,
+  };
 }

@@ -72,15 +72,19 @@ const { isOver } = useDropTarget(target, {
 
 ### `useDragSource(target, options)`
 
-| Опція      | Тип                          | Опис                                              |
-| ---------- | ---------------------------- | ------------------------------------------------- |
-| `data`     | `MaybeRefOrGetter<unknown>`  | Значення, що потрапляє в `onDrop` цілі            |
-| `group`    | `MaybeRefOrGetter<string>`   | Приймають лише цілі з тією ж групою або без групи |
-| `disabled` | `MaybeRefOrGetter<boolean>`  | Перетягувати не можна                             |
-| `onStart`  | `(data: unknown) => void`    | Перетягування почалося                            |
-| `onEnd`    | `(dropped: boolean) => void` | Перетягування завершилося                         |
+| Опція        | Тип                                    | Опис                                                                    |
+| ------------ | -------------------------------------- | ----------------------------------------------------------------------- |
+| `data`       | `MaybeRefOrGetter<unknown>`            | Значення, що потрапляє в `onDrop` цілі                                  |
+| `group`      | `MaybeRefOrGetter<string>`             | Приймають лише цілі з тією ж групою або без групи                       |
+| `disabled`   | `MaybeRefOrGetter<boolean>`            | Перетягувати не можна                                                   |
+| `delay`      | `MaybeRefOrGetter<number>`             | Утримання дотиком у мс до початку; типово `300`                         |
+| `activation` | `MaybeRefOrGetter<"auto" \| "manual">` | `manual`: натискання лише готує джерело; викличте `start()`, щоб почати |
+| `onStart`    | `(data: unknown) => void`              | Перетягування почалося                                                  |
+| `onEnd`      | `(dropped: boolean) => void`           | Перетягування завершилося                                               |
 
-Повертає `{ isDragging }`.
+Повертає `{ isDragging, start }`. `start()` починає перетягування для
+поточного натискання (наприклад, з `onTrigger` у `useLongPress`); без нього
+нічого не робить.
 
 ### `useDropTarget(target, options)`
 

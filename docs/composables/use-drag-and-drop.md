@@ -72,15 +72,18 @@ const { isOver } = useDropTarget(target, {
 
 ### `useDragSource(target, options)`
 
-| Option     | Type                         | Description                                          |
-| ---------- | ---------------------------- | ---------------------------------------------------- |
-| `data`     | `MaybeRefOrGetter<unknown>`  | Value handed to the target's `onDrop`                |
-| `group`    | `MaybeRefOrGetter<string>`   | Only targets with the same group, or none, accept it |
-| `disabled` | `MaybeRefOrGetter<boolean>`  | Cannot be dragged                                    |
-| `onStart`  | `(data: unknown) => void`    | The drag began                                       |
-| `onEnd`    | `(dropped: boolean) => void` | The drag ended                                       |
+| Option       | Type                                   | Description                                                     |
+| ------------ | -------------------------------------- | --------------------------------------------------------------- |
+| `data`       | `MaybeRefOrGetter<unknown>`            | Value handed to the target's `onDrop`                           |
+| `group`      | `MaybeRefOrGetter<string>`             | Only targets with the same group, or none, accept it            |
+| `disabled`   | `MaybeRefOrGetter<boolean>`            | Cannot be dragged                                               |
+| `delay`      | `MaybeRefOrGetter<number>`             | Touch hold in ms before the drag starts; default `300`          |
+| `activation` | `MaybeRefOrGetter<"auto" \| "manual">` | `manual`: a press only arms the source; call `start()` to begin |
+| `onStart`    | `(data: unknown) => void`              | The drag began                                                  |
+| `onEnd`      | `(dropped: boolean) => void`           | The drag ended                                                  |
 
-Returns `{ isDragging }`.
+Returns `{ isDragging, start }`. `start()` begins the drag for the press in
+progress (e.g. from `useLongPress`'s `onTrigger`); without one it does nothing.
 
 ### `useDropTarget(target, options)`
 

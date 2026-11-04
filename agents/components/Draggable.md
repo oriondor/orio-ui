@@ -16,9 +16,16 @@ pair it with `<orio-drop-zone>`. Public docs: `docs/components/drag-and-drop.md`
 
 - **Nothing moves by itself.** The drop zone emits `drop(data, event)`;
   the consumer updates its own arrays. `data` is read when the drag starts.
-- **Start rules:** mouse/pen after 5px of movement; touch after a 300ms
-  still hold (moving ≥10px first = a scroll, the drag never starts). Left
-  button / primary pointer only; Ctrl+click ignored.
+- **Start rules (`activation="auto"`):** mouse/pen after 5px of movement;
+  touch after a `delay` (300ms) still hold (moving ≥10px first = a scroll,
+  the drag never starts). Left button / primary pointer only; Ctrl+click
+  ignored.
+- **`activation="longpress"`** wraps the slot in `<orio-long-press>` and
+  calls `useDragSource`'s `start()` from its `trigger`: every pointer holds
+  `delay` (LongPress default 500ms), shrink feedback, Safari force click.
+  Movement before the trigger never starts a drag. Keyboard Space-hold
+  triggers are ignored (no pointer to follow). The ghost clones the
+  shrunk state.
 - **Touch scroll is blocked only during a drag** — a window-level
   non-passive `touchmove` calls `preventDefault` while `isDragging`.
 - **Ghost:** `cloneNode(true)` of the wrapper, `position: fixed` in
@@ -45,7 +52,9 @@ pair it with `<orio-drop-zone>`. Public docs: `docs/components/drag-and-drop.md`
 
 ## Props / events
 
-- Props: `data (undefined)`, `group (undefined)`, `disabled (false)`.
+- Props: `data (undefined)`, `group (undefined)`, `disabled (false)`,
+  `activation ("auto" | "longpress", "auto")`, `delay (undefined → 300
+touch / 500 longpress)`.
 - Events: `drag-start(data)`, `drag-end(dropped: boolean)`.
 
 ## Quick reference

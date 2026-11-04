@@ -223,11 +223,13 @@ function moveTask({ task, from }, to) {
 
 ### Props
 
-| Prop       | Type      | Default     | Description                                        |
-| ---------- | --------- | ----------- | -------------------------------------------------- |
-| `data`     | `unknown` | `undefined` | Handed to the zone's `drop` event                  |
-| `group`    | `string`  | `undefined` | Only zones with the same group, or none, accept it |
-| `disabled` | `boolean` | `false`     | Cannot be dragged; clicks inside work as usual     |
+| Prop         | Type                    | Default       | Description                                                                               |
+| ------------ | ----------------------- | ------------- | ----------------------------------------------------------------------------------------- |
+| `data`       | `unknown`               | `undefined`   | Handed to the zone's `drop` event                                                         |
+| `group`      | `string`                | `undefined`   | Only zones with the same group, or none, accept it                                        |
+| `disabled`   | `boolean`               | `false`       | Cannot be dragged; clicks inside work as usual                                            |
+| `activation` | `"auto" \| "longpress"` | `"auto"`      | `longpress`: every pointer holds first, with the long-press shrink and Safari force click |
+| `delay`      | `number`                | `300` / `500` | Hold in ms: touch hold for `auto`, long press for `longpress`                             |
 
 ### Events
 
@@ -269,7 +271,11 @@ function moveTask({ task, from }, to) {
 - **Mouse and pen**: the drag starts once the pointer moves 5px. A plain click
   still clicks.
 - **Touch**: hold for 300ms without moving, then drag. Moving earlier scrolls
-  the page instead; once the drag starts the page stops scrolling.
+  the page instead; once the drag starts the page stops scrolling. `delay`
+  changes the hold.
+- **`activation="longpress"`**: mouse, pen and touch all hold first (500ms
+  by default). The item shrinks while held, as in `<orio-long-press>`, and a
+  Safari force click starts the drag at once.
 - A copy of the item follows the pointer; the original stays in place at 40%
   opacity. The copy is moved to `<body>`, so styles that depend on its parent
   (`.column .card`) do not reach it.
