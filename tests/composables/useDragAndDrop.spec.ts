@@ -267,9 +267,51 @@ describe("Draggable + DropZone", () => {
       await nextTick();
       expect(wrapper.find(".long-press").classes()).toContain("pressing");
       vi.advanceTimersByTime(400);
+      await nextTick();
       window.dispatchEvent(pointer("pointermove", 150, 0));
       window.dispatchEvent(pointer("pointerup", 150, 0));
       expect(onDrop).toHaveBeenCalledWith({ id: 7 }, expect.anything());
+    });
+
+    it("the drag copy is not shrunk", async () => {
+      const { card } = await setup(undefined, { activation: "longpress" });
+      card.dispatchEvent(pointer("pointerdown", 0, 0));
+      await nextTick();
+      vi.advanceTimersByTime(500);
+      await nextTick();
+      const copy = document.body.querySelector(':scope > [aria-hidden="true"]');
+      expect(copy).not.toBeNull();
+      expect(copy!.querySelector(".long-press")!.classList).not.toContain(
+        "pressing",
+      );
+    });
+
+    it("Space hold on a focused child keeps its click", async () => {
+      const { card, onDragEnd } = await setup(undefined, {
+        activation: "longpress",
+      });
+      const key = (type: string) =>
+        new KeyboardEvent(type, { key: " ", bubbles: true, cancelable: true });
+      card.dispatchEvent(key("keydown"));
+      vi.advanceTimersByTime(500);
+      await nextTick();
+      const up = key("keyup");
+      card.dispatchEvent(up);
+      expect(up.defaultPrevented).toBe(false);
+      expect(onDragEnd).not.toHaveBeenCalled();
+    });
+
+    it("passes long-press tuning through", async () => {
+      const { wrapper } = await setup(undefined, {
+        activation: "longpress",
+        scale: 0.8,
+        progress: true,
+      });
+      const longPress = wrapper.find(".long-press");
+      expect(longPress.classes()).toContain("progress");
+      expect(longPress.attributes("style")).toContain(
+        "--long-press-scale: 0.8",
+      );
     });
 
     it("Safari force click starts the drag at once", async () => {
@@ -280,6 +322,7 @@ describe("Draggable + DropZone", () => {
       card.dispatchEvent(
         new MouseEvent("webkitmouseforcedown", { bubbles: true }),
       );
+      await nextTick();
       window.dispatchEvent(pointer("pointermove", 150, 0));
       window.dispatchEvent(pointer("pointerup", 150, 0));
       expect(onDrop).toHaveBeenCalled();

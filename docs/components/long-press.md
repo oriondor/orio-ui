@@ -341,14 +341,15 @@ const { modalProps, openModal } = useModal();
 | `disabled`      | `boolean` | `false` | No feedback, no events; normal clicks still work               |
 | `moveTolerance` | `number`  | `10`    | Pointer movement in px that cancels the press                  |
 | `progress`      | `boolean` | `false` | Thin bar on the child's top edge that fills over `delay`       |
+| `keyboard`      | `boolean` | `true`  | Holding Space on a focused child triggers too                  |
 
 ## Events
 
-| Event          | Payload                                                          | Description                          |
-| -------------- | ---------------------------------------------------------------- | ------------------------------------ |
+| Event          | Payload                                                                                         | Description                          |
+| -------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------ |
 | `trigger`      | `(event: PointerEvent \| MouseEvent \| KeyboardEvent, source: "hold" \| "force" \| "keyboard")` | Hold reached `delay`, or force click |
-| `press-start`  | `(event: PointerEvent \| KeyboardEvent)`                         | Primary pointer or Space went down   |
-| `press-cancel` | —                                                                | Press ended without triggering       |
+| `press-start`  | `(event: PointerEvent \| KeyboardEvent)`                                                        | Primary pointer or Space went down   |
+| `press-cancel` | —                                                                                               | Press ended without triggering       |
 
 `trigger` passes the original event, so `@trigger="openModal"` animates the
 modal from the pressed element.

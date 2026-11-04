@@ -17,6 +17,8 @@ export interface LongPressOptions {
   moveTolerance?: MaybeRefOrGetter<number>;
   forceTouch?: MaybeRefOrGetter<boolean>;
   disabled?: MaybeRefOrGetter<boolean>;
+  /** Space hold triggers too. Default true */
+  keyboard?: MaybeRefOrGetter<boolean>;
   onStart?: (event: PointerEvent | KeyboardEvent) => void;
   onCancel?: () => void;
   onTrigger: (event: LongPressEvent, source: LongPressSource) => void;
@@ -135,6 +137,7 @@ export function useLongPress(
   function handleKeyDown(event: KeyboardEvent) {
     if (event.key !== " " || event.repeat) return;
     if (claimedEvents.has(event) || isDisabled()) return;
+    if (toValue(options.keyboard) === false) return;
     claimedEvents.add(event);
     clearTimer();
     isSpaceHeld = true;

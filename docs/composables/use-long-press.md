@@ -53,22 +53,23 @@ const { isPressing, isHolding } = useLongPress(target, {
 
 ## Options
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `delay` | `MaybeRefOrGetter<number>` | `500` | Hold time in ms |
-| `moveTolerance` | `MaybeRefOrGetter<number>` | `10` | Movement in px that cancels |
-| `forceTouch` | `MaybeRefOrGetter<boolean>` | `true` | Safari force click triggers immediately |
-| `disabled` | `MaybeRefOrGetter<boolean>` | `false` | Ignore presses; cancels an active one |
-| `onStart` | `(event: PointerEvent \| KeyboardEvent) => void` | — | Primary pointer or Space went down |
-| `onCancel` | `() => void` | — | Press ended without triggering |
-| `onTrigger` | `(event, source: "hold" \| "force" \| "keyboard") => void` | required | Hold reached `delay`, or force click |
+| Option          | Type                                                       | Default  | Description                                |
+| --------------- | ---------------------------------------------------------- | -------- | ------------------------------------------ |
+| `delay`         | `MaybeRefOrGetter<number>`                                 | `500`    | Hold time in ms                            |
+| `moveTolerance` | `MaybeRefOrGetter<number>`                                 | `10`     | Movement in px that cancels                |
+| `forceTouch`    | `MaybeRefOrGetter<boolean>`                                | `true`   | Safari force click triggers immediately    |
+| `disabled`      | `MaybeRefOrGetter<boolean>`                                | `false`  | Ignore presses; cancels an active one      |
+| `keyboard`      | `MaybeRefOrGetter<boolean>`                                | `true`   | Space hold on a focused child triggers too |
+| `onStart`       | `(event: PointerEvent \| KeyboardEvent) => void`           | —        | Primary pointer or Space went down         |
+| `onCancel`      | `() => void`                                               | —        | Press ended without triggering             |
+| `onTrigger`     | `(event, source: "hold" \| "force" \| "keyboard") => void` | required | Hold reached `delay`, or force click       |
 
 ## Returns
 
-| Key | Type | Description |
-|---|---|---|
-| `isPressing` | `Readonly<Ref<boolean>>` | `true` from pointerdown until trigger or cancel |
-| `isHolding` | `Readonly<Ref<boolean>>` | `true` from pointerdown until the finger lifts or the press is cancelled — outlives the trigger |
+| Key          | Type                     | Description                                                                                     |
+| ------------ | ------------------------ | ----------------------------------------------------------------------------------------------- |
+| `isPressing` | `Readonly<Ref<boolean>>` | `true` from pointerdown until trigger or cancel                                                 |
+| `isHolding`  | `Readonly<Ref<boolean>>` | `true` from pointerdown until the finger lifts or the press is cancelled — outlives the trigger |
 
 ## Notes
 

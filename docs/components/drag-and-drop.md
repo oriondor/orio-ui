@@ -223,13 +223,16 @@ function moveTask({ task, from }, to) {
 
 ### Props
 
-| Prop         | Type                    | Default       | Description                                                                               |
-| ------------ | ----------------------- | ------------- | ----------------------------------------------------------------------------------------- |
-| `data`       | `unknown`               | `undefined`   | Handed to the zone's `drop` event                                                         |
-| `group`      | `string`                | `undefined`   | Only zones with the same group, or none, accept it                                        |
-| `disabled`   | `boolean`               | `false`       | Cannot be dragged; clicks inside work as usual                                            |
-| `activation` | `"auto" \| "longpress"` | `"auto"`      | `longpress`: every pointer holds first, with the long-press shrink and Safari force click |
-| `delay`      | `number`                | `300` / `500` | Hold in ms: touch hold for `auto`, long press for `longpress`                             |
+| Prop            | Type                    | Default       | Description                                                                               |
+| --------------- | ----------------------- | ------------- | ----------------------------------------------------------------------------------------- |
+| `data`          | `unknown`               | `undefined`   | Handed to the zone's `drop` event                                                         |
+| `group`         | `string`                | `undefined`   | Only zones with the same group, or none, accept it                                        |
+| `disabled`      | `boolean`               | `false`       | Cannot be dragged; clicks inside work as usual                                            |
+| `activation`    | `"auto" \| "longpress"` | `"auto"`      | `longpress`: every pointer holds first, with the long-press shrink and Safari force click |
+| `delay`         | `number`                | `300` / `500` | Hold in ms: touch hold for `auto`, long press for `longpress`                             |
+| `moveTolerance` | `number`                | `10`          | `longpress` only: movement in px that cancels the hold                                    |
+| `scale`         | `number`                | `0.95`        | `longpress` only: scale reached at the trigger                                            |
+| `progress`      | `boolean`               | `false`       | `longpress` only: bar that fills over `delay`                                             |
 
 ### Events
 

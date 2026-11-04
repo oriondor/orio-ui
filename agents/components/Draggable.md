@@ -23,9 +23,12 @@ pair it with `<orio-drop-zone>`. Public docs: `docs/components/drag-and-drop.md`
 - **`activation="longpress"`** wraps the slot in `<orio-long-press>` and
   calls `useDragSource`'s `start()` from its `trigger`: every pointer holds
   `delay` (LongPress default 500ms), shrink feedback, Safari force click.
-  Movement before the trigger never starts a drag. Keyboard Space-hold
-  triggers are ignored (no pointer to follow). The ghost clones the
-  shrunk state.
+  Movement before the trigger never starts a drag. LongPress gets
+  `:keyboard="false"`, so Space on a focused child clicks normally.
+  `start()` runs on `nextTick` after the trigger, so the ghost is cloned
+  after `.pressing` leaves the DOM (unshrunk). `.draggable > .long-press`
+  is `flex: 1; min-width: 0` so full-width children keep their width.
+  `moveTolerance`, `scale`, `progress` pass through to LongPress.
 - **Touch scroll is blocked only during a drag** — a window-level
   non-passive `touchmove` calls `preventDefault` while `isDragging`.
 - **Ghost:** `cloneNode(true)` of the wrapper, `position: fixed` in
@@ -54,7 +57,8 @@ pair it with `<orio-drop-zone>`. Public docs: `docs/components/drag-and-drop.md`
 
 - Props: `data (undefined)`, `group (undefined)`, `disabled (false)`,
   `activation ("auto" | "longpress", "auto")`, `delay (undefined → 300
-touch / 500 longpress)`.
+touch / 500 longpress)`; longpress only: `moveTolerance`, `scale`,
+  `progress` (LongPress defaults).
 - Events: `drag-start(data)`, `drag-end(dropped: boolean)`.
 
 ## Quick reference

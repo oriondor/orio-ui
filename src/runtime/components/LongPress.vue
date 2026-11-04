@@ -14,6 +14,8 @@ export interface LongPressProps {
   moveTolerance?: number;
   /** thin bar above the content that fills over `delay` */
   progress?: boolean;
+  /** Space hold on a focused child triggers too */
+  keyboard?: boolean;
 }
 
 const props = withDefaults(defineProps<LongPressProps>(), {
@@ -23,6 +25,7 @@ const props = withDefaults(defineProps<LongPressProps>(), {
   disabled: false,
   moveTolerance: 10,
   progress: false,
+  keyboard: true,
 });
 
 const emit = defineEmits<{
@@ -38,6 +41,7 @@ const { isPressing, isHolding } = useLongPress(root, {
   moveTolerance: () => props.moveTolerance,
   forceTouch: () => props.forceTouch,
   disabled: () => props.disabled,
+  keyboard: () => props.keyboard,
   onStart: (event) => emit("pressStart", event),
   onCancel: () => emit("pressCancel"),
   onTrigger: (event, source) => emit("trigger", event, source),

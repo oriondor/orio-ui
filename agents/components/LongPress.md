@@ -34,7 +34,7 @@ and emits `trigger(event, source)` after a hold. Behavior lives in
 - **Primary pointer + left button only.** Right-click-hold and Ctrl+click
   (macOS context menu) do nothing.
 - **Cancels** on pointerup/leave/cancel or movement ≥ `moveTolerance` before
-  the delay. Releasing *after* a trigger does not emit `press-cancel`.
+  the delay. Releasing _after_ a trigger does not emit `press-cancel`.
 - **Nested wrappers:** only the innermost reacts to a press.
 - **Wrapper is `display: inline-flex`** with `touch-action: manipulation`.
 - **Selection is blocked only while held.** `.holding` (pointerdown → finger
@@ -123,5 +123,6 @@ More demos in the docs page: user card peek, toast quick action, hold to
 confirm (`:delay="1500"` + `@press-cancel` hint), reveal hidden value.
 
 Props: `delay` (500), `scale` (0.95), `forceTouch` (true), `disabled`
-(false), `moveTolerance` (10), `progress` (false). Events: `trigger`, `press-start`,
+(false), `moveTolerance` (10), `progress` (false), `keyboard` (true —
+false turns off the Space hold). Events: `trigger`, `press-start`,
 `press-cancel`.

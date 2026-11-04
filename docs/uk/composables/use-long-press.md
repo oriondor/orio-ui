@@ -53,22 +53,23 @@ const { isPressing, isHolding } = useLongPress(target, {
 
 ## Опції
 
-| Опція | Тип | За замовчуванням | Опис |
-|---|---|---|---|
-| `delay` | `MaybeRefOrGetter<number>` | `500` | Час утримання в мс |
-| `moveTolerance` | `MaybeRefOrGetter<number>` | `10` | Зсув у px, що скасовує натискання |
-| `forceTouch` | `MaybeRefOrGetter<boolean>` | `true` | Force click у Safari спрацьовує одразу |
-| `disabled` | `MaybeRefOrGetter<boolean>` | `false` | Ігнорувати натискання; скасовує активне |
-| `onStart` | `(event: PointerEvent \| KeyboardEvent) => void` | — | Натиснуто основний вказівник або Space |
-| `onCancel` | `() => void` | — | Натискання завершилося без спрацювання |
-| `onTrigger` | `(event, source: "hold" \| "force" \| "keyboard") => void` | обов'язкова | Утримання досягло `delay` або стався force click |
+| Опція           | Тип                                                        | За замовчуванням | Опис                                                   |
+| --------------- | ---------------------------------------------------------- | ---------------- | ------------------------------------------------------ |
+| `delay`         | `MaybeRefOrGetter<number>`                                 | `500`            | Час утримання в мс                                     |
+| `moveTolerance` | `MaybeRefOrGetter<number>`                                 | `10`             | Зсув у px, що скасовує натискання                      |
+| `forceTouch`    | `MaybeRefOrGetter<boolean>`                                | `true`           | Force click у Safari спрацьовує одразу                 |
+| `disabled`      | `MaybeRefOrGetter<boolean>`                                | `false`          | Ігнорувати натискання; скасовує активне                |
+| `keyboard`      | `MaybeRefOrGetter<boolean>`                                | `true`           | Утримання Space на сфокусованому вмісті теж спрацьовує |
+| `onStart`       | `(event: PointerEvent \| KeyboardEvent) => void`           | —                | Натиснуто основний вказівник або Space                 |
+| `onCancel`      | `() => void`                                               | —                | Натискання завершилося без спрацювання                 |
+| `onTrigger`     | `(event, source: "hold" \| "force" \| "keyboard") => void` | обов'язкова      | Утримання досягло `delay` або стався force click       |
 
 ## Повертає
 
-| Ключ | Тип | Опис |
-|---|---|---|
-| `isPressing` | `Readonly<Ref<boolean>>` | `true` від pointerdown до спрацювання або скасування |
-| `isHolding` | `Readonly<Ref<boolean>>` | `true` від pointerdown, доки палець не піднято або натискання не скасовано — триває й після спрацювання |
+| Ключ         | Тип                      | Опис                                                                                                    |
+| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `isPressing` | `Readonly<Ref<boolean>>` | `true` від pointerdown до спрацювання або скасування                                                    |
+| `isHolding`  | `Readonly<Ref<boolean>>` | `true` від pointerdown, доки палець не піднято або натискання не скасовано — триває й після спрацювання |
 
 ## Примітки
 
