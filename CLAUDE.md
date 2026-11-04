@@ -28,6 +28,8 @@ from the frontmatter of those docs; do not edit by hand.
 - `AnimatedContainer.vue` — flex container that fade-slides its direct children up on mount and exposes a sound `play` callback. **Read the agent doc first.**
 - `Canvas/` — pannable workspace with pluggable tools and detached toolbar registry. **Read the agent doc first.**
 - `DashedContainer.vue` — clickable dashed-border tile with icon and label, used for add/upload affordances. **Read the agent doc first.**
+- `Draggable.vue` — wrapper that makes any child draggable with mouse, pen or touch and carries a `data` value to `<orio-drop-zone>`. **Read the agent doc first.**
+- `DropZone.vue` — wrapper that accepts `<orio-draggable>` drops and emits `drop(data, event)`; slot exposes `isDragging` / `isOver`. **Read the agent doc first.**
 - `Modal.vue` — teleported overlay dialog with open-from-origin animation. **Read the agent doc first.**
 - `Popover.vue` — anchored floating panel teleported to body with auto-flip placement and click-outside dismissal. **Read the agent doc first.**
 - `Toast/` — notification card drawn by the auto-mounted toast host; queue it with `useToast`, never place it by hand. **Read the agent doc first.**
@@ -87,6 +89,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `useApi` — thin typed wrapper around ofetch's `$fetch` for GET/POST/PUT/DELETE/PATCH requests.
 - `useControlSize` — provide/inject `ControlSize` (xs/sm/md/lg/xl) and read a CSS-var token bag for the active size. **Read the agent doc first.**
 - `useDecimalFormatter` — parse numeric strings (US or EU separator) and format via Intl.NumberFormat with locale defaults. **Read the agent doc first.**
+- `useDragAndDrop` — `useDragSource` + `useDropTarget` — pointer-based drag and drop with touch hold, ghost copy and group filtering; powers Draggable / DropZone. **Read the agent doc first.**
 - `useFilter` — named filter group with v-bind bags, $-helpers, $active chips, $clearAll, optional URL sync via lazy import. **Read the agent doc first.**
 - `useFuzzySearch` — typed Fuse.js wrapper that returns a computed list of matched items (strings or objects).
 - `useInertia` — post-drag momentum loop that calls a tick callback with decaying velocity each frame. **Read the agent doc first.**
