@@ -325,6 +325,7 @@ function onNavButtonClick(button: NavButton) {
   font-size: var(--control-font-size, var(--font-md));
   color: var(--color-text);
   width: 22rem;
+  max-width: 100%;
 }
 
 .calendar-nav {

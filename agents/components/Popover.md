@@ -33,12 +33,17 @@ is the default slot; the panel content is the `#content` slot.
 - **Placement auto-flips.** If the requested position doesn't fit in the
   viewport, the component tries the opposite-main, then center variants,
   then perpendicular axes — first fit wins. `currentPosition` is the
-  resolved value. No way to disable the fallback.
+  resolved value. No way to disable the fallback. The final `top`/`left`
+  is then clamped 8px inside the viewport, so a panel near an edge
+  slides over instead of going off-screen. The wrapper also has
+  `max-width: calc(100% - 16px)`; content wider than that must be able
+  to shrink (Calendar/MonthCalendar use `max-width: 100%`).
 - **`offset` is gap in px between trigger and panel.** Default `10`.
 - **Click outside closes**, with `triggerRef` in the ignore list.
 - **Reposition on scroll/resize** uses capture-phase listeners that
   default to `window` (SSR-safe — no explicit `window` target), so it
-  catches nested scrolling ancestors. Panel resizes via
+  catches nested scrolling ancestors. Scrolls *inside* the panel are
+  ignored — re-measuring hides the panel, which kills iOS touch scroll. Panel resizes via
   `useElementBounding` also trigger reposition, as does any capture-phase
   `transitionend` (a parent modal's open morph settles the position).
 - **Esc inside the panel closes it** (`preventDefault`s, so a parent

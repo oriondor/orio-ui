@@ -228,6 +228,7 @@ function onActiveKeyChange(iso: string) {
   font-size: var(--control-font-size, var(--font-md));
   color: var(--color-text);
   width: 16rem;
+  max-width: 100%;
 }
 
 .month-calendar-nav {
