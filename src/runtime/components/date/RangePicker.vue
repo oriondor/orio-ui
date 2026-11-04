@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useMediaQuery } from "@vueuse/core";
 import type { ControlProps } from "../ControlElement.vue";
 import type { CalendarMarker } from "../Calendar.vue";
 import {
@@ -69,19 +70,32 @@ function anchorPairFor(startIso: string | null | undefined): [string, string] {
   return [formatISO(firstOfMonth), formatISO(addMonths(firstOfMonth, 1))];
 }
 
-const [seedLeft, seedRight] = anchorPairFor(range.value?.start);
-const leftAnchor = ref<string | null>(seedLeft);
-const rightAnchor = ref<string | null>(seedRight);
+type Side = "start" | "end";
+
+const [seedStart, seedEnd] = anchorPairFor(range.value?.start);
+const anchors = reactive<Record<Side, string | null>>({
+  start: seedStart,
+  end: seedEnd,
+});
 
 watch(
   () => range.value?.start,
   (start) => {
     if (!parseISO(start)) return;
-    const [nextLeft, nextRight] = anchorPairFor(start);
-    if (leftAnchor.value === nextLeft || rightAnchor.value === nextLeft) return;
-    leftAnchor.value = nextLeft;
-    rightAnchor.value = nextRight;
+    const [nextStart, nextEnd] = anchorPairFor(start);
+    if (anchors.start === nextStart || anchors.end === nextStart) return;
+    anchors.start = nextStart;
+    anchors.end = nextEnd;
   },
+);
+
+// two calendars don't fit side by side on a phone; show one and let the
+// user switch which month it is
+const isNarrow = useMediaQuery("(max-width: 48rem)");
+const activeSide = ref<Side>("start");
+const sides: Side[] = ["start", "end"];
+const visibleSides = computed<Side[]>(() =>
+  isNarrow.value ? [activeSide.value] : sides,
 );
 
 const hovering = ref<string | null>(null);
@@ -163,42 +177,44 @@ function clearHover() {
   >
     <template #default="{ toggle }">
       <div class="range-content" @mouseleave="clearHover">
-        <template v-if="month">
-          <orio-date-month-calendar
-            v-model:anchor="leftAnchor"
-            :markers
-            :get-marker="calendarGetMarker"
-            :is-disabled="calendarIsDisabled"
-            @select="pick($event, toggle)"
-            @month-enter="onHover"
-          />
-          <orio-date-month-calendar
-            v-model:anchor="rightAnchor"
-            :markers
-            :get-marker="calendarGetMarker"
-            :is-disabled="calendarIsDisabled"
-            @select="pick($event, toggle)"
-            @month-enter="onHover"
-          />
-        </template>
-        <template v-else>
-          <orio-calendar
-            v-model:anchor="leftAnchor"
-            :markers
-            :get-marker="calendarGetMarker"
-            :is-disabled="calendarIsDisabled"
-            @select="pick($event, toggle)"
-            @day-enter="onHover"
-          />
-          <orio-calendar
-            v-model:anchor="rightAnchor"
-            :markers
-            :get-marker="calendarGetMarker"
-            :is-disabled="calendarIsDisabled"
-            @select="pick($event, toggle)"
-            @day-enter="onHover"
-          />
-        </template>
+        <div v-if="isNarrow" class="range-sides">
+          <orio-button
+            v-for="side in sides"
+            :key="side"
+            size="sm"
+            :variant="side === activeSide ? 'primary' : 'secondary'"
+            :aria-pressed="side === activeSide"
+            @click="activeSide = side"
+          >
+            {{ t(`dateRangePicker.${side}`) }}
+          </orio-button>
+        </div>
+        <div class="range-calendars">
+          <template v-if="month">
+            <orio-date-month-calendar
+              v-for="side in visibleSides"
+              :key="side"
+              v-model:anchor="anchors[side]"
+              :markers
+              :get-marker="calendarGetMarker"
+              :is-disabled="calendarIsDisabled"
+              @select="pick($event, toggle)"
+              @month-enter="onHover"
+            />
+          </template>
+          <template v-else>
+            <orio-calendar
+              v-for="side in visibleSides"
+              :key="side"
+              v-model:anchor="anchors[side]"
+              :markers
+              :get-marker="calendarGetMarker"
+              :is-disabled="calendarIsDisabled"
+              @select="pick($event, toggle)"
+              @day-enter="onHover"
+            />
+          </template>
+        </div>
       </div>
     </template>
   </orio-date-picker-trigger>
@@ -206,6 +222,17 @@ function clearHover() {
 
 <style lang="scss" scoped>
 .range-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.range-sides {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.range-calendars {
   display: flex;
   gap: 0.75rem;
 }

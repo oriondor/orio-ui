@@ -20,7 +20,9 @@
     "placeholder": "Select a date"
   },
   "dateRangePicker": {
-    "placeholder": "Select a date range"
+    "placeholder": "Select a date range",
+    "start": "Start",
+    "end": "End"
   },
   "dates": {
     "present": "Present"

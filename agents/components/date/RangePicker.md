@@ -36,6 +36,10 @@ calendars** (left = start month, right = start month + 1). Read
   range.
 - **Built on `<orio-calendar>` × 2**, side-by-side in a flex row with
   0.75rem gap.
+- **Narrow screens (`max-width: 48rem`, via `useMediaQuery`) render one
+  calendar** plus Start / End `<orio-button>`s that swap which anchor it
+  shows. Both anchors keep their state across switches; picking does not
+  auto-switch sides. i18n keys `dateRangePicker.start` / `.end`.
 - **i18n key**: `dateRangePicker.placeholder` for the empty-display label.
 - **Display string**: `"start – end"` when both exist (en-dash, spaces).
   Just `start` or just `end` if only one. Empty string if both null.

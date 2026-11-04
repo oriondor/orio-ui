@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { afterEach, describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { defineComponent, h } from "vue";
 import DateRangePicker from "../../src/runtime/components/date/RangePicker.vue";
@@ -66,6 +66,17 @@ function mountRangePicker(props: Record<string, unknown> = {}) {
         "orio-date-picker-trigger": TriggerStub,
         "orio-calendar": CalendarStub,
         "orio-date-month-calendar": true,
+        "orio-button": defineComponent({
+          emits: ["click"],
+          setup(_, { slots, emit }) {
+            return () =>
+              h(
+                "button",
+                { class: "side-button", onClick: () => emit("click") },
+                slots.default?.(),
+              );
+          },
+        }),
       },
     },
   });
@@ -238,5 +249,34 @@ describe("DateRangePicker", () => {
     expect(text).toContain("Sep 2015");
     expect(text).toContain("Jun 2019");
     expect(text).toContain("–");
+  });
+
+  describe("on a narrow screen", () => {
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("shows one calendar and switches between start and end month", async () => {
+      vi.stubGlobal("matchMedia", () => ({
+        matches: true,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+      }));
+      const wrapper = mountRangePicker({
+        modelValue: { start: "2024-06-01", end: null },
+      });
+
+      expect(wrapper.findAll(".calendar-stub")).toHaveLength(1);
+      expect(wrapper.find(".calendar-stub").attributes("data-anchor")).toBe(
+        "2024-06-01",
+      );
+
+      const [, endButton] = wrapper.findAll(".side-button");
+      expect(endButton!.text()).toBe("End");
+      await endButton!.trigger("click");
+
+      expect(wrapper.findAll(".calendar-stub")).toHaveLength(1);
+      expect(wrapper.find(".calendar-stub").attributes("data-anchor")).toBe(
+        "2024-07-01",
+      );
+    });
   });
 });

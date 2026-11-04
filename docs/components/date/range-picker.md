@@ -50,6 +50,7 @@ const dates = ref({ start: null, end: null });
 - Second click sets `end`. If the picked date is before `start`, the two are swapped.
 - A third click (when the range is complete) starts a fresh range.
 - Hovering after the first click previews the range across both calendars.
+- On screens up to `48rem` wide only one calendar is shown, with Start / End buttons above it to switch between the start and end month.
 
 ## Props
 

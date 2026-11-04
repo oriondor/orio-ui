@@ -20,7 +20,9 @@
     "placeholder": "Оберіть дату"
   },
   "dateRangePicker": {
-    "placeholder": "Оберіть діапазон дат"
+    "placeholder": "Оберіть діапазон дат",
+    "start": "Початок",
+    "end": "Кінець"
   },
   "dates": {
     "present": "Дотепер"
