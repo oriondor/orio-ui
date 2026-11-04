@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.0](https://github.com/oriondor/orio-ui/compare/v1.36.5...v1.37.0) (2026-11-04)
+
+feat: Add drag-and-drop support
+
+- Add `<orio-draggable>` and `<orio-drop-zone>` components for pointer-based drag-and-drop.
+- Add `useDragSource` and `useDropTarget` composables with drag thresholds, group matching, drop handling, cancellation, and lifecycle cleanup.
+- Add English and Ukrainian guides with component and composable examples.
+- Add agent documentation and routing entries for the new components and composable.
+- Add tests for drag thresholds, drops, group matching, cancellation, touch handling, and disabled sources. Test results were not provided.
 ## [1.36.5](https://github.com/oriondor/orio-ui/compare/v1.36.4...v1.36.5) (2026-11-03)
 
 ### fix: accessibility of long press component ([#204](https://github.com/oriondor/orio-ui/pull/204))
