@@ -126,8 +126,9 @@ export function useDragSource(
     hoveredZone.value = zoneAt(x, y, activeDrag.value);
   }
 
-  // dropped: the pointer was released over an accepting zone
-  function end(event: PointerEvent | null) {
+  // dropped: the pointer was released over a zone that still accepts.
+  // expectClick: the pointer is (or was just) released, so a click follows
+  function end(event: PointerEvent | null, expectClick = event !== null) {
     clearTimeout(holdTimer);
     const wasDragging = isDragging.value;
     const drag = activeDrag.value;
@@ -143,8 +144,10 @@ export function useDragSource(
     hoveredZone.value = null;
     document.documentElement.style.cursor = "";
     // the release would also click whatever sits under it
-    swallowNextClick = true;
-    const dropped = Boolean(event && drag && dropTarget);
+    swallowNextClick = expectClick;
+    const dropped = Boolean(
+      event && drag && dropTarget && accepts(dropTarget, drag),
+    );
     if (dropped) dropTarget!.onDrop(drag!.data, event!);
     options.onEnd?.(dropped);
   }
@@ -192,11 +195,13 @@ export function useDragSource(
   }
 
   function handleKeyDown(event: KeyboardEvent) {
-    if (event.key === "Escape" && isDragging.value) end(null);
+    // the button is still down, its release will click
+    if (event.key === "Escape" && isDragging.value) end(null, true);
   }
 
   function handleClick(event: MouseEvent) {
-    if (!swallowNextClick) return;
+    // keyboard and assistive-tech clicks have detail 0 and never pressed
+    if (!swallowNextClick || event.detail === 0) return;
     swallowNextClick = false;
     event.stopPropagation();
     event.preventDefault();

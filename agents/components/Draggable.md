@@ -26,7 +26,9 @@ pair it with `<orio-drop-zone>`. Public docs: `docs/components/drag-and-drop.md`
   CSS (`.column .card`) does not reach it; scoped and `:root` styles do.
   The original gets `.dragging` (opacity 0.4).
 - **The click after a drag is swallowed** (window capture listener, disarmed
-  by the next pointerdown) so a wrapped button does not also fire.
+  by the next pointerdown) so a wrapped button does not also fire. Armed on
+  release and on Escape (button still down), not on pointercancel; clicks
+  with `detail === 0` (keyboard, assistive tech) always pass.
 - **Escape / pointercancel / `disabled` turning true** end the drag;
   `drag-end` reports `false`.
 - **One drag at a time page-wide** (module-level state). Nested draggables:
@@ -50,9 +52,17 @@ pair it with `<orio-drop-zone>`. Public docs: `docs/components/drag-and-drop.md`
 
 ```vue
 <!-- from docs/components/drag-and-drop.md -->
-<orio-draggable v-for="file in files" :key="file" :data="file" group="files">
-  <orio-button variant="secondary" icon="file">{{ file }}</orio-button>
-</orio-draggable>
+<template v-for="file in files" :key="file">
+  <orio-draggable :data="file" group="files">
+    <orio-button variant="secondary" icon="file">{{ file }}</orio-button>
+  </orio-draggable>
+  <orio-button
+    icon="delete"
+    variant="subdued"
+    :aria-label="`Delete ${file}`"
+    @click="deleteFile(file)"
+  />
+</template>
 
 <orio-drop-zone group="files" @drop="deleteFile">
   <template #default="{ isDragging, isOver }">

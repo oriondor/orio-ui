@@ -15,7 +15,8 @@ invariants: true
 ## Invariants
 
 - **`drop(data, event: PointerEvent)`** fires only on release over the zone
-  with an accepted drag. The consumer moves the data.
+  with an accepted drag; `accepts` is rechecked at release, so a zone that
+  turned `disabled` mid-drag gets nothing. The consumer moves the data.
 - **Accepts** when not `disabled` and (`group` unset or equal to the
   draggable's `group`).
 - **Hit test is `elementFromPoint`** walked up through ancestors: the
@@ -58,7 +59,23 @@ invariants: true
         :data="{ task, from: columnIndex }"
         group="tasks"
       >
-        <orio-tag :text="task" />
+        <div class="card">
+          <orio-button
+            v-if="columnIndex > 0"
+            icon="chevron-left"
+            variant="subdued"
+            :aria-label="`Move ${task} to ${columns[columnIndex - 1].name}`"
+            @click="moveTask({ task, from: columnIndex }, columnIndex - 1)"
+          />
+          <orio-tag :text="task" />
+          <orio-button
+            v-if="columnIndex < columns.length - 1"
+            icon="chevron-right"
+            variant="subdued"
+            :aria-label="`Move ${task} to ${columns[columnIndex + 1].name}`"
+            @click="moveTask({ task, from: columnIndex }, columnIndex + 1)"
+          />
+        </div>
       </orio-draggable>
     </div>
   </template>

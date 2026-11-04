@@ -69,7 +69,23 @@ function restoreFiles() {
             :data="{ task, from: columnIndex }"
             group="tasks"
           >
-            <orio-tag :text="task" />
+            <div style="display: flex; align-items: center; gap: 0.25rem;">
+              <orio-button
+                v-if="columnIndex > 0"
+                icon="chevron-left"
+                variant="subdued"
+                :aria-label="`Move ${task} to ${columns[columnIndex - 1].name}`"
+                @click="moveTask({ task, from: columnIndex }, columnIndex - 1)"
+              />
+              <orio-tag :text="task" />
+              <orio-button
+                v-if="columnIndex < columns.length - 1"
+                icon="chevron-right"
+                variant="subdued"
+                :aria-label="`Move ${task} to ${columns[columnIndex + 1].name}`"
+                @click="moveTask({ task, from: columnIndex }, columnIndex + 1)"
+              />
+            </div>
           </orio-draggable>
         </div>
       </template>
@@ -84,9 +100,17 @@ can show itself only when it is useful.
 
 <div class="demo-container">
   <div class="demo-row">
-    <orio-draggable v-for="file in files" :key="file" :data="file" group="files">
-      <orio-button variant="secondary" icon="file">{{ file }}</orio-button>
-    </orio-draggable>
+    <template v-for="file in files" :key="file">
+      <orio-draggable :data="file" group="files">
+        <orio-button variant="secondary" icon="file">{{ file }}</orio-button>
+      </orio-draggable>
+      <orio-button
+        icon="delete"
+        variant="subdued"
+        :aria-label="`Delete ${file}`"
+        @click="deleteFile(file)"
+      />
+    </template>
   </div>
   <div class="demo-row">
     <orio-drop-zone group="files" @drop="deleteFile">
@@ -125,7 +149,23 @@ can show itself only when it is useful.
           :data="{ task, from: columnIndex }"
           group="tasks"
         >
-          <orio-tag :text="task" />
+          <div class="card">
+            <orio-button
+              v-if="columnIndex > 0"
+              icon="chevron-left"
+              variant="subdued"
+              :aria-label="`Move ${task} to ${columns[columnIndex - 1].name}`"
+              @click="moveTask({ task, from: columnIndex }, columnIndex - 1)"
+            />
+            <orio-tag :text="task" />
+            <orio-button
+              v-if="columnIndex < columns.length - 1"
+              icon="chevron-right"
+              variant="subdued"
+              :aria-label="`Move ${task} to ${columns[columnIndex + 1].name}`"
+              @click="moveTask({ task, from: columnIndex }, columnIndex + 1)"
+            />
+          </div>
         </orio-draggable>
       </div>
     </template>
@@ -153,9 +193,17 @@ function moveTask({ task, from }, to) {
 
 ```vue
 <template>
-  <orio-draggable v-for="file in files" :key="file" :data="file" group="files">
-    <orio-button variant="secondary" icon="file">{{ file }}</orio-button>
-  </orio-draggable>
+  <template v-for="file in files" :key="file">
+    <orio-draggable :data="file" group="files">
+      <orio-button variant="secondary" icon="file">{{ file }}</orio-button>
+    </orio-draggable>
+    <orio-button
+      icon="delete"
+      variant="subdued"
+      :aria-label="`Delete ${file}`"
+      @click="deleteFile(file)"
+    />
+  </template>
 
   <orio-drop-zone group="files" @drop="deleteFile">
     <template #default="{ isDragging, isOver }">
@@ -235,5 +283,5 @@ function moveTask({ task, from }, to) {
 
 ## Accessibility
 
-Dragging has no keyboard equivalent. Give every drop action another path too
-(a menu, a move button).
+Dragging has no keyboard equivalent. Give every drop action another path too,
+like the move arrows and delete buttons in the demos above.

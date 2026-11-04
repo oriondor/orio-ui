@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { defineComponent, h, nextTick } from "vue";
+import { defineComponent, h, nextTick, ref } from "vue";
 import Draggable from "../../src/runtime/components/Draggable.vue";
 import DropZone from "../../src/runtime/components/DropZone.vue";
 
@@ -21,6 +21,13 @@ function pointer(
   Object.defineProperty(event, "pointerId", { value: 1 });
   Object.defineProperty(event, "pointerType", { value: pointerType });
   return event;
+}
+
+// mouse/touch clicks carry detail >= 1; keyboard activation has detail 0
+function pointerClick(element: Element) {
+  element.dispatchEvent(
+    new MouseEvent("click", { bubbles: true, cancelable: true, detail: 1 }),
+  );
 }
 
 // a card in one zone and two zones; elementFromPoint maps x to a zone
@@ -97,10 +104,61 @@ describe("Draggable + DropZone", () => {
     card.dispatchEvent(pointer("pointerdown", 0, 0));
     window.dispatchEvent(pointer("pointermove", 50, 0));
     window.dispatchEvent(pointer("pointerup", 50, 0));
-    card.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    pointerClick(card);
     expect(onClick).not.toHaveBeenCalled();
-    card.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    pointerClick(card);
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("never swallows a keyboard click", async () => {
+    const { card } = await setup();
+    const onClick = vi.fn();
+    card.addEventListener("click", onClick);
+    card.dispatchEvent(pointer("pointerdown", 0, 0));
+    window.dispatchEvent(pointer("pointermove", 50, 0));
+    window.dispatchEvent(pointer("pointerup", 50, 0));
+    card.dispatchEvent(new MouseEvent("click", { bubbles: true, detail: 0 }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("a pointercancel arms no swallow", async () => {
+    const { card } = await setup();
+    const onClick = vi.fn();
+    card.addEventListener("click", onClick);
+    card.dispatchEvent(pointer("pointerdown", 0, 0));
+    window.dispatchEvent(pointer("pointermove", 50, 0));
+    window.dispatchEvent(pointer("pointercancel", 50, 0));
+    pointerClick(card);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("no drop when the zone stops accepting before release", async () => {
+    const isZoneDisabled = ref(false);
+    const onDrop = vi.fn();
+    const onDragEnd = vi.fn();
+    const wrapper = mount(
+      defineComponent({
+        render: () => [
+          h(Draggable, { onDragEnd }, () => h("span", { class: "card" })),
+          h(DropZone, {
+            class: "zone",
+            disabled: isZoneDisabled.value,
+            onDrop,
+          }),
+        ],
+      }),
+      { attachTo: document.body },
+    );
+    const zone = wrapper.find(".zone").element;
+    document.elementFromPoint = () => zone;
+    await nextTick();
+    wrapper.find(".card").element.dispatchEvent(pointer("pointerdown", 0, 0));
+    window.dispatchEvent(pointer("pointermove", 50, 0));
+    isZoneDisabled.value = true;
+    await nextTick();
+    window.dispatchEvent(pointer("pointerup", 50, 0));
+    expect(onDrop).not.toHaveBeenCalled();
+    expect(onDragEnd).toHaveBeenCalledWith(false);
   });
 
   it("reports a miss when released outside any zone", async () => {
