@@ -62,6 +62,11 @@ one, pass `ControlProps` straight through — they are usually re-exported.
   the first slot child. Use for inputs embedded in a row with their own
   surrounding chrome.
 
+- **Owns the font size of everything in `.slot-wrapper`** (`.slot-wrapper *`
+  outranks a component's own `input` rule). On `pointer: coarse` it floors
+  `input` / `textarea` at 16px, or iOS Safari zooms in on focus. Change the
+  size here, not on the input.
+
 ## Gotchas
 
 - The slot's `id` matches what the `<label>` points to via `for`. The inner
