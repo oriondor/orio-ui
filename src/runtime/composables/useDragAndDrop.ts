@@ -173,7 +173,7 @@ export function useDragSource(
     isTouch = event.pointerType === "touch";
     if (isTouch && !isManual()) {
       holdTimer = setTimeout(
-        () => begin(start!.x, start!.y),
+        () => !isManual() && begin(start!.x, start!.y),
         toValue(options.delay) ?? TOUCH_DELAY,
       );
     }
@@ -196,7 +196,11 @@ export function useDragSource(
   }
 
   function handlePointerUp(event: PointerEvent) {
-    if (event.pointerId === pointerId) end(event);
+    if (event.pointerId !== pointerId) return;
+    // the release may land without a final pointermove (e.g. right after
+    // start()), so pick the zone under the release point
+    if (isDragging.value) move(event.clientX, event.clientY);
+    end(event);
   }
 
   function handlePointerCancel(event: PointerEvent) {
@@ -258,7 +262,7 @@ export function useDragSource(
 
   /** begin the drag for the press in progress; no-op without one */
   function startDrag() {
-    if (!start || isDragging.value || isDisabled()) return;
+    if (!start || activeDrag.value || isDisabled()) return;
     begin(start.x, start.y);
   }
 

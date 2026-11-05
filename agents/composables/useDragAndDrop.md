@@ -32,7 +32,8 @@ behavior rules.
   ref) — tests must `await nextTick()` after mounting.
 - **`activation: "manual"`** — pointerdown only records the press; no
   movement threshold or touch timer. `start()` begins the drag at the press
-  position; no-op without a press, while dragging, or when disabled.
+  position; no-op without a press, while any drag is active, or when
+  disabled. On release the zone is re-read at the release point.
   `Draggable activation="longpress"` drives it from `useLongPress`.
 - **`isDragging` is cast to `Readonly<Ref<boolean>>`** — bare
   `readonly(ref)` emits as `ReadonlyMap<K, V>` in the built `.d.ts`

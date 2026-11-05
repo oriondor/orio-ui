@@ -28,7 +28,8 @@ per press. Use `<orio-long-press>` unless you need no scale feedback.
   starts a press, auto-repeat ignored; early `keyup` / `focusout` cancels;
   trigger fires with `source: "keyboard"` and the trigger-time Space `keyup`
   is `preventDefault`ed (no button click). Enter is ignored on purpose.
-  `keyboard: false` skips Space entirely (no press, no swallowed keyup).
+  `keyboard: false` skips Space entirely (no press, no swallowed keyup);
+  turning it off mid-hold cancels the Space press.
   `isHolding` stays pointer-only.
 - **Nested targets:** first (innermost) handler claims the pointerdown / keydown.
 - **Force:** `webkitmouseforcewillbegin` is `preventDefault`ed while

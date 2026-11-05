@@ -292,7 +292,9 @@ describe("Draggable + DropZone", () => {
       });
       const key = (type: string) =>
         new KeyboardEvent(type, { key: " ", bubbles: true, cancelable: true });
-      card.dispatchEvent(key("keydown"));
+      const down = key("keydown");
+      card.dispatchEvent(down);
+      expect(down.defaultPrevented).toBe(false);
       vi.advanceTimersByTime(500);
       await nextTick();
       const up = key("keyup");
@@ -312,6 +314,18 @@ describe("Draggable + DropZone", () => {
       expect(longPress.attributes("style")).toContain(
         "--long-press-scale: 0.8",
       );
+    });
+
+    it("drops on the zone under the release, not the last move", async () => {
+      const { card, onDrop, onOtherDrop } = await setup(undefined, {
+        activation: "longpress",
+      });
+      card.dispatchEvent(pointer("pointerdown", 0, 0));
+      vi.advanceTimersByTime(500);
+      await nextTick();
+      window.dispatchEvent(pointer("pointerup", 250, 0));
+      expect(onOtherDrop).toHaveBeenCalled();
+      expect(onDrop).not.toHaveBeenCalled();
     });
 
     it("Safari force click starts the drag at once", async () => {

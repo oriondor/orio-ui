@@ -83,8 +83,10 @@ const { isOver } = useDropTarget(target, {
 | `onEnd`      | `(dropped: boolean) => void`           | Перетягування завершилося                                               |
 
 Повертає `{ isDragging, start }`. `start()` починає перетягування для
-поточного натискання (наприклад, з `onTrigger` у `useLongPress`); без нього
-нічого не робить.
+поточного натискання вказівником (наприклад, з `onTrigger` у `useLongPress`);
+без нього або для натискання клавіатурою нічого не робить. Із `useLongPress`
+передайте `keyboard: false`, щоб утримання Space не спрацьовувало без
+перетягування.
 
 ### `useDropTarget(target, options)`
 

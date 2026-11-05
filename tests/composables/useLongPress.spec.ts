@@ -367,6 +367,17 @@ describe("useLongPress", () => {
       expect(up.defaultPrevented).toBe(false);
     });
 
+    it("turning keyboard off mid-hold cancels the Space press", async () => {
+      const keyboard = ref(true);
+      const { button, onTrigger, onCancel } = await setup({ keyboard });
+      button.dispatchEvent(key("keydown"));
+      keyboard.value = false;
+      await nextTick();
+      vi.advanceTimersByTime(500);
+      expect(onCancel).toHaveBeenCalledTimes(1);
+      expect(onTrigger).not.toHaveBeenCalled();
+    });
+
     it("ignores Enter and other keys", async () => {
       const { button, onStart } = await setup();
       button.dispatchEvent(key("keydown", { key: "Enter" }));

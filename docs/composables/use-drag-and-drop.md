@@ -82,8 +82,11 @@ const { isOver } = useDropTarget(target, {
 | `onStart`    | `(data: unknown) => void`              | The drag began                                                  |
 | `onEnd`      | `(dropped: boolean) => void`           | The drag ended                                                  |
 
-Returns `{ isDragging, start }`. `start()` begins the drag for the press in
-progress (e.g. from `useLongPress`'s `onTrigger`); without one it does nothing.
+Returns `{ isDragging, start }`. `start()` begins the drag for the pointer
+press in progress (e.g. from `useLongPress`'s `onTrigger`); without one, or
+for a keyboard press, it does nothing. With `useLongPress`, pass
+`keyboard: false` so holding Space does not fire a trigger that starts no
+drag.
 
 ### `useDropTarget(target, options)`
 

@@ -217,6 +217,13 @@ export function useLongPress(
     if (disabled) cancel();
   });
 
+  watch(
+    () => toValue(options.keyboard),
+    (keyboard) => {
+      if (keyboard === false && isSpaceHeld) cancel();
+    },
+  );
+
   // A swapped or removed target must not fire the old press's timer.
   watch(() => toValue(target), cancel);
 

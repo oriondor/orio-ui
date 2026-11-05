@@ -143,6 +143,17 @@ function pick(iso: string, toggle: (force?: boolean | null) => void) {
   const current = range.value ?? { start: null, end: null };
 
   if (!current.start || (current.start && current.end)) {
+    // picked on the narrow End view: move only the hidden Start anchor, so
+    // the start watcher keeps the End view where the user is looking
+    if (isNarrow.value && activeSide.value === "end") {
+      anchors.start = anchorPairFor(iso)[0];
+    }
+    // picked on the narrow Start view: the end comes next, usually close by,
+    // so open the End view on the same month
+    if (isNarrow.value && activeSide.value === "start") {
+      anchors.end = anchorPairFor(iso)[0];
+      activeSide.value = "end";
+    }
     range.value = { start: iso, end: null };
     return;
   }

@@ -68,7 +68,7 @@ const { isPressing, isHolding } = useLongPress(target, {
 
 | Ключ         | Тип                      | Опис                                                                                                    |
 | ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------- |
-| `isPressing` | `Readonly<Ref<boolean>>` | `true` від pointerdown до спрацювання або скасування                                                    |
+| `isPressing` | `Readonly<Ref<boolean>>` | `true` від pointerdown або натискання Space до спрацювання або скасування                               |
 | `isHolding`  | `Readonly<Ref<boolean>>` | `true` від pointerdown, доки палець не піднято або натискання не скасовано — триває й після спрацювання |
 
 ## Примітки

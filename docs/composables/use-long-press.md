@@ -68,7 +68,7 @@ const { isPressing, isHolding } = useLongPress(target, {
 
 | Key          | Type                     | Description                                                                                     |
 | ------------ | ------------------------ | ----------------------------------------------------------------------------------------------- |
-| `isPressing` | `Readonly<Ref<boolean>>` | `true` from pointerdown until trigger or cancel                                                 |
+| `isPressing` | `Readonly<Ref<boolean>>` | `true` from pointerdown or Space keydown until trigger or cancel                                |
 | `isHolding`  | `Readonly<Ref<boolean>>` | `true` from pointerdown until the finger lifts or the press is cancelled — outlives the trigger |
 
 ## Notes
