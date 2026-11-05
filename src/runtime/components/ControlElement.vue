@@ -182,6 +182,14 @@ const control = computed<ControlSlotAttrs>(() => {
     font-size: var(--control-font-size);
   }
 
+  // iOS Safari zooms the page into any focused field under 16px. Lives here
+  // because the rule above outranks anything set on the input itself.
+  @media (pointer: coarse) {
+    .slot-wrapper :deep(:is(input, textarea)) {
+      font-size: max(16px, var(--control-font-size));
+    }
+  }
+
   &.has-error {
     // If component has .error-fields - we want manual error handling for it
     // Can be improved in the future though
@@ -191,10 +199,6 @@ const control = computed<ControlSlotAttrs>(() => {
 
     .slot-wrapper :deep(.error-fields .slot-wrapper > *) {
       border: 1px solid var(--color-danger);
-    }
-
-    .slot-wrapper :deep(*) {
-      font-size: var(--control-font-size);
     }
   }
 

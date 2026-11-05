@@ -18,12 +18,12 @@ orio-ui's shipped, version-pinned agent docs. Details in
 
 ## Features
 
-✨ **68 Components** - Beautiful, accessible components ready to use
+✨ **70 Components** - Beautiful, accessible components ready to use
 🎨 **Themeable** - 6 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
 🎯 **TypeScript** - Fully typed for great developer experience
-🧪 **Tested** - 60 test suites for reliability
+🧪 **Tested** - 61 test suites for reliability
 📱 **Responsive** - Mobile-first design approach
 ♿ **Accessible** - ARIA-compliant components
 🌐 **i18n** - Built-in vue-i18n support with English defaults
@@ -77,7 +77,7 @@ function handleClick() {
 
 ## What's Included
 
-### Components (68)
+### Components (70)
 
 #### Form Controls
 
@@ -129,7 +129,7 @@ function handleClick() {
 
 - **Upload** - File upload component
 
-### Composables (19)
+### Composables (20)
 
 - **useTheme** - Theme and color mode management
 - **useModal** - Modal state with animation origin tracking
@@ -270,8 +270,8 @@ npm run docs:dev
 orio-ui/
 ├── src/
 │   ├── runtime/
-│   │   ├── components/   # 68 Vue components
-│   │   ├── composables/  # 19 composables
+│   │   ├── components/   # 70 Vue components
+│   │   ├── composables/  # 20 composables
 │   │   ├── assets/css/   # Theme CSS files
 │   │   └── utils/        # Icon registry
 │   └── module.ts         # Nuxt Module definition

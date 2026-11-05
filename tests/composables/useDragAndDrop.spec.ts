@@ -3,6 +3,7 @@ import { mount } from "@vue/test-utils";
 import { defineComponent, h, nextTick, ref } from "vue";
 import Draggable from "../../src/runtime/components/Draggable.vue";
 import DropZone from "../../src/runtime/components/DropZone.vue";
+import LongPress from "../../src/runtime/components/LongPress.vue";
 
 function pointer(
   type: string,
@@ -31,15 +32,20 @@ function pointerClick(element: Element) {
 }
 
 // a card in one zone and two zones; elementFromPoint maps x to a zone
-async function setup(zoneGroup?: string) {
+async function setup(
+  zoneGroup?: string,
+  draggableProps: Record<string, unknown> = {},
+) {
   const onDrop = vi.fn();
   const onOtherDrop = vi.fn();
   const onDragEnd = vi.fn();
   const wrapper = mount(
     defineComponent({
       render: () => [
-        h(Draggable, { data: { id: 7 }, group: "cards", onDragEnd }, () =>
-          h("button", { class: "card" }, "Card"),
+        h(
+          Draggable,
+          { data: { id: 7 }, group: "cards", onDragEnd, ...draggableProps },
+          () => h("button", { class: "card" }, "Card"),
         ),
         h(DropZone, { group: zoneGroup, class: "zone", onDrop }, () =>
           h("p", { class: "inner" }, "Zone"),
@@ -47,7 +53,10 @@ async function setup(zoneGroup?: string) {
         h(DropZone, { class: "other", onDrop: onOtherDrop }),
       ],
     }),
-    { attachTo: document.body },
+    {
+      attachTo: document.body,
+      global: { components: { "orio-long-press": LongPress } },
+    },
   );
   const card = wrapper.find(".card").element;
   const zone = wrapper.find(".zone").element;
@@ -222,6 +231,115 @@ describe("Draggable + DropZone", () => {
       window.dispatchEvent(touchMove);
       expect(touchMove.defaultPrevented).toBe(false);
       expect(onDragEnd).not.toHaveBeenCalled();
+    });
+
+    it("delay replaces the default hold", async () => {
+      const { card, onDragEnd } = await setup(undefined, { delay: 600 });
+      card.dispatchEvent(pointer("pointerdown", 0, 0, "touch"));
+      vi.advanceTimersByTime(300);
+      window.dispatchEvent(pointer("pointerup", 0, 0, "touch"));
+      expect(onDragEnd).not.toHaveBeenCalled();
+
+      card.dispatchEvent(pointer("pointerdown", 0, 0, "touch"));
+      vi.advanceTimersByTime(600);
+      window.dispatchEvent(pointer("pointerup", 0, 0, "touch"));
+      expect(onDragEnd).toHaveBeenCalledWith(false);
+    });
+  });
+
+  describe("longpress activation", () => {
+    it("mouse movement before the hold does not start a drag", async () => {
+      const { wrapper, card } = await setup(undefined, {
+        activation: "longpress",
+      });
+      card.dispatchEvent(pointer("pointerdown", 0, 0));
+      window.dispatchEvent(pointer("pointermove", 150, 0));
+      await nextTick();
+      expect(wrapper.find(".draggable").classes()).not.toContain("dragging");
+    });
+
+    it("starts after the long-press delay and drops", async () => {
+      const { wrapper, card, onDrop } = await setup(undefined, {
+        activation: "longpress",
+        delay: 400,
+      });
+      card.dispatchEvent(pointer("pointerdown", 0, 0));
+      await nextTick();
+      expect(wrapper.find(".long-press").classes()).toContain("pressing");
+      vi.advanceTimersByTime(400);
+      await nextTick();
+      window.dispatchEvent(pointer("pointermove", 150, 0));
+      window.dispatchEvent(pointer("pointerup", 150, 0));
+      expect(onDrop).toHaveBeenCalledWith({ id: 7 }, expect.anything());
+    });
+
+    it("the drag copy is not shrunk", async () => {
+      const { card } = await setup(undefined, { activation: "longpress" });
+      card.dispatchEvent(pointer("pointerdown", 0, 0));
+      await nextTick();
+      vi.advanceTimersByTime(500);
+      await nextTick();
+      const copy = document.body.querySelector(':scope > [aria-hidden="true"]');
+      expect(copy).not.toBeNull();
+      expect(copy!.querySelector(".long-press")!.classList).not.toContain(
+        "pressing",
+      );
+    });
+
+    it("Space hold on a focused child keeps its click", async () => {
+      const { card, onDragEnd } = await setup(undefined, {
+        activation: "longpress",
+      });
+      const key = (type: string) =>
+        new KeyboardEvent(type, { key: " ", bubbles: true, cancelable: true });
+      const down = key("keydown");
+      card.dispatchEvent(down);
+      expect(down.defaultPrevented).toBe(false);
+      vi.advanceTimersByTime(500);
+      await nextTick();
+      const up = key("keyup");
+      card.dispatchEvent(up);
+      expect(up.defaultPrevented).toBe(false);
+      expect(onDragEnd).not.toHaveBeenCalled();
+    });
+
+    it("passes long-press tuning through", async () => {
+      const { wrapper } = await setup(undefined, {
+        activation: "longpress",
+        scale: 0.8,
+        progress: true,
+      });
+      const longPress = wrapper.find(".long-press");
+      expect(longPress.classes()).toContain("progress");
+      expect(longPress.attributes("style")).toContain(
+        "--long-press-scale: 0.8",
+      );
+    });
+
+    it("drops on the zone under the release, not the last move", async () => {
+      const { card, onDrop, onOtherDrop } = await setup(undefined, {
+        activation: "longpress",
+      });
+      card.dispatchEvent(pointer("pointerdown", 0, 0));
+      vi.advanceTimersByTime(500);
+      await nextTick();
+      window.dispatchEvent(pointer("pointerup", 250, 0));
+      expect(onOtherDrop).toHaveBeenCalled();
+      expect(onDrop).not.toHaveBeenCalled();
+    });
+
+    it("Safari force click starts the drag at once", async () => {
+      const { card, onDrop } = await setup(undefined, {
+        activation: "longpress",
+      });
+      card.dispatchEvent(pointer("pointerdown", 0, 0));
+      card.dispatchEvent(
+        new MouseEvent("webkitmouseforcedown", { bubbles: true }),
+      );
+      await nextTick();
+      window.dispatchEvent(pointer("pointermove", 150, 0));
+      window.dispatchEvent(pointer("pointerup", 150, 0));
+      expect(onDrop).toHaveBeenCalled();
     });
   });
 

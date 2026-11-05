@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { afterEach, describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { defineComponent, h } from "vue";
 import DateRangePicker from "../../src/runtime/components/date/RangePicker.vue";
@@ -50,6 +50,9 @@ const CalendarStub = defineComponent({
             const target = e.currentTarget as HTMLElement;
             if (target.dataset.hover) emit("dayEnter", target.dataset.hover);
           },
+          // stands in for the calendar's own month navigation
+          onNavigate: (e: CustomEvent<string>) =>
+            emit("update:anchor", e.detail),
         },
         "pick",
       );
@@ -66,6 +69,17 @@ function mountRangePicker(props: Record<string, unknown> = {}) {
         "orio-date-picker-trigger": TriggerStub,
         "orio-calendar": CalendarStub,
         "orio-date-month-calendar": true,
+        "orio-button": defineComponent({
+          emits: ["click"],
+          setup(_, { slots, emit }) {
+            return () =>
+              h(
+                "button",
+                { class: "side-button", onClick: () => emit("click") },
+                slots.default?.(),
+              );
+          },
+        }),
       },
     },
   });
@@ -238,5 +252,107 @@ describe("DateRangePicker", () => {
     expect(text).toContain("Sep 2015");
     expect(text).toContain("Jun 2019");
     expect(text).toContain("–");
+  });
+
+  describe("on a narrow screen", () => {
+    afterEach(() => vi.unstubAllGlobals());
+
+    const narrow = () =>
+      vi.stubGlobal("matchMedia", () => ({
+        matches: true,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+      }));
+    const anchorOf = (wrapper: ReturnType<typeof mountRangePicker>) =>
+      wrapper.find(".calendar-stub").attributes("data-anchor");
+    const navigate = async (
+      wrapper: ReturnType<typeof mountRangePicker>,
+      anchor: string,
+    ) => {
+      wrapper
+        .find(".calendar-stub")
+        .element.dispatchEvent(new CustomEvent("navigate", { detail: anchor }));
+      await wrapper.vm.$nextTick();
+    };
+
+    it("shows one calendar and switches between start and end month", async () => {
+      narrow();
+      const wrapper = mountRangePicker({
+        modelValue: { start: "2024-06-01", end: null },
+      });
+
+      expect(wrapper.findAll(".calendar-stub")).toHaveLength(1);
+      expect(wrapper.find(".calendar-stub").attributes("data-anchor")).toBe(
+        "2024-06-01",
+      );
+
+      const [, endButton] = wrapper.findAll(".side-button");
+      expect(endButton!.text()).toBe("End");
+      await endButton!.trigger("click");
+
+      expect(wrapper.findAll(".calendar-stub")).toHaveLength(1);
+      expect(wrapper.find(".calendar-stub").attributes("data-anchor")).toBe(
+        "2024-07-01",
+      );
+    });
+
+    it("each side keeps its navigated month across switches", async () => {
+      narrow();
+      const wrapper = mountRangePicker({
+        modelValue: { start: "2024-06-01", end: null },
+      });
+      const [startButton, endButton] = wrapper.findAll(".side-button");
+
+      await navigate(wrapper, "2024-03-01");
+      await endButton!.trigger("click");
+      await navigate(wrapper, "2024-10-01");
+      await startButton!.trigger("click");
+      expect(anchorOf(wrapper)).toBe("2024-03-01");
+      await endButton!.trigger("click");
+      expect(anchorOf(wrapper)).toBe("2024-10-01");
+    });
+
+    it("picking a start on the Start view opens End on the same month", async () => {
+      narrow();
+      const wrapper = mountRangePicker({
+        modelValue: { start: "2024-06-10", end: "2024-06-20" },
+        "onUpdate:modelValue": (value: unknown) =>
+          wrapper.setProps({ modelValue: value }),
+      });
+      const [startButton, endButton] = wrapper.findAll(".side-button");
+
+      const calendar = wrapper.find(".calendar-stub");
+      (calendar.element as HTMLElement).dataset.pick = "2024-06-25";
+      await calendar.trigger("click");
+
+      expect(endButton!.attributes("aria-pressed")).toBe("true");
+      expect(startButton!.attributes("aria-pressed")).toBe("false");
+      expect(anchorOf(wrapper)).toBe("2024-06-01");
+    });
+
+    it("a trailing-cell start pick on the End view keeps the End month", async () => {
+      narrow();
+      const wrapper = mountRangePicker({
+        modelValue: { start: "2024-06-10", end: "2024-06-20" },
+        "onUpdate:modelValue": (value: unknown) =>
+          wrapper.setProps({ modelValue: value }),
+      });
+      const [startButton, endButton] = wrapper.findAll(".side-button");
+      await endButton!.trigger("click");
+      expect(anchorOf(wrapper)).toBe("2024-07-01");
+
+      // August 2nd, shown in the trailing row of July
+      const calendar = wrapper.find(".calendar-stub");
+      (calendar.element as HTMLElement).dataset.pick = "2024-08-02";
+      await calendar.trigger("click");
+
+      expect(wrapper.props("modelValue")).toEqual({
+        start: "2024-08-02",
+        end: null,
+      });
+      expect(anchorOf(wrapper)).toBe("2024-07-01");
+      await startButton!.trigger("click");
+      expect(anchorOf(wrapper)).toBe("2024-08-01");
+    });
   });
 });

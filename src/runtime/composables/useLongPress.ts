@@ -5,6 +5,7 @@ import {
   toValue,
   watch,
   type MaybeRefOrGetter,
+  type Ref,
 } from "vue";
 import { useEventListener } from "@vueuse/core";
 
@@ -16,6 +17,8 @@ export interface LongPressOptions {
   moveTolerance?: MaybeRefOrGetter<number>;
   forceTouch?: MaybeRefOrGetter<boolean>;
   disabled?: MaybeRefOrGetter<boolean>;
+  /** Space hold triggers too. Default true */
+  keyboard?: MaybeRefOrGetter<boolean>;
   onStart?: (event: PointerEvent | KeyboardEvent) => void;
   onCancel?: () => void;
   onTrigger: (event: LongPressEvent, source: LongPressSource) => void;
@@ -134,6 +137,7 @@ export function useLongPress(
   function handleKeyDown(event: KeyboardEvent) {
     if (event.key !== " " || event.repeat) return;
     if (claimedEvents.has(event) || isDisabled()) return;
+    if (toValue(options.keyboard) === false) return;
     claimedEvents.add(event);
     clearTimer();
     isSpaceHeld = true;
@@ -213,10 +217,21 @@ export function useLongPress(
     if (disabled) cancel();
   });
 
+  watch(
+    () => toValue(options.keyboard),
+    (keyboard) => {
+      if (keyboard === false && isSpaceHeld) cancel();
+    },
+  );
+
   // A swapped or removed target must not fire the old press's timer.
   watch(() => toValue(target), cancel);
 
   onScopeDispose(clearTimer);
 
-  return { isPressing: readonly(isPressing), isHolding: readonly(isHolding) };
+  // annotated: readonly(ref) otherwise emits as ReadonlyMap in the .d.ts
+  return {
+    isPressing: readonly(isPressing) as Readonly<Ref<boolean>>,
+    isHolding: readonly(isHolding) as Readonly<Ref<boolean>>,
+  };
 }
