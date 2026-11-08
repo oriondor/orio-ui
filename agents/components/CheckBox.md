@@ -20,7 +20,7 @@ type="checkbox">` is visually hidden; the rendered tick lives in a sibling
 - **Default tick is a CSS rotate-45-border checkmark** drawn in
   `::after`, applied when no `checkedIcon` is passed.
 - **`checkedIcon` / `uncheckedIcon` props** swap in `<orio-icon>` glyphs
-  for either state. Pass icon names registered in `utils/iconRegistry`.
+  for either state. Pass icon names registered in `utils/icon-registry`.
 - **`#icon` slot** lets you render arbitrary indicator content; receives
   `{ checked }`. Overrides both the default tick and any icon props.
 - **ControlElement is passed `fill`** so the checkbox row fills the wrapper
@@ -47,12 +47,19 @@ type="checkbox">` is visually hidden; the rendered tick lives in a sibling
 ## Quick reference
 
 ```vue
+<!-- from docs/components/checkbox.md -->
 <template>
-  <orio-check-box v-model="agreed" :error="errors.terms">
-    {{ $t("signup.acceptTerms") }}
+  <orio-check-box v-model="agreed">
+    I agree to the terms and conditions
   </orio-check-box>
 
-  <orio-check-box v-model="bookmarked" checked-icon="bookmark-filled" unchecked-icon="bookmark" />
+  <orio-check-box v-model="newsletter" checked-icon="loading-loop">
+    Subscribe to newsletter (loading icon when checked)
+  </orio-check-box>
+
+  <orio-check-box v-model="notifications" unchecked-icon="plus">
+    Enable notifications (unchecked icon plus)
+  </orio-check-box>
 </template>
 ```
 

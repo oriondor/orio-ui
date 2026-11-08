@@ -89,6 +89,7 @@ function closeOnEscape(event: KeyboardEvent) {
     )
     ?.focus();
 }
+const VIEWPORT_MARGIN = 8;
 const triggerRect = ref<DOMRect | null>(null);
 const popoverRect = ref<DOMRect | null>(null);
 
@@ -136,9 +137,18 @@ const popoverStyle = computed(() => {
     leftValue = tRect.right + offset;
   }
 
+  // keep the panel on screen when the trigger sits near an edge
+  const viewportWidth = document.documentElement.clientWidth;
+  const viewportHeight = document.documentElement.clientHeight;
+  const clamp = (value: number, size: number, viewport: number) =>
+    Math.max(
+      VIEWPORT_MARGIN,
+      Math.min(value, viewport - size - VIEWPORT_MARGIN),
+    );
+
   return {
-    top: `${topValue}px`,
-    left: `${leftValue}px`,
+    top: `${clamp(topValue, pRect.height, viewportHeight)}px`,
+    left: `${clamp(leftValue, pRect.width, viewportWidth)}px`,
   };
 });
 
@@ -267,7 +277,16 @@ function redrawPopover() {
 
 watch([popoverWidth, popoverHeight], redrawPopover);
 
-useEventListener("scroll", redrawPopover, { capture: true });
+// scrolling inside the panel doesn't move it; re-measuring there hides the
+// panel mid-gesture, which makes iOS drop the touch scroll
+useEventListener(
+  "scroll",
+  (event: Event) => {
+    if (containerRef.value?.contains(event.target as Node)) return;
+    redrawPopover();
+  },
+  { capture: true },
+);
 useEventListener("resize", redrawPopover, { capture: true });
 // a parent modal's open morph moves the trigger; re-measure once it settles
 useEventListener("transitionend", redrawPopover, { capture: true });
@@ -278,5 +297,7 @@ useEventListener("transitionend", redrawPopover, { capture: true });
   background-color: transparent;
   position: fixed;
   z-index: 999999;
+  /* matches VIEWPORT_MARGIN on both sides */
+  max-width: calc(100% - 16px);
 }
 </style>

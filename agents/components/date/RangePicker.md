@@ -10,7 +10,8 @@ invariants: true
 
 `<orio-date-range-picker>` is the date range picker: a
 `<orio-date-picker-trigger>` opens a popover containing **two side-by-side
-calendars** (left = start month, right = start month + 1). Read
+calendars** (start month, start month + 1; one at a time on narrow
+screens). Read
 `../Calendar.md` and `Picker.md` first.
 
 ## Invariants
@@ -23,9 +24,11 @@ calendars** (left = start month, right = start month + 1). Read
   earlier than the existing start, start and end **swap automatically**.
 - **The popover closes on range completion** (second pick), via
   `toggle(false)`. A single click leaves it open.
-- **Two-month anchored display** — `leftAnchor` = first of start's month,
-  `rightAnchor` = `leftAnchor + 1 month`. They re-sync when the model's
-  start changes to a month not currently visible.
+- **Two-month anchored display** — `anchors` is a reactive
+  `{ start, end }`: `anchors.start` = first of start's month,
+  `anchors.end` = that + 1 month. They re-sync when the model's start
+  moves to a month that is neither anchor (on narrow screens one of those
+  may be hidden).
 - **Hover preview**: hovering a day in the popover renders an "accent"
   range marker from `start` to the hovered day (or hovered day to start
   if the hover is earlier). Requires `start` to be already picked.
@@ -36,7 +39,19 @@ calendars** (left = start month, right = start month + 1). Read
   range.
 - **Built on `<orio-calendar>` × 2**, side-by-side in a flex row with
   0.75rem gap.
-- **i18n key**: `dateRangePicker.placeholder` for the empty-display label.
+- **`month` prop** swaps both for `<orio-date-month-calendar>` (listens to
+  `@month-enter`, not `@day-enter`). Anchors become Jan 1 of the start's
+  year and of the next year (narrow End anchor too); display uses
+  `{ month: "short", year: "numeric" }`.
+- **Narrow screens (`max-width: 48rem`, via `useMediaQuery`) render one
+  calendar** plus Start / End `<orio-button>`s that swap which anchor it
+  shows. Both anchors keep their state across switches. A start pick on
+  the Start view switches to End and sets the End anchor to the picked
+  month. A start pick made on the End view moves only the hidden Start
+  anchor, so the End view stays put. i18n keys
+  `dateRangePicker.start` / `.end`.
+- **i18n key**: `dateRangePicker.placeholder` for the empty-display label,
+  unless the `placeholder` prop is set.
 - **Display string**: `"start – end"` when both exist (en-dash, spaces).
   Just `start` or just `end` if only one. Empty string if both null.
 
@@ -89,7 +104,9 @@ function isDisabled(iso: string) {
 
 ## Related
 
-- `<orio-calendar>` — the underlying grid; rendered twice.
+- `<orio-calendar>` — the underlying grid; rendered twice (once on narrow
+  screens).
+- `<orio-date-month-calendar>` — the grid used instead when `month` is set.
 - `<orio-date-picker>` — single-date variant.
 - `<orio-date-picker-trigger>` — the shared trigger button.
 - `utils/date` — `DateRange`, `parseISO`, `formatISO`, `addMonths`,

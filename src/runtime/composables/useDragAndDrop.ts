@@ -7,6 +7,7 @@ import {
   toValue,
   watch,
   type MaybeRefOrGetter,
+  type Ref,
 } from "vue";
 import { useEventListener } from "@vueuse/core";
 
@@ -14,6 +15,14 @@ export interface DragSourceOptions {
   data?: MaybeRefOrGetter<unknown>;
   group?: MaybeRefOrGetter<string | undefined>;
   disabled?: MaybeRefOrGetter<boolean>;
+  /** touch: ms of still hold before the drag starts. Default 300 */
+  delay?: MaybeRefOrGetter<number>;
+  /**
+   * "auto": mouse/pen drag after 5px, touch after `delay`.
+   * "manual": a press only arms the source; call `start()` (e.g. from a
+   * long press) to begin the drag under the held pointer.
+   */
+  activation?: MaybeRefOrGetter<"auto" | "manual">;
   onStart?: (data: unknown) => void;
   onEnd?: (dropped: boolean) => void;
 }
@@ -37,7 +46,7 @@ interface DropTarget {
 
 // mouse and pen: distance that turns a press into a drag
 const MOUSE_THRESHOLD = 5;
-// touch: hold before the drag starts, so a swipe still scrolls the page
+// touch: default hold before the drag starts, so a swipe still scrolls
 const TOUCH_DELAY = 300;
 // touch: movement during that hold that means the user is scrolling
 const TOUCH_TOLERANCE = 10;
@@ -103,6 +112,7 @@ export function useDragSource(
   let swallowNextClick = false;
 
   const isDisabled = () => toValue(options.disabled) ?? false;
+  const isManual = () => toValue(options.activation) === "manual";
 
   function begin(x: number, y: number) {
     const element = toValue(target);
@@ -161,14 +171,19 @@ export function useDragSource(
     start = { x: event.clientX, y: event.clientY };
     pointerId = event.pointerId;
     isTouch = event.pointerType === "touch";
-    if (isTouch) {
-      holdTimer = setTimeout(() => begin(start!.x, start!.y), TOUCH_DELAY);
+    if (isTouch && !isManual()) {
+      holdTimer = setTimeout(
+        () => !isManual() && begin(start!.x, start!.y),
+        toValue(options.delay) ?? TOUCH_DELAY,
+      );
     }
   }
 
   function handlePointerMove(event: PointerEvent) {
     if (!start || event.pointerId !== pointerId) return;
     if (isDragging.value) return move(event.clientX, event.clientY);
+    // manual: whoever calls start() owns the movement rules before it
+    if (isManual()) return;
     const distance = Math.hypot(
       event.clientX - start.x,
       event.clientY - start.y,
@@ -181,7 +196,11 @@ export function useDragSource(
   }
 
   function handlePointerUp(event: PointerEvent) {
-    if (event.pointerId === pointerId) end(event);
+    if (event.pointerId !== pointerId) return;
+    // the release may land without a final pointermove (e.g. right after
+    // start()), so pick the zone under the release point
+    if (isDragging.value) move(event.clientX, event.clientY);
+    end(event);
   }
 
   function handlePointerCancel(event: PointerEvent) {
@@ -241,7 +260,17 @@ export function useDragSource(
 
   onScopeDispose(() => end(null));
 
-  return { isDragging: readonly(isDragging) };
+  /** begin the drag for the press in progress; no-op without one */
+  function startDrag() {
+    if (!start || activeDrag.value || isDisabled()) return;
+    begin(start.x, start.y);
+  }
+
+  // annotated: readonly(ref) otherwise emits as ReadonlyMap in the .d.ts
+  return {
+    isDragging: readonly(isDragging) as Readonly<Ref<boolean>>,
+    start: startDrag,
+  };
 }
 
 export function useDropTarget(
