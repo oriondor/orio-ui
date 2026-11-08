@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.38.0](https://github.com/oriondor/orio-ui/compare/v1.37.0...v1.38.0) (2026-11-08)
 
+fix: improve mobile controls and drag activation
 
-### Features
-
-* mobile fixes and long-press drag activation ([#207](https://github.com/oriondor/orio-ui/issues/207)) ([9c836ed](https://github.com/oriondor/orio-ui/commit/9c836ed7607cb424f4aac131a6192b9c6da120e8))
-
+- On coarse-pointer devices, `ControlElement` sets slotted inputs and textareas to at least 16px to prevent iOS Safari zoom on focus.
+- `Popover` keeps its panel at least 8px inside the viewport and ignores scroll events from inside the panel.
+- Calendars shrink to fit their container. On screens up to `48rem`, `RangePicker` shows one calendar with Start and End buttons and preserves each side’s month anchor when switching views.
+- `Draggable` adds `activation="longpress"` and configurable `delay`, `moveTolerance`, `scale`, and `progress` options. Long-press activation starts the drag after the hold and keeps Space available for focused-child clicks.
+- `useDragSource` adds manual activation and a `start()` method. Active drags re-check the drop zone at the pointer’s release position.
+- `LongPress` adds a `keyboard` option, enabled by default, to control Space-key activation.
+- English and Ukrainian translations add Start and End labels for `RangePicker`.
+- Documentation and tests cover the updated mobile, calendar, long-press, and drag-and-drop behavior.
 ## [1.37.0](https://github.com/oriondor/orio-ui/compare/v1.36.5...v1.37.0) (2026-11-04)
 
 feat: Add drag-and-drop support
