@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.38.0](https://github.com/oriondor/orio-ui/compare/v1.37.0...v1.38.0) (2026-11-08)
+
+
+### Features
+
+* mobile fixes and long-press drag activation ([#207](https://github.com/oriondor/orio-ui/issues/207)) ([9c836ed](https://github.com/oriondor/orio-ui/commit/9c836ed7607cb424f4aac131a6192b9c6da120e8))
+
 ## [1.37.0](https://github.com/oriondor/orio-ui/compare/v1.36.5...v1.37.0) (2026-11-04)
 
 feat: Add drag-and-drop support
