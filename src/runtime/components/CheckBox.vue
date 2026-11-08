@@ -72,6 +72,7 @@ const props = defineProps<CheckBoxProps>();
   }
 
   &-box {
+    flex-shrink: 0;
     width: var(--box-size);
     height: var(--box-size);
     border: 2px solid var(--color-border);
