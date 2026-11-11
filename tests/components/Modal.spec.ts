@@ -412,4 +412,154 @@ describe("Modal", () => {
       expect(document.activeElement).toBe(field);
     });
   });
+
+  describe("presentation", () => {
+    function stubMedia({ narrow = false, reducedMotion = false } = {}) {
+      vi.stubGlobal("matchMedia", (query: string) => ({
+        matches: query.includes("reduced-motion") ? reducedMotion : narrow,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+      }));
+    }
+
+    function mountModal(props: Record<string, unknown> = {}, attrs = {}) {
+      return mount(Modal, {
+        props: { show: true, origin: null, ...props },
+        attrs,
+        slots: { default: "Body" },
+        global: { stubs: { transition: false } },
+      });
+    }
+
+    const modalElement = () => document.querySelector<HTMLElement>(".modal")!;
+
+    beforeEach(() => stubMedia());
+
+    it("defaults to dialog", () => {
+      mountModal();
+      expect(modalElement().dataset.presentation).toBe("dialog");
+    });
+
+    it("renders sheet when asked", () => {
+      mountModal({ presentation: "sheet" });
+      expect(modalElement().dataset.presentation).toBe("sheet");
+    });
+
+    it.each([
+      [true, "sheet"],
+      [false, "dialog"],
+    ])("auto resolves for narrow=%s to %s", (narrow, expected) => {
+      stubMedia({ narrow });
+      mountModal({ presentation: "auto" });
+      expect(modalElement().dataset.presentation).toBe(expected);
+    });
+
+    it("keeps the mode it opened in when the viewport changes while open", async () => {
+      stubMedia({ narrow: true });
+      const wrapper = mountModal({ presentation: "auto", show: false });
+      await wrapper.setProps({ show: true });
+      expect(modalElement().dataset.presentation).toBe("sheet");
+      stubMedia({ narrow: false });
+      await wrapper.setProps({ title: "Re-render" });
+      expect(modalElement().dataset.presentation).toBe("sheet");
+    });
+
+    it("renders an aria-hidden grip only for a sheet with dragHandle", () => {
+      mountModal({ presentation: "sheet", dragHandle: true });
+      const grip = document.querySelector(".modal-grip");
+      expect(grip?.getAttribute("aria-hidden")).toBe("true");
+      expect(grip?.parentElement?.classList.contains("modal-inner")).toBe(true);
+    });
+
+    it.each([
+      [{ presentation: "sheet" }],
+      [{ presentation: "dialog", dragHandle: true }],
+    ])("has no grip for %o", (props) => {
+      mountModal(props);
+      expect(document.querySelector(".modal-grip")).toBeNull();
+    });
+
+    it("keeps .modal-inner the first child of .modal", () => {
+      mountModal({ presentation: "sheet", dragHandle: true });
+      expect(modalElement().firstElementChild?.className).toContain(
+        "modal-inner",
+      );
+    });
+
+    it("ignores origin in a sheet", async () => {
+      const wrapper = mountModal({
+        presentation: "sheet",
+        show: false,
+        origin: { x: 10, y: 10, width: 50, height: 20 },
+      });
+      await wrapper.setProps({ show: true });
+      const element = modalElement();
+      expect(element.style.transform).toBe("none");
+      expect(element.style.transition).toBe("");
+    });
+
+    it("slides down on close without fading", async () => {
+      vi.useFakeTimers();
+      const wrapper = mountModal({ presentation: "sheet" });
+      await wrapper.setProps({ show: false });
+      const element = modalElement();
+      expect(element.style.transform).toBe("translateY(100%)");
+      expect(element.style.transition).toContain("transform");
+      expect(element.style.opacity).not.toBe("0");
+      await vi.advanceTimersByTimeAsync(500);
+      vi.useRealTimers();
+    });
+
+    it("reopening mid-close slides back with no stuck transform", async () => {
+      vi.useFakeTimers();
+      const wrapper = mountModal({ presentation: "sheet" });
+      await wrapper.setProps({ show: false });
+      await wrapper.setProps({ show: true });
+      const element = modalElement();
+      expect(element.style.transform).toBe("none");
+      expect(element.style.transition).toBe("");
+      await vi.advanceTimersByTimeAsync(500);
+      vi.useRealTimers();
+    });
+
+    it("only fades under reduced motion", async () => {
+      stubMedia({ reducedMotion: true });
+      vi.useFakeTimers();
+      const wrapper = mountModal({ presentation: "sheet" });
+      await wrapper.setProps({ show: false });
+      const element = modalElement();
+      expect(element.style.opacity).toBe("0");
+      expect(element.style.transform).not.toBe("translateY(100%)");
+      await vi.advanceTimersByTimeAsync(500);
+      vi.useRealTimers();
+    });
+
+    it("lands class, style and attrs on .modal", () => {
+      mountModal(
+        { presentation: "sheet" },
+        { class: "mine", style: "--modal-radius: 20px", "data-test": "x" },
+      );
+      const element = modalElement();
+      expect(element.classList.contains("mine")).toBe(true);
+      expect(element.style.getPropertyValue("--modal-radius")).toBe("20px");
+      expect(element.dataset.test).toBe("x");
+    });
+
+    it("keeps dialog semantics, Esc and focus in a sheet", () => {
+      const onUpdateShow = vi.fn();
+      mountModal({ presentation: "sheet", "onUpdate:show": onUpdateShow });
+      const element = modalElement();
+      expect(element.getAttribute("role")).toBe("dialog");
+      expect(element.getAttribute("aria-modal")).toBe("true");
+      expect(document.activeElement).toBe(element);
+      element.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          key: "Escape",
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+      expect(onUpdateShow).toHaveBeenCalledWith(false);
+    });
+  });
 });

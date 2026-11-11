@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch, useAttrs, useId, useSlots, provide } from "vue";
-import { useEventListener } from "@vueuse/core";
+import {
+  breakpointsTailwind,
+  useBreakpoints,
+  useEventListener,
+} from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import { usePageScrollLock } from "../composables/usePageScrollLock";
 import { modalTeleportTarget } from "../utils/modal";
@@ -27,14 +31,28 @@ export interface OriginRect {
   height: number;
 }
 
+export type ModalPresentation = "dialog" | "sheet" | "auto";
+
 interface Props {
   title?: string;
   origin: OriginRect | null;
   /** open and close animation length in ms; unset keeps 500 open / 400 close */
   duration?: number;
+  /** `auto` = sheet below the Tailwind `sm` breakpoint (640px), decided on open */
+  presentation?: ModalPresentation;
+  /** decorative grip at the top of a sheet; no gesture */
+  dragHandle?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  presentation: "dialog",
+});
+
+const isCompactViewport = useBreakpoints(breakpointsTailwind).smaller("sm");
+// resolved on open and kept until the modal has left, so resizing never
+// swaps the mode (or its transform) mid-flight
+const resolvedPresentation = ref<"dialog" | "sheet">("dialog");
+const isSheet = computed(() => resolvedPresentation.value === "sheet");
 
 // root is a teleport, so attrs (aria-label, aria-labelledby, …) go on the dialog
 defineOptions({ inheritAttrs: false });
@@ -61,8 +79,16 @@ watch(
   show,
   (open) => {
     if (!open) return;
-    if (!visible.value && typeof document !== "undefined") {
-      returnFocus = document.activeElement as HTMLElement | null;
+    if (!visible.value) {
+      resolvedPresentation.value =
+        props.presentation === "auto"
+          ? isCompactViewport.value
+            ? "sheet"
+            : "dialog"
+          : props.presentation;
+      if (typeof document !== "undefined") {
+        returnFocus = document.activeElement as HTMLElement | null;
+      }
     }
     visible.value = true;
   },
@@ -148,8 +174,11 @@ function animateOpen() {
   const el = wrapper.value;
   if (!el) return;
 
-  // FLIP: jump onto the trigger without transition, then play to identity
-  if (props.origin && !prefersReducedMotion()) {
+  if (isSheet.value) {
+    // start below the viewport (CSS), commit it, then slide up
+    void el.offsetWidth;
+  } else if (props.origin && !prefersReducedMotion()) {
+    // FLIP: jump onto the trigger without transition, then play to identity
     el.style.transition = "none";
     el.style.transform = originTransform(el, props.origin);
     // force reflow so the start transform is committed before transitioning
@@ -173,7 +202,14 @@ function animateClose(overlay: Element, done: () => void) {
   // fallback when transitionend never fires (hidden tab)
   setTimeout(done, closeDuration.value + 100);
 
-  if (props.origin && !prefersReducedMotion()) {
+  if (isSheet.value && !prefersReducedMotion()) {
+    // slide down; no fade, it leaves the viewport instead
+    el.style.transition = `transform ${closeDuration.value}ms cubic-bezier(0.32, 0.72, 0, 1)`;
+    el.style.transform = "translateY(100%)";
+    return;
+  }
+
+  if (props.origin && !isSheet.value && !prefersReducedMotion()) {
     // fade only at the tail so it visibly shrinks back into the trigger
     const fadeDelay = Math.max(0, closeDuration.value - 150);
     el.style.transition = `transform ${closeDuration.value}ms cubic-bezier(0.32, 0.72, 0, 1), opacity 150ms ease-in ${fadeDelay}ms`;
@@ -222,10 +258,19 @@ const hasFooter = computed(() => {
           aria-modal="true"
           tabindex="-1"
           :aria-labelledby="labelledBy"
+          :data-presentation="resolvedPresentation"
           data-smooth-resize
         >
           <!-- measured by the global smooth-resize watcher; .modal animates -->
-          <div class="modal-inner">
+          <div
+            class="modal-inner"
+            :class="{ 'has-grip': isSheet && dragHandle }"
+          >
+            <div
+              v-if="isSheet && dragHandle"
+              class="modal-grip"
+              aria-hidden="true"
+            />
             <header v-if="hasHeader" class="modal-header">
               <slot name="header">
                 <orio-view-text :id="titleId" type="title" class="modal-title">
@@ -273,11 +318,11 @@ const hasFooter = computed(() => {
   position: absolute;
   z-index: 100;
 
-  min-width: 380px;
-  max-width: 90vw;
+  min-inline-size: min(var(--modal-min-inline-size, 380px), 100% - 2rem);
+  max-inline-size: min(var(--modal-max-inline-size, 90vw), 100% - 2rem);
 
   background: var(--color-surface);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--modal-radius, var(--border-radius-lg));
 
   transform-origin: top left;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
@@ -295,6 +340,60 @@ const hasFooter = computed(() => {
   display: flex;
   flex-direction: column;
   max-height: 90vh;
+}
+
+/* sheet: docked to the bottom, full width, slides up from below */
+.modal[data-presentation="sheet"] {
+  inset-inline: 0;
+  inset-block-end: 0;
+  min-inline-size: 0;
+  max-inline-size: none;
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+  box-shadow: none;
+  transform: translateY(100%);
+  opacity: 1;
+  transition: transform var(--modal-open-duration)
+    cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.modal[data-presentation="sheet"]:focus-visible {
+  outline-offset: -2px;
+}
+
+.modal[data-presentation="sheet"] .modal-inner {
+  max-height: none;
+  max-block-size: var(--modal-max-block-size, 90dvh);
+}
+
+.modal[data-presentation="sheet"] .modal-content {
+  overscroll-behavior: contain;
+}
+
+/* the last block clears the home indicator (needs viewport-fit=cover) */
+.modal[data-presentation="sheet"] .modal-inner > :last-child {
+  padding-block-end: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* grip sits in the header's top padding, so the header stays compact */
+.modal-inner.has-grip {
+  position: relative;
+  padding-block-start: 0.75rem;
+}
+
+.modal-inner.has-grip .modal-header {
+  padding-block-start: 0.25rem;
+}
+
+.modal-grip {
+  position: absolute;
+  inset-block-start: 0.375rem;
+  inset-inline: 0;
+  margin-inline: auto;
+  inline-size: 2.25rem;
+  block-size: 0.25rem;
+  border-radius: var(--border-radius-pill);
+  background: var(--color-border);
 }
 
 .modal-header {
@@ -338,6 +437,12 @@ const hasFooter = computed(() => {
 
 @media (prefers-reduced-motion: reduce) {
   .modal {
+    transition: opacity 0.15s ease-out;
+  }
+  /* sheet fades instead of sliding */
+  .modal[data-presentation="sheet"] {
+    transform: none;
+    opacity: 0;
     transition: opacity 0.15s ease-out;
   }
   .overlay-fade-enter-active,

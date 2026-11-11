@@ -9,6 +9,7 @@ import { ref } from 'vue'
 
 const showModal = ref(false)
 const modalOrigin = ref(null)
+const showSheet = ref(false)
 
 function openModal(event) {
   const rect = event.target.getBoundingClientRect()
@@ -53,6 +54,23 @@ function openModal(event) {
     <template #footer>
       <orio-button variant="primary" @click="showModal = false">
         Закрити вікно
+      </orio-button>
+    </template>
+  </orio-modal>
+</div>
+
+## Демо листа
+
+<div class="demo-container">
+  <orio-button @click="showSheet = true">
+    Відкрити лист
+  </orio-button>
+
+  <orio-modal v-model:show="showSheet" :origin="null" presentation="sheet" drag-handle title="Лист">
+    <p>Прикріплений до низу, виїжджає знизу, ігнорує origin.</p>
+    <template #footer>
+      <orio-button variant="primary" @click="showSheet = false">
+        Закрити
       </orio-button>
     </template>
   </orio-modal>
@@ -166,13 +184,63 @@ function openModal(event) {
 </script>
 ```
 
+### Нижній лист
+
+`presentation="sheet"` прикріплює вікно до нижнього краю на всю ширину із заокругленими верхніми кутами. Воно виїжджає знизу при відкритті й від’їжджає вниз при закритті (за `prefers-reduced-motion` лише згасання) та ігнорує `origin`. Заголовок і футер залишаються на місці, прокручується вміст. `drag-handle` додає декоративну смужку (`aria-hidden`, без жестів).
+
+```vue
+<template>
+  <orio-button @click="showSheet = true"> Open sheet </orio-button>
+
+  <orio-modal v-model:show="showSheet" :origin="null" presentation="sheet" drag-handle title="Sheet">
+    <p>Docked to the bottom, slides up, ignores origin.</p>
+    <template #footer>
+      <orio-button variant="primary" @click="showSheet = false">
+        Close
+      </orio-button>
+    </template>
+  </orio-modal>
+</template>
+
+<script setup>
+const showSheet = ref(false);
+</script>
+```
+
+`presentation="auto"` обирає лист на ширині менше 640px (Tailwind `sm`), інакше звичайне вікно. Режим визначається під час відкриття й тримається до закриття: зміна розміру через 640px, поки вікно відкрите, його не перемикає.
+
+```vue
+<orio-modal v-model:show="showModal" :origin="null" presentation="auto">…</orio-modal>
+```
+
+### Стилізація
+
+`class`, `style` та інші атрибути на `<orio-modal>` потрапляють на елемент `.modal`. Він має `data-presentation="sheet" | "dialog"` (визначений режим, ніколи `auto`), тож стилізувати за режимом можна без `:has()`. Токени нижче можна задати на `.modal` або на предку (наприклад, `:root`). У листі `env(safe-area-inset-bottom)` додає відступ до останнього блоку; значення з’являється лише з `viewport-fit=cover` у meta viewport сторінки.
+
+```css
+.modal[data-presentation="sheet"] {
+  --modal-radius: 24px;
+}
+```
+
 ## Пропси
 
 | Проп       | Тип                  | За замовчуванням                 | Опис                                                                            |
 | ---------- | -------------------- | -------------------------------- | ------------------------------------------------------------------------------- |
 | `show`     | `Boolean`            | -                                | Видимість вікна (v-model:show)                                                  |
 | `origin`   | `OriginRect \| null` | `null`                           | Точка початку анімації                                                          |
+| `presentation` | `'dialog' \| 'sheet' \| 'auto'` | `'dialog'` | `dialog` по центру, `sheet` знизу, `auto` = лист при ширині менше 640px, визначається при відкритті |
+| `dragHandle` | `boolean` | `false` | Декоративна смужка на листі (`aria-hidden`, без жестів) |
 | `duration` | `number`             | `500` відкриття / `400` закриття | Тривалість анімації відкриття та закриття в мс. Ігнорується при зменшеному русі |
+
+### CSS-токени
+
+| Токен | За замовчуванням | Опис |
+| ----- | ---------------- | ---- |
+| `--modal-min-inline-size` | `380px` | Мінімальна ширина вікна, не більше `100% - 2rem` |
+| `--modal-max-inline-size` | `90vw` | Максимальна ширина вікна, не більше `100% - 2rem` |
+| `--modal-max-block-size` | `90dvh` | Максимальна висота листа |
+| `--modal-radius` | `var(--border-radius-lg)` | Радіус кутів (вікно; верхні кути листа) |
 
 ### Тип OriginRect
 

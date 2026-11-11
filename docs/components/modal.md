@@ -9,6 +9,7 @@ import { ref } from 'vue'
 
 const showModal = ref(false)
 const modalOrigin = ref(null)
+const showSheet = ref(false)
 
 function openModal(event) {
   const rect = event.target.getBoundingClientRect()
@@ -53,6 +54,23 @@ function openModal(event) {
     <template #footer>
       <orio-button variant="primary" @click="showModal = false">
         Close Modal
+      </orio-button>
+    </template>
+  </orio-modal>
+</div>
+
+## Sheet demo
+
+<div class="demo-container">
+  <orio-button @click="showSheet = true">
+    Open sheet
+  </orio-button>
+
+  <orio-modal v-model:show="showSheet" :origin="null" presentation="sheet" drag-handle title="Sheet">
+    <p>Docked to the bottom, slides up, ignores origin.</p>
+    <template #footer>
+      <orio-button variant="primary" @click="showSheet = false">
+        Close
       </orio-button>
     </template>
   </orio-modal>
@@ -166,13 +184,63 @@ function openModal(event) {
 </script>
 ```
 
+### Bottom sheet
+
+`presentation="sheet"` docks the modal to the bottom edge at full width with rounded top corners. It slides up on open and down on close (fade only under `prefers-reduced-motion`) and ignores `origin`. Header and footer stay pinned while the content scrolls. `drag-handle` adds a decorative grip (`aria-hidden`, no gesture).
+
+```vue
+<template>
+  <orio-button @click="showSheet = true"> Open sheet </orio-button>
+
+  <orio-modal v-model:show="showSheet" :origin="null" presentation="sheet" drag-handle title="Sheet">
+    <p>Docked to the bottom, slides up, ignores origin.</p>
+    <template #footer>
+      <orio-button variant="primary" @click="showSheet = false">
+        Close
+      </orio-button>
+    </template>
+  </orio-modal>
+</template>
+
+<script setup>
+const showSheet = ref(false);
+</script>
+```
+
+`presentation="auto"` picks a sheet below 640px (Tailwind `sm`) and a dialog otherwise. The mode is decided when the modal opens and kept until it closes: resizing across 640px while open does not switch it.
+
+```vue
+<orio-modal v-model:show="showModal" :origin="null" presentation="auto">…</orio-modal>
+```
+
+### Styling
+
+`class`, `style` and other attrs on `<orio-modal>` land on the `.modal` dialog element. It carries `data-presentation="sheet" | "dialog"` (the resolved mode, never `auto`), so per-mode styling needs no `:has()`. Tokens below can be set on `.modal` or any ancestor of the teleport target (e.g. `:root`). In a sheet, `env(safe-area-inset-bottom)` pads the last block; it only reports a value when the page sets `viewport-fit=cover` in its viewport meta.
+
+```css
+.modal[data-presentation="sheet"] {
+  --modal-radius: 24px;
+}
+```
+
 ## Props
 
 | Prop       | Type                 | Default                  | Description                                                      |
 | ---------- | -------------------- | ------------------------ | ---------------------------------------------------------------- |
 | `show`     | `Boolean`            | -                        | Modal visibility (v-model:show)                                  |
 | `origin`   | `OriginRect \| null` | `null`                   | Animation origin point                                           |
+| `presentation` | `'dialog' \| 'sheet' \| 'auto'` | `'dialog'` | `dialog` centered, `sheet` docked bottom, `auto` = sheet under 640px, resolved on open |
+| `dragHandle` | `boolean` | `false` | Decorative grip on a sheet (`aria-hidden`, no gesture) |
 | `duration` | `number`             | `500` open / `400` close | Open and close animation length in ms. Reduced motion ignores it |
+
+### CSS tokens
+
+| Token | Default | Description |
+| ----- | ------- | ----------- |
+| `--modal-min-inline-size` | `380px` | Dialog minimum width, capped at `100% - 2rem` |
+| `--modal-max-inline-size` | `90vw` | Dialog maximum width, capped at `100% - 2rem` |
+| `--modal-max-block-size` | `90dvh` | Sheet maximum height |
+| `--modal-radius` | `var(--border-radius-lg)` | Corner radius (dialog; top corners of a sheet) |
 
 ### OriginRect Type
 
