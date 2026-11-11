@@ -4,6 +4,7 @@ import type { NumberInputProps } from "./index.vue";
 
 withDefaults(defineProps<NumberInputProps>(), {
   layout: "vertical",
+  type: "text",
   min: undefined,
   max: undefined,
   step: 1,
@@ -11,7 +12,7 @@ withDefaults(defineProps<NumberInputProps>(), {
   disabled: false,
 });
 
-const modelValue = defineModel<number>({ default: 0 });
+const modelValue = defineModel<number | null>({ default: null });
 
 const { pressAndHold, stop } = usePressAndHold();
 </script>

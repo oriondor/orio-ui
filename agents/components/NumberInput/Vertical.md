@@ -15,6 +15,7 @@ of its contract.
 
 ## Invariants
 
+- **Model is `number | null` (default `null`) and `type` (`'text'` default / `'number'`) passes through** to the base.
 - **Accepts the full `NumberInputProps` interface** plus a `disabled` prop
   for the buttons. Forwarded via `v-bind="$props"`.
 - **Buttons use `usePressAndHold`** — `@mousedown` starts auto-repeat,

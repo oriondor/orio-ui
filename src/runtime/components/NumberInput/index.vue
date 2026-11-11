@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { computed, toRefs, useTemplateRef } from "vue";
+import { computed, ref, toRefs, useTemplateRef, watch } from "vue";
 import { useFocus } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
 import type { ControlProps } from "../ControlElement.vue";
 import type { InputLayout } from "../Input.vue";
+import { useDecimalFormatter } from "../../composables/useDecimalFormatter";
+
+export type NumberInputType = "text" | "number";
 
 export interface NumberInputProps extends Omit<ControlProps, "layout"> {
   layout?: InputLayout;
+  type?: NumberInputType;
   min?: number;
   max?: number;
   step?: number;
@@ -14,56 +19,155 @@ export interface NumberInputProps extends Omit<ControlProps, "layout"> {
 
 const props = withDefaults(defineProps<NumberInputProps>(), {
   layout: "vertical",
+  type: "text",
   min: undefined,
   max: undefined,
   step: 1,
   decimalPlaces: 0,
 });
 
-const { min, max, step, decimalPlaces } = toRefs(props);
+const { min, max, step, decimalPlaces, type } = toRefs(props);
 
-const modelValue = defineModel<number | null>({ default: 0 });
+const modelValue = defineModel<number | null>({ default: null });
 
 const input = useTemplateRef("input");
 const { focused } = useFocus(input);
+const { toNumber } = useDecimalFormatter();
+const { locale } = useI18n();
 
-function setValidatedValue(value: number | null) {
-  let finalValue = value ?? 0;
-  if (Number.isFinite(max.value) && finalValue > (max.value as number)) {
-    finalValue = max.value as number;
+function decimalsOf(value: number) {
+  const [mantissa, exponent] = String(value).split("e");
+  return Math.max(
+    0,
+    (mantissa.split(".")[1]?.length ?? 0) - Number(exponent ?? 0),
+  );
+}
+
+const precision = computed(() =>
+  Math.max(decimalPlaces.value, decimalsOf(step.value)),
+);
+
+// Decimal-exponent rounding: avoids binary float errors (1.005 -> 1.01),
+// half away from zero.
+function roundTo(value: number, places: number) {
+  if (String(value).includes("e")) return value;
+  const sign = value < 0 ? -1 : 1;
+  const shifted = Math.round(Number(`${Math.abs(value)}e${places}`));
+  return sign * Number(`${shifted}e-${places}`);
+}
+
+function clamp(value: number) {
+  let result = value;
+  if (Number.isFinite(max.value) && result > (max.value as number)) {
+    result = max.value as number;
   }
-
-  if (Number.isFinite(min.value) && finalValue < (min.value as number)) {
-    finalValue = min.value as number;
+  if (Number.isFinite(min.value) && result < (min.value as number)) {
+    result = min.value as number;
   }
+  return result;
+}
 
-  finalValue = Number((finalValue ?? 0).toFixed(decimalPlaces.value));
+function normalize(value: number) {
+  return clamp(roundTo(value, precision.value));
+}
 
-  modelValue.value = finalValue;
+function formatDisplay(value: number | null) {
+  if (value === null) return "";
+  return new Intl.NumberFormat(locale.value, {
+    useGrouping: false,
+    maximumFractionDigits: 20,
+  }).format(value);
+}
+
+const display = ref(formatDisplay(modelValue.value));
+
+// Not `focused.value`: the slot re-render resets the template ref, which
+// makes useFocus drop its state mid-typing.
+const isTyping = () =>
+  input.value !== null && document.activeElement === input.value;
+
+// External model/locale changes re-render the text, unless the user is
+// typing something that already parses to the model (don't clobber "1,").
+watch([modelValue, locale], () => {
+  if (!isTyping() || toNumber(display.value) !== modelValue.value) {
+    display.value = formatDisplay(modelValue.value);
+  }
+});
+
+function onInput(event: Event) {
+  const raw = (event.target as HTMLInputElement).value;
+  if (type.value === "number") {
+    modelValue.value = raw === "" ? null : Number(raw);
+    return;
+  }
+  display.value = raw;
+  if (raw.trim() === "") {
+    modelValue.value = null;
+    return;
+  }
+  const parsed = toNumber(raw);
+  // Unparsable mid-typing ("-", "abc") keeps the last model value.
+  if (parsed !== null) modelValue.value = parsed;
+}
+
+function commit(value: number) {
+  modelValue.value = value;
+  display.value = formatDisplay(value);
 }
 
 function onBlur() {
-  setValidatedValue(modelValue.value);
+  if (type.value === "number") {
+    if (modelValue.value === null) return;
+    const target = normalize(modelValue.value);
+    if (target !== modelValue.value) modelValue.value = target;
+    return;
+  }
+  if (display.value.trim() === "") return;
+  const parsed = toNumber(display.value);
+  if (parsed === null) {
+    display.value = formatDisplay(modelValue.value);
+    return;
+  }
+  const target = normalize(parsed);
+  // Valid value: keep the typed text and the model untouched.
+  if (target !== parsed) commit(target);
+}
+
+function stepBy(delta: number) {
+  const base =
+    modelValue.value ?? (Number.isFinite(min.value) ? min.value! : 0);
+  commit(normalize(base + delta));
 }
 
 function increase() {
-  setValidatedValue((modelValue.value ?? 0) + step.value);
+  if (props.disabled) return;
+  stepBy(step.value);
 }
 
 function decrease() {
-  setValidatedValue((modelValue.value ?? 0) - step.value);
+  if (props.disabled) return;
+  stepBy(-step.value);
+}
+
+// Text mode has no native stepper; number mode keeps the browser's own.
+function onArrow(event: KeyboardEvent, action: () => void) {
+  if (type.value !== "text") return;
+  event.preventDefault();
+  action();
 }
 
 const isAtMax = computed(
   () =>
+    modelValue.value !== null &&
     Number.isFinite(max.value) &&
-    (modelValue.value ?? 0) >= (max.value as number),
+    modelValue.value >= (max.value as number),
 );
 
 const isAtMin = computed(
   () =>
+    modelValue.value !== null &&
     Number.isFinite(min.value) &&
-    (modelValue.value ?? 0) <= (min.value as number),
+    modelValue.value <= (min.value as number),
 );
 
 const controlProps = computed(() => {
@@ -72,6 +176,7 @@ const controlProps = computed(() => {
     max: _max,
     step: _step,
     decimalPlaces: _decimalPlaces,
+    type: _type,
     ...rest
   } = props;
   return rest;
@@ -98,13 +203,17 @@ defineExpose({ input, focused });
       <input
         v-bind="{ ...$attrs, ...control }"
         ref="input"
-        v-model="modelValue"
-        type="number"
+        :type
+        :inputmode="type === 'text' ? 'decimal' : undefined"
+        :value="type === 'text' ? display : (modelValue ?? '')"
         class="number-input"
-        :min
-        :max
-        :step
+        :min="type === 'number' ? min : undefined"
+        :max="type === 'number' ? max : undefined"
+        :step="type === 'number' ? step : undefined"
+        @input="onInput"
         @blur="onBlur"
+        @keydown.up="onArrow($event, increase)"
+        @keydown.down="onArrow($event, decrease)"
       />
       <div class="controls">
         <slot name="controls" v-bind="slotExpose" />

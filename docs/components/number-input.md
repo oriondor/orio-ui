@@ -15,6 +15,7 @@ const horizontalLayout = ref(3)
 const innerBasic = ref(25)
 const innerVertical = ref(8)
 const innerHorizontal = ref(4)
+const money = ref(null)
 </script>
 
 ### Basic (No Controls)
@@ -68,6 +69,19 @@ const innerHorizontal = ref(4)
     label="Price"
   />
   <div class="demo-output">Value: {{ price }}</div>
+</div>
+
+### Empty Value and Money Input
+
+<div class="demo-container">
+  <orio-number-input-horizontal
+    v-model="money"
+    :min="0"
+    :step="0.1"
+    :decimal-places="2"
+    label="Amount"
+  />
+  <div class="demo-output">Value: {{ money }}</div>
 </div>
 
 ### Horizontal Layout
@@ -186,13 +200,17 @@ const value = ref(0)
 - **Boundary validation** - Values are clamped to min/max range on blur
 - **Increment/Decrement buttons** - Click to adjust value by step amount (Vertical & Horizontal)
 - **Press and hold** - Hold button to continuously adjust after 500ms delay (Vertical & Horizontal)
-- **Decimal precision** - Control decimal places with `decimalPlaces` prop
+- **Decimal precision** - Control decimal places with `decimalPlaces` prop; rounding is exact (`1.005` at 2 places is `1.01`, `0.1 + 0.2` steps give `0.3`). Precision is the larger of `decimalPlaces` and the decimals of `step`
+- **Empty is `null`** - Clearing the field emits `null` and never becomes `0`. Steppers and ArrowUp/ArrowDown start from `min ?? 0`
+- **Locale-aware text mode** - While focused the input shows exactly what you typed (`1,` stays `1,`). When the value changes from outside (step, clamp, rounding, prop) it shows the vue-i18n locale's decimal separator without grouping (`1234,5` in `de`). A valid typed value is not rewritten on blur; unparsable text reverts to the last value
+- **Text mode parsing is heuristic** - see `useDecimalFormatter().toNumber`; `1,234` reads as 1234, not 1.234
 
 ## Props
 
 | Prop            | Type                                       | Default      | Description                            |
 | --------------- | ------------------------------------------ | ------------ | -------------------------------------- |
-| `modelValue`    | `number`                                   | `0`          | Input value (v-model)                  |
+| `modelValue`    | `number \| null`                           | `null`       | Input value (v-model); empty is `null` |
+| `type`          | `"text" \| "number"`                      | `"text"`      | Text mode (`inputmode="decimal"`, `1.5` and `1,5` both parse) or native number input |
 | `layout`        | `"vertical" \| "horizontal" \| "inner"`    | `"vertical"` | Label position relative to input       |
 | `min`           | `number`                                   | `undefined`  | Minimum allowed value                  |
 | `max`           | `number`                                   | `undefined`  | Maximum allowed value                  |
@@ -207,7 +225,7 @@ All standard HTML input attributes are supported via `v-bind="$attrs"`.
 
 | Event | Payload | Description |
 |-------|---------|-------------|
-| `update:modelValue` | `number` | Emitted when input value changes |
+| `update:modelValue` | `number \| null` | Emitted when input value changes |
 
 ## Styling
 

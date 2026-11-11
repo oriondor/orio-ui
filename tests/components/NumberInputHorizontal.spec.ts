@@ -6,7 +6,7 @@ import Button from "../../src/runtime/components/Button.vue";
 describe("NumberInputHorizontal", () => {
   it("renders with default value", () => {
     const wrapper = mount(NumberInputHorizontal);
-    expect(wrapper.find("input").element.value).toBe("0");
+    expect(wrapper.find("input").element.value).toBe("");
   });
 
   it("renders with custom value", () => {

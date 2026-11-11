@@ -17,7 +17,7 @@ describe("NumberInput", () => {
       },
     });
 
-    expect(wrapper.find("input").element.value).toBe("0");
+    expect(wrapper.find("input").element.value).toBe("");
   });
 
   it("emits update when input value changes", async () => {
