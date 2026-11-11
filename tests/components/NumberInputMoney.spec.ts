@@ -1,7 +1,8 @@
-import { describe, it, expect } from "vitest";
+import { afterEach, describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import NumberInput from "../../src/runtime/components/NumberInput/index.vue";
+import NumberInputHorizontal from "../../src/runtime/components/NumberInput/Horizontal.vue";
 import NumberInputVertical from "../../src/runtime/components/NumberInput/Vertical.vue";
 import { i18n } from "../../src/runtime/i18n";
 
@@ -26,6 +27,10 @@ async function type(wrapper: ReturnType<typeof make>, text: string) {
 
 const lastEmit = (wrapper: ReturnType<typeof make>) =>
   wrapper.emitted("update:modelValue")?.at(-1)?.[0];
+
+afterEach(() => {
+  i18n.global.locale.value = "en";
+});
 
 describe("NumberInput text mode", () => {
   it("renders type=text inputmode=decimal, empty for null (R3/R4)", () => {
@@ -145,7 +150,67 @@ describe("NumberInput text mode", () => {
     i18n.global.locale.value = "de";
     await nextTick();
     expect(wrapper.find("input").element.value).toBe("1234,5");
-    i18n.global.locale.value = "en";
+  });
+
+  it("F2: sv display (U+2212 minus) round-trips; typing and blur keep -5", async () => {
+    i18n.global.locale.value = "sv";
+    const wrapper = make({ modelValue: -5, max: 3 });
+    const input = wrapper.find("input");
+    expect(input.element.value).toBe("\u22125");
+    input.element.focus();
+    await input.setValue("\u221250");
+    expect(lastEmit(wrapper)).toBe(-50);
+    await input.setValue("\u22125");
+    await input.trigger("blur");
+    expect(wrapper.props("modelValue")).toBe(-5);
+  });
+
+  it("F4: roundTo never yields -0 and handles exponent-form numbers", async () => {
+    const zero = make({ modelValue: -0.4 });
+    await type(zero, "-0.4");
+    await zero.find("input").trigger("blur");
+    expect(Object.is(zero.props("modelValue"), 0)).toBe(true);
+    expect(zero.find("input").element.value).toBe("0");
+    const tiny = make({ decimalPlaces: 2 });
+    await type(tiny, "0.0000001");
+    await tiny.find("input").trigger("blur");
+    expect(tiny.props("modelValue")).toBe(0);
+    const tinyKept = make({ decimalPlaces: 8 });
+    await type(tinyKept, "0.0000001");
+    await tinyKept.find("input").trigger("blur");
+    expect(tinyKept.props("modelValue")).toBe(1e-7);
+  });
+
+  it("F6: readonly blocks arrow stepping and exposed steppers", async () => {
+    const wrapper = make({ modelValue: 1, readonly: true });
+    await wrapper.find("input").trigger("keydown", { key: "ArrowUp" });
+    expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    const horizontal = mount(NumberInputHorizontal, {
+      props: { modelValue: 1, readonly: true },
+    });
+    await horizontal.findAll("button")[1].trigger("mousedown");
+    expect(horizontal.emitted("update:modelValue")).toBeUndefined();
+  });
+
+  it("F7: consumer inputmode wins over the default", () => {
+    const wrapper = make({ inputmode: "numeric" });
+    expect(wrapper.find("input").attributes("inputmode")).toBe("numeric");
+  });
+
+  it("F9: type=number clears a bad-input leftover on blur", async () => {
+    const wrapper = make({ type: "number" });
+    const input = wrapper.find("input");
+    input.element.focus();
+    Object.defineProperty(input.element, "validity", {
+      value: { badInput: true },
+    });
+    // jsdom sanitises "-" away; emulate the browser keeping it visible.
+    Object.defineProperty(input.element, "value", {
+      value: "-",
+      writable: true,
+    });
+    await input.trigger("blur");
+    expect(input.element.value).toBe("");
   });
 
   it("E10: type=number is native and empty stays null", async () => {

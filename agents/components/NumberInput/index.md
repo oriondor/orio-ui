@@ -43,23 +43,27 @@ text input (`type="text" inputmode="decimal"`) with no spinner. Custom step cont
 - **Clamp to `min`/`max` only when finite** (`0` honored).
 - **Stepping** (`increase`/`decrease`, ArrowUp/ArrowDown in text mode with
   `preventDefault`) starts from the model, or `min ?? 0` when `null`, applies
-  `step`, rounds, clamps. No-op while `disabled`.
-- **`decimalPlaces` defaults to `0`** (precision still grows with `step`'s decimals). Decimal input requires both
-  `decimalPlaces` and a matching `step` (e.g. `:decimalPlaces="2" :step="0.01"`).
+  `step`, rounds, clamps. No-op while `disabled` or when the input has a `readonly` attr.
+- **`decimalPlaces` defaults to `0`**; precision is
+  `max(decimalPlaces, decimals in step)`, so `:step="0.01"` alone already gives
+  2 places and `:decimalPlaces="2"` alone rounds typed values to 2 places.
+  It is a rounding precision, not a display format (no trailing zeros).
 - **Native webkit/firefox spin buttons are hidden** via CSS. Always
   `appearance: textfield`.
 - **`#controls` slot overlays the input absolutely** with `pointer-events:
-  none` on the container and `:deep(button) { pointer-events: auto }`.
+none` on the container and `:deep(button) { pointer-events: auto }`.
   Only buttons receive clicks; the rest of the overlay passes through to
   the input.
 - **`#controls` slot props**: `{ increase, decrease, isAtMax, isAtMin }`.
   `increase`/`decrease` apply `step` and run validation; `isAtMax`/`isAtMin`
-  are `false` when `min`/`max` are undefined.
+  are `false` when `min`/`max` are undefined or the model is `null`.
 - **`type`, `min`, `max`, `step`, `decimalPlaces` are stripped from `controlProps`**
   before forwarding to ControlElement — they do not pollute the wrapper's
   prop bag.
 - **`$attrs` is spread before `control`** on the inner `<input>`, same as
-  Input.
+  Input. `inputmode` from `$attrs` wins over the default `decimal`.
+- **`type="number"` blur** clears a native bad-input leftover (a lone `-`)
+  so the field matches the `null` model.
 - **`defineExpose({ input, focused })`** — `input` is the template ref to the
   native `<input>`; `focused` is the **writable** `Ref<boolean>` from
   `useFocus`. Reading reflects focus state; assigning `true`/`false` focuses or
@@ -71,8 +75,9 @@ text input (`type="text" inputmode="decimal"`) with no spinner. Custom step cont
   `<orio-number-input v-model="n" />` renders nothing in the controls area.
 - **`min`/`max` of `0` are honored** because the check uses `Number.isFinite`,
   not truthiness.
-- **No locale-aware parsing of grouping.** `toNumber` is heuristic: `1,234`
-  parses as 1234 (US), never 1.234. Documented ambiguity, not a bug.
+- **No locale-aware parsing of grouping.** `toNumber` is heuristic: with no
+  dot, the last comma is the decimal mark, so `1,234` parses as 1.234 and
+  `1,234.5` as 1234.5. U+2212 `−` (sv/fi/nb output) counts as minus.
 - **`focused` from `useFocus` is unreliable mid-typing** (the control slot
   re-render resets the template ref), so the external-change check uses
   `document.activeElement`.
@@ -99,7 +104,12 @@ text input (`type="text" inputmode="decimal"`) with no spinner. Custom step cont
 
 ```vue
 <template>
-  <orio-number-input v-model="quantity" :min="1" :max="99" :label="$t('cart.qty')">
+  <orio-number-input
+    v-model="quantity"
+    :min="1"
+    :max="99"
+    :label="$t('cart.qty')"
+  >
     <template #controls="{ increase, decrease, isAtMax, isAtMin }">
       <orio-button :disabled="isAtMin" @click="decrease">−</orio-button>
       <orio-button :disabled="isAtMax" @click="increase">+</orio-button>

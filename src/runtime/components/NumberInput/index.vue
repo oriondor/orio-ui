@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, toRefs, useTemplateRef, watch } from "vue";
+import { computed, ref, toRefs, useAttrs, useTemplateRef, watch } from "vue";
 import { useFocus } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import type { ControlProps } from "../ControlElement.vue";
@@ -34,6 +34,10 @@ const input = useTemplateRef("input");
 const { focused } = useFocus(input);
 const { toNumber } = useDecimalFormatter();
 const { locale } = useI18n();
+const attrs = useAttrs();
+
+// `readonly` arrives as an attr (not a ControlProps key): "" / true / "readonly".
+const isReadonly = () => attrs.readonly != null && attrs.readonly !== false;
 
 function decimalsOf(value: number) {
   const [mantissa, exponent] = String(value).split("e");
@@ -50,10 +54,14 @@ const precision = computed(() =>
 // Decimal-exponent rounding: avoids binary float errors (1.005 -> 1.01),
 // half away from zero.
 function roundTo(value: number, places: number) {
-  if (String(value).includes("e")) return value;
   const sign = value < 0 ? -1 : 1;
-  const shifted = Math.round(Number(`${Math.abs(value)}e${places}`));
-  return sign * Number(`${shifted}e-${places}`);
+  // Split "1e-7" so the exponent can be shifted instead of appended to.
+  const [mantissa, exponent = "0"] = String(Math.abs(value)).split("e");
+  const shifted = Math.round(
+    Number(`${mantissa}e${Number(exponent) + places}`),
+  );
+  // `+ 0` turns -0 (e.g. -0.4 at 0 places) into 0.
+  return sign * Number(`${shifted}e-${places}`) + 0;
 }
 
 function clamp(value: number) {
@@ -115,8 +123,12 @@ function commit(value: number) {
   display.value = formatDisplay(value);
 }
 
-function onBlur() {
+function onBlur(event: FocusEvent) {
   if (type.value === "number") {
+    const element = event.target as HTMLInputElement;
+    // Native number input reports "-" / "e" as empty (model null) but keeps
+    // showing it; clear so the field matches the model.
+    if (element.validity.badInput) element.value = "";
     if (modelValue.value === null) return;
     const target = normalize(modelValue.value);
     if (target !== modelValue.value) modelValue.value = target;
@@ -140,12 +152,12 @@ function stepBy(delta: number) {
 }
 
 function increase() {
-  if (props.disabled) return;
+  if (props.disabled || isReadonly()) return;
   stepBy(step.value);
 }
 
 function decrease() {
-  if (props.disabled) return;
+  if (props.disabled || isReadonly()) return;
   stepBy(-step.value);
 }
 
@@ -204,7 +216,9 @@ defineExpose({ input, focused });
         v-bind="{ ...$attrs, ...control }"
         ref="input"
         :type
-        :inputmode="type === 'text' ? 'decimal' : undefined"
+        :inputmode="
+          $attrs.inputmode ?? (type === 'text' ? 'decimal' : undefined)
+        "
         :value="type === 'text' ? display : (modelValue ?? '')"
         class="number-input"
         :min="type === 'number' ? min : undefined"
