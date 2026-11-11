@@ -39,7 +39,8 @@ function onChange(e: Event) {
 </template>
 
 <style scoped>
-.canvas-color-control {
+/* doubled class: outranks ControlElement's scoped .control regardless of CSS order */
+.canvas-color-control.canvas-color-control {
   /* ControlElement has no outer margin; keep the old toolbar spacing */
   margin: 0.5rem;
 }

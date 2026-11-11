@@ -178,7 +178,8 @@ function close() {
   flex-shrink: 0;
 }
 
-.toast-close {
+/* doubled class: outranks Button's own margin reset regardless of CSS order */
+.toast-close.toast-close {
   flex-shrink: 0;
   margin: 0.5rem;
   margin-inline-start: 0.25rem;

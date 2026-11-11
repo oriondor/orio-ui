@@ -240,7 +240,9 @@ function clearHover() {
 
 .range-sides {
   display: flex;
-  gap: 0.25rem;
+  /* buttons carry no margin; keep the old 0.5rem inset + 1.25rem spacing, aligned with the calendar nav */
+  gap: 1.25rem;
+  padding: 0.5rem;
 }
 
 .range-calendars {
