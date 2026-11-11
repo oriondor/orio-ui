@@ -11,6 +11,11 @@
   background: var(--color-bg);
 }
 
+.demo-container > * + * {
+  /* controls have no outer margin; space stacked demo children */
+  margin-block-start: 0.5rem;
+}
+
 .demo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

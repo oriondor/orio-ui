@@ -51,7 +51,8 @@ defineExpose({ input, focused });
 input {
   @include input-inner;
   flex: 1;
-  min-width: 0;
+  inline-size: 100%;
+  min-inline-size: 0;
   padding: var(--control-py) 0;
 }
 

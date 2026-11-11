@@ -217,6 +217,28 @@ Input і Textarea підтримують `layout="inner"`, що розміщує
 <orio-selector v-model="value" :options="options" size="sm" />
 ```
 
+### Відступи
+
+За замовчуванням контроли не мають зовнішнього відступу. Розділяйте їх через `gap` у батьківському елементі. Щоб повернути старий відступ `0.5rem`, задайте змінну `--control-margin` на будь-якому предку (наприклад `:root`).
+
+<div class="demo-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem">
+  <orio-input v-model="inputValue" label="Перше" />
+  <orio-input v-model="inputValue" label="Друге" />
+</div>
+
+```vue
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem">
+  <orio-input v-model="first" label="Перше" />
+  <orio-input v-model="second" label="Друге" />
+</div>
+```
+
+```css
+:root {
+  --control-margin: 0.5rem;
+}
+```
+
 ## Пропси
 
 | Проп         | Тип                                 | За замовчуванням | Опис                                               |

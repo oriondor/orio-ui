@@ -150,7 +150,8 @@ const control = computed<ControlSlotAttrs>(() => {
 
 <style lang="scss" scoped>
 .control {
-  margin: 0.5rem;
+  margin: var(--control-margin, 0);
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0.1rem;

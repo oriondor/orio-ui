@@ -133,6 +133,8 @@ input[type="number"] {
 
 .number-input {
   @include base-input;
+  inline-size: 100%;
+  min-inline-size: 0;
 }
 
 .inner {

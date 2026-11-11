@@ -217,6 +217,28 @@ Input and Textarea support `layout="inner"`, which floats the label inside the c
 <orio-selector v-model="value" :options="options" size="sm" />
 ```
 
+### Spacing
+
+Controls have no outer margin by default. Space them with `gap` on the parent. To restore the old `0.5rem` margin, set the `--control-margin` custom property on any ancestor (e.g. `:root`).
+
+<div class="demo-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem">
+  <orio-input v-model="inputValue" label="First" />
+  <orio-input v-model="inputValue" label="Second" />
+</div>
+
+```vue
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem">
+  <orio-input v-model="first" label="First" />
+  <orio-input v-model="second" label="Second" />
+</div>
+```
+
+```css
+:root {
+  --control-margin: 0.5rem;
+}
+```
+
 ## Props
 
 | Prop         | Type                                | Default    | Description                                              |

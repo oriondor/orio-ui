@@ -58,6 +58,10 @@ one, pass `ControlProps` straight through — they are usually re-exported.
   `--orio-control-px`, … in plain CSS on any ancestor. Never override
   `--control-*` with `:deep(...)` + `!important`. A `--control-*` value in
   the control's own `style` attr still wins.
+- **Outer margin is `var(--control-margin, 0)`** (default none; was `0.5rem`).
+  Space controls with `gap` on the parent; set `:root { --control-margin: 0.5rem }`
+  to restore the old spacing. `.control` also has `min-width: 0` so it shrinks in
+  grids/flex rows.
 - **`appearance="minimal"`** zeros margin and strips border + box-shadow from
   the first slot child. Use for inputs embedded in a row with their own
   surrounding chrome.
