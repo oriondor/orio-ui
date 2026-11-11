@@ -221,9 +221,11 @@ Input і Textarea підтримують `layout="inner"`, що розміщує
 
 За замовчуванням контроли не мають зовнішнього відступу. Розділяйте їх через `gap` у батьківському елементі. Щоб повернути старий відступ `0.5rem`, задайте змінну `--control-margin` на будь-якому предку (наприклад `:root`).
 
-<div class="demo-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem">
-  <orio-input v-model="inputValue" label="Перше" />
-  <orio-input v-model="inputValue" label="Друге" />
+<div class="demo-container">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem">
+    <orio-input v-model="inputValue" label="Перше" />
+    <orio-input v-model="inputValue" label="Друге" />
+  </div>
 </div>
 
 ```vue
@@ -241,18 +243,18 @@ Input і Textarea підтримують `layout="inner"`, що розміщує
 
 ## Пропси
 
-| Проп         | Тип                                 | За замовчуванням | Опис                                               |
-| ------------ | ----------------------------------- | ---------- | -------------------------------------------------------- |
-| `appearance` | `'normal' \| 'minimal'`            | `'normal'` | Minimal прибирає відступи, рамку й тінь зі слоту         |
-| `size`       | `'sm' \| 'md' \| 'lg' \| 'xl'`    | `'md'`     | Керує розміром шрифту, відступами й заокругленням внутрішніх елементів |
-| `layout`     | `'vertical' \| 'horizontal'`       | `'vertical'` | Позиція підпису відносно елемента                      |
-| `label`      | `string`                           | -          | Текст підпису над елементом                              |
+| Проп         | Тип                            | За замовчуванням | Опис                                                                   |
+| ------------ | ------------------------------ | ---------------- | ---------------------------------------------------------------------- |
+| `appearance` | `'normal' \| 'minimal'`        | `'normal'`       | Minimal прибирає відступи, рамку й тінь зі слоту                       |
+| `size`       | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'`           | Керує розміром шрифту, відступами й заокругленням внутрішніх елементів |
+| `layout`     | `'vertical' \| 'horizontal'`   | `'vertical'`     | Позиція підпису відносно елемента                                      |
+| `label`      | `string`                       | -                | Текст підпису над елементом                                            |
 
 ## Слоти
 
-| Слот      | Опис                 |
-| --------- | -------------------- |
-| `default` | Елемент форми        |
+| Слот      | Опис          |
+| --------- | ------------- |
+| `default` | Елемент форми |
 
 Слот за замовчуванням надає проп `control` — набір атрибутів, який ваш внутрішній
 елемент має розгорнути. Кожен ключ уже записано як DOM-атрибут, яким він
@@ -266,18 +268,18 @@ Input і Textarea підтримують `layout="inner"`, що розміщує
 
 ## Доступність
 
-| Ключ набору        | Джерело                                   |
-| ------------------ | ----------------------------------------- |
-| `id`               | проп `id` або `useId()` — ціль `<label for>` |
-| `tabindex`         | проп `tabindex`                           |
-| `disabled`         | проп `disabled`                           |
-| `required`         | проп `required`                           |
-| `name`             | проп `name`                               |
+| Ключ набору        | Джерело                                               |
+| ------------------ | ----------------------------------------------------- |
+| `id`               | проп `id` або `useId()` — ціль `<label for>`          |
+| `tabindex`         | проп `tabindex`                                       |
+| `disabled`         | проп `disabled`                                       |
+| `required`         | проп `required`                                       |
+| `name`             | проп `name`                                           |
 | `focus-key`        | проп `focusKey` — атрибут, який шукає `useRovingGrid` |
 | `aria-label`       | проп `ariaLabel` — для елементів без видимого `label` |
-| `aria-describedby` | id елемента `.control-error`, коли задано `error` |
-| `aria-invalid`     | `"true"`, коли задано `error`            |
-| `aria-required`    | проп `required`                           |
+| `aria-describedby` | id елемента `.control-error`, коли задано `error`     |
+| `aria-invalid`     | `"true"`, коли задано `error`                         |
+| `aria-required`    | проп `required`                                       |
 
 Ключі пропускаються, коли сказати нічого, тож порожній `aria-label=""`
 не потрапляє в розмітку.
@@ -286,15 +288,15 @@ Input і Textarea підтримують `layout="inner"`, що розміщує
 
 ControlElement встановлює такі CSS custom properties залежно від `size`, а дочірні компоненти їх використовують:
 
-| Змінна                          | sm       | md (за замовч.) | lg       | xl       |
-| ------------------------------- | -------- | ------------ | -------- | -------- |
-| `--control-font-size`           | 0.75rem  | 0.875rem     | 1.25rem  | 1.75rem  |
-| `--control-label-font-size`     | 0.65rem  | 0.75rem      | 0.875rem | 1.25rem  |
-| `--control-py`                  | 0.25rem  | 0.5rem       | 0.625rem | 0.75rem  |
-| `--control-px`                  | 0.5rem   | 0.75rem      | 1rem     | 1.25rem  |
-| `--control-gap`                 | 0.25rem  | 0.5rem       | 0.5rem   | 0.75rem  |
-| `--control-radius`              | 4px      | 8px          | 8px      | 12px     |
-| `--control-icon-size`           | 0.75rem  | 1rem         | 1.25rem  | 1.5rem   |
+| Змінна                      | sm      | md (за замовч.) | lg       | xl      |
+| --------------------------- | ------- | --------------- | -------- | ------- |
+| `--control-font-size`       | 0.75rem | 0.875rem        | 1.25rem  | 1.75rem |
+| `--control-label-font-size` | 0.65rem | 0.75rem         | 0.875rem | 1.25rem |
+| `--control-py`              | 0.25rem | 0.5rem          | 0.625rem | 0.75rem |
+| `--control-px`              | 0.5rem  | 0.75rem         | 1rem     | 1.25rem |
+| `--control-gap`             | 0.25rem | 0.5rem          | 0.5rem   | 0.75rem |
+| `--control-radius`          | 4px     | 8px             | 8px      | 12px    |
+| `--control-icon-size`       | 0.75rem | 1rem            | 1.25rem  | 1.5rem  |
 
 ## Примітки
 

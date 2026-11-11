@@ -106,3 +106,21 @@ describe("control bag through wrappers", () => {
     expect(custom.find("input").attributes("tabindex")).toBe("3");
   });
 });
+
+describe("ControlElement shrink wiring", () => {
+  it("Button and NavButton roots carry the no-shrink class", async () => {
+    const { default: Button } =
+      await import("../../src/runtime/components/Button.vue");
+    const { default: NavButton } =
+      await import("../../src/runtime/components/NavButton.vue");
+    expect(mount(Button).find(".control").classes()).toContain(
+      "button-control",
+    );
+    expect(mount(NavButton).find(".control").classes()).toContain(
+      "nav-button-control",
+    );
+    expect(mount(Input).find(".control").classes()).not.toContain(
+      "button-control",
+    );
+  });
+});

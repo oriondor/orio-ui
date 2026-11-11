@@ -234,7 +234,9 @@ function onActiveKeyChange(iso: string) {
 .month-calendar-nav {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  /* buttons used to carry a 0.5rem margin; keep the nav row's old spacing */
+  gap: 0.75rem;
+  padding: 0.5rem;
   margin-bottom: 0.5rem;
 }
 

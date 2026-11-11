@@ -27,7 +27,7 @@ function onChange(e: Event) {
 </script>
 
 <template>
-  <orio-control-element>
+  <orio-control-element class="canvas-color-control">
     <input
       type="color"
       :value="options.color"
@@ -39,6 +39,11 @@ function onChange(e: Event) {
 </template>
 
 <style scoped>
+.canvas-color-control {
+  /* ControlElement has no outer margin; keep the old toolbar spacing */
+  margin: 0.5rem;
+}
+
 .canvas-color-picker {
   width: 2rem;
   height: 1.75rem;

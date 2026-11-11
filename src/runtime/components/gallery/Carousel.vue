@@ -321,10 +321,10 @@ onMounted(() => {
 }
 
 .switch-button.previous-button {
-  left: 0;
+  left: 0.5rem;
 }
 .switch-button.next-button {
-  right: 0;
+  right: 0.5rem;
 }
 
 /* ── Minimal appearance ─────────────────────────────────────────── */

@@ -172,13 +172,16 @@ function close() {
 .toast-actions {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  /* buttons carry no outer margin; keep the old 0.5rem inset + 0.5rem spacing */
+  gap: 1.25rem;
+  padding: 0.5rem;
   flex-shrink: 0;
 }
 
 .toast-close {
   flex-shrink: 0;
-  margin-inline-start: -0.25rem;
+  margin: 0.5rem;
+  margin-inline-start: 0.25rem;
 }
 
 .toast-progress {
