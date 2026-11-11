@@ -60,6 +60,9 @@ function roundTo(value: number, places: number) {
   const shifted = Math.round(
     Number(`${mantissa}e${Number(exponent) + places}`),
   );
+  // Beyond 2^53 the shift is lossy and String() goes exponential ("1e+21"),
+  // which would break the re-parse; such values have no fraction to round.
+  if (!Number.isSafeInteger(shifted)) return value;
   // `+ 0` turns -0 (e.g. -0.4 at 0 places) into 0.
   return sign * Number(`${shifted}e-${places}`) + 0;
 }
@@ -81,6 +84,8 @@ function normalize(value: number) {
 
 function formatDisplay(value: number | null) {
   if (value === null) return "";
+  // Native number inputs only accept the plain "." form.
+  if (type.value === "number") return String(value);
   return new Intl.NumberFormat(locale.value, {
     useGrouping: false,
     maximumFractionDigits: 20,
@@ -94,28 +99,34 @@ const display = ref(formatDisplay(modelValue.value));
 const isTyping = () =>
   input.value !== null && document.activeElement === input.value;
 
+// Number mode: the browser already normalised the text; compare like
+// Vue's vModelText does instead of rewriting what the user typed.
+const parseDisplay = (raw: string) =>
+  type.value === "number" ? (raw === "" ? null : Number(raw)) : toNumber(raw);
+
 // External model/locale changes re-render the text, unless the user is
 // typing something that already parses to the model (don't clobber "1,").
 watch([modelValue, locale], () => {
-  if (!isTyping() || toNumber(display.value) !== modelValue.value) {
+  if (!isTyping() || parseDisplay(display.value) !== modelValue.value) {
     display.value = formatDisplay(modelValue.value);
   }
 });
 
 function onInput(event: Event) {
   const raw = (event.target as HTMLInputElement).value;
+  display.value = raw;
   if (type.value === "number") {
-    modelValue.value = raw === "" ? null : Number(raw);
+    // `+ 0` keeps -0 out of the model.
+    modelValue.value = raw === "" ? null : Number(raw) + 0;
     return;
   }
-  display.value = raw;
   if (raw.trim() === "") {
     modelValue.value = null;
     return;
   }
   const parsed = toNumber(raw);
   // Unparsable mid-typing ("-", "abc") keeps the last model value.
-  if (parsed !== null) modelValue.value = parsed;
+  if (parsed !== null) modelValue.value = parsed + 0;
 }
 
 function commit(value: number) {
@@ -128,10 +139,13 @@ function onBlur(event: FocusEvent) {
     const element = event.target as HTMLInputElement;
     // Native number input reports "-" / "e" as empty (model null) but keeps
     // showing it; clear so the field matches the model.
-    if (element.validity.badInput) element.value = "";
+    if (element.validity.badInput) {
+      element.value = "";
+      display.value = "";
+    }
     if (modelValue.value === null) return;
     const target = normalize(modelValue.value);
-    if (target !== modelValue.value) modelValue.value = target;
+    if (target !== modelValue.value) commit(target);
     return;
   }
   if (display.value.trim() === "") return;
@@ -142,7 +156,7 @@ function onBlur(event: FocusEvent) {
   }
   const target = normalize(parsed);
   // Valid value: keep the typed text and the model untouched.
-  if (target !== parsed) commit(target);
+  if (target !== parsed || Object.is(parsed, -0)) commit(target);
 }
 
 function stepBy(delta: number) {
@@ -219,7 +233,7 @@ defineExpose({ input, focused });
         :inputmode="
           $attrs.inputmode ?? (type === 'text' ? 'decimal' : undefined)
         "
-        :value="type === 'text' ? display : (modelValue ?? '')"
+        :value="display"
         class="number-input"
         :min="type === 'number' ? min : undefined"
         :max="type === 'number' ? max : undefined"

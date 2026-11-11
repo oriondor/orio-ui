@@ -227,6 +227,47 @@ describe("NumberInput text mode", () => {
   });
 });
 
+describe("NumberInput round-2 fixes", () => {
+  it("R2-1: number mode never rewrites text that parses to the model", async () => {
+    const wrapper = make({ type: "number", step: 0.01, decimalPlaces: 2 });
+    const input = wrapper.find("input");
+    await type(wrapper, "1");
+    await type(wrapper, "");
+    await type(wrapper, "1.0");
+    await nextTick();
+    expect(input.element.value).toBe("1.0");
+    expect(lastEmit(wrapper)).toBe(1);
+  });
+
+  it("R2-1: sign survives -0 then -0.5 in number mode", async () => {
+    const wrapper = make({ type: "number", step: 0.1, decimalPlaces: 1 });
+    await type(wrapper, "-0");
+    await type(wrapper, "-0.5");
+    await nextTick();
+    expect(wrapper.find("input").element.value).toBe("-0.5");
+    expect(lastEmit(wrapper)).toBe(-0.5);
+  });
+
+  it("R2-2: model never holds -0 (text, number, blur)", async () => {
+    const text = make({ decimalPlaces: 1 });
+    await type(text, "-0");
+    expect(Object.is(lastEmit(text), -0)).toBe(false);
+    await text.find("input").trigger("blur");
+    expect(Object.is(lastEmit(text), -0)).toBe(false);
+    const number = make({ type: "number" });
+    await type(number, "-0");
+    expect(Object.is(lastEmit(number), 0)).toBe(true);
+  });
+
+  it("R2-3: huge values stay finite and are clamped", async () => {
+    const wrapper = make({ max: 100 });
+    await type(wrapper, "1000000000000000000000");
+    await wrapper.find("input").trigger("blur");
+    expect(lastEmit(wrapper)).toBe(100);
+    expect(wrapper.find("input").element.value).toBe("100");
+  });
+});
+
 describe("NumberInputVertical", () => {
   it("R9: passes type through and emits null", async () => {
     const wrapper = mount(NumberInputVertical, {
