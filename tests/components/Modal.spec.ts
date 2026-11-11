@@ -414,12 +414,30 @@ describe("Modal", () => {
   });
 
   describe("presentation", () => {
+    // Live stub: setNarrow flips `matches` and fires registered change listeners.
+    let setNarrow: (narrow: boolean) => void = () => {};
     function stubMedia({ narrow = false, reducedMotion = false } = {}) {
-      vi.stubGlobal("matchMedia", (query: string) => ({
-        matches: query.includes("reduced-motion") ? reducedMotion : narrow,
-        addEventListener: () => {},
-        removeEventListener: () => {},
-      }));
+      const narrowListeners = new Set<(event: { matches: boolean }) => void>();
+      const narrowList = {
+        matches: narrow,
+        addEventListener: (_: string, listener: never) =>
+          narrowListeners.add(listener),
+        removeEventListener: (_: string, listener: never) =>
+          narrowListeners.delete(listener),
+      };
+      setNarrow = (value) => {
+        narrowList.matches = value;
+        narrowListeners.forEach((listener) => listener({ matches: value }));
+      };
+      vi.stubGlobal("matchMedia", (query: string) =>
+        query.includes("reduced-motion")
+          ? {
+              matches: reducedMotion,
+              addEventListener: () => {},
+              removeEventListener: () => {},
+            }
+          : narrowList,
+      );
     }
 
     function mountModal(props: Record<string, unknown> = {}, attrs = {}) {
@@ -459,7 +477,8 @@ describe("Modal", () => {
       const wrapper = mountModal({ presentation: "auto", show: false });
       await wrapper.setProps({ show: true });
       expect(modalElement().dataset.presentation).toBe("sheet");
-      stubMedia({ narrow: false });
+      setNarrow(false);
+      await nextTick();
       await wrapper.setProps({ title: "Re-render" });
       expect(modalElement().dataset.presentation).toBe("sheet");
     });

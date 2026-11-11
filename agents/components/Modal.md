@@ -88,7 +88,7 @@ invariants: true
 - `origin`'s `width` / `height` should be the trigger's rendered size, not
   the modal's. Open is a FLIP: the modal measures its own laid-out rect,
   jumps onto `origin` (translate + non-uniform scale, `transform-origin:
-  top left`), then transitions to `transform: none`. Close reverses it:
+top left`), then transitions to `transform: none`. Close reverses it:
   shrinks back onto `origin` and fades at the tail, so keep `origin` set
   until the modal has closed. Wrong size = visible jump.
 - The overlay transition fades only the backdrop (`background`,
@@ -141,7 +141,13 @@ function trigger(event: MouseEvent) {
 <!-- from docs/components/modal.md -->
 <orio-button @click="showSheet = true"> Open sheet </orio-button>
 
-<orio-modal v-model:show="showSheet" :origin="null" presentation="sheet" drag-handle title="Sheet">
+<orio-modal
+  v-model:show="showSheet"
+  :origin="null"
+  presentation="sheet"
+  drag-handle
+  title="Sheet"
+>
   <p>Docked to the bottom, slides up, ignores origin.</p>
   <template #footer>
     <orio-button variant="primary" @click="showSheet = false">

@@ -10,6 +10,7 @@ import { ref } from 'vue'
 const showModal = ref(false)
 const modalOrigin = ref(null)
 const showSheet = ref(false)
+const showAuto = ref(false)
 
 function openModal(event) {
   const rect = event.target.getBoundingClientRect()
@@ -70,6 +71,23 @@ function openModal(event) {
     <p>Docked to the bottom, slides up, ignores origin.</p>
     <template #footer>
       <orio-button variant="primary" @click="showSheet = false">
+        Close
+      </orio-button>
+    </template>
+  </orio-modal>
+</div>
+
+## Auto demo
+
+<div class="demo-container">
+  <orio-button @click="showAuto = true">
+    Open auto
+  </orio-button>
+
+  <orio-modal v-model:show="showAuto" :origin="null" presentation="auto" title="Auto">
+    <p>Sheet under 640px, dialog above; fixed while open.</p>
+    <template #footer>
+      <orio-button variant="primary" @click="showAuto = false">
         Close
       </orio-button>
     </template>
@@ -192,7 +210,13 @@ function openModal(event) {
 <template>
   <orio-button @click="showSheet = true"> Open sheet </orio-button>
 
-  <orio-modal v-model:show="showSheet" :origin="null" presentation="sheet" drag-handle title="Sheet">
+  <orio-modal
+    v-model:show="showSheet"
+    :origin="null"
+    presentation="sheet"
+    drag-handle
+    title="Sheet"
+  >
     <p>Docked to the bottom, slides up, ignores origin.</p>
     <template #footer>
       <orio-button variant="primary" @click="showSheet = false">
@@ -210,7 +234,23 @@ const showSheet = ref(false);
 `presentation="auto"` picks a sheet below 640px (Tailwind `sm`) and a dialog otherwise. The mode is decided when the modal opens and kept until it closes: resizing across 640px while open does not switch it.
 
 ```vue
-<orio-modal v-model:show="showModal" :origin="null" presentation="auto">…</orio-modal>
+<orio-button @click="showAuto = true">
+  Open auto
+</orio-button>
+
+<orio-modal
+  v-model:show="showAuto"
+  :origin="null"
+  presentation="auto"
+  title="Auto"
+>
+  <p>Sheet under 640px, dialog above; fixed while open.</p>
+  <template #footer>
+    <orio-button variant="primary" @click="showAuto = false">
+      Close
+    </orio-button>
+  </template>
+</orio-modal>
 ```
 
 ### Styling
@@ -225,22 +265,22 @@ const showSheet = ref(false);
 
 ## Props
 
-| Prop       | Type                 | Default                  | Description                                                      |
-| ---------- | -------------------- | ------------------------ | ---------------------------------------------------------------- |
-| `show`     | `Boolean`            | -                        | Modal visibility (v-model:show)                                  |
-| `origin`   | `OriginRect \| null` | `null`                   | Animation origin point                                           |
-| `presentation` | `'dialog' \| 'sheet' \| 'auto'` | `'dialog'` | `dialog` centered, `sheet` docked bottom, `auto` = sheet under 640px, resolved on open |
-| `dragHandle` | `boolean` | `false` | Decorative grip on a sheet (`aria-hidden`, no gesture) |
-| `duration` | `number`             | `500` open / `400` close | Open and close animation length in ms. Reduced motion ignores it |
+| Prop           | Type                            | Default                  | Description                                                                            |
+| -------------- | ------------------------------- | ------------------------ | -------------------------------------------------------------------------------------- |
+| `show`         | `Boolean`                       | -                        | Modal visibility (v-model:show)                                                        |
+| `origin`       | `OriginRect \| null`            | `null`                   | Animation origin point                                                                 |
+| `presentation` | `'dialog' \| 'sheet' \| 'auto'` | `'dialog'`               | `dialog` centered, `sheet` docked bottom, `auto` = sheet under 640px, resolved on open |
+| `dragHandle`   | `boolean`                       | `false`                  | Decorative grip on a sheet (`aria-hidden`, no gesture)                                 |
+| `duration`     | `number`                        | `500` open / `400` close | Open and close animation length in ms. Reduced motion ignores it                       |
 
 ### CSS tokens
 
-| Token | Default | Description |
-| ----- | ------- | ----------- |
-| `--modal-min-inline-size` | `380px` | Dialog minimum width, capped at `100% - 2rem` |
-| `--modal-max-inline-size` | `90vw` | Dialog maximum width, capped at `100% - 2rem` |
-| `--modal-max-block-size` | `90dvh` | Sheet maximum height |
-| `--modal-radius` | `var(--border-radius-lg)` | Corner radius (dialog; top corners of a sheet) |
+| Token                     | Default                   | Description                                    |
+| ------------------------- | ------------------------- | ---------------------------------------------- |
+| `--modal-min-inline-size` | `380px`                   | Dialog minimum width, capped at `100% - 2rem`  |
+| `--modal-max-inline-size` | `90vw`                    | Dialog maximum width, capped at `100% - 2rem`  |
+| `--modal-max-block-size`  | `90dvh`                   | Sheet maximum height                           |
+| `--modal-radius`          | `var(--border-radius-lg)` | Corner radius (dialog; top corners of a sheet) |
 
 ### OriginRect Type
 
