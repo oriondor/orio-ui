@@ -15,14 +15,13 @@ describe("toNumber", () => {
     expect(toNumber("−1,5")).toBe(-1.5);
   });
 
-  it("round-trips Intl output in every locale", () => {
-    ["sv", "fi", "nb", "de", "en", "uk", "ar-EG"].forEach((locale) => {
+  it("round-trips Intl output in every listed locale", () => {
+    ["sv", "fi", "nb", "de", "en", "uk"].forEach((locale) => {
       const text = new Intl.NumberFormat(locale, {
         useGrouping: false,
         maximumFractionDigits: 20,
       }).format(-12.5);
-      // ar-EG uses non-ASCII digits, outside toNumber's scope.
-      if (/\d/.test(text)) expect(toNumber(text)).toBe(-12.5);
+      expect(toNumber(text)).toBe(-12.5);
     });
   });
 });
