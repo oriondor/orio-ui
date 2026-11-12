@@ -551,8 +551,14 @@ describe("Modal", () => {
           show: false,
           origin: { x: 10, y: 10, width: 50, height: 20 },
         });
+        const rectSpy = vi.spyOn(
+          HTMLElement.prototype,
+          "getBoundingClientRect",
+        );
         await wrapper.setProps({ show: true });
         const element = modalElement();
+        // the FLIP start measures the modal; instant open never does
+        expect(rectSpy).not.toHaveBeenCalled();
         expect(element.style.transform).toBe("none");
         expect(element.style.transition).toBe("");
         await wrapper.setProps({ show: false });

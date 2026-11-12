@@ -167,10 +167,7 @@ function originTransform(el: HTMLElement, origin: OriginRect) {
 }
 
 function prefersReducedMotion() {
-  // matchMedia is absent in some test environments
-  return Boolean(
-    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
-  );
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 function animateOpen() {
@@ -426,7 +423,7 @@ const hasFooter = computed(() => {
   /* gap replaces the control margin; ignore an app-wide --control-margin */
   --control-margin: 0;
   border-block-start: 1px solid var(--color-border);
-  padding: 0.5rem 1rem;
+  padding: 1rem 1.5rem;
 }
 
 /* fade only the backdrop so the modal stays visible while it morphs */
