@@ -541,17 +541,26 @@ describe("Modal", () => {
       vi.useRealTimers();
     });
 
-    it("only fades under reduced motion", async () => {
-      stubMedia({ reducedMotion: true });
-      vi.useFakeTimers();
-      const wrapper = mountModal({ presentation: "sheet" });
-      await wrapper.setProps({ show: false });
-      const element = modalElement();
-      expect(element.style.opacity).toBe("0");
-      expect(element.style.transform).not.toBe("translateY(100%)");
-      await vi.advanceTimersByTimeAsync(500);
-      vi.useRealTimers();
-    });
+    it.each(["sheet", "dialog"])(
+      "opens and closes instantly under reduced motion (%s)",
+      async (presentation) => {
+        stubMedia({ reducedMotion: true });
+        vi.useFakeTimers();
+        const wrapper = mountModal({
+          presentation,
+          show: false,
+          origin: { x: 10, y: 10, width: 50, height: 20 },
+        });
+        await wrapper.setProps({ show: true });
+        const element = modalElement();
+        expect(element.style.transform).toBe("none");
+        expect(element.style.transition).toBe("");
+        await wrapper.setProps({ show: false });
+        // done ran synchronously: gone without advancing timers
+        expect(document.querySelector(".overlay")).toBeNull();
+        vi.useRealTimers();
+      },
+    );
 
     it("lands class, style and attrs on .modal", () => {
       mountModal(

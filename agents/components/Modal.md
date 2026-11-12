@@ -69,7 +69,7 @@ invariants: true
   open does not switch; reopen mid-leave keeps the mode). `.modal` carries
   `data-presentation="sheet|dialog"` (resolved, never `auto`).
 - **Sheet:** docked bottom, full width, ignores `origin`, slides up/down
-  (inline transform), fade only under reduced motion. `dragHandle` renders a
+  (inline transform), instant under reduced motion. `dragHandle` renders a
   decorative `aria-hidden` `.modal-grip` as first child of `.modal-inner`
   (absolute, so `.modal-inner` stays `.modal`'s first child). Last block of
   `.modal-inner` gets `env(safe-area-inset-bottom)` padding (needs
@@ -79,6 +79,9 @@ invariants: true
   (90vw), both capped at `100% - 2rem`; `--modal-max-block-size` (90dvh,
   sheet); `--modal-radius` (dialog corners, sheet top corners).
 - Close button label comes from i18n `modal.close`.
+- **Footer is a wrapping flex row** (`gap: 0.5rem`) with a local
+  `--control-margin: 0`; header pads itself (75px tall) with the same local
+  reset, so neither depends on an app-wide `--control-margin`.
 - **Header/footer are auto-hidden** when no `title` prop and no
   `#header`/`#footer` slot is present. The content section (`#default`)
   always renders.
@@ -100,8 +103,10 @@ top left`), then transitions to `transform: none`. Close reverses it:
   the JS close transition + its fallback timeout. The backdrop must match
   the close leg: leave completes on the overlay's `transitionend`, so a
   shorter backdrop would cut the morph off.
-- `prefers-reduced-motion: reduce` skips the morph (plain 0.15s fade) and
-  ignores `duration`.
+- `prefers-reduced-motion: reduce` is instant for sheet and dialog: no
+  slide, morph or fade, backdrop included. Close calls `done` immediately
+  (no transitionend/timeout wait, so the overlay never lingers). Ignores
+  `duration`.
   The transition has `appear`, so mounting with `show` already true
   still plays the enter hook.
 - The component writes `style.transform`, `style.transition` and

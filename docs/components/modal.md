@@ -204,7 +204,7 @@ function openModal(event) {
 
 ### Bottom sheet
 
-`presentation="sheet"` docks the modal to the bottom edge at full width with rounded top corners. It slides up on open and down on close (fade only under `prefers-reduced-motion`) and ignores `origin`. Header and footer stay pinned while the content scrolls. `drag-handle` adds a decorative grip (`aria-hidden`, no gesture).
+`presentation="sheet"` docks the modal to the bottom edge at full width with rounded top corners. It slides up on open and down on close (under `prefers-reduced-motion` it opens and closes instantly) and ignores `origin`. Header and footer stay pinned while the content scrolls. Footer buttons sit side by side in a row and wrap with a gap on narrow screens. `drag-handle` adds a decorative grip (`aria-hidden`, no gesture).
 
 ```vue
 <template>
@@ -308,6 +308,7 @@ interface OriginRect {
 - Backdrop blur effect
 - Morphing animation from origin element
 - Smooth fade-in when no origin provided
+- Reduced motion (`prefers-reduced-motion`): no animation, the modal opens and closes instantly
 - Locks page scroll while open without layout shift: `<body>` is padded by the
   scrollbar width
 

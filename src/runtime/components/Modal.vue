@@ -167,7 +167,10 @@ function originTransform(el: HTMLElement, origin: OriginRect) {
 }
 
 function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // matchMedia is absent in some test environments
+  return Boolean(
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+  );
 }
 
 function animateOpen() {
@@ -193,7 +196,8 @@ function animateOpen() {
 function animateClose(overlay: Element, done: () => void) {
   // wrapper ref is already cleared during leave, so query the element
   const el = overlay.querySelector<HTMLElement>(".modal");
-  if (!el) return done();
+  // reduced motion: no animation, so nothing to wait on; don't linger over the page
+  if (!el || prefersReducedMotion()) return done();
 
   // backdrop fade is the longest leg; modal transitions bubble here too
   overlay.addEventListener("transitionend", (event) => {
@@ -202,14 +206,14 @@ function animateClose(overlay: Element, done: () => void) {
   // fallback when transitionend never fires (hidden tab)
   setTimeout(done, closeDuration.value + 100);
 
-  if (isSheet.value && !prefersReducedMotion()) {
+  if (isSheet.value) {
     // slide down; no fade, it leaves the viewport instead
     el.style.transition = `transform ${closeDuration.value}ms cubic-bezier(0.32, 0.72, 0, 1)`;
     el.style.transform = "translateY(100%)";
     return;
   }
 
-  if (props.origin && !isSheet.value && !prefersReducedMotion()) {
+  if (props.origin && !isSheet.value) {
     // fade only at the tail so it visibly shrinks back into the trigger
     const fadeDelay = Math.max(0, closeDuration.value - 150);
     el.style.transition = `transform ${closeDuration.value}ms cubic-bezier(0.32, 0.72, 0, 1), opacity 150ms ease-in ${fadeDelay}ms`;
@@ -401,7 +405,9 @@ const hasFooter = computed(() => {
   justify-content: space-between;
   align-items: center;
   border-block-end: 1px solid var(--color-border);
-  padding: 0.5rem 1rem;
+  /* padding replaces the close button's control margin; ignore an app-wide --control-margin */
+  --control-margin: 0;
+  padding: 1rem 1.5rem 1rem 1rem;
 }
 
 .modal-content {
@@ -413,6 +419,12 @@ const hasFooter = computed(() => {
 }
 
 .modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  /* gap replaces the control margin; ignore an app-wide --control-margin */
+  --control-margin: 0;
   border-block-start: 1px solid var(--color-border);
   padding: 0.5rem 1rem;
 }
@@ -435,21 +447,13 @@ const hasFooter = computed(() => {
     backdrop-filter var(--modal-close-duration) ease;
 }
 
+/* no motion at all: open and close are instant (close also skips the wait) */
 @media (prefers-reduced-motion: reduce) {
-  .modal {
-    transition: opacity 0.15s ease-out;
-  }
-  /* sheet fades instead of sliding */
-  .modal[data-presentation="sheet"] {
-    transform: none;
-    opacity: 0;
-    transition: opacity 0.15s ease-out;
-  }
+  .modal,
+  .modal[data-presentation="sheet"],
   .overlay-fade-enter-active,
   .overlay-fade-leave-active {
-    transition:
-      background 0.15s ease,
-      backdrop-filter 0.15s ease;
+    transition: none;
   }
 }
 </style>
