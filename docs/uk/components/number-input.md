@@ -45,19 +45,6 @@ const nativeNumber = ref(5)
   <div class="demo-output">Значення: {{ vertical }}</div>
 </div>
 
-### Порожнє значення та грошове поле
-
-<div class="demo-container">
-  <orio-number-input-horizontal
-    v-model="money"
-    :min="0"
-    :step="0.1"
-    :decimal-places="2"
-    label="Сума"
-  />
-  <div class="demo-output">Value: {{ money }}</div>
-</div>
-
 ### Горизонтальні кнопки
 
 <div class="demo-container">
@@ -83,6 +70,19 @@ const nativeNumber = ref(5)
     label="Ціна"
   />
   <div class="demo-output">Значення: {{ price }}</div>
+</div>
+
+### Порожнє значення та грошове поле
+
+<div class="demo-container">
+  <orio-number-input-horizontal
+    v-model="money"
+    :min="0"
+    :step="0.1"
+    :decimal-places="2"
+    label="Сума"
+  />
+  <div class="demo-output">Value: {{ money }}</div>
 </div>
 
 ### Рідне числове поле
@@ -225,6 +225,7 @@ const value = ref(0);
 
 - **Перевірка меж** — під час втрати фокусу значення обмежується діапазоном min/max
 - **Кнопки збільшення/зменшення** — клік змінює значення на величину кроку (Vertical і Horizontal)
+- **Доступні кнопки** — кнопки мають назви з vue-i18n (`numberInput.increase` / `numberInput.decrease`) і пропускаються Tab (`tabindex="-1"`); з клавіатури керують стрілками вгору/вниз у полі (патерн spinbutton)
 - **Натиснути й утримувати** — утримання кнопки безперервно змінює значення після затримки 500 мс (Vertical і Horizontal)
 - **Десяткова точність** — кількість знаків після коми задається пропом `decimalPlaces`; округлення точне (`1.005` з 2 знаками дає `1.01`, кроки `0.1 + 0.2` дають `0.3`). Точність — більше з `decimalPlaces` і кількості знаків `step`
 - **Порожнє — це `null`** — очищення поля генерує `null` і ніколи не стає `0`. Кнопки кроку та ArrowUp/ArrowDown починають з `min ?? 0`
