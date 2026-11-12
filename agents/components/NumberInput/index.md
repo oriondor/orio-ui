@@ -37,10 +37,12 @@ text input (`type="text" inputmode="decimal"`) with no spinner. Custom step cont
   grouping (`de` `1234,5`, `en` `1234.5`). If an external change arrives
   while focused it wins only when it differs from the parsed typed text, so
   our own echo never clobbers `1,`.
-  The display always uses Latin digits 0-9 with the locale's Latin-digit
+  Values the component formats itself (steps, clamping, rounding, external
+  model changes) are shown with Latin digits 0-9 and the locale's Latin-digit
   decimal mark (`ar-EG`/`fa` show `.`, not `٫`). Typed native digits (any
-  `\p{Nd}` script) and `٫` are accepted and converted to ASCII; `٬` is
-  dropped; anything else non-numeric is unreadable.
+  `\p{Nd}` script) and `٫` are read into the model value; valid typed text is
+  left as typed (`fa`: type `۱۲`, Tab, field shows `۱۲`, model 12). `٬` is
+  ignored; anything else non-numeric is unreadable.
 - **Precision = `max(decimalPlaces, decimals in step)`.** Rounding is
   decimal-exponent based (half away from zero), not `toFixed`: `1.005` at 2
   places is `1.01`; `0.1` step three times is exactly `0.3`.
@@ -69,15 +71,16 @@ none` on the container and `:deep(button) { pointer-events: auto }`.
 - **`type="number"` blur** clears any native bad input (a lone `-`, `e`, or a
   trailing `.` such as `1.` in Chrome) so the field matches the `null` model.
   The partial text is dropped, not kept as `1`.
-- **Text mode letters rule**: text with any character other than digits,
-  whitespace, `.`, `,`, `-` or `−` (U+2212) is unreadable. It emits nothing
-  while typing (model keeps the last value) and blur reverts the text to the
-  model's display, so `1a5` / `1e5` never become 15. The invisible bidi marks
-  U+200E, U+200F and U+061C (he/ar/ur put them before the minus) are stripped
-  first, so the component can read its own display. The display is also
-  formatted with `numberingSystem: "latn"` (ASCII digits) because fa, ar-EG,
-  bn, mr etc. default to native digits that the digit check would reject. The check lives in
-  NumberInput, not in `useDecimalFormatter`.
+- **Text mode letters rule**: the readable set is digits of any Unicode `Nd`
+  script, whitespace, `.`, `,`, `٫` (U+066B, read as decimal), `٬` (U+066C,
+  ignored), `-` and `−` (U+2212), after stripping the invisible bidi marks
+  U+200E, U+200F and U+061C (he/ar/ur put them before the minus). Text with
+  any other character is unreadable: it emits nothing while typing (model
+  keeps the last value) and blur reverts the text to the model's display, so
+  `1a5` / `1e5` never become 15. The display is formatted with
+  `numberingSystem: "latn"` by design decision: values the component formats
+  use Latin digits. It is not a parser limitation, the parser reads native
+  digits. The check lives in NumberInput, not in `useDecimalFormatter`.
 - **`defineExpose({ input, focused })`** — `input` is the template ref to the
   native `<input>`; `focused` is the **writable** `Ref<boolean>` from
   `useFocus`. Reading reflects focus state; assigning `true`/`false` focuses or
