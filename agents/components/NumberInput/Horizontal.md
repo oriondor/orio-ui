@@ -28,6 +28,9 @@ contract.
   with 3px horizontal padding. Buttons sit at the edges.
 - **`layout="inner"` is supported** — the label centers between the two
   buttons (`left: 0; right: 0; text-align: center`).
+- **Stepper buttons are `tabindex="-1"` with i18n names** — `aria-label` from
+  `numberInput.decrease` / `numberInput.increase` (en + uk). Keyboard path is
+  ArrowUp/ArrowDown on the input (WAI spinbutton), not Tab to the buttons.
 - **No keyboard auto-repeat.** Press-and-hold listens to mouse events
   only; holding Enter on a focused button does not ramp.
 

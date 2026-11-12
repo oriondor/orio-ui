@@ -225,6 +225,8 @@ const value = ref(0);
 
 - **Boundary validation** - Values are clamped to min/max range on blur
 - **Increment/Decrement buttons** - Click to adjust value by step amount (Vertical & Horizontal)
+- **Accessible steppers** - The buttons are named from vue-i18n (`numberInput.increase` / `numberInput.decrease`) and skipped by Tab (`tabindex="-1"`); the keyboard path is ArrowUp/ArrowDown on the input (spinbutton pattern)
+- **Accessible steppers** - The buttons are named from vue-i18n (`numberInput.increase` / `numberInput.decrease`) and skipped by Tab (`tabindex="-1"`); the keyboard path is ArrowUp/ArrowDown on the input (spinbutton pattern)
 - **Press and hold** - Hold button to continuously adjust after 500ms delay (Vertical & Horizontal)
 - **Decimal precision** - Control decimal places with `decimalPlaces` prop; rounding is exact (`1.005` at 2 places is `1.01`, `0.1 + 0.2` steps give `0.3`). Precision is the larger of `decimalPlaces` and the decimals of `step`
 - **Empty is `null`** - Clearing the field emits `null` and never becomes `0`. Steppers and ArrowUp/ArrowDown start from `min ?? 0`

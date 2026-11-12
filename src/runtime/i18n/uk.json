@@ -46,6 +46,10 @@
   "modal": {
     "close": "Закрити"
   },
+  "numberInput": {
+    "increase": "Збільшити",
+    "decrease": "Зменшити"
+  },
   "segmentedInput": {
     "digit": "Цифра {index} з {total}",
     "character": "Символ {index} з {total}"

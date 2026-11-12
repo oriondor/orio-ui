@@ -75,4 +75,15 @@ describe("NumberInputVertical", () => {
     const wrapper = mount(NumberInputVertical);
     expect(wrapper.find(".controls").exists()).toBe(true);
   });
+
+  it("names the stepper buttons and keeps them out of the tab order", () => {
+    const buttons = mount(NumberInputVertical).findAll("button");
+    expect(buttons.map((button) => button.attributes("aria-label"))).toEqual([
+      "Increase",
+      "Decrease",
+    ]);
+    buttons.forEach((button) =>
+      expect(button.attributes("tabindex")).toBe("-1"),
+    );
+  });
 });

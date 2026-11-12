@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import { usePressAndHold } from "../../composables/usePressAndHold";
 import type { NumberInputProps } from "./index.vue";
 
@@ -14,6 +15,7 @@ withDefaults(defineProps<NumberInputProps>(), {
 
 const modelValue = defineModel<number | null>({ default: null });
 
+const { t } = useI18n();
 const { pressAndHold, stop } = usePressAndHold();
 </script>
 
@@ -25,6 +27,8 @@ const { pressAndHold, stop } = usePressAndHold();
         icon="minus"
         variant="subdued"
         size="sm"
+        :aria-label="t('numberInput.decrease')"
+        tabindex="-1"
         :disabled="isAtMin || disabled"
         @mousedown="pressAndHold(decrease)"
         @mouseup="stop"
@@ -35,6 +39,8 @@ const { pressAndHold, stop } = usePressAndHold();
         icon="plus"
         variant="subdued"
         size="sm"
+        :aria-label="t('numberInput.increase')"
+        tabindex="-1"
         :disabled="isAtMax || disabled"
         @mousedown="pressAndHold(increase)"
         @mouseup="stop"

@@ -61,4 +61,15 @@ describe("NumberInputHorizontal", () => {
     const wrapper = mount(NumberInputHorizontal);
     expect(wrapper.find(".controls").exists()).toBe(true);
   });
+
+  it("names the stepper buttons and keeps them out of the tab order", () => {
+    const buttons = mount(NumberInputHorizontal).findAll("button");
+    expect(buttons.map((button) => button.attributes("aria-label"))).toEqual([
+      "Decrease",
+      "Increase",
+    ]);
+    buttons.forEach((button) =>
+      expect(button.attributes("tabindex")).toBe("-1"),
+    );
+  });
 });
