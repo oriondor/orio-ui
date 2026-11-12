@@ -334,6 +334,8 @@ function onNavButtonClick(button: NavButton) {
   /* buttons used to carry a 0.5rem margin; keep the nav row's old spacing */
   gap: 0.75rem;
   padding: 0.5rem;
+  /* padding/gap replace the control margin; ignore an app-wide --control-margin */
+  --control-margin: 0;
   margin-bottom: 0.5rem;
 }
 

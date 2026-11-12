@@ -320,6 +320,10 @@ onMounted(() => {
   }
 }
 
+/* left/right offsets replace the control margin; ignore an app-wide --control-margin */
+.switch-button {
+  --control-margin: 0;
+}
 .switch-button.previous-button {
   left: 0.5rem;
 }

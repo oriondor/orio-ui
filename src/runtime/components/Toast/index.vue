@@ -172,9 +172,11 @@ function close() {
 .toast-actions {
   display: flex;
   align-items: center;
-  /* buttons carry no outer margin; keep the old 0.5rem inset + 0.5rem spacing */
+  /* old spacing: 0.25rem gap + 2 x 0.5rem button margin = 1.25rem; padding keeps the 0.5rem inset */
   gap: 1.25rem;
   padding: 0.5rem;
+  /* padding/gap replace the control margin; ignore an app-wide --control-margin */
+  --control-margin: 0;
   flex-shrink: 0;
 }
 

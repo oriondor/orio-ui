@@ -9,16 +9,10 @@
   border-radius: 8px;
   margin: 1.5rem 0;
   background: var(--color-bg);
-}
-
-.demo-container {
-  /* ControlElement margin is var(--control-margin); a plain sibling rule loses to its scoped selector */
-  --control-margin: 0.5rem 0;
-}
-
-.demo-container > * + * {
-  /* controls have no outer margin; space stacked demo children */
-  margin-block-start: 0.5rem;
+  /* controls have no outer margin; space stacked direct children */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .demo-grid {
