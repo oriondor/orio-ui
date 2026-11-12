@@ -68,7 +68,9 @@ none` on the container and `:deep(button) { pointer-events: auto }`.
 - **Text mode letters rule**: text with any character other than digits,
   whitespace, `.`, `,`, `-` or `−` (U+2212) is unreadable. It emits nothing
   while typing (model keeps the last value) and blur reverts the text to the
-  model's display, so `1a5` / `1e5` never become 15. The check lives in
+  model's display, so `1a5` / `1e5` never become 15. The invisible bidi marks
+  U+200E, U+200F and U+061C (he/ar/ur put them before the minus) are stripped
+  first, so the component can read its own display. The check lives in
   NumberInput, not in `useDecimalFormatter`.
 - **`defineExpose({ input, focused })`** — `input` is the template ref to the
   native `<input>`; `focused` is the **writable** `Ref<boolean>` from

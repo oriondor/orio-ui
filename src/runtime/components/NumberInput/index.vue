@@ -94,8 +94,15 @@ function formatDisplay(value: number | null) {
 
 // Text mode: anything but digits, whitespace, separators and minus signs is
 // unreadable ("1a5", "1e5"), never silently stripped to a number.
+// Invisible bidi marks (LRM, RLM, ALM) that he/ar/ur Intl output puts before
+// the minus are stripped first, so the component can read its own display.
+const stripBidiMarks = (raw: string) =>
+  raw.replace(/[\u200E\u200F\u061C]/g, "");
 const hasUnreadable = (raw: string) => /[^\d\s.,\-\u2212]/.test(raw);
-const readText = (raw: string) => (hasUnreadable(raw) ? null : toNumber(raw));
+const readText = (raw: string) => {
+  const text = stripBidiMarks(raw);
+  return hasUnreadable(text) ? null : toNumber(text);
+};
 
 const display = ref(formatDisplay(modelValue.value));
 

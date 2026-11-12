@@ -277,7 +277,9 @@ describe("NumberInputVertical", () => {
     await wrapper.find("input").setValue("");
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([null]);
   });
+});
 
+describe("NumberInput round-3 fixes", () => {
   it("#5: letters are unreadable, keep model, revert on blur", async () => {
     for (const text of ["1a5", "1e5", "12abc"]) {
       const wrapper = make({ modelValue: 7 });
@@ -307,5 +309,16 @@ describe("NumberInputVertical", () => {
     expect(wrapper.find("input").element.value).toBe("1.5");
     await wrapper.setProps({ type: "text" });
     expect(wrapper.find("input").element.value).toBe("1,5");
+  });
+
+  it("R4-1: reads its own he display with a bidi mark before the minus", async () => {
+    i18n.global.locale.value = "he";
+    const wrapper = make({ modelValue: -5 });
+    const shown = wrapper.find("input").element.value;
+    expect(shown).toMatch(/[\u200E\u200F\u061C]/);
+    await type(wrapper, `${shown}0`);
+    expect(lastEmit(wrapper)).toBe(-50);
+    await wrapper.find("input").trigger("blur");
+    expect(wrapper.find("input").element.value).toBe(`${shown}0`);
   });
 });

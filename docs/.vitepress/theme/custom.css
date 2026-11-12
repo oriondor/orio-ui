@@ -15,6 +15,15 @@
   gap: 0.5rem;
 }
 
+/* flex gap (0.5rem) + 0.5rem = the 1rem row gap inside a grid */
+.demo-container > .demo-grid {
+  margin-block: 0;
+}
+
+.demo-container > .demo-grid + .demo-grid {
+  margin-top: 0.5rem;
+}
+
 .demo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
