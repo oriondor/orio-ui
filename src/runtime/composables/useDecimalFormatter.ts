@@ -18,7 +18,11 @@ export function useDecimalFormatter() {
 
     if (typeof input !== "string") return null;
 
-    const cleaned = input.replace(/[^\d.,-]/g, "").trim();
+    // U+2212 is the minus Intl.NumberFormat emits in sv/fi/nb/...
+    const cleaned = input
+      .replace(/\u2212/g, "-")
+      .replace(/[^\d.,-]/g, "")
+      .trim();
 
     if (!cleaned) return null;
 

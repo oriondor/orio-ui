@@ -217,14 +217,38 @@ Input and Textarea support `layout="inner"`, which floats the label inside the c
 <orio-selector v-model="value" :options="options" size="sm" />
 ```
 
+### Spacing
+
+Controls have no outer margin by default. Space them with `gap` on the parent. To restore the old `0.5rem` margin, set the `--control-margin` custom property on any ancestor (e.g. `:root`).
+
+<div class="demo-container">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem">
+    <orio-input v-model="inputValue" label="First" />
+    <orio-input v-model="inputValue" label="Second" />
+  </div>
+</div>
+
+```vue
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem">
+  <orio-input v-model="first" label="First" />
+  <orio-input v-model="second" label="Second" />
+</div>
+```
+
+```css
+:root {
+  --control-margin: 0.5rem;
+}
+```
+
 ## Props
 
-| Prop         | Type                                | Default    | Description                                              |
-| ------------ | ----------------------------------- | ---------- | -------------------------------------------------------- |
-| `appearance` | `'normal' \| 'minimal'`            | `'normal'` | Minimal removes margin, border, and box-shadow from slot |
-| `size`       | `'sm' \| 'md' \| 'lg' \| 'xl'`    | `'md'`     | Controls font-size, padding, and radius of inner elements |
-| `layout`     | `'vertical' \| 'horizontal'`       | `'vertical'` | Label position relative to the control                 |
-| `label`      | `string`                           | -          | Label text displayed above the control                   |
+| Prop         | Type                           | Default      | Description                                               |
+| ------------ | ------------------------------ | ------------ | --------------------------------------------------------- |
+| `appearance` | `'normal' \| 'minimal'`        | `'normal'`   | Minimal removes margin, border, and box-shadow from slot  |
+| `size`       | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'`       | Controls font-size, padding, and radius of inner elements |
+| `layout`     | `'vertical' \| 'horizontal'`   | `'vertical'` | Label position relative to the control                    |
+| `label`      | `string`                       | -            | Label text displayed above the control                    |
 
 ## Slots
 
@@ -244,18 +268,18 @@ becomes, so `v-bind` is all that is needed:
 
 ## Accessibility
 
-| Bag key            | Source                                    |
-| ------------------ | ----------------------------------------- |
-| `id`               | `id` prop, or `useId()` — the `<label for>` target |
-| `tabindex`         | `tabindex` prop                           |
-| `disabled`         | `disabled` prop                           |
-| `required`         | `required` prop                           |
-| `name`             | `name` prop                               |
-| `focus-key`        | `focusKey` prop — the attr `useRovingGrid` queries |
+| Bag key            | Source                                                  |
+| ------------------ | ------------------------------------------------------- |
+| `id`               | `id` prop, or `useId()` — the `<label for>` target      |
+| `tabindex`         | `tabindex` prop                                         |
+| `disabled`         | `disabled` prop                                         |
+| `required`         | `required` prop                                         |
+| `name`             | `name` prop                                             |
+| `focus-key`        | `focusKey` prop — the attr `useRovingGrid` queries      |
 | `aria-label`       | `ariaLabel` prop — for controls with no visible `label` |
-| `aria-describedby` | id of the `.control-error` span, when `error` is set |
-| `aria-invalid`     | `"true"` when `error` is set              |
-| `aria-required`    | `required` prop                           |
+| `aria-describedby` | id of the `.control-error` span, when `error` is set    |
+| `aria-invalid`     | `"true"` when `error` is set                            |
+| `aria-required`    | `required` prop                                         |
 
 Keys are omitted when there is nothing to say, so no empty `aria-label=""`
 reaches the markup.
@@ -264,15 +288,15 @@ reaches the markup.
 
 ControlElement sets the following CSS custom properties based on `size`, which child components consume:
 
-| Variable                        | sm       | md (default) | lg       | xl       |
-| ------------------------------- | -------- | ------------ | -------- | -------- |
-| `--control-font-size`           | 0.75rem  | 0.875rem     | 1.25rem  | 1.75rem  |
-| `--control-label-font-size`     | 0.65rem  | 0.75rem      | 0.875rem | 1.25rem  |
-| `--control-py`                  | 0.25rem  | 0.5rem       | 0.625rem | 0.75rem  |
-| `--control-px`                  | 0.5rem   | 0.75rem      | 1rem     | 1.25rem  |
-| `--control-gap`                 | 0.25rem  | 0.5rem       | 0.5rem   | 0.75rem  |
-| `--control-radius`              | 4px      | 8px          | 8px      | 12px     |
-| `--control-icon-size`           | 0.75rem  | 1rem         | 1.25rem  | 1.5rem   |
+| Variable                    | sm      | md (default) | lg       | xl      |
+| --------------------------- | ------- | ------------ | -------- | ------- |
+| `--control-font-size`       | 0.75rem | 0.875rem     | 1.25rem  | 1.75rem |
+| `--control-label-font-size` | 0.65rem | 0.75rem      | 0.875rem | 1.25rem |
+| `--control-py`              | 0.25rem | 0.5rem       | 0.625rem | 0.75rem |
+| `--control-px`              | 0.5rem  | 0.75rem      | 1rem     | 1.25rem |
+| `--control-gap`             | 0.25rem | 0.5rem       | 0.5rem   | 0.75rem |
+| `--control-radius`          | 4px     | 8px          | 8px      | 12px    |
+| `--control-icon-size`       | 0.75rem | 1rem         | 1.25rem  | 1.5rem  |
 
 ## Notes
 

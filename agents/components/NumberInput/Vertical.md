@@ -15,6 +15,7 @@ of its contract.
 
 ## Invariants
 
+- **Model is `number | null` (default `null`) and `type` (`'text'` default / `'number'`) passes through** to the base.
 - **Accepts the full `NumberInputProps` interface** plus a `disabled` prop
   for the buttons. Forwarded via `v-bind="$props"`.
 - **Buttons use `usePressAndHold`** — `@mousedown` starts auto-repeat,
@@ -22,7 +23,7 @@ of its contract.
 - **Chevron up = `increase`, chevron down = `decrease`.** Standard
   direction; do not swap them in a consumer.
 - **Buttons are stacked vertically** in a column flex (`flex-direction:
-  column; justify-content: space-around`) anchored to `right: 3px`.
+column; justify-content: space-around`) anchored to `right: 3px`.
 - **Input remains left-aligned** — text stays at its natural alignment;
   only the controls move.
 
@@ -32,6 +33,9 @@ of its contract.
   overlaps the input's right edge. For decimal values with many digits,
   numbers may render under the buttons. Pad the input or switch to
   `<orio-number-input-horizontal>`.
+- **Stepper buttons are `tabindex="-1"` with i18n names** — `aria-label` from
+  `numberInput.increase` / `numberInput.decrease` (en + uk). Keyboard path is
+  ArrowUp/ArrowDown on the input (WAI spinbutton), not Tab to the buttons.
 - **No keyboard auto-repeat.** Same limitation as the horizontal variant.
 
 ## Quick reference

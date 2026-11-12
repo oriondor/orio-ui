@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { computed, toRefs, useTemplateRef } from "vue";
+import { computed, ref, toRefs, useAttrs, useTemplateRef, watch } from "vue";
 import { useFocus } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
 import type { ControlProps } from "../ControlElement.vue";
 import type { InputLayout } from "../Input.vue";
+import { useDecimalFormatter } from "../../composables/useDecimalFormatter";
+
+export type NumberInputType = "text" | "number";
 
 export interface NumberInputProps extends Omit<ControlProps, "layout"> {
   layout?: InputLayout;
+  type?: NumberInputType;
   min?: number;
   max?: number;
   step?: number;
@@ -14,56 +19,213 @@ export interface NumberInputProps extends Omit<ControlProps, "layout"> {
 
 const props = withDefaults(defineProps<NumberInputProps>(), {
   layout: "vertical",
+  type: "text",
   min: undefined,
   max: undefined,
   step: 1,
   decimalPlaces: 0,
 });
 
-const { min, max, step, decimalPlaces } = toRefs(props);
+const { min, max, step, decimalPlaces, type } = toRefs(props);
 
-const modelValue = defineModel<number | null>({ default: 0 });
+const modelValue = defineModel<number | null>({ default: null });
 
 const input = useTemplateRef("input");
 const { focused } = useFocus(input);
+const { toNumber } = useDecimalFormatter();
+const { locale } = useI18n();
+const attrs = useAttrs();
 
-function setValidatedValue(value: number | null) {
-  let finalValue = value ?? 0;
-  if (Number.isFinite(max.value) && finalValue > (max.value as number)) {
-    finalValue = max.value as number;
-  }
+// `readonly` arrives as an attr (not a ControlProps key): "" / true / "readonly".
+const isReadonly = () => attrs.readonly != null && attrs.readonly !== false;
 
-  if (Number.isFinite(min.value) && finalValue < (min.value as number)) {
-    finalValue = min.value as number;
-  }
-
-  finalValue = Number((finalValue ?? 0).toFixed(decimalPlaces.value));
-
-  modelValue.value = finalValue;
+function decimalsOf(value: number) {
+  const [mantissa, exponent] = String(value).split("e");
+  return Math.max(
+    0,
+    (mantissa.split(".")[1]?.length ?? 0) - Number(exponent ?? 0),
+  );
 }
 
-function onBlur() {
-  setValidatedValue(modelValue.value);
+const precision = computed(() =>
+  Math.max(decimalPlaces.value, decimalsOf(step.value)),
+);
+
+// Decimal-exponent rounding: avoids binary float errors (1.005 -> 1.01),
+// half away from zero.
+function roundTo(value: number, places: number) {
+  const sign = value < 0 ? -1 : 1;
+  // Split "1e-7" so the exponent can be shifted instead of appended to.
+  const [mantissa, exponent = "0"] = String(Math.abs(value)).split("e");
+  const shifted = Math.round(
+    Number(`${mantissa}e${Number(exponent) + places}`),
+  );
+  // Beyond 2^53 the shift is lossy and String() goes exponential ("1e+21"),
+  // which would break the re-parse; such values have no fraction to round.
+  if (!Number.isSafeInteger(shifted)) return value;
+  // `+ 0` turns -0 (e.g. -0.4 at 0 places) into 0.
+  return sign * Number(`${shifted}e-${places}`) + 0;
+}
+
+function clamp(value: number) {
+  let result = value;
+  if (Number.isFinite(max.value) && result > (max.value as number)) {
+    result = max.value as number;
+  }
+  if (Number.isFinite(min.value) && result < (min.value as number)) {
+    result = min.value as number;
+  }
+  return result;
+}
+
+function normalize(value: number) {
+  return clamp(roundTo(value, precision.value));
+}
+
+function formatDisplay(value: number | null) {
+  if (value === null) return "";
+  // Native number inputs only accept the plain "." form.
+  if (type.value === "number") return String(value);
+  return new Intl.NumberFormat(locale.value, {
+    useGrouping: false,
+    maximumFractionDigits: 20,
+    // Design decision: values the component formats use Latin digits (fa/ar-EG/bn... would default to native ones). readText still reads native digits.
+    numberingSystem: "latn",
+  }).format(value);
+}
+
+// Text mode: anything but digits, whitespace, separators and minus signs is
+// unreadable ("1a5", "1e5"), never silently stripped to a number.
+// Invisible bidi marks (LRM, RLM, ALM) that he/ar/ur Intl output puts before
+// the minus are stripped first, so the component can read its own display.
+const stripBidiMarks = (raw: string) =>
+  raw.replace(/[\u200E\u200F\u061C]/g, "");
+// Typed native digits (any \p{Nd} script) become ASCII: every Nd block is a
+// contiguous run of 0-9, so the digit is the offset into that run.
+const isDecimalDigit = (codePoint: number) =>
+  /^\p{Nd}$/u.test(String.fromCodePoint(codePoint));
+const toAsciiDigit = (char: string) => {
+  const codePoint = char.codePointAt(0)!;
+  let offset = 0;
+  while (isDecimalDigit(codePoint - offset - 1)) offset++;
+  return String(offset % 10); // runs of adjacent blocks start on multiples of 10
+};
+// U+066B Arabic decimal separator -> ".", U+066C Arabic thousands separator
+// dropped (a "," would be read as a decimal mark when no dot follows).
+const normalizeNativeNumerals = (raw: string) =>
+  raw
+    .replace(/\p{Nd}/gu, toAsciiDigit)
+    .replace(/\u066B/g, ".")
+    .replace(/\u066C/g, "");
+const hasUnreadable = (raw: string) => /[^\d\s.,\-\u2212]/.test(raw);
+const readText = (raw: string) => {
+  const text = normalizeNativeNumerals(stripBidiMarks(raw));
+  return hasUnreadable(text) ? null : toNumber(text);
+};
+
+const display = ref(formatDisplay(modelValue.value));
+
+// Not `focused.value`: the slot re-render resets the template ref, which
+// makes useFocus drop its state mid-typing.
+const isTyping = () =>
+  input.value !== null && document.activeElement === input.value;
+
+// Number mode: the browser already normalised the text; compare like
+// Vue's vModelText does instead of rewriting what the user typed.
+const parseDisplay = (raw: string) =>
+  type.value === "number" ? (raw === "" ? null : Number(raw)) : readText(raw);
+
+// External model/locale changes re-render the text, unless the user is
+// typing something that already parses to the model (don't clobber "1,").
+watch([modelValue, locale, type], () => {
+  if (!isTyping() || parseDisplay(display.value) !== modelValue.value) {
+    display.value = formatDisplay(modelValue.value);
+  }
+});
+
+function onInput(event: Event) {
+  const raw = (event.target as HTMLInputElement).value;
+  display.value = raw;
+  if (type.value === "number") {
+    // `+ 0` keeps -0 out of the model.
+    modelValue.value = raw === "" ? null : Number(raw) + 0;
+    return;
+  }
+  if (raw.trim() === "") {
+    modelValue.value = null;
+    return;
+  }
+  const parsed = readText(raw);
+  // Unparsable mid-typing ("-", "abc", "1a5") keeps the last model value.
+  if (parsed !== null) modelValue.value = parsed + 0;
+}
+
+function commit(value: number) {
+  modelValue.value = value;
+  display.value = formatDisplay(value);
+}
+
+function onBlur(event: FocusEvent) {
+  if (type.value === "number") {
+    const element = event.target as HTMLInputElement;
+    // Native number input reports any bad input ("-", "e", a trailing "."
+    // in Chrome) as empty (model null) but keeps showing it; clear so the
+    // field matches the model. Intentional: "1." is dropped, not kept as 1.
+    if (element.validity.badInput) {
+      element.value = "";
+      display.value = "";
+    }
+    if (modelValue.value === null) return;
+    const target = normalize(modelValue.value);
+    if (target !== modelValue.value) commit(target);
+    return;
+  }
+  if (display.value.trim() === "") return;
+  const parsed = readText(display.value);
+  if (parsed === null) {
+    display.value = formatDisplay(modelValue.value);
+    return;
+  }
+  const target = normalize(parsed);
+  // Valid value: keep the typed text and the model untouched.
+  if (target !== parsed || Object.is(parsed, -0)) commit(target);
+}
+
+function stepBy(delta: number) {
+  const base =
+    modelValue.value ?? (Number.isFinite(min.value) ? min.value! : 0);
+  commit(normalize(base + delta));
 }
 
 function increase() {
-  setValidatedValue((modelValue.value ?? 0) + step.value);
+  if (props.disabled || isReadonly()) return;
+  stepBy(step.value);
 }
 
 function decrease() {
-  setValidatedValue((modelValue.value ?? 0) - step.value);
+  if (props.disabled || isReadonly()) return;
+  stepBy(-step.value);
+}
+
+// Text mode has no native stepper; number mode keeps the browser's own.
+function onArrow(event: KeyboardEvent, action: () => void) {
+  if (type.value !== "text") return;
+  event.preventDefault();
+  action();
 }
 
 const isAtMax = computed(
   () =>
+    modelValue.value !== null &&
     Number.isFinite(max.value) &&
-    (modelValue.value ?? 0) >= (max.value as number),
+    modelValue.value >= (max.value as number),
 );
 
 const isAtMin = computed(
   () =>
+    modelValue.value !== null &&
     Number.isFinite(min.value) &&
-    (modelValue.value ?? 0) <= (min.value as number),
+    modelValue.value <= (min.value as number),
 );
 
 const controlProps = computed(() => {
@@ -72,6 +234,7 @@ const controlProps = computed(() => {
     max: _max,
     step: _step,
     decimalPlaces: _decimalPlaces,
+    type: _type,
     ...rest
   } = props;
   return rest;
@@ -98,13 +261,19 @@ defineExpose({ input, focused });
       <input
         v-bind="{ ...$attrs, ...control }"
         ref="input"
-        v-model="modelValue"
-        type="number"
+        :type
+        :inputmode="
+          $attrs.inputmode ?? (type === 'text' ? 'decimal' : undefined)
+        "
+        :value="display"
         class="number-input"
-        :min
-        :max
-        :step
+        :min="type === 'number' ? min : undefined"
+        :max="type === 'number' ? max : undefined"
+        :step="type === 'number' ? step : undefined"
+        @input="onInput"
         @blur="onBlur"
+        @keydown.up="onArrow($event, increase)"
+        @keydown.down="onArrow($event, decrease)"
       />
       <div class="controls">
         <slot name="controls" v-bind="slotExpose" />
@@ -133,6 +302,8 @@ input[type="number"] {
 
 .number-input {
   @include base-input;
+  inline-size: 100%;
+  min-inline-size: 0;
 }
 
 .inner {

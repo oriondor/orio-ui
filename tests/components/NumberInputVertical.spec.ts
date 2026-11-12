@@ -6,7 +6,7 @@ import Button from "../../src/runtime/components/Button.vue";
 describe("NumberInputVertical", () => {
   it("renders with default value", () => {
     const wrapper = mount(NumberInputVertical);
-    expect(wrapper.find("input").element.value).toBe("0");
+    expect(wrapper.find("input").element.value).toBe("");
   });
 
   it("renders with custom value", () => {
@@ -74,5 +74,16 @@ describe("NumberInputVertical", () => {
   it("has controls container", () => {
     const wrapper = mount(NumberInputVertical);
     expect(wrapper.find(".controls").exists()).toBe(true);
+  });
+
+  it("names the stepper buttons and keeps them out of the tab order", () => {
+    const buttons = mount(NumberInputVertical).findAll("button");
+    expect(buttons.map((button) => button.attributes("aria-label"))).toEqual([
+      "Increase",
+      "Decrease",
+    ]);
+    buttons.forEach((button) =>
+      expect(button.attributes("tabindex")).toBe("-1"),
+    );
   });
 });

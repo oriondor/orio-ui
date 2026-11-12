@@ -6,7 +6,7 @@ import Button from "../../src/runtime/components/Button.vue";
 describe("NumberInputHorizontal", () => {
   it("renders with default value", () => {
     const wrapper = mount(NumberInputHorizontal);
-    expect(wrapper.find("input").element.value).toBe("0");
+    expect(wrapper.find("input").element.value).toBe("");
   });
 
   it("renders with custom value", () => {
@@ -60,5 +60,16 @@ describe("NumberInputHorizontal", () => {
   it("has controls container with correct positioning", () => {
     const wrapper = mount(NumberInputHorizontal);
     expect(wrapper.find(".controls").exists()).toBe(true);
+  });
+
+  it("names the stepper buttons and keeps them out of the tab order", () => {
+    const buttons = mount(NumberInputHorizontal).findAll("button");
+    expect(buttons.map((button) => button.attributes("aria-label"))).toEqual([
+      "Decrease",
+      "Increase",
+    ]);
+    buttons.forEach((button) =>
+      expect(button.attributes("tabindex")).toBe("-1"),
+    );
   });
 });

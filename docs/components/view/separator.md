@@ -5,9 +5,11 @@ A horizontal line separator for dividing content sections.
 ## Live Demo
 
 <div class="demo-container">
+  <div>
   <p>Content above</p>
   <orio-view-separator />
   <p>Content below</p>
+  </div>
 </div>
 
 ## Usage
@@ -48,11 +50,11 @@ A horizontal line separator for dividing content sections.
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `style` | `'solid' \| 'dashed' \| 'dotted' \| 'double' \| 'groove' \| 'ridge'` | `'solid'` | Border style |
-| `size` | `number \| string` | `1` | Border thickness in pixels |
-| `margin` | `number \| string` | `1` | Vertical margin in rem |
+| Prop     | Type                                                                 | Default   | Description                |
+| -------- | -------------------------------------------------------------------- | --------- | -------------------------- |
+| `style`  | `'solid' \| 'dashed' \| 'dotted' \| 'double' \| 'groove' \| 'ridge'` | `'solid'` | Border style               |
+| `size`   | `number \| string`                                                   | `1`       | Border thickness in pixels |
+| `margin` | `number \| string`                                                   | `1`       | Vertical margin in rem     |
 
 ## Styling
 

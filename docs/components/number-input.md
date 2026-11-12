@@ -15,6 +15,8 @@ const horizontalLayout = ref(3)
 const innerBasic = ref(25)
 const innerVertical = ref(8)
 const innerHorizontal = ref(4)
+const money = ref(null)
+const nativeNumber = ref(5)
 </script>
 
 ### Basic (No Controls)
@@ -70,6 +72,32 @@ const innerHorizontal = ref(4)
   <div class="demo-output">Value: {{ price }}</div>
 </div>
 
+### Empty Value and Money Input
+
+<div class="demo-container">
+  <orio-number-input-horizontal
+    v-model="money"
+    :min="0"
+    :step="0.1"
+    :decimal-places="2"
+    label="Amount"
+  />
+  <div class="demo-output">Value: {{ money }}</div>
+</div>
+
+### Native Number Input
+
+<div class="demo-container">
+  <orio-number-input-horizontal
+    v-model="nativeNumber"
+    type="number"
+    :min="0"
+    :max="10"
+    label="Native"
+  />
+  <div class="demo-output">Value: {{ nativeNumber }}</div>
+</div>
+
 ### Horizontal Layout
 
 <div class="demo-container">
@@ -112,10 +140,10 @@ const innerHorizontal = ref(4)
 
 ## Variants
 
-| Component | Description |
-|-----------|-------------|
-| `orio-number-input` | Basic number input without controls |
-| `orio-number-input-vertical` | Controls stacked vertically on the right |
+| Component                      | Description                                 |
+| ------------------------------ | ------------------------------------------- |
+| `orio-number-input`            | Basic number input without controls         |
+| `orio-number-input-vertical`   | Controls stacked vertically on the right    |
 | `orio-number-input-horizontal` | Minus/plus controls on left and right sides |
 
 ## Usage
@@ -128,7 +156,7 @@ const innerHorizontal = ref(4)
 </template>
 
 <script setup>
-const value = ref(0)
+const value = ref(0);
 </script>
 ```
 
@@ -169,6 +197,18 @@ const value = ref(0)
 />
 ```
 
+### Native Number Input
+
+```vue
+<orio-number-input-horizontal
+  v-model="nativeNumber"
+  type="number"
+  :min="0"
+  :max="10"
+  label="Native"
+/>
+```
+
 ### Horizontal Layout
 
 ```vue
@@ -185,29 +225,37 @@ const value = ref(0)
 
 - **Boundary validation** - Values are clamped to min/max range on blur
 - **Increment/Decrement buttons** - Click to adjust value by step amount (Vertical & Horizontal)
+- **Accessible steppers** - The buttons are named from vue-i18n (`numberInput.increase` / `numberInput.decrease`) and skipped by Tab (`tabindex="-1"`); the keyboard path is ArrowUp/ArrowDown on the input (spinbutton pattern)
 - **Press and hold** - Hold button to continuously adjust after 500ms delay (Vertical & Horizontal)
-- **Decimal precision** - Control decimal places with `decimalPlaces` prop
+- **Decimal precision** - Control decimal places with `decimalPlaces` prop; rounding is exact (`1.005` at 2 places is `1.01`, `0.1 + 0.2` steps give `0.3`). Precision is the larger of `decimalPlaces` and the decimals of `step`
+- **Empty is `null`** - Clearing the field emits `null` and never becomes `0`. Steppers and ArrowUp/ArrowDown start from `min ?? 0`
+- **Locale-aware text mode** - While focused the input shows exactly what you typed (`1,` stays `1,`). When the value changes from outside (step, clamp, rounding, prop) it shows the vue-i18n locale's decimal separator without grouping (`1234,5` in `de`). A valid typed value is not rewritten on blur; unparsable text reverts to the last value
+- **Text mode parsing is heuristic** - see `useDecimalFormatter().toNumber`; `1,234` reads as 1.234 (with no dot, the last comma is the decimal mark), `1,234.5` reads as 1234.5, and the Unicode minus `−` (used by `sv`, `fi`, `nb`) is accepted
+- **Latin display, native digits accepted** - Values the component formats itself (steps, clamping, rounding, external model changes) are shown with Latin digits 0-9 and the locale's Latin-digit decimal mark (`ar-EG` and `fa` show `.`, not `٫`). Typed native digits from any script (`۱۲۳`, `١٢٣`, `১২৩`, `१२३`) and the Arabic decimal separator `٫` are read into the model value, and valid typed text is left as typed (`fa`: type `۱۲`, Tab, the field shows `۱۲`, the model is 12); the Arabic thousands separator `٬` is ignored
+- **Anything else non-numeric is unreadable** - Text mode input containing anything other than digits (any script), whitespace, `.`, `,`, `٫`, `٬`, `-` or `−` (e.g. `1a5`, `1e5`, `12abc`) emits nothing while typing and reverts to the last value on blur
+- **Native mode drops bad input** - With `type="number"`, any native bad input (including a trailing `.` such as `1.` in Chrome) is cleared on blur and the value is `null`
 
 ## Props
 
-| Prop            | Type                                       | Default      | Description                            |
-| --------------- | ------------------------------------------ | ------------ | -------------------------------------- |
-| `modelValue`    | `number`                                   | `0`          | Input value (v-model)                  |
-| `layout`        | `"vertical" \| "horizontal" \| "inner"`    | `"vertical"` | Label position relative to input       |
-| `min`           | `number`                                   | `undefined`  | Minimum allowed value                  |
-| `max`           | `number`                                   | `undefined`  | Maximum allowed value                  |
-| `step`          | `number`                                   | `1`          | Amount to increment/decrement per step |
-| `decimalPlaces` | `number`                                   | `0`          | Number of decimal places to display    |
-| `label`         | `string`                                   | `undefined`  | Label text                             |
-| `placeholder`   | `string`                                   | `undefined`  | Placeholder text                       |
+| Prop            | Type                                    | Default      | Description                                                                          |
+| --------------- | --------------------------------------- | ------------ | ------------------------------------------------------------------------------------ |
+| `modelValue`    | `number \| null`                        | `null`       | Input value (v-model); empty is `null`                                               |
+| `type`          | `"text" \| "number"`                    | `"text"`     | Text mode (`inputmode="decimal"`, `1.5` and `1,5` both parse) or native number input |
+| `layout`        | `"vertical" \| "horizontal" \| "inner"` | `"vertical"` | Label position relative to input                                                     |
+| `min`           | `number`                                | `undefined`  | Minimum allowed value                                                                |
+| `max`           | `number`                                | `undefined`  | Maximum allowed value                                                                |
+| `step`          | `number`                                | `1`          | Amount to increment/decrement per step                                               |
+| `decimalPlaces` | `number`                                | `0`          | Decimal places values are rounded to (never fewer than the decimals of `step`)       |
+| `label`         | `string`                                | `undefined`  | Label text                                                                           |
+| `placeholder`   | `string`                                | `undefined`  | Placeholder text                                                                     |
 
 All standard HTML input attributes are supported via `v-bind="$attrs"`.
 
 ## Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `number` | Emitted when input value changes |
+| Event               | Payload          | Description                      |
+| ------------------- | ---------------- | -------------------------------- |
+| `update:modelValue` | `number \| null` | Emitted when input value changes |
 
 ## Styling
 

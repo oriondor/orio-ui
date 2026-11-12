@@ -2,7 +2,7 @@
 kind: component
 category: Layout & containers
 purpose: modal, dialog, popup overlay, lightbox
-short: teleported overlay dialog with open-from-origin animation
+short: teleported overlay dialog (centered or bottom sheet) with open-from-origin animation
 invariants: true
 ---
 
@@ -63,7 +63,33 @@ invariants: true
   when its first child `.modal-inner` resizes. Keep `.modal-inner` the
   first child. It owns the flex column + `max-height: 90vh`; `.modal` has
   no max-height. `.modal-content` has `scrollbar-gutter: stable`.
+- **`presentation`** (`dialog` default | `sheet` | `auto`). `auto` = sheet
+  below Tailwind `sm` (640px) via `useBreakpoints(breakpointsTailwind)`,
+  resolved when opening and kept until the modal has left (resize while
+  open does not switch; reopen mid-leave keeps the mode). `.modal` carries
+  `data-presentation="sheet|dialog"` (resolved, never `auto`).
+- **Sheet:** docked bottom, full width, ignores `origin`, slides up/down
+  (inline transform), instant under reduced motion. `dragHandle` renders a
+  decorative `aria-hidden` `.modal-grip` as first child of `.modal-inner`
+  (absolute, so `.modal-inner` stays `.modal`'s first child). Last block of
+  `.modal-inner` gets `env(safe-area-inset-bottom)` padding (needs
+  `viewport-fit=cover`). Focus trap, Esc, scroll lock, return focus are
+  unchanged.
+- **Tokens:** `--modal-min-inline-size` (380px), `--modal-max-inline-size`
+  (90vw), both capped at `100% - 2rem`; `--modal-max-block-size` (90dvh,
+  sheet); `--modal-radius` (dialog corners, sheet top corners).
 - Close button label comes from i18n `modal.close`.
+- **Footer is a wrapping flex row** (`gap: 0.5rem`) with a local
+  `--control-margin: 0`; header pads itself (75px tall) with the same local
+  reset, so neither depends on an app-wide `--control-margin`.
+- **Footer children are flex items** (dialog and sheet): a wrapper element
+  needs `flex: 1` or `width: 100%` to span the footer.
+- **Custom `#header` gets the default header's padding** too (the header pads
+  itself, `--control-margin: 0` inside), so plain text there is taller than
+  before.
+- **Custom `#footer` gets the default footer's padding** too (`1rem 1.5rem`,
+  `--control-margin: 0` inside), so plain text there is taller and inset more
+  than before.
 - **Header/footer are auto-hidden** when no `title` prop and no
   `#header`/`#footer` slot is present. The content section (`#default`)
   always renders.
@@ -73,7 +99,7 @@ invariants: true
 - `origin`'s `width` / `height` should be the trigger's rendered size, not
   the modal's. Open is a FLIP: the modal measures its own laid-out rect,
   jumps onto `origin` (translate + non-uniform scale, `transform-origin:
-  top left`), then transitions to `transform: none`. Close reverses it:
+top left`), then transitions to `transform: none`. Close reverses it:
   shrinks back onto `origin` and fades at the tail, so keep `origin` set
   until the modal has closed. Wrong size = visible jump.
 - The overlay transition fades only the backdrop (`background`,
@@ -85,8 +111,10 @@ invariants: true
   the JS close transition + its fallback timeout. The backdrop must match
   the close leg: leave completes on the overlay's `transitionend`, so a
   shorter backdrop would cut the morph off.
-- `prefers-reduced-motion: reduce` skips the morph (plain 0.15s fade) and
-  ignores `duration`.
+- `prefers-reduced-motion: reduce` is instant for sheet and dialog: no
+  slide, morph or fade, backdrop included. Close calls `done` immediately
+  (no transitionend/timeout wait, so the overlay never lingers). Ignores
+  `duration`.
   The transition has `appear`, so mounting with `show` already true
   still plays the enter hook.
 - The component writes `style.transform`, `style.transition` and
@@ -118,6 +146,28 @@ function trigger(event: MouseEvent) {
     </template>
   </orio-modal>
 </template>
+```
+
+## Sheet
+
+```vue
+<!-- from docs/components/modal.md -->
+<orio-button @click="showSheet = true"> Open sheet </orio-button>
+
+<orio-modal
+  v-model:show="showSheet"
+  :origin="null"
+  presentation="sheet"
+  drag-handle
+  title="Sheet"
+>
+  <p>Docked to the bottom, slides up, ignores origin.</p>
+  <template #footer>
+    <orio-button variant="primary" @click="showSheet = false">
+      Close
+    </orio-button>
+  </template>
+</orio-modal>
 ```
 
 ## Related

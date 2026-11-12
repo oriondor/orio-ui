@@ -46,6 +46,10 @@
   "modal": {
     "close": "Close"
   },
+  "numberInput": {
+    "increase": "Increase",
+    "decrease": "Decrease"
+  },
   "segmentedInput": {
     "digit": "Digit {index} of {total}",
     "character": "Character {index} of {total}"
