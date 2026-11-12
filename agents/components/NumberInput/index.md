@@ -37,6 +37,10 @@ text input (`type="text" inputmode="decimal"`) with no spinner. Custom step cont
   grouping (`de` `1234,5`, `en` `1234.5`). If an external change arrives
   while focused it wins only when it differs from the parsed typed text, so
   our own echo never clobbers `1,`.
+  The display always uses Latin digits 0-9 with the locale's Latin-digit
+  decimal mark (`ar-EG`/`fa` show `.`, not `٫`). Typed native digits (any
+  `\p{Nd}` script) and `٫` are accepted and converted to ASCII; `٬` is
+  dropped; anything else non-numeric is unreadable.
 - **Precision = `max(decimalPlaces, decimals in step)`.** Rounding is
   decimal-exponent based (half away from zero), not `toFixed`: `1.005` at 2
   places is `1.01`; `0.1` step three times is exactly `0.3`.

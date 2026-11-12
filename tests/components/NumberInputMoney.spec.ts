@@ -321,6 +321,27 @@ describe("NumberInput text-mode parsing", () => {
     await wrapper.find("input").trigger("blur");
     expect(wrapper.find("input").element.value).toBe(`${shown}0`);
   });
+
+  it.each([
+    ["fa", "۱۲۳۴٫۵", 1234.5],
+    ["ar-EG", "-١٢٫٥", -12.5],
+    ["bn", "১২", 12],
+    ["hi", "१२.५", 12.5],
+    ["en", "1۲", 12],
+    ["ar-EG", "١٬٢٣٤٫٥", 1234.5],
+  ])("native digits: %s typing %s reads %s", async (locale, text, expected) => {
+    i18n.global.locale.value = locale;
+    const wrapper = make({ modelValue: null });
+    await type(wrapper, text);
+    expect(lastEmit(wrapper)).toBe(expected);
+  });
+
+  it("native digits: letters still unreadable", async () => {
+    const wrapper = make({ modelValue: 7 });
+    await type(wrapper, "1a5");
+    expect(lastEmit(wrapper)).not.toBe(15);
+    expect(wrapper.emitted("update:modelValue")).toBeFalsy();
+  });
 });
 
 describe("NumberInput locale round-trip", () => {

@@ -100,9 +100,26 @@ function formatDisplay(value: number | null) {
 // the minus are stripped first, so the component can read its own display.
 const stripBidiMarks = (raw: string) =>
   raw.replace(/[\u200E\u200F\u061C]/g, "");
+// Typed native digits (any \p{Nd} script) become ASCII: every Nd block is a
+// contiguous run of 0-9, so the digit is the offset into that run.
+const isDecimalDigit = (codePoint: number) =>
+  /^\p{Nd}$/u.test(String.fromCodePoint(codePoint));
+const toAsciiDigit = (char: string) => {
+  const codePoint = char.codePointAt(0)!;
+  let offset = 0;
+  while (isDecimalDigit(codePoint - offset - 1)) offset++;
+  return String(offset % 10); // runs of adjacent blocks start on multiples of 10
+};
+// U+066B Arabic decimal separator -> ".", U+066C Arabic thousands separator
+// dropped (a "," would be read as a decimal mark when no dot follows).
+const normalizeNativeNumerals = (raw: string) =>
+  raw
+    .replace(/\p{Nd}/gu, toAsciiDigit)
+    .replace(/\u066B/g, ".")
+    .replace(/\u066C/g, "");
 const hasUnreadable = (raw: string) => /[^\d\s.,\-\u2212]/.test(raw);
 const readText = (raw: string) => {
-  const text = stripBidiMarks(raw);
+  const text = normalizeNativeNumerals(stripBidiMarks(raw));
   return hasUnreadable(text) ? null : toNumber(text);
 };
 
