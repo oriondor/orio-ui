@@ -92,6 +92,11 @@ function formatDisplay(value: number | null) {
   }).format(value);
 }
 
+// Text mode: anything but digits, whitespace, separators and minus signs is
+// unreadable ("1a5", "1e5"), never silently stripped to a number.
+const hasUnreadable = (raw: string) => /[^\d\s.,\-\u2212]/.test(raw);
+const readText = (raw: string) => (hasUnreadable(raw) ? null : toNumber(raw));
+
 const display = ref(formatDisplay(modelValue.value));
 
 // Not `focused.value`: the slot re-render resets the template ref, which
@@ -102,11 +107,11 @@ const isTyping = () =>
 // Number mode: the browser already normalised the text; compare like
 // Vue's vModelText does instead of rewriting what the user typed.
 const parseDisplay = (raw: string) =>
-  type.value === "number" ? (raw === "" ? null : Number(raw)) : toNumber(raw);
+  type.value === "number" ? (raw === "" ? null : Number(raw)) : readText(raw);
 
 // External model/locale changes re-render the text, unless the user is
 // typing something that already parses to the model (don't clobber "1,").
-watch([modelValue, locale], () => {
+watch([modelValue, locale, type], () => {
   if (!isTyping() || parseDisplay(display.value) !== modelValue.value) {
     display.value = formatDisplay(modelValue.value);
   }
@@ -124,8 +129,8 @@ function onInput(event: Event) {
     modelValue.value = null;
     return;
   }
-  const parsed = toNumber(raw);
-  // Unparsable mid-typing ("-", "abc") keeps the last model value.
+  const parsed = readText(raw);
+  // Unparsable mid-typing ("-", "abc", "1a5") keeps the last model value.
   if (parsed !== null) modelValue.value = parsed + 0;
 }
 
@@ -137,8 +142,9 @@ function commit(value: number) {
 function onBlur(event: FocusEvent) {
   if (type.value === "number") {
     const element = event.target as HTMLInputElement;
-    // Native number input reports "-" / "e" as empty (model null) but keeps
-    // showing it; clear so the field matches the model.
+    // Native number input reports any bad input ("-", "e", a trailing "."
+    // in Chrome) as empty (model null) but keeps showing it; clear so the
+    // field matches the model. Intentional: "1." is dropped, not kept as 1.
     if (element.validity.badInput) {
       element.value = "";
       display.value = "";
@@ -149,7 +155,7 @@ function onBlur(event: FocusEvent) {
     return;
   }
   if (display.value.trim() === "") return;
-  const parsed = toNumber(display.value);
+  const parsed = readText(display.value);
   if (parsed === null) {
     display.value = formatDisplay(modelValue.value);
     return;

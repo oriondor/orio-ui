@@ -62,8 +62,14 @@ none` on the container and `:deep(button) { pointer-events: auto }`.
   prop bag.
 - **`$attrs` is spread before `control`** on the inner `<input>`, same as
   Input. `inputmode` from `$attrs` wins over the default `decimal`.
-- **`type="number"` blur** clears a native bad-input leftover (a lone `-`)
-  so the field matches the `null` model.
+- **`type="number"` blur** clears any native bad input (a lone `-`, `e`, or a
+  trailing `.` such as `1.` in Chrome) so the field matches the `null` model.
+  The partial text is dropped, not kept as `1`.
+- **Text mode letters rule**: text with any character other than digits,
+  whitespace, `.`, `,`, `-` or `−` (U+2212) is unreadable. It emits nothing
+  while typing (model keeps the last value) and blur reverts the text to the
+  model's display, so `1a5` / `1e5` never become 15. The check lives in
+  NumberInput, not in `useDecimalFormatter`.
 - **`defineExpose({ input, focused })`** — `input` is the template ref to the
   native `<input>`; `focused` is the **writable** `Ref<boolean>` from
   `useFocus`. Reading reflects focus state; assigning `true`/`false` focuses or

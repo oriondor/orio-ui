@@ -277,4 +277,35 @@ describe("NumberInputVertical", () => {
     await wrapper.find("input").setValue("");
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([null]);
   });
+
+  it("#5: letters are unreadable, keep model, revert on blur", async () => {
+    for (const text of ["1a5", "1e5", "12abc"]) {
+      const wrapper = make({ modelValue: 7 });
+      await type(wrapper, text);
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+      await wrapper.find("input").trigger("blur");
+      expect(wrapper.find("input").element.value).toBe("7");
+      expect(wrapper.props("modelValue")).toBe(7);
+    }
+  });
+
+  it("#5: spaces, comma decimals and both minus signs still parse", async () => {
+    const wrapper = make();
+    await type(wrapper, "1 234,5");
+    expect(lastEmit(wrapper)).toBe(1234.5);
+    await type(wrapper, "\u22125");
+    expect(lastEmit(wrapper)).toBe(-5);
+    await type(wrapper, "-1,5");
+    expect(lastEmit(wrapper)).toBe(-1.5);
+  });
+
+  it("R3-3: unfocused display re-renders when type switches", async () => {
+    i18n.global.locale.value = "de";
+    const wrapper = make({ modelValue: 1.5 });
+    expect(wrapper.find("input").element.value).toBe("1,5");
+    await wrapper.setProps({ type: "number" });
+    expect(wrapper.find("input").element.value).toBe("1.5");
+    await wrapper.setProps({ type: "text" });
+    expect(wrapper.find("input").element.value).toBe("1,5");
+  });
 });
