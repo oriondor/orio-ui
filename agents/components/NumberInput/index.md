@@ -70,7 +70,9 @@ none` on the container and `:deep(button) { pointer-events: auto }`.
   while typing (model keeps the last value) and blur reverts the text to the
   model's display, so `1a5` / `1e5` never become 15. The invisible bidi marks
   U+200E, U+200F and U+061C (he/ar/ur put them before the minus) are stripped
-  first, so the component can read its own display. The check lives in
+  first, so the component can read its own display. The display is also
+  formatted with `numberingSystem: "latn"` (ASCII digits) because fa, ar-EG,
+  bn, mr etc. default to native digits that the digit check would reject. The check lives in
   NumberInput, not in `useDecimalFormatter`.
 - **`defineExpose({ input, focused })`** — `input` is the template ref to the
   native `<input>`; `focused` is the **writable** `Ref<boolean>` from

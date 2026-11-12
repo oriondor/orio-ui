@@ -89,6 +89,8 @@ function formatDisplay(value: number | null) {
   return new Intl.NumberFormat(locale.value, {
     useGrouping: false,
     maximumFractionDigits: 20,
+    // readText only understands ASCII digits; fa/ar-EG/bn... default to native ones.
+    numberingSystem: "latn",
   }).format(value);
 }
 

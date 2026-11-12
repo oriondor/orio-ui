@@ -279,7 +279,7 @@ describe("NumberInputVertical", () => {
   });
 });
 
-describe("NumberInput round-3 fixes", () => {
+describe("NumberInput text-mode parsing", () => {
   it("#5: letters are unreadable, keep model, revert on blur", async () => {
     for (const text of ["1a5", "1e5", "12abc"]) {
       const wrapper = make({ modelValue: 7 });
@@ -320,5 +320,58 @@ describe("NumberInput round-3 fixes", () => {
     expect(lastEmit(wrapper)).toBe(-50);
     await wrapper.find("input").trigger("blur");
     expect(wrapper.find("input").element.value).toBe(`${shown}0`);
+  });
+});
+
+describe("NumberInput locale round-trip", () => {
+  const locales = [
+    "en",
+    "de",
+    "uk",
+    "sv",
+    "fi",
+    "nb",
+    "fr",
+    "he",
+    "ar",
+    "ar-EG",
+    "ar-SA",
+    "fa",
+    "ps",
+    "ur",
+    "bn",
+    "as",
+    "mr",
+    "ne",
+    "my",
+    "hi",
+    "ja",
+    "zh",
+    "ru",
+    "pt-BR",
+    "de-CH",
+    "es-ES",
+  ];
+  const values = [-1234.5, 0.05, 1000000, -0.5];
+
+  it.each(locales)("%s: reads its own display back", async (locale) => {
+    for (const value of values) {
+      i18n.global.locale.value = locale;
+      const wrapper = make({ modelValue: value, decimalPlaces: 3 });
+      const input = wrapper.find("input");
+      const shown = input.element.value;
+      expect(shown, `${locale} ${value} display is ASCII-digit`).toMatch(/\d/);
+      input.element.focus();
+      await input.trigger("blur");
+      expect(wrapper.props("modelValue"), `${locale} ${value} blur`).toBe(
+        value,
+      );
+      expect(input.element.value).toBe(shown);
+      await type(wrapper, `${shown}1`);
+      expect(lastEmit(wrapper), `${locale} ${value} edit`).toBe(
+        Number(`${value}1`),
+      );
+      wrapper.unmount();
+    }
   });
 });
