@@ -414,6 +414,12 @@ describe("Modal", () => {
   });
 
   describe("presentation", () => {
+    // a failing assertion must not leak fake timers into later tests
+    afterEach(() => {
+      if (vi.isFakeTimers()) vi.runOnlyPendingTimers();
+      vi.useRealTimers();
+    });
+
     // Live stub: setNarrow flips `matches` and fires registered change listeners.
     let setNarrow: (narrow: boolean) => void = () => {};
     function stubMedia({ narrow = false, reducedMotion = false } = {}) {

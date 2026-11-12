@@ -87,6 +87,9 @@ invariants: true
 - **Custom `#header` gets the default header's padding** too (the header pads
   itself, `--control-margin: 0` inside), so plain text there is taller than
   before.
+- **Custom `#footer` gets the default footer's padding** too (`1rem 1.5rem`,
+  `--control-margin: 0` inside), so plain text there is taller and inset more
+  than before.
 - **Header/footer are auto-hidden** when no `title` prop and no
   `#header`/`#footer` slot is present. The content section (`#default`)
   always renders.

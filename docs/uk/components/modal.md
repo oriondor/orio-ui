@@ -84,7 +84,7 @@ function openModal(event) {
     Відкрити авто
   </orio-button>
 
-  <orio-modal v-model:show="showAuto" :origin="null" presentation="auto" title="Auto">
+  <orio-modal v-model:show="showAuto" :origin="null" presentation="auto" title="Авто">
     <p>Лист нижче 640px, вікно вище; фіксується під час відкриття.</p>
     <template #footer>
       <orio-button variant="primary" @click="showAuto = false">
@@ -242,7 +242,7 @@ const showSheet = ref(false);
   v-model:show="showAuto"
   :origin="null"
   presentation="auto"
-  title="Auto"
+  title="Авто"
 >
   <p>Лист нижче 640px, вікно вище; фіксується під час відкриття.</p>
   <template #footer>

@@ -371,9 +371,11 @@ const hasFooter = computed(() => {
   overscroll-behavior: contain;
 }
 
-/* the last block clears the home indicator (needs viewport-fit=cover) */
+/* the last block keeps its own block-end padding (--modal-block-end) and clears the home indicator (needs viewport-fit=cover) */
 .modal[data-presentation="sheet"] .modal-inner > :last-child {
-  padding-block-end: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  padding-block-end: calc(
+    var(--modal-block-end, 0.5rem) + env(safe-area-inset-bottom, 0px)
+  );
 }
 
 /* grip sits in the header's top padding, so the header stays compact */
@@ -404,6 +406,7 @@ const hasFooter = computed(() => {
   border-block-end: 1px solid var(--color-border);
   /* padding replaces the close button's control margin; ignore an app-wide --control-margin */
   --control-margin: 0;
+  --modal-block-end: 1rem;
   padding: 1rem 1.5rem 1rem 1rem;
 }
 
@@ -422,6 +425,7 @@ const hasFooter = computed(() => {
   gap: 0.5rem;
   /* gap replaces the control margin; ignore an app-wide --control-margin */
   --control-margin: 0;
+  --modal-block-end: 1rem;
   border-block-start: 1px solid var(--color-border);
   padding: 1rem 1.5rem;
 }
