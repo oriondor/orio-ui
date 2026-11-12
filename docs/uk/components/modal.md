@@ -81,14 +81,14 @@ function openModal(event) {
 
 <div class="demo-container">
   <orio-button @click="showAuto = true">
-    Open auto
+    Відкрити авто
   </orio-button>
 
   <orio-modal v-model:show="showAuto" :origin="null" presentation="auto" title="Auto">
-    <p>Sheet under 640px, dialog above; fixed while open.</p>
+    <p>Лист нижче 640px, вікно вище; фіксується під час відкриття.</p>
     <template #footer>
       <orio-button variant="primary" @click="showAuto = false">
-        Close
+        Закрити
       </orio-button>
     </template>
   </orio-modal>
@@ -208,19 +208,19 @@ function openModal(event) {
 
 ```vue
 <template>
-  <orio-button @click="showSheet = true"> Open sheet </orio-button>
+  <orio-button @click="showSheet = true"> Відкрити лист </orio-button>
 
   <orio-modal
     v-model:show="showSheet"
     :origin="null"
     presentation="sheet"
     drag-handle
-    title="Sheet"
+    title="Лист"
   >
-    <p>Docked to the bottom, slides up, ignores origin.</p>
+    <p>Прикріплений до низу, виїжджає знизу, ігнорує origin.</p>
     <template #footer>
       <orio-button variant="primary" @click="showSheet = false">
-        Close
+        Закрити
       </orio-button>
     </template>
   </orio-modal>
@@ -235,7 +235,7 @@ const showSheet = ref(false);
 
 ```vue
 <orio-button @click="showAuto = true">
-  Open auto
+  Відкрити авто
 </orio-button>
 
 <orio-modal
@@ -244,10 +244,10 @@ const showSheet = ref(false);
   presentation="auto"
   title="Auto"
 >
-  <p>Sheet under 640px, dialog above; fixed while open.</p>
+  <p>Лист нижче 640px, вікно вище; фіксується під час відкриття.</p>
   <template #footer>
     <orio-button variant="primary" @click="showAuto = false">
-      Close
+      Закрити
     </orio-button>
   </template>
 </orio-modal>
@@ -302,6 +302,7 @@ interface OriginRect {
 ## Можливості
 
 - Закриття кліком поза вікном або клавішею `Esc`
+- Дочірні елементи футера — flex-елементи (і у вікні, і в листі): щоб обгортка зайняла всю ширину футера, їй потрібен `flex: 1` або `width: 100%`
 - `role="dialog"` з `aria-modal`, підписане через `title`
 - Переводить фокус у вікно, тримає `Tab` всередині, повертає фокус на
   елемент, що мав його до відкриття

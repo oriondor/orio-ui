@@ -302,6 +302,7 @@ interface OriginRect {
 ## Features
 
 - Click outside or press `Esc` to close
+- Footer children are flex items (dialog and sheet): a wrapper element needs `flex: 1` or `width: 100%` to span the footer
 - `role="dialog"` with `aria-modal`, labelled by `title`
 - Moves focus into the dialog, keeps `Tab` inside, returns focus to the
   element focused before opening

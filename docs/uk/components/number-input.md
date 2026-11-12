@@ -82,7 +82,7 @@ const nativeNumber = ref(5)
     :decimal-places="2"
     label="Сума"
   />
-  <div class="demo-output">Value: {{ money }}</div>
+  <div class="demo-output">Значення: {{ money }}</div>
 </div>
 
 ### Рідне числове поле

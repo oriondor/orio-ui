@@ -82,6 +82,11 @@ invariants: true
 - **Footer is a wrapping flex row** (`gap: 0.5rem`) with a local
   `--control-margin: 0`; header pads itself (75px tall) with the same local
   reset, so neither depends on an app-wide `--control-margin`.
+- **Footer children are flex items** (dialog and sheet): a wrapper element
+  needs `flex: 1` or `width: 100%` to span the footer.
+- **Custom `#header` gets the default header's padding** too (the header pads
+  itself, `--control-margin: 0` inside), so plain text there is taller than
+  before.
 - **Header/footer are auto-hidden** when no `title` prop and no
   `#header`/`#footer` slot is present. The content section (`#default`)
   always renders.
