@@ -30,7 +30,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `DashedContainer.vue` — clickable dashed-border tile with icon and label, used for add/upload affordances. **Read the agent doc first.**
 - `Draggable.vue` — wrapper that makes any child draggable with mouse, pen or touch and carries a `data` value to `<orio-drop-zone>`. **Read the agent doc first.**
 - `DropZone.vue` — wrapper that accepts `<orio-draggable>` drops and emits `drop(data, event)`; slot exposes `isDragging` / `isOver`. **Read the agent doc first.**
-- `Modal.vue` — teleported overlay dialog with open-from-origin animation. **Read the agent doc first.**
+- `Modal.vue` — teleported overlay dialog (centered or bottom sheet) with open-from-origin animation. **Read the agent doc first.**
 - `Popover.vue` — anchored floating panel teleported to body with auto-flip placement and click-outside dismissal. **Read the agent doc first.**
 - `Toast/` — notification card drawn by the auto-mounted toast host; queue it with `useToast`, never place it by hand. **Read the agent doc first.**
 - `Tooltip.vue` — hover/focus-triggered tooltip teleported to body, with delay, arrow, and four placements. **Read the agent doc first.**

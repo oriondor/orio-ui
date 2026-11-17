@@ -172,13 +172,19 @@ function close() {
 .toast-actions {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  /* old spacing: 0.25rem gap + 2 x 0.5rem button margin = 1.25rem; padding keeps the 0.5rem inset */
+  gap: 1.25rem;
+  padding: 0.5rem;
+  /* padding/gap replace the control margin; ignore an app-wide --control-margin */
+  --control-margin: 0;
   flex-shrink: 0;
 }
 
-.toast-close {
+/* doubled class: outranks Button's own margin reset regardless of CSS order */
+.toast-close.toast-close {
   flex-shrink: 0;
-  margin-inline-start: -0.25rem;
+  margin: 0.5rem;
+  margin-inline-start: 0.25rem;
 }
 
 .toast-progress {
