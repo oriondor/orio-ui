@@ -4,7 +4,7 @@
 
 ## Можливості
 
-✨ **67 компонентів** — гарні, доступні компоненти, готові до використання
+✨ **71 компонент** — гарні, доступні компоненти, готові до використання
 🎨 **Теми** — 6 вбудованих акцентних тем зі світлим і темним режимами
 🚀 **Автоімпорт** — безшовно працює з системою автоімпорту Nuxt
 📦 **Tree-shaking** — у бандл потрапляє лише те, що ви використовуєте
@@ -38,7 +38,7 @@ export default defineNuxtConfig({
 
 ### Компоненти
 
-- Елементи форм: Input, NumberInput, NumberInputVertical, NumberInputHorizontal, Textarea, CheckBox, CheckboxGroup, RadioButton, DatePicker, DateRangePicker, Selector, TaggableSelector, SwitchButton
+- Елементи форм: Input, NumberInput, NumberInputVertical, NumberInputHorizontal, NumberInputMoney, Textarea, CheckBox, CheckboxGroup, RadioButton, DatePicker, DateRangePicker, Selector, TaggableSelector, SwitchButton
 - Навігація: Button, NavButton, Form, Modal, Popover, Tooltip, Banner
 - Відображення: Icon, LoadingSpinner, EmptyState, Tag, Badge, ListItem, DashedContainer
 - Перегляд: Text, Dates, Separator

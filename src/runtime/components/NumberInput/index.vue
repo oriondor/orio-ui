@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, toRefs, useTemplateRef } from "vue";
+import { computed, ref, toRefs, useAttrs, useTemplateRef, watch } from "vue";
 import { useFocus } from "@vueuse/core";
 import type { ControlProps } from "../ControlElement.vue";
 import type { InputLayout } from "../Input.vue";
+import { roundTo } from "../../utils/decimal";
 
 export interface NumberInputProps extends Omit<ControlProps, "layout"> {
   layout?: InputLayout;
@@ -22,48 +23,129 @@ const props = withDefaults(defineProps<NumberInputProps>(), {
 
 const { min, max, step, decimalPlaces } = toRefs(props);
 
-const modelValue = defineModel<number | null>({ default: 0 });
+const modelValue = defineModel<number | null>({ default: null });
 
 const input = useTemplateRef("input");
 const { focused } = useFocus(input);
+const attrs = useAttrs();
 
-function setValidatedValue(value: number | null) {
-  let finalValue = value ?? 0;
-  if (Number.isFinite(max.value) && finalValue > (max.value as number)) {
-    finalValue = max.value as number;
-  }
+// `readonly` arrives as an attr (not a ControlProps key): "" / true / "readonly".
+const isReadonly = () => attrs.readonly != null && attrs.readonly !== false;
 
-  if (Number.isFinite(min.value) && finalValue < (min.value as number)) {
-    finalValue = min.value as number;
-  }
-
-  finalValue = Number((finalValue ?? 0).toFixed(decimalPlaces.value));
-
-  modelValue.value = finalValue;
+function decimalsOf(value: number) {
+  const [mantissa, exponent] = String(value).split("e");
+  return Math.max(
+    0,
+    (mantissa.split(".")[1]?.length ?? 0) - Number(exponent ?? 0),
+  );
 }
 
-function onBlur() {
-  setValidatedValue(modelValue.value);
+const precision = computed(() =>
+  Math.max(decimalPlaces.value, decimalsOf(step.value)),
+);
+
+function clamp(value: number) {
+  let result = value;
+  if (Number.isFinite(max.value) && result > (max.value as number)) {
+    result = max.value as number;
+  }
+  if (Number.isFinite(min.value) && result < (min.value as number)) {
+    result = min.value as number;
+  }
+  return result;
+}
+
+function normalize(value: number) {
+  return clamp(roundTo(value, precision.value));
+}
+
+// Native number inputs only accept the plain "." form.
+const formatDisplay = (value: number | null) =>
+  value === null ? "" : String(value);
+
+const display = ref(formatDisplay(modelValue.value));
+// Only the initial attribute (SSR / native step base) is bound, via `.attr`.
+// A bound `value` prop is re-applied by Vue on every re-render (resetting
+// typed text) and also rewrites the attribute, so later changes go through
+// the property here.
+const initialDisplay = display.value;
+watch(
+  display,
+  (text) => {
+    if (input.value && input.value.value !== text) input.value.value = text;
+  },
+  { flush: "post" },
+);
+
+// Not `focused.value`: the slot re-render resets the template ref, which
+// makes useFocus drop its state mid-typing.
+const isTyping = () =>
+  input.value !== null && document.activeElement === input.value;
+
+const parseDisplay = (raw: string) => (raw === "" ? null : Number(raw));
+
+// External model changes re-render the text, unless the user is typing
+// something that already equals the model (compare like Vue's vModelText).
+watch(modelValue, () => {
+  if (!isTyping() || parseDisplay(display.value) !== modelValue.value) {
+    display.value = formatDisplay(modelValue.value);
+  }
+});
+
+function onInput(event: Event) {
+  const raw = (event.target as HTMLInputElement).value;
+  display.value = raw;
+  // `+ 0` keeps -0 out of the model.
+  modelValue.value = raw === "" ? null : Number(raw) + 0;
+}
+
+function commit(value: number) {
+  modelValue.value = value;
+  display.value = formatDisplay(value);
+}
+
+function onBlur(event: FocusEvent) {
+  const element = event.target as HTMLInputElement;
+  // Native number input reports any bad input ("-", "e", a trailing "."
+  // in Chrome) as empty (model null) but keeps showing it; clear so the
+  // field matches the model. Intentional: "1." is dropped, not kept as 1.
+  if (element.validity.badInput) {
+    element.value = "";
+    display.value = "";
+  }
+  if (modelValue.value === null) return;
+  const target = normalize(modelValue.value);
+  if (target !== modelValue.value) commit(target);
+}
+
+function stepBy(delta: number) {
+  const base =
+    modelValue.value ?? (Number.isFinite(min.value) ? min.value! : 0);
+  commit(normalize(base + delta));
 }
 
 function increase() {
-  setValidatedValue((modelValue.value ?? 0) + step.value);
+  if (props.disabled || isReadonly()) return;
+  stepBy(step.value);
 }
 
 function decrease() {
-  setValidatedValue((modelValue.value ?? 0) - step.value);
+  if (props.disabled || isReadonly()) return;
+  stepBy(-step.value);
 }
 
 const isAtMax = computed(
   () =>
+    modelValue.value !== null &&
     Number.isFinite(max.value) &&
-    (modelValue.value ?? 0) >= (max.value as number),
+    modelValue.value >= (max.value as number),
 );
 
 const isAtMin = computed(
   () =>
+    modelValue.value !== null &&
     Number.isFinite(min.value) &&
-    (modelValue.value ?? 0) <= (min.value as number),
+    modelValue.value <= (min.value as number),
 );
 
 const controlProps = computed(() => {
@@ -98,12 +180,13 @@ defineExpose({ input, focused });
       <input
         v-bind="{ ...$attrs, ...control }"
         ref="input"
-        v-model="modelValue"
         type="number"
+        :value.attr="initialDisplay"
         class="number-input"
         :min
         :max
         :step
+        @input="onInput"
         @blur="onBlur"
       />
       <div class="controls">
@@ -133,6 +216,8 @@ input[type="number"] {
 
 .number-input {
   @include base-input;
+  inline-size: 100%;
+  min-inline-size: 0;
 }
 
 .inner {

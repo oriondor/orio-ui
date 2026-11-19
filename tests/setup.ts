@@ -2,6 +2,8 @@ import { beforeEach, vi } from "vitest";
 import { config } from "@vue/test-utils";
 import Button from "../src/runtime/components/Button.vue";
 import NumberInput from "../src/runtime/components/NumberInput/index.vue";
+import NumberInputMoney from "../src/runtime/components/NumberInput/Money.vue";
+import Input from "../src/runtime/components/Input.vue";
 import ControlElement from "../src/runtime/components/ControlElement.vue";
 import Icon from "../src/runtime/components/Icon.vue";
 import LoadingSpinner from "../src/runtime/components/LoadingSpinner.vue";
@@ -12,6 +14,8 @@ import ViewText from "../src/runtime/components/view/Text.vue";
 config.global.components = {
   "orio-button": Button,
   "orio-number-input": NumberInput,
+  "orio-number-input-money": NumberInputMoney,
+  "orio-input": Input,
   "orio-control-element": ControlElement,
   "orio-icon": Icon,
   "orio-loading-spinner": LoadingSpinner,

@@ -15,7 +15,7 @@ call it once and reuse the two helpers.
 
 - **`toNumber(input: string | number)`**:
   - Numbers pass through as-is (non-finite → `null`).
-  - Strings are stripped of any character except digits, `,`, `.`, `-`.
+  - Strings are stripped of any character except digits, `,`, `.`, `-` (U+2212 `−` is first mapped to `-`).
   - **Decimal separator auto-detected** by checking the position of the
     last `,` and last `.`:
     - If last `,` is after last `.` → European format. Strip `.` (thousands)
@@ -35,8 +35,8 @@ call it once and reuse the two helpers.
 
 ## Gotchas
 
-- **Auto-separator detection is heuristic.** `"1,000"` is ambiguous; the
-  parser treats it as US (1000), not EU (1.0). For unambiguous behavior,
+- **Auto-separator detection is heuristic.** `"1,000"` is ambiguous; with
+  no dot the last comma is the decimal mark, so it parses as 1 (EU), not 1000. For unambiguous behavior,
   strip separators before passing.
 - **No currency symbol handling.** `"$1,234.56"` is stripped to
   `"1234.56"` and parsed. To format as currency, build your own with
@@ -48,6 +48,10 @@ call it once and reuse the two helpers.
   the string. `"100-50"` becomes `"100-50"` then `Number("100-50") = NaN`
   → null. No expression evaluation.
 
+- **`minimumFractionDigits` > `maximumFractionDigits` throws.** `decimals`
+  defaults to `2`, which sets the minimum too, so passing only
+  `maximumFractionDigits` below `2` throws a `RangeError`. Pass both.
+
 ## Quick reference
 
 ```ts
@@ -55,18 +59,24 @@ import { useDecimalFormatter } from "../composables/useDecimalFormatter";
 
 const { toNumber, formatDecimal } = useDecimalFormatter();
 
-toNumber("1.234,56");      // 1234.56  (EU)
-toNumber("1,234.56");      // 1234.56  (US)
-toNumber("abc");           // null
+toNumber("1.234,56"); // 1234.56  (EU)
+toNumber("1,234.56"); // 1234.56  (US)
+toNumber("abc"); // null
 
-formatDecimal(1234.5, { locale: "de-DE" });      // "1.234,50"
-formatDecimal(1234.5, { locale: "en-US" });      // "1,234.50"
-formatDecimal(1234.567, { decimals: 0 });        // "1,235"
-formatDecimal("$1,234.567", { maximumFractionDigits: 1 }); // "1,234.6"
+formatDecimal(1234.5, { locale: "de-DE" }); // "1.234,50"
+formatDecimal(1234.5, { locale: "en-US" }); // "1,234.50"
+formatDecimal(1234.567, { decimals: 0, locale: "en-US" }); // "1,235"
+formatDecimal("$1,234.567", {
+  locale: "en-US",
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 1,
+}); // "1,234.6"
 ```
 
 ## Related
 
-- `<orio-number-input>` — uses similar fraction-digit semantics via its
-  `decimalPlaces` prop.
-- Public API reference: `docs/composables/use-decimal-formatter.md`.
+- Standalone helper: neither `<orio-number-input>` (native number input, no
+  text parsing) nor `<orio-number-input-money>` (own strict locale parser, see
+  `agents/components/NumberInput/Money.md`) uses it. Reach for it only to
+  format or loosely read a number outside those components.
+- Tests: `tests/composables/useDecimalFormatter.spec.ts`.

@@ -8,6 +8,10 @@ export { default as SegmentedInput } from "./components/SegmentedInput.vue";
 export { default as NumberInput } from "./components/NumberInput/index.vue";
 export { default as NumberInputVertical } from "./components/NumberInput/Vertical.vue";
 export { default as NumberInputHorizontal } from "./components/NumberInput/Horizontal.vue";
+export {
+  default as NumberInputMoney,
+  type NumberInputMoneyProps,
+} from "./components/NumberInput/Money.vue";
 export { default as Textarea } from "./components/Textarea.vue";
 export { default as CheckBox } from "./components/CheckBox.vue";
 export {

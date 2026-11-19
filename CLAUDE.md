@@ -42,8 +42,9 @@ from the frontmatter of those docs; do not edit by hand.
 - `ControlElement.vue` — label/legend wrapper, owns a11y attrs, exposes the `control` slot prop bag. **Read the agent doc first.**
 - `Form.vue` — form wrapper that auto-binds child controls by `name` prop to a single object v-model. **Read the agent doc first.**
 - `Input.vue` — text input wrapping ControlElement; supports inner-floating label layout. **Read the agent doc first.**
-- `NumberInput/` — numeric input base with overlay controls slot; pair with Horizontal/Vertical variants for ready-made spinners. **Read the agent doc first.**
+- `NumberInput/` — native number input with overlay controls slot; pair with Horizontal/Vertical variants for ready-made spinners. **Read the agent doc first.**
 - `NumberInput/Horizontal.vue` — number input variant with minus/plus buttons flanking the field and press-and-hold repeat. **Read the agent doc first.**
+- `NumberInput/Money.vue` — locale-aware currency amount input with fixed symbol affix, text-driven paste parsing and optional minor-unit (cents) model. **Read the agent doc first.**
 - `NumberInput/Vertical.vue` — number input variant with chevron up/down stacked on the right and press-and-hold repeat. **Read the agent doc first.**
 - `RadioButton.vue` — single radio option wrapping ControlElement; group by sharing the same v-model. **Read the agent doc first.**
 - `SegmentedInput.vue` — fixed-length code input split into auto-advancing per-character segments for OTP / PIN entry. **Read the agent doc first.**

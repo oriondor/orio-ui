@@ -46,8 +46,19 @@
   "modal": {
     "close": "Закрити"
   },
+  "numberInput": {
+    "increase": "Збільшити",
+    "decrease": "Зменшити"
+  },
   "segmentedInput": {
     "digit": "Цифра {index} з {total}",
     "character": "Символ {index} з {total}"
+  },
+  "moneyInput": {
+    "invalid": "Введіть коректну суму, не більше {places} знаків після коми",
+    "invalidWhole": "Введіть цілу суму, без знаків після коми",
+    "outOfRange": "Сума поза допустимим діапазоном",
+    "tooLarge": "Сума завелика",
+    "currency": "Валюта: {name}"
   }
 }

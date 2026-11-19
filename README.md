@@ -18,7 +18,7 @@ orio-ui's shipped, version-pinned agent docs. Details in
 
 ## Features
 
-✨ **70 Components** - Beautiful, accessible components ready to use
+✨ **71 Components** - Beautiful, accessible components ready to use
 🎨 **Themeable** - 6 built-in accent themes with light/dark mode support
 🚀 **Auto-imported** - Works seamlessly with Nuxt's auto-import system
 📦 **Tree-shakeable** - Only bundle what you use
@@ -77,13 +77,14 @@ function handleClick() {
 
 ## What's Included
 
-### Components (70)
+### Components (71)
 
 #### Form Controls
 
 - **Input** - Text input with label support
 - **Textarea** - Multi-line text input
 - **NumberInput** - Numeric input with increment/decrement (horizontal & vertical variants)
+- **NumberInputMoney** - Currency amount input with locale-aware parsing, symbol affix and optional minor-unit (cents) model
 - **CheckBox** - Custom checkbox with icon states
 - **SwitchButton** - Toggle switch component
 - **DatePicker** - Date selection with month/year options
@@ -270,7 +271,7 @@ npm run docs:dev
 orio-ui/
 ├── src/
 │   ├── runtime/
-│   │   ├── components/   # 70 Vue components
+│   │   ├── components/   # 71 Vue components
 │   │   ├── composables/  # 20 composables
 │   │   ├── assets/css/   # Theme CSS files
 │   │   └── utils/        # Icon registry
