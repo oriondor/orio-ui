@@ -48,7 +48,10 @@ them into a single v-model string. Built for OTP / verification-code entry.
 - **Paste is intercepted** (`@paste.prevent` on the wrapper): the pasted
   text replaces `modelValue` wholesale — digits-only filtered for
   `type="number"`, trimmed for `type="string"`, truncated to
-  `segments × segmentSize`. A paste that fills every segment emits `end`.
+  `segments × segmentSize`. A paste that fills every segment emits `end`. After a
+  non-empty paste, focus moves (next tick) to the first segment that isn't
+  full, or the last segment when all are full; an empty / all-junk paste
+  changes nothing.
 
 ## Gotchas
 

@@ -252,4 +252,67 @@ describe("SegmentedInput", () => {
     await nextTick();
     expect(document.activeElement).toBe(wrapper.findAll("input")[2].element);
   });
+
+  describe("focus after paste", () => {
+    function mountAttached(props: Record<string, unknown>) {
+      return mount(SegmentedInput, {
+        props: { modelValue: "", ...props },
+        attachTo: document.body,
+      });
+    }
+
+    it("focuses the last segment after a full paste", async () => {
+      const wrapper = mountAttached({ segments: 6 });
+      dispatchPaste(wrapper.findAll("input")[0].element, "123456");
+      await nextTick();
+      await nextTick();
+      expect(document.activeElement).toBe(wrapper.findAll("input")[5].element);
+      expect(wrapper.emitted("end")).toHaveLength(1);
+    });
+
+    it("focuses the first open segment after a partial paste", async () => {
+      const wrapper = mountAttached({ segments: 6 });
+      dispatchPaste(wrapper.findAll("input")[0].element, "123");
+      await nextTick();
+      await nextTick();
+      expect(document.activeElement).toBe(wrapper.findAll("input")[3].element);
+    });
+
+    it("leaves model and focus alone for an all-junk paste", async () => {
+      const wrapper = mountAttached({ segments: 6 });
+      const fifth = wrapper.findAll("input")[4].element;
+      fifth.focus();
+      dispatchPaste(fifth, "abc");
+      await nextTick();
+      await nextTick();
+      expect(wrapper.emitted("update:modelValue")).toBeFalsy();
+      expect(document.activeElement).toBe(fifth);
+    });
+
+    it("focuses the first non-full segment when segmentSize > 1", async () => {
+      const wrapper = mountAttached({ segments: 3, segmentSize: 2 });
+      dispatchPaste(wrapper.findAll("input")[0].element, "123");
+      await nextTick();
+      await nextTick();
+      expect(document.activeElement).toBe(wrapper.findAll("input")[1].element);
+    });
+
+    it("focuses the first open segment after an autofilled overflow", async () => {
+      const wrapper = mountAttached({ segments: 4, segmentSize: 2 });
+      await wrapper.findAll("input")[0].setValue("123");
+      await nextTick();
+      await nextTick();
+      expect(document.activeElement).toBe(wrapper.findAll("input")[1].element);
+    });
+
+    it("gives the same result when pasting from a later segment", async () => {
+      const wrapper = mountAttached({ segments: 6 });
+      const fifth = wrapper.findAll("input")[4].element;
+      fifth.focus();
+      dispatchPaste(fifth, "123");
+      await nextTick();
+      await nextTick();
+      expect(document.activeElement).toBe(wrapper.findAll("input")[3].element);
+    });
+  });
 });
