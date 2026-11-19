@@ -72,4 +72,31 @@ describe("NumberInputHorizontal", () => {
       expect(button.attributes("tabindex")).toBe("-1"),
     );
   });
+
+  describe("stepper button size", () => {
+    const sizes = (wrapper: ReturnType<typeof mount>) =>
+      wrapper.findAllComponents(Button).map((button) => button.props("size"));
+
+    it.each([
+      ["inner", "xs", "xs"],
+      ["inner", "sm", "xs"],
+      ["inner", "md", "sm"],
+      ["vertical", "xs", "xs"],
+      ["vertical", "sm", "xs"],
+      ["horizontal", "md", "sm"],
+      ["vertical", "xl", "sm"],
+    ] as const)("%s + %s field uses %s buttons", (layout, size, expected) => {
+      const wrapper = mount(NumberInputHorizontal, { props: { layout, size } });
+      expect(sizes(wrapper)).toEqual([expected, expected]);
+    });
+
+    it("switches when the field size changes", async () => {
+      const wrapper = mount(NumberInputHorizontal, {
+        props: { layout: "inner", size: "md" },
+      });
+      expect(sizes(wrapper)).toEqual(["sm", "sm"]);
+      await wrapper.setProps({ size: "sm" });
+      expect(sizes(wrapper)).toEqual(["xs", "xs"]);
+    });
+  });
 });
