@@ -51,6 +51,16 @@ describe("NumberInput", () => {
     expect(wrapper.emitted("update:modelValue")?.[0]).toEqual([100]);
   });
 
+  it("readonly blur does not clamp", async () => {
+    const wrapper = mount(NumberInput, {
+      props: { modelValue: 150, max: 100 },
+      attrs: { readonly: true },
+      global: { stubs: { "orio-control-element": ControlStub } },
+    });
+    await wrapper.find("input").trigger("blur");
+    expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+  });
+
   it("clamps value to min on blur", async () => {
     const wrapper = mount(NumberInput, {
       props: { modelValue: -10, min: 0 },

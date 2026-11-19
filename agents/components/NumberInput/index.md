@@ -36,7 +36,7 @@ slot. For ready-made stepper UIs, use `<orio-number-input-horizontal>` or
 - **`decimalPlaces` defaults to `0`**, so `:step="0.01"` alone already gives
   2 places and `:decimalPlaces="2"` alone rounds typed values to 2 places.
   It is a rounding precision, not a display format (no trailing zeros).
-- **Clamp to `min`/`max` only when finite** (`0` honored), on blur and on step.
+- **Clamp to `min`/`max` only when finite** (`0` honored), on blur (except a `readonly` field, which blur leaves unclamped) and on step.
 - **Stepping** (`increase`/`decrease`) starts from the model, or `min ?? 0`
   when `null`, applies `step`, rounds, clamps. No-op while `disabled` or when
   the input has a `readonly` attr. Steppers from an empty field land on `min + step`
@@ -101,8 +101,8 @@ slot. For ready-made stepper UIs, use `<orio-number-input-horizontal>` or
     :label="$t('cart.qty')"
   >
     <template #controls="{ increase, decrease, isAtMax, isAtMin }">
-      <orio-button :disabled="isAtMin" @click="decrease">−</orio-button>
-      <orio-button :disabled="isAtMax" @click="increase">+</orio-button>
+      <orio-button type="button" :disabled="isAtMin" @click="decrease">−</orio-button>
+      <orio-button type="button" :disabled="isAtMax" @click="increase">+</orio-button>
     </template>
   </orio-number-input>
 </template>

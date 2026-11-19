@@ -794,9 +794,11 @@ describe("round 2 decisions", () => {
   it("G3: stepping at the ceiling does not emit", async () => {
     let api: { increase: () => void };
     const wrapper = make(
-      { modelValue: 99999999999999, step: 0.01 },
+      { modelValue: 12345678901234.5, step: 0.01 },
       { controls: (slotProps: typeof api) => ((api = slotProps), "") },
     );
+    // Starts from a showable value, so the refusal is the ceiling's doing.
+    expect(wrapper.find("input").attributes("aria-invalid")).not.toBe("true");
     api!.increase();
     await nextTick();
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
@@ -1049,5 +1051,96 @@ describe("round 3 decisions", () => {
       await type(wrapper, text);
       expect(model(wrapper)).toBe(expected);
     });
+  });
+});
+
+describe("CodeRabbit round", () => {
+  const copyOf = (wrapper: Wrapper) => {
+    const input = wrapper.find("input").element as HTMLInputElement;
+    input.focus();
+    input.setSelectionRange(0, input.value.length);
+    const event = new Event("copy", { bubbles: true, cancelable: true });
+    const data = new Map<string, string>();
+    Object.defineProperty(event, "clipboardData", {
+      value: { setData: (key: string, value: string) => data.set(key, value) },
+    });
+    input.dispatchEvent(event);
+    return data.get("text/plain")!;
+  };
+  const stepper = (props: Record<string, unknown>) => {
+    let api: { increase: () => void };
+    const wrapper = make(props, {
+      controls: (slotProps: typeof api) => ((api = slotProps), ""),
+    });
+    return { wrapper, increase: () => api!.increase() };
+  };
+
+  it("C5: KWD de-DE copy of 1.234 pastes back as 1.234, not 1234", async () => {
+    const copied = copyOf(
+      make({ currency: "KWD", locale: "de-DE", modelValue: 1.234 }),
+    );
+    const target = make({ currency: "KWD", locale: "de-DE" });
+    await type(target, copied);
+    expect(model(target)).toBe(1.234);
+  });
+
+  it("C6: blur of a readonly field restores the text and never clamps", async () => {
+    const wrapper = make({ modelValue: -50, readonly: true });
+    wrapper.find("input").element.focus();
+    await wrapper.find("input").trigger("focus");
+    await blur(wrapper);
+    expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    expect(shown(wrapper)).toBe("-50.00");
+  });
+
+  it("C7: type stays text, inputmode and autocomplete are overridable", () => {
+    const wrapper = make({
+      modelValue: 1,
+      type: "number",
+      inputmode: "numeric",
+      autocomplete: "transaction-amount",
+    });
+    const input = wrapper.find("input");
+    expect(input.attributes("type")).toBe("text");
+    expect(input.attributes("inputmode")).toBe("numeric");
+    expect(input.attributes("autocomplete")).toBe("transaction-amount");
+  });
+
+  it("C10: minor-units hidden value is empty when the shown text is not the model", async () => {
+    const wrapper = make({
+      modelValue: 300,
+      minorUnits: true,
+      name: "amt",
+      "onUpdate:modelValue": () => {},
+    });
+    await type(wrapper, "5");
+    const hidden = wrapper.find('input[type="hidden"]')
+      .element as HTMLInputElement;
+    expect(model(wrapper)).toBe(300);
+    expect(hidden.value).toBe("");
+  });
+
+  it.each([
+    [0.005, false, 1],
+    [0.005, true, 100],
+  ])(
+    "C11: step %s finer than USD's cents is refused",
+    async (step, minorUnits, modelValue) => {
+      const { wrapper, increase } = stepper({ modelValue, step, minorUnits });
+      increase();
+      await nextTick();
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    },
+  );
+
+  it("C11: KWD still steps by 0.001", async () => {
+    const { wrapper, increase } = stepper({
+      currency: "KWD",
+      modelValue: 1,
+      step: 0.001,
+    });
+    increase();
+    await nextTick();
+    expect(model(wrapper)).toBe(1.001);
   });
 });

@@ -105,6 +105,8 @@ function commit(value: number) {
 }
 
 function onBlur(event: FocusEvent) {
+  // A readonly field only shows: no clamp, no commit.
+  if (isReadonly()) return;
   const element = event.target as HTMLInputElement;
   // Native number input reports any bad input ("-", "e", a trailing "."
   // in Chrome) as empty (model null) but keeps showing it; clear so the

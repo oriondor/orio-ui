@@ -199,7 +199,7 @@ const value = ref(0);
 
 - **Native number input** - Always renders `<input type="number">`: browser parsing, `.` as the decimal mark, no locale text handling. A `type` attribute is ignored. For currency amounts use [`orio-number-input-money`](./number-input-money)
 - **Nullable model** - Clearing the field emits `null` and never `0`; `-0` becomes `0`. The steppers start from `min ?? 0`, so from an empty field they land on `min + step` (`step` when there is no `min`). Native ArrowUp/ArrowDown from an empty field is the browser's own and goes to `min`
-- **Boundary clamping** - Values are clamped to min/max on blur and on step; `disabled` and `readonly` block the steppers
+- **Boundary clamping** - Values are clamped to min/max on blur (except a `readonly` field, which blur leaves unclamped) and on step; `disabled` and `readonly` block the steppers
 - **Exact decimal rounding** - Control decimal places with `decimalPlaces`; `1.005` at 2 places is `1.01`, `0.1 + 0.2` steps give `0.3`. Precision is the larger of `decimalPlaces` and the decimals of `step`
 - **Bad input is cleared** - Native bad input (a lone `-`, `e`, a trailing `.` such as `1.` in Chrome) is cleared on blur and the value is `null`
 - **Increment/Decrement buttons** - Click to adjust value by step amount (Vertical & Horizontal)

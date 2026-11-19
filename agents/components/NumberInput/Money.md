@@ -8,8 +8,8 @@ invariants: true
 
 # NumberInput/Money — agent-only invariants
 
-`<orio-number-input-money>` wraps `<orio-input>` (`type="text"`,
-`inputmode="decimal"`, `autocomplete="off"`, overridable via attrs). It is
+`<orio-number-input-money>` wraps `<orio-input>` (`type="text"` always,
+`inputmode="decimal"` and `autocomplete="off"` overridable via attrs). It is
 independent of `<orio-number-input>`: text parsing lives here, the plain
 number input stays native.
 
@@ -44,8 +44,10 @@ number input stays native.
   `integer`), is muted, `aria-hidden`, `pointerdown` focuses the input. The
   currency name goes to a visually hidden span referenced by the input's
   `aria-describedby`. Chrome may render `грн` for UAH where Node renders `₴`:
-  never hard-code the symbol in tests. Unknown currency -> `Intl` RangeError
-  is caught: no affix, 2 places, `console.warn`.
+  never hard-code the symbol in tests. Malformed code (`Intl`
+  RangeError, e.g. `"US"`) is caught: no affix, `decimalPlaces` or 2 places,
+  `console.warn`. A well-formed unknown code (`ZZZ`) is shown as the affix,
+  no warning.
 - **Parsing** (typed and pasted; the format is read from the text, the field
   locale only breaks a true tie). Accepts digits of any script, whitespace
   incl. NBSP/NNBSP, the field's own currency symbol, narrowSymbol or code
@@ -70,19 +72,23 @@ number input stays native.
     blur; `1'2'3` errors at once.
   - Extra fraction digits beyond `decimalPlaces`: all zeros are dropped
     (`12.500` USD = 12.5), a non-zero one is an error.
-  - One shared ceiling (`withinCeiling`) for text AND model, both modes: at
+  - One shared ceiling (`withinCeiling` in `utils/money.ts`, with the other pure parse/format helpers) for text AND model, both modes: at
     most 15 significant digits and a safe-integer minor value. Text beyond
     it gets `moneyInput.tooLarge`; an outside model beyond it is unshowable
-    with the same message; `stepBy` refuses non-finite or ceiling results.
+    with the same message; `stepBy` refuses non-finite or ceiling results and a `step` finer than the
+    field's decimals (`inspectModel(|step|, places, false)` cannot show it).
 - **Copy/cut** put the raw value (`1234.5`, major units, `-` sign) on the
-  clipboard only when `parse(display)` equals the model; partial
+  clipboard only when `parse(display)` equals the model (a 3-digit fraction
+  gets a trailing `0`, so `1.234` is not read as grouping on paste); partial
   selections, empty, error, incomplete or otherwise differing text fall back
   to the browser.
 - **Form `name`**: removed from the visible input. A hidden
   `<input type="hidden" :name>` (inside the `#after` slot) holds the
   canonical raw value in model units (`1234.5`, or `1250` with `minorUnits`),
-  empty while `invalid` (parse error, incomplete, unshowable, out of range)
-  or the model is `null`; it is `disabled` with the field.
+  empty while `invalid` (parse error, incomplete, unshowable, out of range),
+  the model is `null`, or the shown text is not the model (declined update); it
+  is `disabled` with the field. A `readonly` field is barred from constraint
+  validation, so it does not block native submit; blur only restores its text.
 - **Errors**: unparsable text keeps the last valid model, sets the built-in
   `moneyInput.invalid` (`invalidWhole` when `decimalPlaces` is 0) message
   (en + uk) as ControlElement `error` (`aria-invalid`, `aria-describedby`).
@@ -168,8 +174,8 @@ isAtMax, isAtMin }`; `increase`/`decrease` do nothing while `disabled` or
   label="Tip"
 >
   <template #controls="{ increase, decrease, isAtMax, isAtMin }">
-    <orio-button :disabled="isAtMin" @click="decrease">-</orio-button>
-    <orio-button :disabled="isAtMax" @click="increase">+</orio-button>
+    <orio-button type="button" :disabled="isAtMin" @click="decrease">-</orio-button>
+    <orio-button type="button" :disabled="isAtMax" @click="increase">+</orio-button>
   </template>
 </orio-number-input-money>
 ```

@@ -1,6 +1,6 @@
 # NumberInputMoney
 
-Currency amount input. The symbol is a fixed affix beside the field, typing and pasting follow the field's locale, and the model is either a number in major units or an integer of minor units (cents).
+Currency amount input. The symbol is a fixed affix beside the field, typing and pasting read the format from the text (the field's locale only breaks a tie), and the model is either a number in major units or an integer of minor units (cents).
 
 ## Live Demo
 
@@ -128,8 +128,8 @@ const stepped = ref(10)
     label="Tip"
   >
     <template #controls="{ increase, decrease, isAtMax, isAtMin }">
-      <orio-button :disabled="isAtMin" @click="decrease">-</orio-button>
-      <orio-button :disabled="isAtMax" @click="increase">+</orio-button>
+      <orio-button type="button" :disabled="isAtMin" @click="decrease">-</orio-button>
+      <orio-button type="button" :disabled="isAtMax" @click="increase">+</orio-button>
     </template>
   </orio-number-input-money>
   <div class="demo-output">Value: {{ stepped }}</div>
@@ -193,8 +193,8 @@ const stepped = ref(10)
   label="Tip"
 >
   <template #controls="{ increase, decrease, isAtMax, isAtMin }">
-    <orio-button :disabled="isAtMin" @click="decrease">-</orio-button>
-    <orio-button :disabled="isAtMax" @click="increase">+</orio-button>
+    <orio-button type="button" :disabled="isAtMin" @click="decrease">-</orio-button>
+    <orio-button type="button" :disabled="isAtMax" @click="increase">+</orio-button>
   </template>
 </orio-number-input-money>
 ```
@@ -202,10 +202,10 @@ const stepped = ref(10)
 ## Features
 
 - **Locale-aware display** - Focused, the field shows raw editable text without grouping (`1234.5` in `en`, `1234,5` in `de`). On blur it shows grouping and a fixed number of fraction digits (`1,234.50` in `en`, `1.234,50` in `de`, `1 234,50` in `uk`), always with Latin digits
-- **Currency affix** - The symbol sits outside the editable text, muted, on the side the locale uses (`$` before in `en-US`, `₴` after in `uk-UA`, `€` after in `de-DE`). It is hidden from assistive technology; the currency name is announced as the input's description instead. The symbol comes from `Intl`, so a browser may show `грн` for UAH where Node shows `₴`. An unknown currency code renders no affix, uses 2 places and logs a warning
+- **Currency affix** - The symbol sits outside the editable text, muted, on the side the locale uses (`$` before in `en-US`, `₴` after in `uk-UA`, `€` after in `de-DE`). It is hidden from assistive technology; the currency name is announced as the input's description instead. The symbol comes from `Intl`, so a browser may show `грн` for UAH where Node shows `₴`. A malformed currency code (a `RangeError`, e.g. `US`) renders no affix, uses `decimalPlaces` or 2 places and logs a warning; a well-formed unknown code (`ZZZ`) is shown as the affix without a warning
 - **Value alignment** - Digits are end-aligned with tabular numerals so amounts line up
 - **Nullable model** - Empty is `null`, never `0`; `-0` becomes `0`
-- **No negatives by default** - `min` defaults to `0`, so any `-` (`-`, `-5`, `-1,234`) is an error at once. Pass a negative `min` to allow them (`-Infinity` for no lower bound); then a lone `-` is incomplete and shows no error while typing. Values are clamped to `min`/`max` on blur and on step, and stay unclamped while the field is focused. If the bound cannot be shown exactly with the field's decimals (or as a whole number with `minorUnits`), blur leaves the value unclamped and the field shows the out-of-range error; a step toward such a bound does nothing
+- **No negatives by default** - `min` defaults to `0`, so any `-` (`-`, `-5`, `-1,234`) is an error at once. Pass a negative `min` to allow them (`-Infinity` for no lower bound); then a lone `-` is incomplete and shows no error while typing. Values are clamped to `min`/`max` on blur and on step (except a `readonly` field, which blur leaves unclamped), and stay unclamped while the field is focused. If the bound cannot be shown exactly with the field's decimals (or as a whole number with `minorUnits`), blur leaves the value unclamped and the field shows the out-of-range error; a step toward such a bound does nothing
 - **No steppers by default** - Use the `#controls` slot; `step` is in major units (default `1`)
 
 ## Parsing rules
@@ -228,19 +228,19 @@ The separator format is read from the text itself, in any locale; the field's `l
 - **While typing** - Incomplete text that may still become valid (`.`, `$`, `US`, a lone `-`) shows no error until blur, but it already blocks native submit (`invalid` is true). `12.` is a complete `12`. Text that can never become valid errors at once
 - **On blur** - Unparsable or incomplete text stays so it can be fixed, and the error stays
 - **Your own `error`** - A non-empty `error` prop wins over the built-in message; an empty string does not hide it
-- **Steps** - A step from the `#controls` slot clears the parse error and shows the stepped value
+- **Steps** - A step from the `#controls` slot clears the parse error and shows the stepped value. A `step` finer than the field's decimals (`0.005` for USD) is refused
 - **Outside value that cannot be shown** - A model that is not finite, has more decimals than `decimalPlaces`, is not a whole number with `minor-units`, or is beyond the safe ceiling is never rounded, rewritten or emitted. The field shows the built-in error and a console warning, with the value's own exact digits (empty for `NaN`/`Infinity`)
-- **Native validation** - A parse error, incomplete text or an out-of-range value calls `setCustomValidity(message)` on the input, so a native form submit is blocked; it is cleared when the value is valid. `defineExpose` also gives `invalid` (boolean), `input` and a writable `focused`
-- **Form submission** - The visible input carries no `name`. With a `name` prop a hidden `<input type="hidden">` submits the canonical raw value in model units (`1234.5`, or `1250` with `minor-units`), empty while the text is invalid, incomplete, out of range or cannot be shown
+- **Native validation** - A parse error, incomplete text or an out-of-range value calls `setCustomValidity(message)` on the input, so a native form submit is blocked; it is cleared when the value is valid. A `readonly` field is barred from constraint validation and does not block submit. `defineExpose` also gives `invalid` (boolean), `input` and a writable `focused`
+- **Form submission** - The visible input carries no `name`. With a `name` prop a hidden `<input type="hidden">` submits the canonical raw value in model units (`1234.5`, or `1250` with `minor-units`), empty while the text is invalid, incomplete, out of range, cannot be shown or is not the model (a declined update)
 - **Messages** - Built-in messages are translated (en, uk); with `decimalPlaces` 0 the message asks for a whole amount. The currency name in the description follows the UI language (vue-i18n), not the field `locale`
-- **Copy and cut** - Copy and cut put the raw value on the clipboard, but only when the shown text is the model value (not while it is incomplete or invalid; then the browser copies the text as is): plain digits, `.` as decimal, no grouping or symbol, `-` for negatives (`1234.5`, always in major units, even with `minor-units`). A partial selection copies as selected. Formatted copy is not supported
-- **Outside value below `min`** - An untouched value below `min` is out of range (native validity message), not a parse error; it is clamped on blur
+- **Copy and cut** - Copy and cut put the raw value on the clipboard, but only when the shown text is the model value (not while it is incomplete or invalid; then the browser copies the text as is): plain digits, `.` as decimal, no grouping or symbol, `-` for negatives (`1234.5`, always in major units, even with `minor-units`); a 3-digit fraction gets a trailing `0` (`1.2340`) so a locale that groups with `.` does not read it as grouping. A partial selection copies as selected. Formatted copy is not supported
+- **Outside value below `min`** - An untouched value below `min` is out of range (native validity message), not a parse error; it is clamped on blur (not in a `readonly` field)
 - **Valid typing** - A valid value is not rewritten while focused, so `12.` is not clobbered
 
 ## Units of min, max and step
 
 - `min` and `max` are in **model units**: cents when `minor-units` is set, so `:max="5000"` is 50.00 USD
-- `step` is always in **major units** (`step="1"` moves by 1.00 USD, or 100 cents with `minor-units`)
+- `step` is always in **major units** (`:step="1"` moves by 1.00 USD, or 100 cents with `minor-units`)
 
 ## Minor units
 
@@ -273,7 +273,7 @@ Needs `Intl.NumberFormat` v3, which formats exact decimal strings: Chrome 106, S
 | `label`           | `string`                                         | `undefined`  | Label text                                                                               |
 | `error`           | `string`                                         | `undefined`  | Error message; replaces the built-in parse error                                         |
 
-The input is `type="text"` with `inputmode="decimal"` and `autocomplete="off"`; other attributes (`disabled`, `readonly`, `required`, `placeholder`) pass through.
+The input is always `type="text"`; `inputmode="decimal"` and `autocomplete="off"` are defaults you can override; other attributes (`disabled`, `readonly`, `required`, `placeholder`) pass through.
 
 ## Slots
 
