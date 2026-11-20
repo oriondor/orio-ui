@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeAll } from "vitest";
 import { mount } from "@vue/test-utils";
 import { defineComponent, h, nextTick } from "vue";
 import Selector from "../../src/runtime/components/Selector.vue";
+import ControlElement from "../../src/runtime/components/ControlElement.vue";
 import ListItem from "../../src/runtime/components/ListItem.vue";
 import { i18n } from "../../src/runtime/i18n";
 
@@ -380,5 +381,275 @@ describe("Selector", () => {
     expect(trigger.attributes("data-testid")).toBe("country-selector");
     expect(trigger.attributes("title")).toBe("Pick a country");
     expect(trigger.attributes("aria-describedby")).toBe("country-hint");
+  });
+
+  describe("listboxId", () => {
+    const stubs = {
+      "orio-control-element": ControlStub,
+      "orio-popover": PopoverStub,
+      "orio-empty-state": EmptyStateStub,
+      "orio-icon": true,
+      "orio-list-item": ListItem,
+      "orio-check-box": true,
+    };
+
+    function mountWithTrigger(received: string[]) {
+      return mount(Selector, {
+        props: { options: stringOptions, modelValue: null },
+        slots: {
+          trigger: (slotProps: { listboxId: string }) => {
+            received.push(slotProps.listboxId);
+            return h("button", { "aria-controls": slotProps.listboxId });
+          },
+        },
+        global: { plugins: [i18n], stubs },
+      });
+    }
+
+    it("sets the listbox id to the trigger slot prop", () => {
+      const received: string[] = [];
+      const wrapper = mountWithTrigger(received);
+      const id = received[0]!;
+      expect(id).toBeTruthy();
+      expect(wrapper.get("ul[role=listbox]").attributes("id")).toBe(id);
+      expect(wrapper.get("button").attributes("aria-controls")).toBe(id);
+    });
+
+    it("gives two selectors on one page different ids", () => {
+      const wrapper = mount(
+        defineComponent({
+          render: () =>
+            h("div", [
+              h(Selector, { options: stringOptions, modelValue: null }),
+              h(Selector, { options: stringOptions, modelValue: null }),
+            ]),
+        }),
+        { global: { plugins: [i18n], stubs } },
+      );
+      const [first, second] = wrapper
+        .findAll("ul[role=listbox]")
+        .map((list) => list.attributes("id"));
+      expect(first).toBeTruthy();
+      expect(first).not.toBe(second);
+    });
+  });
+
+  describe("options-addon keyboard", () => {
+    const toggleSpy = vi.fn();
+    const focusTriggerSpy = vi.fn();
+    const OpenPopoverStub = defineComponent({
+      name: "OpenPopoverStub",
+      setup(_, { slots, expose }) {
+        expose({ focusTrigger: focusTriggerSpy });
+        return () =>
+          h("div", [
+            slots.default?.({ toggle: toggleSpy, isOpen: true }),
+            h("div", slots.content?.({ toggle: toggleSpy })),
+          ]);
+      },
+    });
+    const stubs = {
+      "orio-control-element": ControlStub,
+      "orio-popover": OpenPopoverStub,
+      "orio-empty-state": EmptyStateStub,
+      "orio-icon": true,
+      "orio-list-item": ListItem,
+      "orio-check-box": true,
+    };
+
+    function mountOpen(addon?: () => ReturnType<typeof h>, slots = {}) {
+      toggleSpy.mockClear();
+      focusTriggerSpy.mockClear();
+      return mount(Selector, {
+        props: { options: stringOptions, modelValue: null },
+        slots: { ...(addon ? { "options-addon": addon } : {}), ...slots },
+        attachTo: document.body,
+        global: { plugins: [i18n], stubs },
+      });
+    }
+
+    function press(target: Element, key: string, init: KeyboardEventInit = {}) {
+      const event = new KeyboardEvent("keydown", {
+        key,
+        bubbles: true,
+        cancelable: true,
+        ...init,
+      });
+      target.dispatchEvent(event);
+      return event;
+    }
+
+    const searchAddon = () =>
+      h("div", [
+        h("input", { class: "first", "aria-label": "Search" }),
+        h("button", { class: "last", type: "button" }, "Go"),
+      ]);
+
+    it("Tab from the open trigger focuses the first addon control", () => {
+      const wrapper = mountOpen(searchAddon);
+      const event = press(wrapper.get(".selector-trigger").element, "Tab");
+      expect(event.defaultPrevented).toBe(true);
+      expect(document.activeElement).toBe(wrapper.get("input.first").element);
+      wrapper.unmount();
+    });
+
+    it("Tab is untouched with no addon or no focusable addon content", () => {
+      for (const addon of [undefined, () => h("p", "just text")]) {
+        const wrapper = mountOpen(addon);
+        const event = press(wrapper.get(".selector-trigger").element, "Tab");
+        expect(event.defaultPrevented).toBe(false);
+        wrapper.unmount();
+      }
+    });
+
+    it("Tab from a custom trigger using triggerKeydown enters the addon", () => {
+      const wrapper = mountOpen(searchAddon, {
+        trigger: (slotProps: { triggerKeydown: (e: KeyboardEvent) => void }) =>
+          h("button", { class: "custom", onKeydown: slotProps.triggerKeydown }),
+      });
+      press(wrapper.get("button.custom").element, "Tab");
+      expect(document.activeElement).toBe(wrapper.get("input.first").element);
+      wrapper.unmount();
+    });
+
+    it("Shift+Tab from the first addon control returns to the trigger", () => {
+      const wrapper = mountOpen(searchAddon);
+      const event = press(wrapper.get("input.first").element, "Tab", {
+        shiftKey: true,
+      });
+      expect(event.defaultPrevented).toBe(true);
+      expect(focusTriggerSpy).toHaveBeenCalledTimes(1);
+      wrapper.unmount();
+    });
+
+    it("Tab from the last addon control closes without trapping", () => {
+      const wrapper = mountOpen(searchAddon);
+      const event = press(wrapper.get("button.last").element, "Tab");
+      expect(event.defaultPrevented).toBe(false);
+      expect(toggleSpy).toHaveBeenCalledWith(false);
+      expect(focusTriggerSpy).toHaveBeenCalledTimes(1);
+      wrapper.unmount();
+    });
+
+    it("ArrowDown/ArrowUp in the addon move the highlight, Enter selects", async () => {
+      const wrapper = mountOpen(searchAddon);
+      const input = wrapper.get("input.first").element;
+      press(input, "ArrowDown");
+      press(input, "ArrowDown");
+      press(input, "ArrowUp");
+      await nextTick();
+      expect(wrapper.findAll("li")[0]!.classes()).toContain("highlighted");
+      press(input, "Enter");
+      expect(wrapper.emitted("update:modelValue")![0]).toEqual(["Option 1"]);
+      wrapper.unmount();
+    });
+
+    it("letters and Space typed in the addon do not select or navigate", async () => {
+      const wrapper = mountOpen(searchAddon);
+      const input = wrapper.get("input.first").element;
+      press(input, "ArrowDown");
+      await nextTick();
+      for (const key of ["a", " ", "Home", "End"]) press(input, key);
+      await nextTick();
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+      expect(wrapper.findAll("li")[0]!.classes()).toContain("highlighted");
+      wrapper.unmount();
+    });
+
+    it("Tab from an open multi-select skips the options and enters the addon", () => {
+      const wrapper = mount(Selector, {
+        props: { options: stringOptions, modelValue: [], multiple: true },
+        slots: { "options-addon": searchAddon },
+        attachTo: document.body,
+        global: { plugins: [i18n], stubs },
+      });
+      const event = press(wrapper.get(".selector-trigger").element, "Tab");
+      expect(event.defaultPrevented).toBe(true);
+      expect(document.activeElement).toBe(wrapper.get("input.first").element);
+      wrapper.unmount();
+    });
+
+    it("Tab on an open multi-select without addon controls is left alone", () => {
+      const wrapper = mount(Selector, {
+        props: { options: stringOptions, modelValue: [], multiple: true },
+        attachTo: document.body,
+        global: { plugins: [i18n], stubs },
+      });
+      const event = press(wrapper.get(".selector-trigger").element, "Tab");
+      expect(event.defaultPrevented).toBe(false);
+      wrapper.unmount();
+    });
+
+    it("Enter in the addon that closes a single select refocuses the trigger", async () => {
+      const wrapper = mountOpen(searchAddon);
+      const input = wrapper.get("input.first").element;
+      press(input, "ArrowDown");
+      await nextTick();
+      press(input, "Enter");
+      expect(toggleSpy).toHaveBeenCalledWith(false);
+      expect(focusTriggerSpy).toHaveBeenCalledTimes(1);
+      wrapper.unmount();
+    });
+
+    it("Enter in the addon of a multi-select keeps focus where it is", async () => {
+      const wrapper = mount(Selector, {
+        props: { options: stringOptions, modelValue: [], multiple: true },
+        slots: { "options-addon": searchAddon },
+        attachTo: document.body,
+        global: { plugins: [i18n], stubs },
+      });
+      focusTriggerSpy.mockClear();
+      const input = wrapper.get("input.first").element;
+      press(input, "ArrowDown");
+      await nextTick();
+      press(input, "Enter");
+      expect(focusTriggerSpy).not.toHaveBeenCalled();
+      wrapper.unmount();
+    });
+
+    it("gives the listbox an accessible name", () => {
+      const named = mount(Selector, {
+        props: { options: stringOptions, modelValue: null, label: "Country" },
+        global: { plugins: [i18n], stubs },
+      });
+      expect(named.get("ul[role=listbox]").attributes("aria-label")).toBe(
+        "Country",
+      );
+      const placeholder = mount(Selector, {
+        props: { options: stringOptions, modelValue: null },
+        global: { plugins: [i18n], stubs },
+      });
+      expect(placeholder.get("ul[role=listbox]").attributes("aria-label")).toBe(
+        "Select an option",
+      );
+    });
+
+    it("Enter on an addon button is left to the button", () => {
+      const wrapper = mountOpen(searchAddon);
+      const event = press(wrapper.get("button.last").element, "Enter");
+      expect(event.defaultPrevented).toBe(false);
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+      wrapper.unmount();
+    });
+  });
+
+  it("renders a disabled trigger button when disabled", () => {
+    const wrapper = mount(Selector, {
+      props: { options: stringOptions, modelValue: null, disabled: true },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          "orio-control-element": ControlElement,
+          "orio-popover": PopoverStub,
+          "orio-empty-state": EmptyStateStub,
+          "orio-icon": true,
+          "orio-list-item": ListItem,
+          "orio-check-box": true,
+        },
+      },
+    });
+    expect(
+      wrapper.get(".selector-trigger").attributes("disabled"),
+    ).toBeDefined();
   });
 });

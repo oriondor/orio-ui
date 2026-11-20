@@ -64,8 +64,9 @@ combine with `useFuzzySearch` and slot `#options-addon`. Generic over
 ## Slots
 
 - `#trigger` — replaces the entire button. Receives `{ toggle, control,
-  isOpen, triggerKeydown, selectHighlighted, getOptionKey, getOptionLabel,
-  attrs }`.
+  isOpen, listboxId, triggerKeydown, selectHighlighted, getOptionKey,
+  getOptionLabel, attrs }`. `listboxId` is the unique (`useId`) id set on the
+  `ul[role=listbox]`; put it on a custom combobox's `aria-controls`.
   Wire `triggerKeydown` onto your element's `@keydown` to reuse the roving
   list navigation (arrows/Home/End/Enter/Escape); it skips typing keys when
   the event comes from an inner `<input>`/editable (only
@@ -84,7 +85,13 @@ combine with `useFuzzySearch` and slot `#options-addon`. Generic over
 - `#no-options` — replaces the default `<orio-empty-state>` when
   `options.length === 0`.
 - `#options-addon` — extra content rendered **after** the list (e.g. a
-  "create new" button, a search input).
+  "create new" button, a search input). Keyboard: Tab from the open trigger
+  (built-in or `triggerKeydown`) focuses its first focusable; ArrowUp/Down
+  in it move the list highlight and Enter in a text `<input>` selects it
+  (Space/letters/Home/End stay with the field); Shift+Tab from its first
+  control returns to the trigger; Tab past its last control closes and
+  continues after the trigger (no trap); Escape closes and refocuses the
+  trigger (Popover). No focusable content means Tab behaves as before.
 
 ## Gotchas
 
@@ -92,7 +99,8 @@ combine with `useFuzzySearch` and slot `#options-addon`. Generic over
   `<orio-input>` in `#options-addon` and pass a filtered array to
   `:options`.
 - **Multi-select trigger shows "N selected" by default.** Override via
-  `#trigger-label` to render tags — consider `<orio-tag>` chips. No slot
+  `#trigger-label` for display-only chips; removable chips need a custom
+  `#trigger` (see Quick reference). No slot
   exposes a selection-toggle function: to remove a chip you mutate the
   `v-model` array yourself (e.g. splice the option out). The `toggle` prop
   on the `#option`/`#content` slots only opens/closes the popover — it does
@@ -134,17 +142,51 @@ const country = defineModel<Country | null>({ default: null });
 
 ## Quick reference — multi-select with tag chips
 
+Use a custom `#trigger` holding `<orio-tag removable @remove>` chips. The
+tag's remove button stops its own click and Enter/Space, so it never toggles
+the list or reaches `triggerKeydown` (Escape still bubbles and closes it). Put `listboxId` on `aria-controls`, honour
+`control.disabled`, and keep the consumer's `tabindex` (`control.tabindex`).
+Removal reassigns the bound array; the demo's `removeTag` then moves focus to
+the next chip's remove button, else the previous, else the trigger (via a
+template ref on the trigger).
+
 ```vue
 <template>
-  <orio-selector v-model="tags" :options="allTags" multiple field="id" option-name="label">
-    <template #trigger-label>
-      <orio-tag v-for="tag in tags" :key="tag.id" removable @remove="removeTag(tag)">
-        {{ tag.label }}
-      </orio-tag>
-    </template>
-  </orio-selector>
+<orio-selector v-model="selectedTags" :options="tagItems" multiple field="id" option-name="label" placeholder="Select tags" aria-label="Select tags">
+  <template #trigger="{ toggle, control, attrs, isOpen, listboxId, triggerKeydown, getOptionKey, getOptionLabel }">
+    <div ref="tagsTrigger" v-bind="{ ...attrs, ...control }" class="demo-tags-trigger" role="combobox" :tabindex="control.disabled ? undefined : (control.tabindex ?? 0)" :aria-disabled="control.disabled || undefined" aria-haspopup="listbox" :aria-expanded="isOpen" :aria-controls="listboxId" @click="!control.disabled && toggle()" @keydown="!control.disabled && triggerKeydown($event)">
+      <span v-if="!selectedTags.length" class="demo-tags-placeholder">{{ getOptionLabel(undefined) }}</span>
+      <orio-tag v-for="tag in selectedTags" :key="getOptionKey(tag)" :text="getOptionLabel(tag)" :removable="!control.disabled" @remove="removeTag(tag)" />
+      <orio-icon name="chevron-down" class="demo-tags-chevron" />
+    </div>
+  </template>
+</orio-selector>
 </template>
+
+<script setup>
+import { nextTick, ref } from 'vue'
+const tagItems = [
+  { id: 1, label: 'Urgent' },
+  { id: 2, label: 'Billing' },
+  { id: 3, label: 'Bug' },
+  { id: 4, label: 'Feature' },
+  { id: 5, label: 'Docs' }
+]
+const selectedTags = ref([])
+const tagsTrigger = ref(null)
+async function removeTag(tag) {
+  const index = selectedTags.value.findIndex((item) => item.id === tag.id)
+  selectedTags.value = selectedTags.value.filter((item) => item.id !== tag.id)
+  await nextTick()
+  const buttons = tagsTrigger.value.querySelectorAll('button')
+  const next = buttons[index] ?? buttons[index - 1] ?? tagsTrigger.value
+  next.focus()
+}
+</script>
 ```
+
+Source: `docs/components/selector.md` ("Multi-select with tag chips"); the
+demo also holds the scoped `.demo-tags-*` styles.
 
 ## Related
 

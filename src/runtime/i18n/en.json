@@ -37,6 +37,9 @@
     "light": "Light",
     "dark": "Dark"
   },
+  "tag": {
+    "remove": "Remove {text}"
+  },
   "toast": {
     "close": "Close notification"
   },

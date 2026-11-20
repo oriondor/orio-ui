@@ -1,9 +1,10 @@
 <script setup lang="ts" generic="T extends object">
-import { computed, ref, toRef, toRefs } from "vue";
+import { computed, ref, toRef, toRefs, useAttrs, useId } from "vue";
 import type { ControlProps } from "./ControlElement.vue";
 import { useControlTokens } from "../composables/useControlSize";
 import { useListKeyboard } from "../composables/useListKeyboard";
 import { useI18n } from "vue-i18n";
+import { getFocusable } from "../utils/focusable";
 
 export type SelectableOption<T extends object = object> = string | T;
 
@@ -16,6 +17,7 @@ export interface SelectProps extends ControlProps {
 }
 
 const { t } = useI18n();
+const listboxId = useId();
 
 const props = withDefaults(defineProps<SelectProps>(), {
   field: "id",
@@ -112,8 +114,20 @@ const controlProps = computed(() => {
   return rest;
 });
 
+const attrs = useAttrs();
+const listboxLabel = computed(
+  () =>
+    props.label ||
+    props.ariaLabel ||
+    (attrs["aria-label"] as string | undefined) ||
+    props.placeholder ||
+    t("selector.placeholder"),
+);
+
 const selectorAttrs = computed(() => ({ getOptionKey, getOptionLabel }));
 
+const popoverRef = ref<{ focusTrigger?: () => void } | null>(null);
+const addonRef = ref<HTMLElement | null>(null);
 const popoverToggleRef = ref<(force?: boolean | null) => void>(() => {});
 
 const {
@@ -150,6 +164,21 @@ function onTriggerKeydown(
   isOpen: boolean,
 ) {
   popoverToggleRef.value = toggle;
+  // Tab from the open trigger enters the addon, which the popover teleports
+  // away from the trigger's tab order
+  if (
+    event.key === "Tab" &&
+    !event.shiftKey &&
+    isOpen &&
+    !isEventFromEditableElement(event)
+  ) {
+    const first = getFocusable(addonRef.value)[0];
+    if (first) {
+      event.preventDefault();
+      first.focus();
+    }
+    return;
+  }
   if (
     isEventFromEditableElement(event) &&
     !EDITABLE_KEY_ALLOWLIST.includes(event.key)
@@ -157,6 +186,47 @@ function onTriggerKeydown(
     return;
   }
   onKeydown(event, isOpen);
+}
+
+function isTextEntry(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLInputElement &&
+    !["checkbox", "radio", "button", "submit", "reset"].includes(target.type)
+  );
+}
+
+// Keys inside #options-addon: Tab leaves back to the trigger without
+// trapping, arrows and Enter in a text field drive the list highlight.
+// Escape is left to the Popover, which closes and refocuses the trigger.
+function onContentKeydown(
+  event: KeyboardEvent,
+  toggle: (force?: boolean | null) => void,
+) {
+  if (event.defaultPrevented) return;
+  const target = event.target as HTMLElement;
+  if (event.key === "Tab") {
+    const focusables = getFocusable(addonRef.value);
+    if (event.shiftKey && target === focusables[0]) {
+      event.preventDefault();
+      popoverRef.value?.focusTrigger?.();
+    } else if (!event.shiftKey && target === focusables.at(-1)) {
+      // focus the trigger, then let the browser's Tab move on past it
+      toggle(false);
+      popoverRef.value?.focusTrigger?.();
+    }
+    return;
+  }
+  if (target.matches("select, textarea")) return;
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    popoverToggleRef.value = toggle;
+    onKeydown(event, true);
+  } else if (event.key === "Enter" && isTextEntry(target)) {
+    event.preventDefault();
+    // a single select closes on pick; the focused addon control unmounts
+    if (selectHighlightedOption(toggle) && !props.multiple) {
+      popoverRef.value?.focusTrigger?.();
+    }
+  }
 }
 
 function createTriggerKeydownHandler(
@@ -209,13 +279,14 @@ function createTriggerToggle(
 
 <template>
   <orio-control-element v-slot="{ control }" v-bind="controlProps">
-    <orio-popover position="bottom-right" :offset="5">
+    <orio-popover ref="popoverRef" position="bottom-right" :offset="5">
       <template #default="{ toggle, isOpen }">
         <slot
           name="trigger"
           :toggle="createTriggerToggle(toggle, isOpen)"
           :control
           :isOpen
+          :listboxId
           :triggerKeydown="createTriggerKeydownHandler(toggle, isOpen)"
           :selectHighlighted="createSelectHighlightedHandler(toggle)"
           :attrs="$attrs"
@@ -262,11 +333,17 @@ function createTriggerToggle(
       </template>
 
       <template #content="{ toggle }">
-        <div class="selector-content" :style="controlTokens">
+        <div
+          class="selector-content"
+          :style="controlTokens"
+          @keydown="onContentKeydown($event, toggle)"
+        >
           <ul
             v-if="options.length"
+            :id="listboxId"
             ref="listRef"
             role="listbox"
+            :aria-label="listboxLabel"
             :aria-multiselectable="multiple || undefined"
           >
             <orio-list-item
@@ -294,7 +371,7 @@ function createTriggerToggle(
           <slot v-else name="no-options">
             <orio-empty-state :title="t('selector.noOptions')" size="small" />
           </slot>
-          <slot name="options-addon" />
+          <div ref="addonRef"><slot name="options-addon" /></div>
         </div>
       </template>
     </orio-popover>
@@ -322,12 +399,12 @@ function createTriggerToggle(
     box-shadow 0.2s ease,
     background-color 0.2s ease;
 
-  &:hover {
+  &:not(:disabled):hover {
     border-color: var(--color-accent);
     background-color: var(--color-surface); /* subtle lift */
   }
 
-  &:focus-within {
+  &:not(:disabled):focus-within {
     border-color: var(--color-accent);
     box-shadow: 0 0 0 2px var(--color-surface);
   }
@@ -337,8 +414,15 @@ function createTriggerToggle(
     transition: color 0.2s ease;
   }
 
-  &:hover .icon {
+  &:not(:disabled):hover .icon {
     color: var(--color-accent);
+  }
+
+  // same look as a disabled Input: surface fill, muted text, no hover/focus change
+  &:disabled {
+    background-color: var(--color-surface);
+    color: var(--color-muted);
+    cursor: not-allowed;
   }
 }
 

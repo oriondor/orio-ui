@@ -349,4 +349,86 @@ describe("TaggableSelector", () => {
     expect(trigger.attributes("data-testid")).toBe("tags");
     expect(trigger.attributes("title")).toBe("Pick tags");
   });
+
+  it("combobox aria-controls matches the listbox id", () => {
+    const wrapper = mount(TaggableSelector, {
+      props: { options: objectOptions, modelValue: [], field: "id" },
+      global: globalOptions,
+    });
+    const controls = wrapper
+      .get(".taggable-trigger")
+      .attributes("aria-controls");
+    expect(controls).toBeTruthy();
+    expect(wrapper.get("ul[role=listbox]").attributes("id")).toBe(controls);
+  });
+
+  it("keeps a non-empty listbox name after an option is selected", () => {
+    const empty = mount(TaggableSelector, {
+      props: { options: objectOptions, modelValue: [], field: "id" },
+      global: globalOptions,
+    });
+    const selected = mount(TaggableSelector, {
+      props: {
+        options: objectOptions,
+        modelValue: [objectOptions[0]],
+        field: "id",
+        optionName: "name",
+      },
+      global: globalOptions,
+    });
+    for (const wrapper of [empty, selected]) {
+      const name = wrapper.get("ul[role=listbox]").attributes("aria-label");
+      expect(name).toBe("Select options");
+    }
+  });
+
+  describe("disabled", () => {
+    const ControlWithDisabled = {
+      props: ["disabled"],
+      template:
+        '<div class="control-stub"><slot :control="{ disabled: disabled || undefined }" /></div>',
+    };
+    const popoverToggle = vi.fn();
+    const DisabledPopoverStub = defineComponent({
+      name: "DisabledPopoverStub",
+      setup(_, { slots }) {
+        return () =>
+          h("div", [
+            slots.default?.({ toggle: popoverToggle, isOpen: false }),
+            h("div", slots.content?.({ toggle: popoverToggle })),
+          ]);
+      },
+    });
+
+    function mountDisabled() {
+      popoverToggle.mockClear();
+      return mount(TaggableSelector, {
+        props: { options: objectOptions, modelValue: [], disabled: true },
+        global: {
+          ...globalOptions,
+          stubs: {
+            ...globalOptions.stubs,
+            "orio-control-element": ControlWithDisabled,
+            "orio-popover": DisabledPopoverStub,
+          },
+        },
+      });
+    }
+
+    it("click, Enter and ArrowDown on the combobox do not open it", async () => {
+      const wrapper = mountDisabled();
+      const trigger = wrapper.get(".taggable-trigger");
+      await trigger.trigger("click");
+      await trigger.trigger("keydown", { key: "Enter" });
+      await trigger.trigger("keydown", { key: "ArrowDown" });
+      expect(popoverToggle).not.toHaveBeenCalled();
+    });
+
+    it("disables the search input", () => {
+      const wrapper = mountDisabled();
+      expect(
+        wrapper.get(".taggable-search").attributes("disabled"),
+      ).toBeDefined();
+    });
+  });
 });

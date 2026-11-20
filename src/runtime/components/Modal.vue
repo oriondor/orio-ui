@@ -8,6 +8,7 @@ import {
 import { useI18n } from "vue-i18n";
 import { usePageScrollLock } from "../composables/usePageScrollLock";
 import { modalTeleportTarget } from "../utils/modal";
+import { getFocusable } from "../utils/focusable";
 
 const slots = useSlots();
 const { t } = useI18n();
@@ -106,17 +107,11 @@ function afterLeave() {
   returnFocus = null;
 }
 
-const FOCUSABLE =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
 // keep Tab inside the dialog: wrap from last to first and back
 function trapTab(event: KeyboardEvent) {
   const el = wrapper.value;
   if (!el) return;
-  // checkVisibility drops display:none / hidden controls (absent in jsdom)
-  const focusables = [...el.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
-    (element) => element.checkVisibility?.() !== false,
-  );
+  const focusables = getFocusable(el);
   const first = focusables[0];
   const last = focusables[focusables.length - 1];
   const active = document.activeElement;

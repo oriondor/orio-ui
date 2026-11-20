@@ -2,14 +2,14 @@
 kind: component
 category: Buttons & indicators
 purpose: tag, chip, label, removable chip, category pill
-short: small text chip with neutral or accent variant; static display only (no remove behavior)
+short: small text chip with neutral or accent variant; optional `removable` native remove button emitting `remove`
 invariants: true
 ---
 
 # Tag — agent-only invariants
 
-`<orio-tag>` is a static text chip. No close button, no click handler, no
-removal behavior — display only.
+`<orio-tag>` is a text chip. Display only by default; `removable` adds a
+native remove button that emits `remove`.
 
 ## Invariants
 
@@ -24,11 +24,19 @@ removal behavior — display only.
 - **`user-select: none`** — text inside the chip cannot be selected with
   the cursor.
 
+- **`removable`** (default `false`) renders a native
+  `<button type="button">` with `aria-label` from i18n `tag.remove`
+  ("Remove {text}", en + uk) and emits `remove`. The button stops click and
+  Enter/Space keydown propagation, so a parent trigger (e.g. a Selector
+  `#trigger`) never sees them. Tab and Escape still bubble (Modal focus trap,
+  Popover close). Removing is the consumer's job: update your list in
+  `@remove`; the tag does not hide itself.
+- With `removable` false the markup has no button.
+
 ## Gotchas
 
-- **No remove / close button.** The `TagProps` shape is intentionally
-  passive. For removable chips, wrap a custom button next to it or build
-  your own primitive.
+- **Focus after removal is yours.** The removed tag's button unmounts;
+  move focus to a neighbour's remove button or the owning control.
 - **No icon support.** No `icon` prop, no slot. For icon+text chips,
   build directly from a `<span>` with `<orio-icon>`.
 - **No size variants.** Padding (`0.25rem 0.6rem`) and font size
@@ -41,6 +49,30 @@ removal behavior — display only.
   <orio-tag :text="$t('category.urgent')" variant="accent" />
   <orio-tag :text="$t('category.draft')" />
 </template>
+```
+
+Removable chips with focus handoff, from `docs/components/tag.md`
+("Removable"):
+
+```vue
+<template>
+  <div ref="removableRow">
+    <orio-tag v-for="tag in removableTags" :key="tag" :text="tag" removable @remove="removeTag(tag)" />
+  </div>
+</template>
+
+<script setup>
+import { nextTick, ref } from 'vue'
+const removableTags = ref(['Vue', 'Nuxt', 'Vite'])
+const removableRow = ref(null)
+async function removeTag(tag) {
+  const index = removableTags.value.indexOf(tag)
+  removableTags.value = removableTags.value.filter((item) => item !== tag)
+  await nextTick()
+  const buttons = removableRow.value.querySelectorAll('button')
+  ;(buttons[index] ?? buttons[index - 1])?.focus()
+}
+</script>
 ```
 
 ## Related

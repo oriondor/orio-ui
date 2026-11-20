@@ -96,6 +96,7 @@ const selectorProps = computed(() => {
     v-bind="selectorProps"
     v-model="modelValue"
     :options="filteredOptions"
+    :placeholder="props.placeholder ?? t('taggableSelector.placeholder')"
     multiple
   >
     <template
@@ -103,6 +104,7 @@ const selectorProps = computed(() => {
         toggle,
         control,
         isOpen,
+        listboxId,
         triggerKeydown,
         selectHighlighted,
         getOptionKey,
@@ -116,8 +118,9 @@ const selectorProps = computed(() => {
         role="combobox"
         aria-haspopup="listbox"
         :aria-expanded="isOpen"
-        @click="toggle()"
-        @keydown="triggerKeydown"
+        :aria-controls="listboxId"
+        @click="!control.disabled && toggle()"
+        @keydown="!control.disabled && triggerKeydown($event)"
       >
         <orio-tag
           v-for="option in modelValue"
@@ -130,6 +133,7 @@ const selectorProps = computed(() => {
           class="taggable-search"
           type="text"
           :placeholder="resolvedPlaceholder"
+          :disabled="control.disabled"
           @click.stop="toggle(true)"
           @input="toggle(true)"
           @keydown.enter.prevent="onSearchEnter(isOpen, selectHighlighted)"
@@ -180,13 +184,20 @@ const selectorProps = computed(() => {
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 
-  &:hover {
+  &:not([disabled]):hover {
     border-color: var(--color-accent);
   }
 
-  &:focus-within {
+  &:not([disabled]):focus-within {
     border-color: var(--color-accent);
     box-shadow: 0 0 0 2px var(--color-surface);
+  }
+
+  // same look as a disabled Input: surface fill, muted text, no hover/focus change
+  &[disabled] {
+    background-color: var(--color-surface);
+    color: var(--color-muted);
+    cursor: not-allowed;
   }
 
   .icon {

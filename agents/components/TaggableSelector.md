@@ -35,7 +35,8 @@ renders the selection as a row of `<orio-tag>` chips. Read
 - **Trigger is a `<div role="combobox">`, not a button**, so it can legally
   contain the chips + `<input>`. Keydown is forwarded to Selector via the
   `triggerKeydown` slot prop, so arrow/Escape navigation of the list is the
-  same as the plain Selector (Enter/Space/typing stay with the input).
+  same as the plain Selector (Enter/Space/typing stay with the input). The
+  combobox sets `aria-controls` from the `listboxId` slot prop.
 - **Opening seeds the highlight.** The input's `@click`/`@input` just call
   `toggle(true)`; the Selector's `toggle` seeds the roving highlight on open
   itself, so the list is keyboard-navigable from the first arrow press with
@@ -118,7 +119,8 @@ function createSkill(name: string) {
 
 ## Related
 
-- `<orio-selector>` — base; use with custom `#trigger-label` for removable
-  chips or non-search layouts.
-- `<orio-tag>` — the chip primitive rendered in the trigger.
+- `<orio-selector>` — base; for removable chips without search, use a custom
+  `#trigger` with `<orio-tag removable>` (see its quick reference).
+- `<orio-tag>` — the chip primitive rendered in the trigger (`removable`
+  adds a native remove button).
 - Public API reference: `docs/components/taggable-selector.md`.
