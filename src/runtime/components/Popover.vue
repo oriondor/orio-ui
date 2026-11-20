@@ -23,6 +23,7 @@
 <script setup lang="ts">
 import { ref, computed, inject, nextTick, useTemplateRef, watch } from "vue";
 import { modalTeleportTarget } from "../utils/modal";
+import { getFocusable } from "../utils/focusable";
 import {
   useElementBounding,
   onClickOutside,
@@ -83,12 +84,13 @@ function closeOnEscape(event: KeyboardEvent) {
   event.preventDefault();
   showPopover.value = false;
   // focus was inside the content that is about to unmount
-  triggerRef.value
-    ?.querySelector<HTMLElement>(
-      'button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    )
-    ?.focus();
+  focusTrigger();
 }
+
+function focusTrigger() {
+  getFocusable(triggerRef.value)[0]?.focus();
+}
+defineExpose({ focusTrigger });
 const VIEWPORT_MARGIN = 8;
 const triggerRect = ref<DOMRect | null>(null);
 const popoverRect = ref<DOMRect | null>(null);

@@ -62,6 +62,7 @@ not edit by hand.
 - **text input, single-line input** → `Input.vue` (read the agent doc first)
 - **number input, numeric input, custom-control numeric stepper** → `NumberInput/` (read the agent doc first)
 - **number input horizontal, minus-plus stepper, quantity stepper** → `NumberInput/Horizontal.vue` (read the agent doc first)
+- **money input, currency input, price field, amount field, minor units, cents** → `NumberInput/Money.vue` (read the agent doc first)
 - **number input vertical, chevron stepper, stacked-arrow numeric input** → `NumberInput/Vertical.vue` (read the agent doc first)
 - **radio, radio button, single-choice from group** → `RadioButton.vue` (read the agent doc first)
 - **OTP input, one-time password, verification code, PIN code, segmented code boxes** → `SegmentedInput.vue` (read the agent doc first)

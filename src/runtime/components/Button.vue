@@ -60,7 +60,11 @@ function onMouseleave(event: MouseEvent) {
 </script>
 
 <template>
-  <orio-control-element v-slot="{ control }" v-bind="props">
+  <orio-control-element
+    v-slot="{ control }"
+    v-bind="props"
+    class="button-control"
+  >
     <component
       :is="asLink ? 'a' : 'button'"
       v-bind="{ ...$attrs, ...control }"
@@ -91,6 +95,11 @@ function onMouseleave(event: MouseEvent) {
 </template>
 
 <style lang="scss" scoped>
+/* ControlElement sets min-width: 0 for form controls; buttons must not shrink below their content. Doubled selector beats its scoped rule regardless of CSS order. */
+.button-control.button-control {
+  min-width: auto;
+}
+
 .button-element {
   text-decoration: none;
   box-sizing: border-box;

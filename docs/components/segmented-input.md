@@ -123,7 +123,8 @@ const code = ref("");
 - Pasting into any segment writes the whole pasted text into the model at
   once. With `type="number"` non-digit characters are stripped first; the
   result is truncated to the total capacity (`segments × segmentSize`). A
-  paste that fills every segment also emits `end`.
+  paste that fills every segment also emits `end`. Afterwards focus moves to
+  the first segment that isn't full, or the last one when all are full.
 - With `type="number"` each segment renders with `inputmode="numeric"`, so
   mobile devices show the digit keyboard.
 - The first segment carries `autocomplete="one-time-code"`, letting supported

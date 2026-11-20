@@ -38,7 +38,7 @@ invariants: true
   wrapper is `position: relative; display: inline-flex` — `overflow: visible`
   is implicit, but parent overflow may clip it.
 - **No interactive behavior.** Click does not bubble specially; it's a
-  `<span>`. For removable chips, use `<orio-tag>` instead.
+  `<span>`. For removable chips, use `<orio-tag removable>` instead.
 
 ## Quick reference — corner badge on an icon
 

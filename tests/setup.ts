@@ -1,17 +1,35 @@
+import { beforeEach, vi } from "vitest";
 import { config } from "@vue/test-utils";
 import Button from "../src/runtime/components/Button.vue";
 import NumberInput from "../src/runtime/components/NumberInput/index.vue";
+import NumberInputMoney from "../src/runtime/components/NumberInput/Money.vue";
+import Input from "../src/runtime/components/Input.vue";
 import ControlElement from "../src/runtime/components/ControlElement.vue";
 import Icon from "../src/runtime/components/Icon.vue";
 import LoadingSpinner from "../src/runtime/components/LoadingSpinner.vue";
+import { i18n } from "../src/runtime/i18n";
 import ViewText from "../src/runtime/components/view/Text.vue";
 
 // Register components globally for all tests
 config.global.components = {
   "orio-button": Button,
   "orio-number-input": NumberInput,
+  "orio-number-input-money": NumberInputMoney,
+  "orio-input": Input,
   "orio-control-element": ControlElement,
   "orio-icon": Icon,
   "orio-loading-spinner": LoadingSpinner,
   "orio-view-text": ViewText,
 };
+
+// jsdom has no matchMedia; re-applied per test so unstubAllGlobals() in a
+// spec doesn't remove it. Specs that care stub it themselves.
+beforeEach(() => {
+  vi.stubGlobal("matchMedia", () => ({
+    matches: false,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  }));
+});
+
+config.global.plugins = [i18n];

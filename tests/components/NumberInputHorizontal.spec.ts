@@ -6,7 +6,7 @@ import Button from "../../src/runtime/components/Button.vue";
 describe("NumberInputHorizontal", () => {
   it("renders with default value", () => {
     const wrapper = mount(NumberInputHorizontal);
-    expect(wrapper.find("input").element.value).toBe("0");
+    expect(wrapper.find("input").element.value).toBe("");
   });
 
   it("renders with custom value", () => {
@@ -60,5 +60,43 @@ describe("NumberInputHorizontal", () => {
   it("has controls container with correct positioning", () => {
     const wrapper = mount(NumberInputHorizontal);
     expect(wrapper.find(".controls").exists()).toBe(true);
+  });
+
+  it("names the stepper buttons and keeps them out of the tab order", () => {
+    const buttons = mount(NumberInputHorizontal).findAll("button");
+    expect(buttons.map((button) => button.attributes("aria-label"))).toEqual([
+      "Decrease",
+      "Increase",
+    ]);
+    buttons.forEach((button) =>
+      expect(button.attributes("tabindex")).toBe("-1"),
+    );
+  });
+
+  describe("stepper button size", () => {
+    const sizes = (wrapper: ReturnType<typeof mount>) =>
+      wrapper.findAllComponents(Button).map((button) => button.props("size"));
+
+    it.each([
+      ["inner", "xs", "xs"],
+      ["inner", "sm", "xs"],
+      ["inner", "md", "sm"],
+      ["vertical", "xs", "xs"],
+      ["vertical", "sm", "xs"],
+      ["horizontal", "md", "sm"],
+      ["vertical", "xl", "sm"],
+    ] as const)("%s + %s field uses %s buttons", (layout, size, expected) => {
+      const wrapper = mount(NumberInputHorizontal, { props: { layout, size } });
+      expect(sizes(wrapper)).toEqual([expected, expected]);
+    });
+
+    it("switches when the field size changes", async () => {
+      const wrapper = mount(NumberInputHorizontal, {
+        props: { layout: "inner", size: "md" },
+      });
+      expect(sizes(wrapper)).toEqual(["sm", "sm"]);
+      await wrapper.setProps({ size: "sm" });
+      expect(sizes(wrapper)).toEqual(["xs", "xs"]);
+    });
   });
 });

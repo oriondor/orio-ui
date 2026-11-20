@@ -116,8 +116,10 @@ function fillValue(text: string) {
   return Math.min(sanitizedText.length, capacity.value);
 }
 
-function handlePaste(event: ClipboardEvent) {
-  fillValue(event.clipboardData?.getData("text") ?? "");
+async function handlePaste(event: ClipboardEvent) {
+  if (!fillValue(event.clipboardData?.getData("text") ?? "")) return;
+  await nextTick();
+  focus();
 }
 
 // one-time-code autofill (and IME) drops the whole code into one box,
@@ -128,17 +130,12 @@ async function onSegmentInput(index: number, value: string) {
     return;
   }
   const before = inputComponentsModel.value.slice(0, index).join("");
-  const filledLength = fillValue(before + value);
+  fillValue(before + value);
   await nextTick();
   // the box may keep its old value, so Vue won't re-render the overflow away
   const element = inputComponents.value?.[index]?.input;
   if (element) element.value = inputComponentsModel.value[index] ?? "";
-  focusSegment(
-    Math.min(
-      Math.ceil(filledLength / Number(segmentSize)),
-      Number(segments) - 1,
-    ),
-  );
+  focus();
 }
 
 watch(

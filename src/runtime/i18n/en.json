@@ -37,6 +37,9 @@
     "light": "Light",
     "dark": "Dark"
   },
+  "tag": {
+    "remove": "Remove {text}"
+  },
   "toast": {
     "close": "Close notification"
   },
@@ -46,8 +49,19 @@
   "modal": {
     "close": "Close"
   },
+  "numberInput": {
+    "increase": "Increase",
+    "decrease": "Decrease"
+  },
   "segmentedInput": {
     "digit": "Digit {index} of {total}",
     "character": "Character {index} of {total}"
+  },
+  "moneyInput": {
+    "invalid": "Enter a valid amount with up to {places} decimal places",
+    "invalidWhole": "Enter a whole amount, without decimals",
+    "outOfRange": "Amount is outside the allowed range",
+    "tooLarge": "Amount is too large",
+    "currency": "Currency: {name}"
   }
 }

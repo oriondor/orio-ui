@@ -58,7 +58,11 @@ function holdSpace(event: KeyboardEvent) {
 </script>
 
 <template>
-  <orio-control-element v-slot="{ control }" v-bind="props">
+  <orio-control-element
+    v-slot="{ control }"
+    v-bind="props"
+    class="nav-button-control"
+  >
     <a
       v-bind="{ ...$attrs, ...control }"
       :href="asLink ? hrefFor(to!) : undefined"
@@ -82,6 +86,11 @@ function holdSpace(event: KeyboardEvent) {
 </template>
 
 <style lang="scss" scoped>
+/* ControlElement sets min-width: 0 for form controls; buttons must not shrink below their content. Doubled selector beats its scoped rule regardless of CSS order. */
+.nav-button-control.nav-button-control {
+  min-width: auto;
+}
+
 .nav-button-element {
   text-decoration: none;
   box-sizing: border-box;

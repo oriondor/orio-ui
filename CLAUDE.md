@@ -30,7 +30,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `DashedContainer.vue` — clickable dashed-border tile with icon and label, used for add/upload affordances. **Read the agent doc first.**
 - `Draggable.vue` — wrapper that makes any child draggable with mouse, pen or touch and carries a `data` value to `<orio-drop-zone>`. **Read the agent doc first.**
 - `DropZone.vue` — wrapper that accepts `<orio-draggable>` drops and emits `drop(data, event)`; slot exposes `isDragging` / `isOver`. **Read the agent doc first.**
-- `Modal.vue` — teleported overlay dialog with open-from-origin animation. **Read the agent doc first.**
+- `Modal.vue` — teleported overlay dialog (centered or bottom sheet) with open-from-origin animation. **Read the agent doc first.**
 - `Popover.vue` — anchored floating panel teleported to body with auto-flip placement and click-outside dismissal. **Read the agent doc first.**
 - `Toast/` — notification card drawn by the auto-mounted toast host; queue it with `useToast`, never place it by hand. **Read the agent doc first.**
 - `Tooltip.vue` — hover/focus-triggered tooltip teleported to body, with delay, arrow, and four placements. **Read the agent doc first.**
@@ -42,8 +42,9 @@ from the frontmatter of those docs; do not edit by hand.
 - `ControlElement.vue` — label/legend wrapper, owns a11y attrs, exposes the `control` slot prop bag. **Read the agent doc first.**
 - `Form.vue` — form wrapper that auto-binds child controls by `name` prop to a single object v-model. **Read the agent doc first.**
 - `Input.vue` — text input wrapping ControlElement; supports inner-floating label layout. **Read the agent doc first.**
-- `NumberInput/` — numeric input base with overlay controls slot; pair with Horizontal/Vertical variants for ready-made spinners. **Read the agent doc first.**
+- `NumberInput/` — native number input with overlay controls slot; pair with Horizontal/Vertical variants for ready-made spinners. **Read the agent doc first.**
 - `NumberInput/Horizontal.vue` — number input variant with minus/plus buttons flanking the field and press-and-hold repeat. **Read the agent doc first.**
+- `NumberInput/Money.vue` — locale-aware currency amount input with fixed symbol affix, text-driven paste parsing and optional minor-unit (cents) model. **Read the agent doc first.**
 - `NumberInput/Vertical.vue` — number input variant with chevron up/down stacked on the right and press-and-hold repeat. **Read the agent doc first.**
 - `RadioButton.vue` — single radio option wrapping ControlElement; group by sharing the same v-model. **Read the agent doc first.**
 - `SegmentedInput.vue` — fixed-length code input split into auto-advancing per-character segments for OTP / PIN entry. **Read the agent doc first.**
@@ -69,7 +70,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `LoadingSpinner.vue` — thin wrapper that renders the bundled `loading-loop` icon; no props.
 - `LongPress.vue` — wrapper that scales its child down while held and emits `trigger` after a delay or on Safari force click. **Read the agent doc first.**
 - `NavButton.vue` — bare nav-styled single `<a>` — `role="button"` without `to`, real href + router push with it — with `active` state and `aria-current="page"`. **Read the agent doc first.**
-- `Tag.vue` — small text chip with neutral or accent variant; static display only (no remove behavior). **Read the agent doc first.**
+- `Tag.vue` — small text chip with neutral or accent variant; optional `removable` native remove button emitting `remove`. **Read the agent doc first.**
 
 ### Media & misc
 - `gallery/Carousel.vue` — image carousel with swipe gestures, prev/next buttons, dynamic sizing, and per-image slot. **Read the agent doc first.**

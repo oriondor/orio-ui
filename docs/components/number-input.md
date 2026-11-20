@@ -1,6 +1,6 @@
 # NumberInput
 
-Numeric input components with min/max constraints and optional step controls. Available in three variants.
+Native numeric input with min/max constraints and optional step controls. Available in three variants. For currency amounts see [NumberInputMoney](./number-input-money).
 
 ## Live Demo
 
@@ -15,6 +15,7 @@ const horizontalLayout = ref(3)
 const innerBasic = ref(25)
 const innerVertical = ref(8)
 const innerHorizontal = ref(4)
+const empty = ref(null)
 </script>
 
 ### Basic (No Controls)
@@ -70,6 +71,19 @@ const innerHorizontal = ref(4)
   <div class="demo-output">Value: {{ price }}</div>
 </div>
 
+### Empty Value
+
+<div class="demo-container">
+  <orio-number-input-horizontal
+    v-model="empty"
+    :min="0"
+    :step="0.1"
+    :decimal-places="2"
+    label="Amount"
+  />
+  <div class="demo-output">Value: {{ empty }}</div>
+</div>
+
 ### Horizontal Layout
 
 <div class="demo-container">
@@ -112,10 +126,10 @@ const innerHorizontal = ref(4)
 
 ## Variants
 
-| Component | Description |
-|-----------|-------------|
-| `orio-number-input` | Basic number input without controls |
-| `orio-number-input-vertical` | Controls stacked vertically on the right |
+| Component                      | Description                                 |
+| ------------------------------ | ------------------------------------------- |
+| `orio-number-input`            | Basic number input without controls         |
+| `orio-number-input-vertical`   | Controls stacked vertically on the right    |
 | `orio-number-input-horizontal` | Minus/plus controls on left and right sides |
 
 ## Usage
@@ -128,7 +142,7 @@ const innerHorizontal = ref(4)
 </template>
 
 <script setup>
-const value = ref(0)
+const value = ref(0);
 </script>
 ```
 
@@ -183,31 +197,35 @@ const value = ref(0)
 
 ## Features
 
-- **Boundary validation** - Values are clamped to min/max range on blur
+- **Native number input** - Always renders `<input type="number">`: browser parsing, `.` as the decimal mark, no locale text handling. A `type` attribute is ignored. For currency amounts use [`orio-number-input-money`](./number-input-money)
+- **Nullable model** - Clearing the field emits `null` and never `0`; `-0` becomes `0`. The steppers start from `min ?? 0`, so from an empty field they land on `min + step` (`step` when there is no `min`). Native ArrowUp/ArrowDown from an empty field is the browser's own and goes to `min`
+- **Boundary clamping** - Values are clamped to min/max on blur (except a `readonly` field, which blur leaves unclamped) and on step; `disabled` and `readonly` block the steppers
+- **Exact decimal rounding** - Control decimal places with `decimalPlaces`; `1.005` at 2 places is `1.01`, `0.1 + 0.2` steps give `0.3`. Precision is the larger of `decimalPlaces` and the decimals of `step`
+- **Bad input is cleared** - Native bad input (a lone `-`, `e`, a trailing `.` such as `1.` in Chrome) is cleared on blur and the value is `null`
 - **Increment/Decrement buttons** - Click to adjust value by step amount (Vertical & Horizontal)
+- **Accessible steppers** - The buttons are named from vue-i18n (`numberInput.increase` / `numberInput.decrease`) and skipped by Tab (`tabindex="-1"`); the keyboard path is ArrowUp/ArrowDown on the input (spinbutton pattern)
 - **Press and hold** - Hold button to continuously adjust after 500ms delay (Vertical & Horizontal)
-- **Decimal precision** - Control decimal places with `decimalPlaces` prop
 
 ## Props
 
-| Prop            | Type                                       | Default      | Description                            |
-| --------------- | ------------------------------------------ | ------------ | -------------------------------------- |
-| `modelValue`    | `number`                                   | `0`          | Input value (v-model)                  |
-| `layout`        | `"vertical" \| "horizontal" \| "inner"`    | `"vertical"` | Label position relative to input       |
-| `min`           | `number`                                   | `undefined`  | Minimum allowed value                  |
-| `max`           | `number`                                   | `undefined`  | Maximum allowed value                  |
-| `step`          | `number`                                   | `1`          | Amount to increment/decrement per step |
-| `decimalPlaces` | `number`                                   | `0`          | Number of decimal places to display    |
-| `label`         | `string`                                   | `undefined`  | Label text                             |
-| `placeholder`   | `string`                                   | `undefined`  | Placeholder text                       |
+| Prop            | Type                                    | Default      | Description                                                                    |
+| --------------- | --------------------------------------- | ------------ | ------------------------------------------------------------------------------ |
+| `modelValue`    | `number \| null`                        | `null`       | Input value (v-model); empty is `null`                                         |
+| `layout`        | `"vertical" \| "horizontal" \| "inner"` | `"vertical"` | Label position relative to input                                               |
+| `min`           | `number`                                | `undefined`  | Minimum allowed value                                                          |
+| `max`           | `number`                                | `undefined`  | Maximum allowed value                                                          |
+| `step`          | `number`                                | `1`          | Amount to increment/decrement per step                                         |
+| `decimalPlaces` | `number`                                | `0`          | Decimal places values are rounded to (never fewer than the decimals of `step`) |
+| `label`         | `string`                                | `undefined`  | Label text                                                                     |
+| `placeholder`   | `string`                                | `undefined`  | Placeholder text                                                               |
 
 All standard HTML input attributes are supported via `v-bind="$attrs"`.
 
 ## Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `number` | Emitted when input value changes |
+| Event               | Payload          | Description                      |
+| ------------------- | ---------------- | -------------------------------- |
+| `update:modelValue` | `number \| null` | Emitted when input value changes |
 
 ## Styling
 
