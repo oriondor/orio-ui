@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.39.0](https://github.com/oriondor/orio-ui/compare/v1.38.0...v1.39.0) (2026-11-20)
+
+
+### Features
+
+* fixes and improvements for modal, number input and range picker ([#209](https://github.com/oriondor/orio-ui/issues/209)) ([d1b7c7d](https://github.com/oriondor/orio-ui/commit/d1b7c7d04ed11cf2f7f876abe864a2bb1bf6d97c))
+
 ## [1.38.0](https://github.com/oriondor/orio-ui/compare/v1.37.0...v1.38.0) (2026-11-08)
 
 fix: improve mobile controls and drag activation
