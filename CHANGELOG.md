@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.39.0](https://github.com/oriondor/orio-ui/compare/v1.38.0...v1.39.0) (2026-11-20)
 
+feat: shrinkable inputs, modal presentations, and native number input money support
 
-### Features
-
-* fixes and improvements for modal, number input and range picker ([#209](https://github.com/oriondor/orio-ui/issues/209)) ([d1b7c7d](https://github.com/oriondor/orio-ui/commit/d1b7c7d04ed11cf2f7f876abe864a2bb1bf6d97c))
-
+- feat: Input and ControlElement can shrink. `.control` uses `var(--control-margin, 0)` and `min-width: 0`. Consumers that relied on the 0.5rem margin must set `--control-margin: 0.5rem` or use `gap`.
+- feat: Modal adds `presentation` (`dialog`, `sheet`, `auto`) and `dragHandle`. `dialog` is the default. `auto` resolves to a sheet below 640px and stays fixed while open. Reduced motion closes immediately.
+- feat: NumberInput uses a native `type="number"` input with a `number | null` model that defaults to `null`. This breaks consumers that expected `0` by default.
+- feat: NumberInputMoney adds a locale-aware, currency-required input with nullable and minor-unit models, bounds, step, and a controls slot.
+- fix: Horizontal NumberInput label and stepper button spacing are corrected.
+- refactor: Money parsing and formatting move to pure functions in `utils/money.ts`, with direct tests. Review fixes cover locale separators, readonly blur, and form submission.
+- fix: SegmentedInput moves focus to the first open segment after paste.
+- feat: Tag adds a `removable` prop that emits `remove`. Selector adds addon keyboard handling and listbox accessibility changes.
 ## [1.38.0](https://github.com/oriondor/orio-ui/compare/v1.37.0...v1.38.0) (2026-11-08)
 
 fix: improve mobile controls and drag activation
