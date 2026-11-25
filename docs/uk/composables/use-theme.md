@@ -272,7 +272,7 @@ const themes = [
 }
 ```
 
-`--color-accent-ink`, `--color-accent-hover` і `--color-accent-active` обчислюються автоматично через `color-mix()`.
+`--color-accent-hover` і `--color-accent-active` обчислюються з `--color-accent` через `color-mix()`. `--color-accent-ink` (текст на акцентних заливках) не обчислюється: задайте його в кожній темі так, щоб контраст з акцентом був щонайменше 4.5:1 (типове значення біле). Зберігайте форму `:root[data-theme="x"]`; див. [Теми](/uk/theming) про специфічність.
 
 ### Створення нової теми
 

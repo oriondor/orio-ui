@@ -272,7 +272,7 @@ Themes control the accent colors used throughout the UI. The main variables you 
 }
 ```
 
-The `--color-accent-ink`, `--color-accent-hover`, and `--color-accent-active` are automatically derived using `color-mix()`.
+`--color-accent-hover` and `--color-accent-active` are derived from `--color-accent` using `color-mix()`. `--color-accent-ink` (text on accent fills) is not derived: set it per theme so it reaches 4.5:1 on your accent (the default is white). Keep the `:root[data-theme="x"]` form; see [Theming](/theming) for the specificity note.
 
 ### Creating a New Theme
 
