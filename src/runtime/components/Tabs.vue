@@ -137,7 +137,7 @@ function itemAttrs(option: TabsOption<T>, index: number) {
     :aria-label="label"
     :aria-disabled="disabled || undefined"
     :class="['tabs', variant, { block }]"
-    :style="[tokens, { '--tabs-count': options.length }]"
+    :style="tokens"
     @keydown="onKeydown"
   >
     <button
@@ -167,7 +167,11 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   --tabs-active-bg: var(--orio-tabs-active-bg, var(--color-accent));
   --tabs-active-ink: var(--orio-tabs-active-ink, var(--color-accent-ink));
 
-  display: flex;
+  /* Grid, not flex: columns are sized max-content up to the strip, and when it is narrower the free space is shared equally, so a short label keeps its full width while a longer sibling absorbs the shrink. Items can never exceed the track, whatever the gap or count; only labels ellipsise. */
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, max-content);
+  justify-content: start;
   box-sizing: border-box;
   max-width: 100%;
   gap: var(--tabs-gap);
@@ -175,9 +179,7 @@ function itemAttrs(option: TabsOption<T>, index: number) {
 
   &.block {
     width: 100%;
-    .tab {
-      flex: 1 1 0;
-    }
+    grid-auto-columns: minmax(0, 1fr);
   }
 }
 
@@ -186,11 +188,7 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   align-items: center;
   justify-content: center;
   gap: var(--control-gap);
-  /* Flex shrink is proportional, so a short label next to a long one would be squeezed too: floor each item at 4.5rem, but never above its equal share of the track (after gaps), so the floors always fit and labels ellipsise. % in min-width ignores the track in its intrinsic size, so fit-content tracks stay snug. */
-  min-width: min(
-    4.5rem,
-    calc((100% - (var(--tabs-count) - 1) * var(--tabs-gap)) / var(--tabs-count))
-  );
+  min-width: 0;
   min-height: 24px;
   box-sizing: border-box;
   padding: var(--control-py) var(--control-px);

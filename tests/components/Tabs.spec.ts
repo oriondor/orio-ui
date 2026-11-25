@@ -346,4 +346,12 @@ describe("Tabs", () => {
     expect(make({ block: true }).classes()).toContain("block");
     expect(make().classes()).not.toContain("block");
   });
+
+  it("sizes via the stylesheet grid, not per-count inline style", () => {
+    // jsdom cannot lay out; real containment is covered by the browser probe. This blocks the old --tabs-count min-width formula coming back.
+    const style =
+      make({ options: [...options, ...options] }).attributes("style") ?? "";
+    expect(style).not.toContain("--tabs-count");
+    expect(style).not.toMatch(/width/);
+  });
 });

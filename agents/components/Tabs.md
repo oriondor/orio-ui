@@ -44,8 +44,12 @@ invariants: true
 - Do not restyle with internal classes; override `--orio-tabs-gap`,
   `--orio-tabs-radius`, `--orio-tabs-track-bg`, `--orio-tabs-active-bg`,
   `--orio-tabs-active-ink`.
-- `segmented` is `width: fit-content`; add `block` for full width. Labels
-  ellipsise: each item keeps at least 4.5rem or its equal share of the strip, whichever is smaller, so items always stay inside the strip. Constrain width on the parent, not the item.
+- `segmented` is `width: fit-content`; add `block` for full width. Layout is a CSS grid
+  (`minmax(0, max-content)` columns; `block`: `minmax(0, 1fr)`): items always stay
+  inside the strip at any width, gap or count. When narrower than the content,
+  free space is shared equally, so short labels keep their width and only the
+  longer ones ellipsise (very narrow strips ellipsise every label). Constrain
+  width on the parent, not the item.
 - The `option` slot replaces icon + label, so it also owns any icon.
 - Arrow keys only see the strip's own buttons; buttons inside the `option` slot are ignored.
 - Overflow scrolling, vertical orientation and panels are out of scope.
