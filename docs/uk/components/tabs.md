@@ -101,7 +101,7 @@ const levelOptions = [
 <div class="demo-container">
   <orio-tabs v-model="tab" :options="tabOptions" block role="radiogroup" label="Блок: підкреслення" />
   <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block label="Блок: сегментований" />
-  <orio-tabs v-model="longLabel" :options="longOptions" variant="segmented" role="radiogroup" label="Довгі підписи" style="max-width: 16rem" />
+  <orio-tabs v-model="longLabel" :options="longOptions" variant="segmented" role="radiogroup" label="Довгі підписи" style="max-width: min(16rem, 100%)" />
 </div>
 
 ### Розміри

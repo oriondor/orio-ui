@@ -101,7 +101,7 @@ ellipsise inside the item.
 <div class="demo-container">
   <orio-tabs v-model="tab" :options="tabOptions" block role="radiogroup" label="Block underline" />
   <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block label="Block segmented" />
-  <orio-tabs v-model="longLabel" :options="longOptions" variant="segmented" role="radiogroup" label="Long labels" style="max-width: 16rem" />
+  <orio-tabs v-model="longLabel" :options="longOptions" variant="segmented" role="radiogroup" label="Long labels" style="max-width: min(16rem, 100%)" />
 </div>
 
 ### Sizes

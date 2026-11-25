@@ -3,22 +3,42 @@ import { describe, expect, it } from "vitest";
 
 // Resolves the real tokens in colors.css (hex, hsl, color-mix, var) per
 // theme x mode, then checks WCAG contrast of --color-accent-text.
-const css = readFileSync("src/runtime/assets/css/colors.css", "utf8").replace(
-  /\/\*[\s\S]*?\*\//g,
-  "",
+function parseBlocks(source: string) {
+  const css = source.replace(/\/\*[\s\S]*?\*\//g, "");
+  return [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].map((match) => ({
+    selector: match[1].trim(),
+    declarations: [...match[2].matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map(
+      (declaration) => [declaration[1], declaration[2].trim()] as const,
+    ),
+  }));
+}
+const colorsCss = readFileSync("src/runtime/assets/css/colors.css", "utf8");
+const blocks = parseBlocks(colorsCss);
+const hoverCss = readFileSync(
+  "src/runtime/assets/css/cool-gradient-hover.css",
+  "utf8",
 );
-const blocks = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].map((match) => ({
-  selector: match[1].trim(),
-  declarations: [...match[2].matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map(
-    (declaration) => [declaration[1], declaration[2].trim()] as const,
-  ),
-}));
+/** Attribute selectors and :root are class-level (0,1,0) each; :not() adds only its argument. */
+const specificity = (selector: string) =>
+  [...selector.matchAll(/\[|:root/g)].length;
 
 type Rgb = [number, number, number];
 
-function resolveTokens(theme: string | null, mode: string) {
+/** Cascade by specificity, then source order; `extra` blocks come last (a consumer stylesheet). */
+function resolveTokens(
+  theme: string | null,
+  mode: string,
+  extra: typeof blocks = [],
+) {
   const tokens: Record<string, string> = {};
-  blocks.forEach((block) => {
+  const ordered = [...blocks, ...extra]
+    .map((block, order) => ({ block, order }))
+    .sort(
+      (a, b) =>
+        specificity(a.block.selector) - specificity(b.block.selector) ||
+        a.order - b.order,
+    );
+  ordered.forEach(({ block }) => {
     const attrs = [...block.selector.matchAll(/\[data-(\w+)="(\w+)"\]/g)];
     const unthemedOnly = block.selector.includes(":not([data-theme])");
     const matches =
@@ -153,6 +173,53 @@ describe("accent color contrast", () => {
         expect(ratio).toBeGreaterThanOrEqual(4.5);
       }),
     ),
+  );
+
+  themes.forEach((theme) =>
+    ["light", "dark"].forEach((mode) =>
+      it(`${theme ?? "default"} ${mode} primary Button ink >= 4.5 across the hover gradient`, () => {
+        const tokens = resolveTokens(theme, mode);
+        // Stops and mix base come from cool-gradient-hover.css; Button primary sets --gh-color.
+        parseBlocks(hoverCss)
+          .filter(
+            (block) =>
+              block.selector === ".gradient-hover" ||
+              (block.selector.includes('[data-mode="dark"]') &&
+                mode === "dark"),
+          )
+          .forEach((block) =>
+            block.declarations.forEach(([name, value]) => {
+              tokens[name] = value;
+            }),
+          );
+        tokens["--gh-color"] = "var(--color-accent)";
+        const gradient = hoverCss.match(/linear-gradient\(([\s\S]*?)\);/)![1];
+        const stops = splitTopLevel(gradient)
+          .slice(1)
+          .map((stop) => stop.replace(/\s+\d+%$/, ""));
+        expect(stops.length).toBe(3);
+        const ink = parseColor("var(--color-accent-ink)", tokens);
+        stops.forEach((stop) => {
+          const ratio = contrast(ink, parseColor(stop, tokens));
+          if (process.env.SHOW_RATIOS)
+            console.log(theme ?? "default", mode, "hover", ratio.toFixed(2));
+          expect(ratio).toBeGreaterThanOrEqual(4.5);
+        });
+      }),
+    ),
+  );
+
+  ["light", "dark"].forEach((mode) =>
+    it(`consumer :root theme keeps its ink and accent-text in ${mode}`, () => {
+      const consumer = parseBlocks(`
+        [data-theme="coral"] { --color-accent: #ff7849; --color-accent-ink: #0e1116; }
+        :root[data-theme="coral"][data-mode="dark"] { --color-accent-text: #ff7849; }
+      `);
+      const tokens = resolveTokens("coral", mode, consumer);
+      expect(tokens["--color-accent-ink"]).toBe("#0e1116");
+      if (mode === "dark")
+        expect(tokens["--color-accent-text"]).toBe("#ff7849");
+    }),
   );
 
   it("derives from --color-accent for a consumer theme setting only the accent", () => {

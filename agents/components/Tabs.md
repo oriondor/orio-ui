@@ -45,7 +45,7 @@ invariants: true
   `--orio-tabs-radius`, `--orio-tabs-track-bg`, `--orio-tabs-active-bg`,
   `--orio-tabs-active-ink`.
 - `segmented` is `width: fit-content`; add `block` for full width. Labels
-  ellipsise, so constrain width on the parent, not the item.
+  ellipsise: each item keeps at least 4.5rem or its equal share of the strip, whichever is smaller, so items always stay inside the strip. Constrain width on the parent, not the item.
 - The `option` slot replaces icon + label, so it also owns any icon.
 - Arrow keys only see the strip's own buttons; buttons inside the `option` slot are ignored.
 - Overflow scrolling, vertical orientation and panels are out of scope.

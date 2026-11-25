@@ -6,9 +6,9 @@
 
   background-image: linear-gradient(
     var(--gh-angle),
-    color-mix(in srgb, var(--gh-color) 90%, var(--gh-mix-base)) 10%,
+    color-mix(in srgb, var(--gh-color) 94%, var(--gh-mix-base)) 10%,
     var(--gh-color) 50%,
-    color-mix(in srgb, var(--gh-color) 80%, var(--gh-mix-base)) 80%
+    color-mix(in srgb, var(--gh-color) 92%, var(--gh-mix-base)) 80%
   );
   background-repeat: no-repeat;
 

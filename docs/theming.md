@@ -155,7 +155,7 @@ Controls the accent color. Set via `data-theme="themename"` on `<html>`:
   --color-accent: hsl(258, 85%, 62%);
 }
 
-[data-theme="normal"] {
+:root[data-theme="normal"] {
   --color-accent: #ced1d5;
   --color-accent-ink: #2a2a2b;
 }
@@ -187,12 +187,12 @@ Create a CSS file with your theme:
 ```css
 /* assets/css/my-themes.css */
 
-[data-theme="coral"] {
+:root[data-theme="coral"] {
   --color-accent: hsl(16, 100%, 66%);
   --color-accent-ink: #0e1116;
 }
 
-[data-theme="lavender"] {
+:root[data-theme="lavender"] {
   --color-accent: hsl(270, 60%, 70%);
   --color-accent-ink: #0e1116;
 }
@@ -200,6 +200,8 @@ Create a CSS file with your theme:
 
 ::: warning
 When your theme sets `--color-accent`, also set `--color-accent-ink` (text on accent fills: primary button, badge, tabs, checkbox). The default is white, which fails 4.5:1 on mid and light accents. Pick `#fff` or a dark ink so the pair reaches 4.5:1.
+
+Write your theme selectors as `:root[data-theme="x"]`, like the built-in themes. A bare `[data-theme="x"]` has lower specificity than the built-in `:root[data-mode="dark"]` block, which would then win for `--color-accent-text`. Ink is the same in both modes, so one rule is enough; `--color-accent-text` (accent used as text) differs per mode, so set it for light and, if the derived value is not what you want, again in `:root[data-theme="x"][data-mode="dark"]`.
 :::
 
 Import in `nuxt.config.ts`:
@@ -225,7 +227,7 @@ setTheme('coral')
 For full control, override the derived accent variables:
 
 ```css
-[data-theme="brand"] {
+:root[data-theme="brand"] {
   --color-accent: #ff6b00;
   --color-accent-ink: #ffffff;
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 15%, #e3e3e3);
@@ -235,7 +237,7 @@ For full control, override the derived accent variables:
 }
 
 /* Dark mode overrides for your theme */
-[data-theme="brand"][data-mode="dark"] {
+:root[data-theme="brand"][data-mode="dark"] {
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 12%, #0e1116);
   --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, #0e1116);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 30%, white 70%);

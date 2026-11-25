@@ -70,7 +70,6 @@
   --color-muted: #a2a9b6;
   --color-border: #2e333d;
 
-  --color-accent-ink: #ffffff;
   --color-accent-text: color-mix(in srgb, var(--color-accent) 55%, white);
   --color-accent-soft-base: color-mix(
     in srgb,
@@ -129,7 +128,7 @@
 }
 
 :root[data-theme="navy"] {
-  --color-accent-ink: #0e1116; /* white is < 4.5:1 on this accent */
+  --color-accent-ink: #000; /* white is < 4.5:1; #0e1116 drops under 4.5:1 on the darker hover gradient */
   --color-accent: hsl(219, 45%, 56%);
   --color-accent-soft-darker: var(--color-accent-soft);
 }

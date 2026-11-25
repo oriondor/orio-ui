@@ -137,7 +137,7 @@ function itemAttrs(option: TabsOption<T>, index: number) {
     :aria-label="label"
     :aria-disabled="disabled || undefined"
     :class="['tabs', variant, { block }]"
-    :style="tokens"
+    :style="[tokens, { '--tabs-count': options.length }]"
     @keydown="onKeydown"
   >
     <button
@@ -186,8 +186,11 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   align-items: center;
   justify-content: center;
   gap: var(--control-gap);
-  /* labels ellipsise, but flex shrink is proportional: keep short items readable. Fixed, not %, so a fit-content track still contains every item. */
-  min-width: 4.5rem;
+  /* Flex shrink is proportional, so a short label next to a long one would be squeezed too: floor each item at 4.5rem, but never above its equal share of the track (after gaps), so the floors always fit and labels ellipsise. % in min-width ignores the track in its intrinsic size, so fit-content tracks stay snug. */
+  min-width: min(
+    4.5rem,
+    calc((100% - (var(--tabs-count) - 1) * var(--tabs-gap)) / var(--tabs-count))
+  );
   min-height: 24px;
   box-sizing: border-box;
   padding: var(--control-py) var(--control-px);
