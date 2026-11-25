@@ -179,7 +179,8 @@ function itemAttrs(option: TabOption<T>, index: number) {
   align-items: center;
   justify-content: center;
   gap: var(--control-gap);
-  min-width: 0;
+  /* labels ellipsise, but flex shrink is proportional: keep short items readable */
+  min-width: min(100%, 4.5rem);
   min-height: 24px;
   box-sizing: border-box;
   padding: var(--control-py) var(--control-px);

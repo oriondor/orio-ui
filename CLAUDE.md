@@ -70,6 +70,7 @@ from the frontmatter of those docs; do not edit by hand.
 - `LoadingSpinner.vue` — thin wrapper that renders the bundled `loading-loop` icon; no props.
 - `LongPress.vue` — wrapper that scales its child down while held and emits `trigger` after a delay or on Safari force click. **Read the agent doc first.**
 - `NavButton.vue` — bare nav-styled single `<a>` — `role="button"` without `to`, real href + router push with it — with `active` state and `aria-current="page"`. **Read the agent doc first.**
+- `Tabs.vue` — single-choice button strip, underline or segmented look, tablist or radiogroup semantics, roving-tabindex keyboard. **Read the agent doc first.**
 - `Tag.vue` — small text chip with neutral or accent variant; optional `removable` native remove button emitting `remove`. **Read the agent doc first.**
 
 ### Media & misc
