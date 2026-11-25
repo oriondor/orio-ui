@@ -15,7 +15,7 @@ menus and tab bars. It always renders one `<a>`: pass `to` and it gets a real
 ## Invariants
 
 - **`active` prop is the "is this the current item" flag.** When true:
-  - Text becomes accent color, font-weight 600.
+  - Text becomes `--color-accent-text` (contrast-safe accent), font-weight 600.
   - `aria-current="page"` is set on the inner `<a>`.
   - `undefined` (not removed) otherwise — so it doesn't appear in the
     DOM at all when inactive.

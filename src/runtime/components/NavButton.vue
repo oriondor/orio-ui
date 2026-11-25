@@ -114,11 +114,11 @@ function holdSpace(event: KeyboardEvent) {
   }
 
   &:hover:not([aria-disabled="true"]) {
-    color: var(--color-accent);
+    color: var(--color-accent-text, var(--color-accent));
   }
 
   &.active {
-    color: var(--color-accent);
+    color: var(--color-accent-text, var(--color-accent));
     font-weight: 600;
   }
 

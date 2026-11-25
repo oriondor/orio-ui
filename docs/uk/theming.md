@@ -75,6 +75,7 @@ MODES  // ['light', 'dark']
 --color-accent-border   /* Accent-tinted border */
 --color-accent-hover    /* Accent hover state */
 --color-accent-active   /* Accent active/pressed state */
+--color-accent-text     /* Акцент для тексту: >= 4.5:1 на bg і surface в кожній вбудованій темі. Виводиться з --color-accent; перевизначте у власній темі. Використовуйте var(--color-accent-text, var(--color-accent)) */
 
 /* Semantic colors */
 --color-danger          /* Error/destructive actions */

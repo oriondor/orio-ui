@@ -75,6 +75,7 @@ These define the foundation and are always available:
 --color-accent-border   /* Accent-tinted border */
 --color-accent-hover    /* Accent hover state */
 --color-accent-active   /* Accent active/pressed state */
+--color-accent-text     /* Accent as text: >= 4.5:1 on bg and surface in every bundled theme. Derived from --color-accent; override it in your own theme. Use var(--color-accent-text, var(--color-accent)) */
 
 /* Semantic colors */
 --color-danger          /* Error/destructive actions */

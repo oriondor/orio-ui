@@ -245,7 +245,8 @@ NavButton використовує такі CSS-змінні:
 
 ```css
 --color-text          /* Default text color */
---color-accent        /* Hover and active state color */
+--color-accent-text   /* Hover and active text color (falls back to --color-accent) */
+--color-accent        /* Focus ring */
 --border-radius-md    /* Border radius */
 ```
 

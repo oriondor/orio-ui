@@ -9,6 +9,8 @@
   /* Accent family */
   --color-accent: #1f3a8a;
   --color-accent-ink: #ffffff;
+  /* Text-safe accent (>= 4.5:1 on bg and surface); override per theme if needed */
+  --color-accent-text: color-mix(in srgb, var(--color-accent) 55%, black);
   --color-accent-soft-base: color-mix(
     in srgb,
     var(--color-accent) 15%,
@@ -69,6 +71,7 @@
   --color-border: #2e333d;
 
   --color-accent-ink: #ffffff;
+  --color-accent-text: color-mix(in srgb, var(--color-accent) 55%, white);
   --color-accent-soft-base: color-mix(
     in srgb,
     var(--color-accent) 12%,
@@ -107,6 +110,11 @@
     var(--color-accent-ink) 90%,
     white 10%
   );
+}
+
+:root[data-theme="normal"][data-mode="light"] {
+  /* near-white accent needs a much darker text tint */
+  --color-accent-text: color-mix(in srgb, var(--color-accent) 40%, black);
 }
 
 :root[data-theme="inverse"][data-mode="light"] {
