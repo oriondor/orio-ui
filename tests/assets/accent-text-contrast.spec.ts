@@ -126,7 +126,7 @@ const themes = [
   "violet",
 ];
 
-describe("--color-accent-text contrast", () => {
+describe("accent color contrast", () => {
   themes.forEach((theme) =>
     ["light", "dark"].forEach((mode) =>
       it(`${theme ?? "default"} ${mode} >= 4.5 on bg and surface`, () => {
@@ -138,6 +138,19 @@ describe("--color-accent-text contrast", () => {
             console.log(theme ?? "default", mode, surface, ratio.toFixed(2));
           expect(ratio).toBeGreaterThanOrEqual(4.5);
         });
+      }),
+    ),
+  );
+
+  themes.forEach((theme) =>
+    ["light", "dark"].forEach((mode) =>
+      it(`${theme ?? "default"} ${mode} --color-accent-ink >= 4.5 on accent`, () => {
+        const tokens = resolveTokens(theme, mode);
+        const ink = parseColor("var(--color-accent-ink)", tokens);
+        const ratio = contrast(ink, parseColor("var(--color-accent)", tokens));
+        if (process.env.SHOW_RATIOS)
+          console.log(theme ?? "default", mode, "ink/accent", ratio.toFixed(2));
+        expect(ratio).toBeGreaterThanOrEqual(4.5);
       }),
     ),
   );

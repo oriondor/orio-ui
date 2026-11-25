@@ -189,12 +189,18 @@ MODES  // ['light', 'dark']
 
 [data-theme="coral"] {
   --color-accent: hsl(16, 100%, 66%);
+  --color-accent-ink: #0e1116;
 }
 
 [data-theme="lavender"] {
   --color-accent: hsl(270, 60%, 70%);
+  --color-accent-ink: #0e1116;
 }
 ```
+
+::: warning
+Якщо ваша тема задає `--color-accent`, задайте також `--color-accent-ink` (текст на акцентних заливках: primary-кнопка, badge, вкладки, чекбокс). Типове значення біле, і воно не досягає 4.5:1 на середніх і світлих акцентах. Оберіть `#fff` або темний колір так, щоб пара мала контраст щонайменше 4.5:1.
+:::
 
 Підключіть його в `nuxt.config.ts`:
 

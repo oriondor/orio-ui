@@ -129,15 +129,18 @@
 }
 
 :root[data-theme="navy"] {
+  --color-accent-ink: #0e1116; /* white is < 4.5:1 on this accent */
   --color-accent: hsl(219, 45%, 56%);
   --color-accent-soft-darker: var(--color-accent-soft);
 }
 
 :root[data-theme="teal"] {
+  --color-accent-ink: #0e1116; /* white is < 4.5:1 on this accent */
   --color-accent: hsl(174, 65%, 44%);
 }
 
 :root[data-theme="forest"] {
+  --color-accent-ink: #0e1116; /* white is < 4.5:1 on this accent */
   --color-accent: hsl(153, 35%, 53%);
 }
 

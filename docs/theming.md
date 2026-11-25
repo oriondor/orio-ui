@@ -189,12 +189,18 @@ Create a CSS file with your theme:
 
 [data-theme="coral"] {
   --color-accent: hsl(16, 100%, 66%);
+  --color-accent-ink: #0e1116;
 }
 
 [data-theme="lavender"] {
   --color-accent: hsl(270, 60%, 70%);
+  --color-accent-ink: #0e1116;
 }
 ```
+
+::: warning
+When your theme sets `--color-accent`, also set `--color-accent-ink` (text on accent fills: primary button, badge, tabs, checkbox). The default is white, which fails 4.5:1 on mid and light accents. Pick `#fff` or a dark ink so the pair reaches 4.5:1.
+:::
 
 Import in `nuxt.config.ts`:
 
