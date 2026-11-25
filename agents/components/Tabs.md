@@ -25,8 +25,10 @@ invariants: true
 - **`id-prefix` must be unique per page** (duplicate ids otherwise) and only
   applies to `tablist`.
 - **Duplicate option values: first match wins.**
+- **Types:** `TabsProps` and `TabsOption` are exported from `Tabs.vue`.
 - **Per-option `disabled` is `aria-disabled`** (still focusable-looking, never
-  selectable, skipped by keys). **The whole-component `disabled` prop sets
+  selectable, skipped by keys). Arrows step from the focused item, even a
+  disabled selected one, to the nearest enabled neighbour, wrapping. **The whole-component `disabled` prop sets
   native `disabled`** on every button.
 - **Selection follows focus.** Arrow keys (wrap, flipped under `dir="rtl"`),
   Home/End move focus and select at once. There is no manual-activation mode.
@@ -45,6 +47,7 @@ invariants: true
 - `segmented` is `width: fit-content`; add `block` for full width. Labels
   ellipsise, so constrain width on the parent, not the item.
 - The `option` slot replaces icon + label, so it also owns any icon.
+- Arrow keys only see the strip's own buttons; buttons inside the `option` slot are ignored.
 - Overflow scrolling, vertical orientation and panels are out of scope.
 
 ## Quick reference

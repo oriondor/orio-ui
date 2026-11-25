@@ -20,9 +20,12 @@ function resolveTokens(theme: string | null, mode: string) {
   const tokens: Record<string, string> = {};
   blocks.forEach((block) => {
     const attrs = [...block.selector.matchAll(/\[data-(\w+)="(\w+)"\]/g)];
-    const matches = attrs.every(
-      ([, name, value]) => (name === "mode" ? mode : theme) === value,
-    );
+    const unthemedOnly = block.selector.includes(":not([data-theme])");
+    const matches =
+      (!unthemedOnly || theme === null) &&
+      attrs.every(
+        ([, name, value]) => (name === "mode" ? mode : theme) === value,
+      );
     if (matches)
       block.declarations.forEach(([name, value]) => (tokens[name] = value));
   });

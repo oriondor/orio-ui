@@ -3,36 +3,38 @@ import { computed, ref, toRef } from "vue";
 import { useControlTokens } from "../composables/useControlSize";
 import type { ControlSize } from "./ControlElement.vue";
 
-interface TabOption<V> {
+export interface TabsOption<V = string | number> {
   value: V;
   label: string;
   icon?: string;
   disabled?: boolean;
 }
 
-const props = withDefaults(
-  defineProps<{
-    options: TabOption<T>[];
-    /** Look only. */
-    variant?: "underline" | "segmented";
-    /** Semantics only: `tablist` for content switching, `radiogroup` for choosing a value. */
-    role?: "tablist" | "radiogroup";
-    /** Accessible name (aria-label). Use `aria-labelledby` for a visible label. */
-    label?: string;
-    /** `tablist` only: tabs get `{idPrefix}-tab-{value}` ids and `aria-controls="{idPrefix}-panel-{value}"`. */
-    idPrefix?: string;
-    /** Full width with equal-width items. */
-    block?: boolean;
-    disabled?: boolean;
-    size?: ControlSize;
-  }>(),
-  { variant: "underline", role: "tablist" },
-);
+export interface TabsProps<V = string | number> {
+  options: TabsOption<V>[];
+  /** Look only. */
+  variant?: "underline" | "segmented";
+  /** Semantics only: `tablist` for content switching, `radiogroup` for choosing a value. */
+  role?: "tablist" | "radiogroup";
+  /** Accessible name (aria-label). Use `aria-labelledby` for a visible label. */
+  label?: string;
+  /** `tablist` only: tabs get `{idPrefix}-tab-{value}` ids and `aria-controls="{idPrefix}-panel-{value}"`. */
+  idPrefix?: string;
+  /** Full width with equal-width items. */
+  block?: boolean;
+  disabled?: boolean;
+  size?: ControlSize;
+}
+
+const props = withDefaults(defineProps<TabsProps<T>>(), {
+  variant: "underline",
+  role: "tablist",
+});
 
 const model = defineModel<T | undefined>();
 
 defineSlots<{
-  option?(props: { option: TabOption<T>; selected: boolean }): unknown;
+  option?(props: { option: TabsOption<T>; selected: boolean }): unknown;
 }>();
 
 const { tokens } = useControlTokens(toRef(props, "size"));
@@ -70,43 +72,48 @@ function isRtl() {
   return !!root && getComputedStyle(root).direction === "rtl";
 }
 
+/** Direct children only: the option slot may contain its own buttons. */
+function tabButtons() {
+  return Array.from(
+    rootRef.value?.querySelectorAll<HTMLElement>(":scope > button") ?? [],
+  );
+}
+
 function moveTo(index: number) {
   select(index);
-  rootRef.value?.querySelectorAll<HTMLElement>("button")[index]?.focus();
+  tabButtons()[index]?.focus();
 }
 
 function onKeydown(event: KeyboardEvent) {
   if (props.disabled) return;
-  const enabled = props.options
-    .map((_, index) => index)
-    .filter((index) => isEnabled(index));
-  if (!enabled.length) return;
+  const count = props.options.length;
+  const firstEnabled = props.options.findIndex((option) => !option.disabled);
+  if (firstEnabled === -1) return;
 
   const forwardKey = isRtl() ? "ArrowLeft" : "ArrowRight";
   const backwardKey = isRtl() ? "ArrowRight" : "ArrowLeft";
-  const focusedIndex = Array.from(
-    rootRef.value!.querySelectorAll("button"),
-  ).indexOf((event.target as HTMLElement).closest("button")!);
-  const current = enabled.indexOf(focusedIndex);
+  const focusedIndex = tabButtons().indexOf(
+    (event.target as HTMLElement).closest("button")!,
+  );
 
   let next: number;
-  if (event.key === "Home") next = 0;
-  else if (event.key === "End") next = enabled.length - 1;
+  if (event.key === "Home") next = firstEnabled;
+  else if (event.key === "End")
+    next = props.options.findLastIndex((option) => !option.disabled);
   else if (event.key === forwardKey || event.key === backwardKey) {
+    if (focusedIndex === -1) return;
     const step = event.key === forwardKey ? 1 : -1;
-    // A focused-but-disabled selected item is not in `enabled`: step from the tab stop's neighbours.
-    if (current === -1) {
-      next = step === 1 ? 0 : enabled.length - 1;
-    } else {
-      next = (current + step + enabled.length) % enabled.length;
-    }
+    // Walk from the focused item (even a disabled one) to the nearest enabled, wrapping.
+    next = focusedIndex;
+    do next = (next + step + count) % count;
+    while (!isEnabled(next));
   } else return;
 
   event.preventDefault();
-  moveTo(enabled[next]);
+  moveTo(next);
 }
 
-function itemAttrs(option: TabOption<T>, index: number) {
+function itemAttrs(option: TabsOption<T>, index: number) {
   const selected = index === selectedIndex.value;
   return isTablist.value
     ? {
@@ -135,7 +142,7 @@ function itemAttrs(option: TabOption<T>, index: number) {
   >
     <button
       v-for="(option, index) in options"
-      :key="option.value"
+      :key="index"
       v-bind="itemAttrs(option, index)"
       type="button"
       :class="['tab', { selected: index === selectedIndex }]"
@@ -179,8 +186,8 @@ function itemAttrs(option: TabOption<T>, index: number) {
   align-items: center;
   justify-content: center;
   gap: var(--control-gap);
-  /* labels ellipsise, but flex shrink is proportional: keep short items readable */
-  min-width: min(100%, 4.5rem);
+  /* labels ellipsise, but flex shrink is proportional: keep short items readable. Fixed, not %, so a fit-content track still contains every item. */
+  min-width: 4.5rem;
   min-height: 24px;
   box-sizing: border-box;
   padding: var(--control-py) var(--control-px);

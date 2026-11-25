@@ -156,3 +156,38 @@
 :root[data-theme="violet"] {
   --color-accent: hsl(258 85% 62%);
 }
+
+/* Raw accent already >= 4.5:1 on bg and surface in these theme x mode combos:
+   use it directly instead of the derived mix, which over-darkens/lightens it
+   until it is indistinguishable from --color-text. Consumer themes keep the mix. */
+:root:not([data-theme])[data-mode="light"] {
+  --color-accent-text: var(--color-accent);
+}
+
+:root[data-theme="inverse"] {
+  --color-accent-text: var(--color-accent);
+}
+
+:root[data-theme="normal"][data-mode="dark"] {
+  --color-accent-text: var(--color-accent);
+}
+
+:root[data-theme="teal"][data-mode="dark"] {
+  --color-accent-text: var(--color-accent);
+}
+
+:root[data-theme="forest"][data-mode="dark"] {
+  --color-accent-text: var(--color-accent);
+}
+
+:root[data-theme="wine"][data-mode="light"] {
+  --color-accent-text: var(--color-accent);
+}
+
+:root[data-theme="royal"][data-mode="light"] {
+  --color-accent-text: var(--color-accent);
+}
+
+:root[data-theme="violet"][data-mode="light"] {
+  --color-accent-text: var(--color-accent);
+}

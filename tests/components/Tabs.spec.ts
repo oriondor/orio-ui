@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { afterEach, describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import Tabs from "../../src/runtime/components/Tabs.vue";
 
@@ -12,6 +12,12 @@ const options = [
   { value: "b", label: "Beta" },
   { value: "c", label: "Gamma" },
 ];
+
+const mounted: { unmount(): void }[] = [];
+afterEach(() => {
+  mounted.splice(0).forEach((wrapper) => wrapper.unmount());
+  document.body.innerHTML = "";
+});
 
 function make(
   props: Record<string, unknown> = {},
@@ -32,6 +38,7 @@ function make(
     attachTo: document.body,
     global: { stubs: { "orio-icon": IconStub } },
   });
+  mounted.push(wrapper);
   return wrapper;
 }
 
@@ -161,6 +168,7 @@ describe("Tabs", () => {
       attachTo: holder,
       global: { stubs: { "orio-icon": IconStub } },
     });
+    mounted.push(wrapper);
     await buttons(wrapper as never)[0].trigger("keydown", { key: "ArrowLeft" });
     expect(wrapper.emitted("update:modelValue")).toEqual([["b"]]);
   });
@@ -175,14 +183,24 @@ describe("Tabs", () => {
     expect(lastEmit(wrapper)).toBeUndefined();
   });
 
-  it("whole disabled: nothing selectable, no tab stop, keys no-op", async () => {
+  it("whole disabled: native disabled, no tab stop, nothing selectable", async () => {
     const wrapper = make({ disabled: true });
     expect(wrapper.attributes("aria-disabled")).toBe("true");
-    expect(
-      buttons(wrapper).every((tab) => tab.attributes("tabindex") === "-1"),
-    ).toBe(true);
-    await buttons(wrapper)[1].trigger("click");
-    await buttons(wrapper)[0].trigger("keydown", { key: "ArrowRight" });
+    buttons(wrapper).forEach((tab) => {
+      expect(tab.attributes("disabled")).toBeDefined();
+      expect(tab.attributes("tabindex")).toBe("-1");
+    });
+    // test-utils skips trigger() on natively disabled buttons, so dispatch for real.
+    buttons(wrapper)[1].element.dispatchEvent(
+      new MouseEvent("click", { bubbles: true }),
+    );
+    buttons(wrapper)[0].element.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
+    );
+    wrapper.element.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
+    );
+    await wrapper.vm.$nextTick();
     expect(lastEmit(wrapper)).toBeUndefined();
   });
 
@@ -204,6 +222,59 @@ describe("Tabs", () => {
     });
     expect(buttons(wrapper)[0].attributes("aria-selected")).toBe("true");
     expect(buttons(wrapper)[0].attributes("tabindex")).toBe("0");
+  });
+
+  it("arrows step from a selected-but-disabled item to its neighbour (E4)", async () => {
+    const wrapper = make({
+      modelValue: "b",
+      options: [options[0], { ...options[1], disabled: true }, options[2]],
+    });
+    buttons(wrapper)[1].element.focus();
+    await buttons(wrapper)[1].trigger("keydown", { key: "ArrowRight" });
+    expect(lastEmit(wrapper)).toEqual([["c"]]);
+    await buttons(wrapper)[2].trigger("keydown", { key: "ArrowLeft" });
+    expect(lastEmit(wrapper)?.[1]).toEqual(["a"]);
+  });
+
+  it("arrow from a disabled item steps backward to the neighbour", async () => {
+    const wrapper = make({
+      modelValue: "b",
+      options: [options[0], { ...options[1], disabled: true }, options[2]],
+    });
+    await buttons(wrapper)[1].trigger("keydown", { key: "ArrowLeft" });
+    expect(lastEmit(wrapper)).toEqual([["a"]]);
+  });
+
+  it("ignores buttons inside the option slot", async () => {
+    const wrapper = make(
+      {},
+      {},
+      {
+        option: `<template #option="{ option }"><span>{{ option.label }}</span><button type="button" class="inner">x</button></template>`,
+      },
+    );
+    await buttons(wrapper)[0].trigger("keydown", { key: "ArrowRight" });
+    expect(lastEmit(wrapper)).toEqual([["b"]]);
+    expect(document.activeElement).toBe(
+      wrapper.findAll(":scope > button")[1].element,
+    );
+  });
+
+  it("duplicate values render every item (E6)", () => {
+    const wrapper = make({
+      modelValue: "a",
+      options: [options[0], { value: "a", label: "Again" }, options[1]],
+    });
+    expect(buttons(wrapper)).toHaveLength(3);
+    expect(buttons(wrapper)[0].attributes("aria-selected")).toBe("true");
+    expect(buttons(wrapper)[1].attributes("aria-selected")).toBe("false");
+  });
+
+  it("size prop sets control tokens on the root", () => {
+    const small = make({ size: "xs" }).attributes("style");
+    const large = make({ size: "lg" }).attributes("style");
+    expect(small).toContain("--control-");
+    expect(small).not.toBe(large);
   });
 
   it("single option: arrows do not emit (E5)", async () => {

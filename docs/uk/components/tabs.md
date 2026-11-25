@@ -74,13 +74,32 @@ const levelOptions = [
   <div class="demo-output">Період: {{ period }}</div>
 </div>
 
+### Сегментований з панелями
+
+`variant="segmented"` працює і з `tablist`: вигляд не залежить від семантики. Для кожного рядка свій `id-prefix`.
+
+<div class="demo-container">
+  <orio-tabs v-model="tab" :options="tabOptions" variant="segmented" label="Сегментовані розділи" id-prefix="seg" />
+  <div
+    v-for="option in tabOptions"
+    v-show="tab === option.value"
+    :id="`seg-panel-${option.value}`"
+    :key="option.value"
+    role="tabpanel"
+    :aria-labelledby="`seg-tab-${option.value}`"
+    tabindex="0"
+  >
+    Panel: {{ option.label }}
+  </div>
+</div>
+
 ### Блок і довгі підписи
 
 `block` розтягує рядок на всю ширину з елементами однакової ширини. Довгі підписи
 обрізаються трикрапкою всередині елемента.
 
 <div class="demo-container">
-  <orio-tabs v-model="tab" :options="tabOptions" block label="Блок: підкреслення" />
+  <orio-tabs v-model="tab" :options="tabOptions" block role="radiogroup" label="Блок: підкреслення" />
   <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block label="Блок: сегментований" />
   <orio-tabs v-model="longLabel" :options="longOptions" variant="segmented" role="radiogroup" label="Довгі підписи" style="max-width: 16rem" />
 </div>
@@ -100,8 +119,8 @@ const levelOptions = [
 `disabled` вимикає весь рядок.
 
 <div class="demo-container">
-  <orio-tabs v-model="disabledOption" :options="disabledOptions" label="Вимкнений варіант" />
-  <orio-tabs v-model="disabledOption" :options="disabledOptions" disabled label="Увесь рядок вимкнено" />
+  <orio-tabs v-model="disabledOption" :options="disabledOptions" role="radiogroup" label="Вимкнений варіант" />
+  <orio-tabs v-model="disabledOption" :options="disabledOptions" role="radiogroup" disabled label="Увесь рядок вимкнено" />
 </div>
 
 ### Слот option
@@ -161,6 +180,8 @@ const tabOptions = [
 - `id-prefix` діє лише для `tablist` і має бути **унікальним на сторінці**; два екземпляри з однаковим префіксом дають дубльовані id.
 
 ## Властивості
+
+Пропси описує експортований `TabsProps`; кожен елемент це `TabsOption` (`{ value, label, icon?, disabled? }`).
 
 | Проп | Тип | За замовчуванням | Опис |
 |------|------|---------|-------------|

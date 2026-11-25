@@ -74,13 +74,32 @@ give your panels the matching ids.
   <div class="demo-output">Period: {{ period }}</div>
 </div>
 
+### Segmented with panels
+
+`variant="segmented"` works with `tablist` too: the look is independent of the semantics. Use a different `id-prefix` per strip.
+
+<div class="demo-container">
+  <orio-tabs v-model="tab" :options="tabOptions" variant="segmented" label="Segmented sections" id-prefix="seg" />
+  <div
+    v-for="option in tabOptions"
+    v-show="tab === option.value"
+    :id="`seg-panel-${option.value}`"
+    :key="option.value"
+    role="tabpanel"
+    :aria-labelledby="`seg-tab-${option.value}`"
+    tabindex="0"
+  >
+    Panel: {{ option.label }}
+  </div>
+</div>
+
 ### Block and long labels
 
 `block` stretches the strip to full width with equal-width items. Long labels
 ellipsise inside the item.
 
 <div class="demo-container">
-  <orio-tabs v-model="tab" :options="tabOptions" block label="Block underline" />
+  <orio-tabs v-model="tab" :options="tabOptions" block role="radiogroup" label="Block underline" />
   <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block label="Block segmented" />
   <orio-tabs v-model="longLabel" :options="longOptions" variant="segmented" role="radiogroup" label="Long labels" style="max-width: 16rem" />
 </div>
@@ -100,8 +119,8 @@ A disabled option is skipped by the arrow keys and cannot be selected. The
 `disabled` prop disables the whole strip.
 
 <div class="demo-container">
-  <orio-tabs v-model="disabledOption" :options="disabledOptions" label="Disabled option" />
-  <orio-tabs v-model="disabledOption" :options="disabledOptions" disabled label="Whole strip disabled" />
+  <orio-tabs v-model="disabledOption" :options="disabledOptions" role="radiogroup" label="Disabled option" />
+  <orio-tabs v-model="disabledOption" :options="disabledOptions" role="radiogroup" disabled label="Whole strip disabled" />
 </div>
 
 ### Option slot
@@ -161,6 +180,8 @@ const tabOptions = [
 - `id-prefix` applies to `tablist` only and must be **unique per page**; two instances with the same prefix produce duplicate ids.
 
 ## Props
+
+Props are typed by the exported `TabsProps`; each option is a `TabsOption` (`{ value, label, icon?, disabled? }`).
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
