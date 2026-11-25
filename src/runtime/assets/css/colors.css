@@ -128,18 +128,27 @@
 }
 
 :root[data-theme="navy"] {
-  --color-accent-ink: #000; /* white is < 4.5:1; #0e1116 drops under 4.5:1 on the darker hover gradient */
+  --color-accent-ink: #000; /* white is < 4.5:1 on this accent */
+  --color-accent-hover-shade: white;
+  --color-accent-hover-depth-start: 75%;
+  --color-accent-hover-depth-end: 60%;
   --color-accent: hsl(219, 45%, 56%);
   --color-accent-soft-darker: var(--color-accent-soft);
 }
 
 :root[data-theme="teal"] {
   --color-accent-ink: #0e1116; /* white is < 4.5:1 on this accent */
+  --color-accent-hover-shade: white;
+  --color-accent-hover-depth-start: 75%;
+  --color-accent-hover-depth-end: 60%;
   --color-accent: hsl(174, 65%, 44%);
 }
 
 :root[data-theme="forest"] {
   --color-accent-ink: #0e1116; /* white is < 4.5:1 on this accent */
+  --color-accent-hover-shade: white;
+  --color-accent-hover-depth-start: 75%;
+  --color-accent-hover-depth-end: 60%;
   --color-accent: hsl(153, 35%, 53%);
 }
 

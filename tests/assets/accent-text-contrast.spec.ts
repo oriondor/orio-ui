@@ -8,7 +8,15 @@ function parseBlocks(source: string) {
   return [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].map((match) => ({
     selector: match[1].trim(),
     declarations: [...match[2].matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map(
-      (declaration) => [declaration[1], declaration[2].trim()] as const,
+      (declaration) =>
+        [
+          declaration[1],
+          declaration[2]
+            .replace(/\s+/g, " ")
+            .replace(/\( /g, "(")
+            .replace(/ \)/g, ")")
+            .trim(),
+        ] as const,
     ),
   }));
 }
@@ -82,8 +90,8 @@ function splitTopLevel(text: string): string[] {
 
 function parseColor(value: string, tokens: Record<string, string>): Rgb {
   const text = value.trim();
-  const variable = text.match(/^var\((--[\w-]+)\)$/);
-  if (variable) return parseColor(tokens[variable[1]], tokens);
+  const variable = text.match(/^var\((--[\w-]+)(?:,([\s\S]*))?\)$/);
+  if (variable) return parseColor(tokens[variable[1]] ?? variable[2], tokens);
   if (text === "white") return [255, 255, 255];
   if (text === "black") return [0, 0, 0];
   const hex = text.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
@@ -196,7 +204,17 @@ describe("accent color contrast", () => {
         const gradient = hoverCss.match(/linear-gradient\(([\s\S]*?)\);/)![1];
         const stops = splitTopLevel(gradient)
           .slice(1)
-          .map((stop) => stop.replace(/\s+\d+%$/, ""));
+          .map((stop) =>
+            stop
+              .replace(/\s+/g, " ")
+              .replace(/\( /g, "(")
+              .replace(/\s+\d+%$/, "")
+              // percent tokens: var(--name, fallback) -> theme value or fallback
+              .replace(
+                /var\((--[\w-]+),\s*(\d+%)\)/g,
+                (_, name, fallback) => tokens[name] ?? fallback,
+              ),
+          );
         expect(stops.length).toBe(3);
         const ink = parseColor("var(--color-accent-ink)", tokens);
         stops.forEach((stop) => {
