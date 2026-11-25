@@ -2,22 +2,25 @@
   --gh-color: #fff;
   --gh-angle: 160deg;
   --gh-peek-x: 95%;
-  /* Mix away from the ink: themes with dark ink set
-     --color-accent-hover-shade: white plus a deeper depth-start/end. */
-  --gh-mix-base: var(--color-accent-hover-shade, black);
+  /* Defaults suit white-on-transparent variants. Primary Button overrides
+     --gh-mix-base and the depths from the theme's accent-hover tokens. */
+  --gh-mix-default: black;
+  --gh-mix-base: var(--gh-mix-default);
+  --gh-depth-start: 90%;
+  --gh-depth-end: 80%;
 
   background-image: linear-gradient(
     var(--gh-angle),
     color-mix(
         in srgb,
-        var(--gh-color) var(--color-accent-hover-depth-start, 90%),
+        var(--gh-color) var(--gh-depth-start),
         var(--gh-mix-base)
       )
       10%,
     var(--gh-color) 50%,
     color-mix(
         in srgb,
-        var(--gh-color) var(--color-accent-hover-depth-end, 80%),
+        var(--gh-color) var(--gh-depth-end),
         var(--gh-mix-base)
       )
       80%
@@ -43,8 +46,5 @@
   --gh-color: var(
     --color-accent
   ); /* switch from static white to theme accent */
-  --gh-mix-base: var(
-    --color-accent-hover-shade,
-    var(--color-bg)
-  ); /* blend into dark background */
+  --gh-mix-default: var(--color-bg); /* blend into dark background */
 }

@@ -190,16 +190,20 @@ Create a CSS file with your theme:
 :root[data-theme="coral"] {
   --color-accent: hsl(16, 100%, 66%);
   --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
 }
 
 :root[data-theme="lavender"] {
   --color-accent: hsl(270, 60%, 70%);
   --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
 }
 ```
 
 ::: warning
 When your theme sets `--color-accent`, also set `--color-accent-ink` (text on accent fills: primary button, badge, tabs, checkbox). The default is white, which fails 4.5:1 on mid and light accents. Pick `#fff` or a dark ink so the pair reaches 4.5:1.
+
+With a dark ink also set `--color-accent-hover-shade: white`. The primary Button hover gradient darkens toward black by default, which pulls a dark ink below 4.5:1 (lavender below is 4.40:1 at the end stop); with the shade it lightens instead. `--color-accent-hover-depth-start` / `-end` (default `90%` / `80%`, lower is stronger) tune its strength. Check the ink against the accent and both hover stops (`accent` mixed with the shade at the depth percentages).
 
 Write your theme selectors as `:root[data-theme="x"]`, like the built-in themes. A bare `[data-theme="x"]` has lower specificity than the built-in `:root[data-mode="dark"]` block, which would then win for `--color-accent-text`. Ink is the same in both modes, so one rule is enough; `--color-accent-text` (accent used as text) differs per mode, so set it for light and, if the derived value is not what you want, again in `:root[data-theme="x"][data-mode="dark"]`.
 :::
@@ -229,7 +233,8 @@ For full control, override the derived accent variables:
 ```css
 :root[data-theme="brand"] {
   --color-accent: #ff6b00;
-  --color-accent-ink: #ffffff;
+  --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 15%, #e3e3e3);
   --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, #fde68a);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, black 15%);

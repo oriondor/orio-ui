@@ -190,16 +190,20 @@ MODES  // ['light', 'dark']
 :root[data-theme="coral"] {
   --color-accent: hsl(16, 100%, 66%);
   --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
 }
 
 :root[data-theme="lavender"] {
   --color-accent: hsl(270, 60%, 70%);
   --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
 }
 ```
 
 ::: warning
 Якщо ваша тема задає `--color-accent`, задайте також `--color-accent-ink` (текст на акцентних заливках: primary-кнопка, badge, вкладки, чекбокс). Типове значення біле, і воно не досягає 4.5:1 на середніх і світлих акцентах. Оберіть `#fff` або темний колір так, щоб пара мала контраст щонайменше 4.5:1.
+
+З темним кольором тексту задайте також `--color-accent-hover-shade: white`. Градієнт наведення primary-кнопки типово темнішає до чорного, через що темний текст опускається нижче 4.5:1 (лавандова тема нижче має 4.40:1 на кінцевій точці); з цим значенням градієнт світлішає. `--color-accent-hover-depth-start` / `-end` (типово `90%` / `80%`, менше значення дає сильніший ефект) регулюють силу. Перевірте контраст тексту з акцентом і з обома точками наведення (`accent`, змішаний із shade у відсотках глибини).
 
 Записуйте селектори теми як `:root[data-theme="x"]`, як у вбудованих тем. Простий `[data-theme="x"]` має нижчу специфічність за вбудований блок `:root[data-mode="dark"]`, тож для `--color-accent-text` переміг би він. Колір тексту на акценті однаковий в обох режимах, тому достатньо одного правила; `--color-accent-text` (акцент як текст) залежить від режиму: задайте його для світлого режиму і, якщо похідне значення не підходить, ще раз у `:root[data-theme="x"][data-mode="dark"]`.
 :::
@@ -229,7 +233,8 @@ setTheme('coral')
 ```css
 :root[data-theme="brand"] {
   --color-accent: #ff6b00;
-  --color-accent-ink: #ffffff;
+  --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 15%, #e3e3e3);
   --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, #fde68a);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, black 15%);

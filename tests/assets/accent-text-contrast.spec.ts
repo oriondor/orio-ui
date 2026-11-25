@@ -183,45 +183,76 @@ describe("accent color contrast", () => {
     ),
   );
 
+  // Resolves the hover gradient stops as Button.vue applies them: the
+  // .gradient-hover defaults, then the variant's own declarations on top.
+  const buttonCss = readFileSync("src/runtime/components/Button.vue", "utf8");
+  const primaryBlock = parseBlocks(
+    buttonCss
+      .match(/&\.primary \{[^}]*\}/)![0]
+      .replace("&.primary", ".primary"),
+  )[0];
+  const hoverStops = (theme: string | null, mode: string, primary: boolean) => {
+    const tokens = resolveTokens(theme, mode);
+    const apply = (block: (typeof blocks)[number]) =>
+      block.declarations.forEach(([name, value]) => (tokens[name] = value));
+    parseBlocks(hoverCss)
+      .filter(
+        (block) =>
+          block.selector === ".gradient-hover" ||
+          (block.selector.includes('[data-mode="dark"]') && mode === "dark"),
+      )
+      .forEach(apply);
+    if (primary) apply(primaryBlock);
+    else
+      tokens["--gh-color"] = mode === "dark" ? "var(--color-accent)" : "#fff";
+    // a custom property that is itself var(--x, fallback): theme value or fallback
+    const resolvePercent = (name: string): string => {
+      const value = tokens[name];
+      const ref = value.match(/^var\((--[\w-]+)(?:,\s*([\d.]+%))?\)$/);
+      if (!ref) return value;
+      return tokens[ref[1]] !== undefined ? resolvePercent(ref[1]) : ref[2];
+    };
+    const gradient = hoverCss.match(/linear-gradient\(([\s\S]*?)\);/)![1];
+    const stops = splitTopLevel(gradient)
+      .slice(1)
+      .map((stop) =>
+        stop
+          .replace(/\s+/g, " ")
+          .replace(/\( /g, "(")
+          .replace(/\s+\d+%$/, "")
+          .replace(/var\((--gh-depth-\w+)\)/g, (_, name) =>
+            resolvePercent(name),
+          ),
+      );
+    expect(stops.length).toBe(3);
+    return { tokens, colors: stops.map((stop) => parseColor(stop, tokens)) };
+  };
+
   themes.forEach((theme) =>
     ["light", "dark"].forEach((mode) =>
       it(`${theme ?? "default"} ${mode} primary Button ink >= 4.5 across the hover gradient`, () => {
-        const tokens = resolveTokens(theme, mode);
-        // Stops and mix base come from cool-gradient-hover.css; Button primary sets --gh-color.
-        parseBlocks(hoverCss)
-          .filter(
-            (block) =>
-              block.selector === ".gradient-hover" ||
-              (block.selector.includes('[data-mode="dark"]') &&
-                mode === "dark"),
-          )
-          .forEach((block) =>
-            block.declarations.forEach(([name, value]) => {
-              tokens[name] = value;
-            }),
-          );
-        tokens["--gh-color"] = "var(--color-accent)";
-        const gradient = hoverCss.match(/linear-gradient\(([\s\S]*?)\);/)![1];
-        const stops = splitTopLevel(gradient)
-          .slice(1)
-          .map((stop) =>
-            stop
-              .replace(/\s+/g, " ")
-              .replace(/\( /g, "(")
-              .replace(/\s+\d+%$/, "")
-              // percent tokens: var(--name, fallback) -> theme value or fallback
-              .replace(
-                /var\((--[\w-]+),\s*(\d+%)\)/g,
-                (_, name, fallback) => tokens[name] ?? fallback,
-              ),
-          );
-        expect(stops.length).toBe(3);
+        const { tokens, colors } = hoverStops(theme, mode, true);
         const ink = parseColor("var(--color-accent-ink)", tokens);
-        stops.forEach((stop) => {
-          const ratio = contrast(ink, parseColor(stop, tokens));
+        colors.forEach((stop) => {
+          const ratio = contrast(ink, stop);
           if (process.env.SHOW_RATIOS)
             console.log(theme ?? "default", mode, "hover", ratio.toFixed(2));
           expect(ratio).toBeGreaterThanOrEqual(4.5);
+        });
+      }),
+    ),
+  );
+
+  // Secondary / subdued keep a themed ink on a transparent fill: the hover
+  // gradient must still move away from its middle (--gh-color) stop.
+  themes.forEach((theme) =>
+    ["light", "dark"].forEach((mode) =>
+      it(`${theme ?? "default"} ${mode} secondary/subdued hover gradient keeps its depth`, () => {
+        const { colors } = hoverStops(theme, mode, false);
+        const [start, middle, end] = colors;
+        [start, end].forEach((edge) => {
+          const gap = Math.abs(luminance(edge) - luminance(middle));
+          expect(gap).toBeGreaterThan(0.005);
         });
       }),
     ),

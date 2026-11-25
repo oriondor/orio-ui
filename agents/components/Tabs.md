@@ -45,8 +45,10 @@ invariants: true
   `--orio-tabs-radius`, `--orio-tabs-track-bg`, `--orio-tabs-active-bg`,
   `--orio-tabs-active-ink`.
 - `segmented` is `width: fit-content`; add `block` for full width. Layout is a CSS grid
-  (`minmax(0, max-content)` columns; `block`: `minmax(0, 1fr)`): items always stay
-  inside the strip at any width, gap or count. When narrower than the content,
+  (`minmax(0, max-content)` columns; `block`: `minmax(0, 1fr)`): items stay inside
+  the strip while it is wider than count x 2 x the control's horizontal padding
+  plus the gaps (button padding is a floor, so extreme widths, e.g. 8 options in
+  100px, overflow). When narrower than the content,
   free space is shared equally, so short labels keep their width and only the
   longer ones ellipsise (very narrow strips ellipsise every label). Constrain
   width on the parent, not the item.
