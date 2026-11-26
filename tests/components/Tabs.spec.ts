@@ -50,6 +50,12 @@ const buttons = (wrapper: ReturnType<typeof make>) => wrapper.findAll("button");
 const lastEmit = (wrapper: ReturnType<typeof make>) =>
   wrapper.emitted("update:modelValue");
 
+/** Watchers await a tick, then the re-render needs another. */
+const settle = async () => {
+  await nextTick();
+  await nextTick();
+};
+
 /** Captures every ResizeObserver callback so a spec can deliver entries by hand. */
 function stubResizeObserver() {
   const callbacks: ((entries: unknown[]) => void)[] = [];
@@ -392,11 +398,6 @@ describe("Tabs", () => {
 });
 
 describe("Tabs sliding indicator", () => {
-  // Watchers await a tick, then the re-render needs another.
-  const settle = async () => {
-    await nextTick();
-    await nextTick();
-  };
   // jsdom has no layout: every button is 100x30 at index * 100.
   const indexOf = (element: HTMLElement) =>
     Array.from(element.parentElement!.children).indexOf(element);
@@ -562,17 +563,39 @@ describe("Tabs sliding indicator", () => {
 });
 
 describe("Tabs density", () => {
-  let truncated = false;
+  // Stands in for layout: labels truncate and the root overflows only at normal density, like the real thing.
+  let labelsTruncateNormally = false;
+  let rootOverflowsNormally = false;
+  let staleIndicatorOverflow = false;
+  const isNormal = (element: HTMLElement) =>
+    !(element.closest(".tabs") as HTMLElement).classList.contains("dense");
+
   beforeEach(() => {
-    truncated = false;
+    labelsTruncateNormally = false;
+    rootOverflowsNormally = false;
+    staleIndicatorOverflow = false;
     vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockImplementation(
       function (this: HTMLElement) {
-        return truncated && this.classList.contains("tab-label") ? 120 : 0;
+        if (this.classList.contains("tab-label"))
+          return labelsTruncateNormally && isNormal(this) ? 120 : 0;
+        if (this.classList.contains("tabs")) {
+          const indicatorShown =
+            (this.querySelector(".indicator") as HTMLElement | null)?.style
+              .display !== "none";
+          if (rootOverflowsNormally && isNormal(this)) return 500;
+          // The absolutely positioned indicator counts toward scrollWidth.
+          if (staleIndicatorOverflow && indicatorShown) return 500;
+        }
+        return 0;
       },
     );
+    vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(100);
     vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockImplementation(
       function (this: HTMLElement) {
-        return this.classList.contains("tab-label") ? 100 : 0;
+        return this.classList.contains("tab-label") ||
+          this.classList.contains("tabs")
+          ? 100
+          : 0;
       },
     );
   });
@@ -580,67 +603,88 @@ describe("Tabs density", () => {
   async function setup(props: Record<string, unknown> = {}) {
     const { fire } = stubResizeObserver();
     const wrapper = make(props);
-    await nextTick();
-    const parent = wrapper.element.parentElement!;
-    const deliver = async (width: number) => {
-      fire([{ target: parent, contentRect: { width } }]);
-      await nextTick();
+    await settle();
+    const resize = async () => {
+      fire([]);
+      await settle();
     };
-    return { wrapper, deliver };
+    return { wrapper, resize };
   }
 
-  it("stays normal while labels fit, even in a 0-width (display: contents) parent", async () => {
-    const { wrapper, deliver } = await setup();
-    await deliver(0);
-    await deliver(200);
+  it("stays normal while labels fit (any parent width, incl. display: contents)", async () => {
+    const { wrapper, resize } = await setup();
+    await resize();
     expect(wrapper.classes()).not.toContain("dense");
   });
 
-  it("goes dense when a label would truncate", async () => {
-    const { wrapper, deliver } = await setup();
-    truncated = true;
-    await deliver(300);
+  it("goes dense when a label would truncate at normal density", async () => {
+    const { wrapper, resize } = await setup();
+    labelsTruncateNormally = true;
+    await resize();
+    expect(wrapper.classes()).toContain("dense");
+    // Judged at normal density even while dense, and the class is put back.
+    await resize();
     expect(wrapper.classes()).toContain("dense");
   });
 
-  it("leaves dense only when the parent's content box grows past where it entered", async () => {
-    const { wrapper, deliver } = await setup();
-    truncated = true;
-    await deliver(300);
-    truncated = false; // labels fit now that it is compact
-    await deliver(300);
+  it("goes dense when the strip itself overflows at normal density", async () => {
+    const { wrapper, resize } = await setup();
+    rootOverflowsNormally = true;
+    await resize();
     expect(wrapper.classes()).toContain("dense");
-    await deliver(250);
+  });
+
+  it("ignores the stale indicator overflowing the strip", async () => {
+    const { wrapper, resize } = await setup();
+    staleIndicatorOverflow = true;
+    await resize();
+    expect(wrapper.classes()).not.toContain("dense");
+    // and the indicator is shown again afterwards
+    expect(
+      (wrapper.find(".indicator").element as HTMLElement).style.display,
+    ).not.toBe("none");
+  });
+
+  it("leaves dense as soon as normal density would fit, with no parent growth", async () => {
+    const { wrapper, resize } = await setup();
+    labelsTruncateNormally = true;
+    await resize();
     expect(wrapper.classes()).toContain("dense");
-    await deliver(301);
+    labelsTruncateNormally = false; // shorter labels / more room
+    await resize();
     expect(wrapper.classes()).not.toContain("dense");
   });
 
-  it("re-enters at the new width if normal density still truncates after growing", async () => {
-    const { wrapper, deliver } = await setup();
-    truncated = true;
-    await deliver(300);
-    await deliver(310); // exits, then labels still truncate at normal density
-    truncated = true;
-    await deliver(310);
-    expect(wrapper.classes()).toContain("dense");
-    await deliver(310);
+  it("re-checks after options change without any resize", async () => {
+    const { wrapper } = await setup();
+    labelsTruncateNormally = true;
+    await wrapper.setProps({
+      options: [{ value: "a", label: "A much longer label" }, ...options],
+    } as never);
+    await settle();
     expect(wrapper.classes()).toContain("dense");
   });
 
-  it("dense prop: true forces compact, false never tightens", async () => {
+  it("dense prop: true forces compact, false never tightens, auto recomputes", async () => {
     expect(make({ dense: true }).classes()).toContain("dense");
-    const { wrapper, deliver } = await setup({ dense: false });
-    truncated = true;
-    await deliver(300);
+    const { wrapper, resize } = await setup({ dense: false });
+    labelsTruncateNormally = true;
+    await resize();
+    expect(wrapper.classes()).not.toContain("dense");
+    await wrapper.setProps({ dense: "auto" } as never);
+    await settle();
+    expect(wrapper.classes()).toContain("dense");
+    await wrapper.setProps({ dense: false } as never);
+    await settle();
     expect(wrapper.classes()).not.toContain("dense");
   });
 
-  it("exposes padding-x and font-size custom properties that win over density", () => {
-    // jsdom does not apply the scoped stylesheet; assert the source wiring.
+  it("the dense block takes padding and font from the public custom properties", () => {
+    // jsdom does not apply the scoped stylesheet; assert the declarations in the .dense rule.
     const source = readFileSync("src/runtime/components/Tabs.vue", "utf8");
-    expect(source).toContain("var(--orio-tabs-padding-x, var(--control-px))");
-    expect(source).toContain("var(--orio-tabs-padding-x, calc(");
-    expect(source).toContain("--orio-tabs-font-size,");
+    const block = source.match(/&\.dense \{([^}]*)\}/)![1];
+    expect(block).toMatch(/--tabs-px:\s*var\(\s*--orio-tabs-padding-x,/);
+    expect(block).toMatch(/--tabs-font-size:\s*var\(\s*--orio-tabs-font-size,/);
+    expect(block).toMatch(/--tabs-gap:\s*var\(\s*--orio-tabs-gap,/);
   });
 });

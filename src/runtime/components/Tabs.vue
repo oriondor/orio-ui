@@ -92,36 +92,31 @@ interface IndicatorBox {
   height: number;
 }
 
-/** Auto density: go compact only when normal density truncates a label (so a strip in a shrink-to-fit or display:contents parent, or one with room to spare, never does), and remember the parent content width it happened at. It leaves compact only once the parent's content box grows beyond that width, so it cannot oscillate. Not a container query: container-type on the fit-content strip would kill its intrinsic width, and a wrapper would change inline layouts. */
+/** Auto density is stateless: re-run the real check, "does normal density fit?", by trying normal density for a moment. The `dense` class is removed, layout is read synchronously (nothing paints in between), and the class is put back. The answer depends only on the space the strip really gets, so there is no hysteresis, nothing gets stuck dense, and shrink-to-fit or display:contents parents just work. Not a container query: container-type on the fit-content strip would kill its intrinsic width, and a wrapper would change inline layouts. */
 const autoDense = ref(false);
 const isDense = computed(() =>
   props.dense === "auto" ? autoDense.value : props.dense,
 );
-let parentWidth = 0;
-let denseEnteredAt = 0;
 
-function isStrained() {
+function updateDense() {
   const root = rootRef.value;
-  return (
-    !!root &&
-    (root.scrollWidth > root.clientWidth + 0.5 ||
-      tabButtons().some((button) => {
-        const label = button.querySelector<HTMLElement>(".tab-label");
-        return !!label && label.scrollWidth > label.clientWidth + 0.5;
-      }))
+  if (!root || props.dense !== "auto") return;
+  const indicatorElement = root.querySelector<HTMLElement>(
+    ":scope > .indicator",
   );
-}
-
-function updateDense(entries: readonly ResizeObserverEntry[]) {
-  const parent = rootRef.value?.parentElement;
-  const entry = entries.find((candidate) => candidate.target === parent);
-  if (entry) parentWidth = entry.contentRect.width;
-  if (props.dense !== "auto") return;
-  if (autoDense.value && parentWidth > denseEnteredAt) autoDense.value = false;
-  if (!autoDense.value && isStrained()) {
-    autoDense.value = true;
-    denseEnteredAt = parentWidth;
-  }
+  const wasDense = root.classList.contains("dense");
+  root.classList.remove("dense");
+  // The stale absolutely positioned indicator would count as overflow.
+  if (indicatorElement) indicatorElement.style.display = "none";
+  const strained =
+    root.scrollWidth > root.clientWidth + 0.5 ||
+    tabButtons().some((button) => {
+      const label = button.querySelector<HTMLElement>(".tab-label");
+      return !!label && label.scrollWidth > label.clientWidth + 0.5;
+    });
+  if (indicatorElement) indicatorElement.style.display = "";
+  if (wasDense) root.classList.add("dense");
+  autoDense.value = strained;
 }
 
 /** Selected item's box in the strip's padding-box coordinates; null = nothing to show (no selection, or not rendered/measurable). */
@@ -156,6 +151,7 @@ watch(
     () => props.size,
     () => props.variant,
     () => props.block,
+    () => props.dense,
   ],
   async ([current], [previous]) => {
     const glide =
@@ -166,6 +162,7 @@ watch(
     lastValue = model.value;
     await nextTick();
     animate.value = glide;
+    updateDense();
     measure();
   },
   { deep: true },
@@ -173,11 +170,11 @@ watch(
 
 // ponytail: a `dir` flip alone does not resize anything, so a fit-content strip keeps its old (mirrored-wrong) box until selection, label or strip size changes; observe `dir` with useMutationObserver if that matters.
 // Items change size on their own (fonts, labels, selected weight, container width).
-// The parent is observed too, for its content box (padding excluded) and for density.
+// The parent is observed too: a dense fit-content strip does not resize when its parent grows, but normal density may fit again.
 useResizeObserver(
   () => [rootRef.value, rootRef.value?.parentElement, ...buttonRefs.value],
-  (entries) => {
-    updateDense(entries);
+  () => {
+    updateDense();
     measure();
   },
 );

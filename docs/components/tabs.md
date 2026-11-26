@@ -96,7 +96,7 @@ give your panels the matching ids.
 ### Block and long labels
 
 `block` stretches the strip to full width with equal-width items. `block="content"` sizes items by their labels and shares the spare space, so a label is never narrower than it needs while it fits. Long labels
-ellipsise inside the item. When normal density would truncate a label, padding, gap and font tighten automatically (`dense="auto"`); it returns to normal only once the parent grows past the width where it tightened. Force it with `dense` (`true` compact, `false` never); `--orio-tabs-gap`, `--orio-tabs-padding-x` and `--orio-tabs-font-size` always win.
+ellipsise inside the item. When normal density would truncate a label, padding, gap and font tighten automatically (`dense="auto"`); it returns to normal as soon as normal density would fit. Force it with `dense` (`true` compact, `false` never); `--orio-tabs-gap`, `--orio-tabs-padding-x` and `--orio-tabs-font-size` always win.
 
 <div class="demo-container">
   <orio-tabs v-model="tab" :options="tabOptions" block role="radiogroup" label="Block underline" />
