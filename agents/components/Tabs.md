@@ -99,19 +99,23 @@ const tabOptions = [
 
 ## Recipe: compact on narrow screens
 
-Copied from the live demo in `docs/components/tabs.md` ("Dense").
+Copied from the live demo in `docs/components/tabs.md` ("Dense"). Gate the
+binding on `useMounted()`: `useMediaQuery` already matches during client
+setup, so binding it directly renders `dense` on the client but not in the
+server HTML (hydration mismatch).
 
 ```vue
 <template>
-  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" :dense="narrow" label="Dense on narrow screens" />
+  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" :dense="mounted && narrow" label="Dense on narrow screens" />
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { useMediaQuery } from '@vueuse/core'
+import { useMediaQuery, useMounted } from '@vueuse/core'
 
 const narrow = useMediaQuery('(max-width: 400px)')
-const period = ref('week')
+const mounted = useMounted()
+const period = ref('month')
 const periodOptions = [
   { value: 'week', label: 'Week' },
   { value: 'month', label: 'Month' },

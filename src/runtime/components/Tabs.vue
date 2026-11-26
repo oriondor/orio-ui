@@ -273,7 +273,7 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   gap: var(--tabs-gap);
   font-size: var(--tabs-font-size);
 
-  /* Strained: tighter, still derived from the size tokens; a consumer --orio-tabs-gap wins. */
+  /* Compact style of the `dense` prop: tighter padding, gap and font, still derived from the size tokens; the public --orio-tabs-* vars win. */
   &.dense {
     --tabs-gap: var(--orio-tabs-gap, calc(var(--control-gap) / 2));
     --tabs-px: var(--orio-tabs-padding-x, calc(var(--control-px) * 0.6));

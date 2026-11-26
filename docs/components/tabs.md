@@ -6,10 +6,11 @@ Single-choice strip of buttons. One component, two looks (`variant`) and two sem
 
 <script setup>
 import { ref } from 'vue'
-import { useMediaQuery } from '@vueuse/core'
+import { useMediaQuery, useMounted } from '@vueuse/core'
 
 const tab = ref('overview')
 const narrow = useMediaQuery('(max-width: 400px)')
+const mounted = useMounted()
 const tabOptions = [
   { value: 'overview', label: 'Overview', icon: 'edit' },
   { value: 'activity', label: 'Activity' },
@@ -112,8 +113,10 @@ ellipsise inside the item. Labels that still truncate in a narrow space can use 
 `dense` applies a compact style (padding x0.6, gap x0.5, font x0.9) so labels fit in tight spaces. It never switches by itself: bind it to your own breakpoint, for example with VueUse. `--orio-tabs-gap`, `--orio-tabs-padding-x` and `--orio-tabs-font-size` still win over it.
 
 <div class="demo-container">
-  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" :dense="narrow" label="Dense on narrow screens" />
+  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" :dense="mounted && narrow" label="Dense on narrow screens" />
 </div>
+
+Gate the binding on `useMounted()`: `useMediaQuery` already matches during client setup, so binding it directly renders `dense` on the client but not in the server HTML, which is a hydration mismatch.
 
 ### Sizes
 

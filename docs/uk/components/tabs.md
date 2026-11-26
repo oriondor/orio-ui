@@ -6,10 +6,11 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useMediaQuery } from '@vueuse/core'
+import { useMediaQuery, useMounted } from '@vueuse/core'
 
 const tab = ref('overview')
 const narrow = useMediaQuery('(max-width: 400px)')
+const mounted = useMounted()
 const tabOptions = [
   { value: 'overview', label: 'Огляд', icon: 'edit' },
   { value: 'activity', label: 'Активність' },
@@ -112,8 +113,10 @@ const levelOptions = [
 `dense` вмикає компактний стиль (відступи x0.6, проміжок x0.5, шрифт x0.9), щоб підписи вміщувалися у вузькому місці. Сам він не перемикається: прив'яжіть його до власної точки зламу, наприклад через VueUse. `--orio-tabs-gap`, `--orio-tabs-padding-x` і `--orio-tabs-font-size` мають над ним пріоритет.
 
 <div class="demo-container">
-  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" :dense="narrow" label="Щільний на вузьких екранах" />
+  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" :dense="mounted && narrow" label="Щільний на вузьких екранах" />
 </div>
+
+Прив'язку варто обмежити через `useMounted()`: `useMediaQuery` збігається вже під час налаштування на клієнті, тож пряма прив'язка дає `dense` на клієнті, але не в серверному HTML, і виникає розбіжність гідратації.
 
 ### Розміри
 
