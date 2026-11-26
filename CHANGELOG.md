@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.40.0](https://github.com/oriondor/orio-ui/compare/v1.39.0...v1.40.0) (2026-11-26)
+
+
+### Features
+
+* add orio-tabs with sliding indicator, accent text tokens and zero-specificity themes ([#211](https://github.com/oriondor/orio-ui/issues/211)) ([f018618](https://github.com/oriondor/orio-ui/commit/f018618bce99b33c33d2e6335198b2ba45cd96f5))
+
 ## [1.39.0](https://github.com/oriondor/orio-ui/compare/v1.38.0...v1.39.0) (2026-11-20)
 
 feat: shrinkable inputs, modal presentations, and native number input money support
