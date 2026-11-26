@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
+import { readFileSync } from "node:fs";
 import { defineComponent, h, nextTick, ref } from "vue";
 import { mount } from "@vue/test-utils";
 import Tabs from "../../src/runtime/components/Tabs.vue";
@@ -16,6 +17,8 @@ const options = [
 
 const mounted: { unmount(): void }[] = [];
 afterEach(() => {
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
   mounted.splice(0).forEach((wrapper) => wrapper.unmount());
   document.body.innerHTML = "";
 });
@@ -46,6 +49,25 @@ function make(
 const buttons = (wrapper: ReturnType<typeof make>) => wrapper.findAll("button");
 const lastEmit = (wrapper: ReturnType<typeof make>) =>
   wrapper.emitted("update:modelValue");
+
+/** Captures every ResizeObserver callback so a spec can deliver entries by hand. */
+function stubResizeObserver() {
+  const callbacks: ((entries: unknown[]) => void)[] = [];
+  vi.stubGlobal(
+    "ResizeObserver",
+    class {
+      constructor(callback: (entries: unknown[]) => void) {
+        callbacks.push(callback);
+      }
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  );
+  return {
+    fire: (entries: unknown[]) => callbacks.forEach((call) => call(entries)),
+  };
+}
 
 describe("Tabs", () => {
   it("tablist role: tab roles and aria-selected", () => {
@@ -360,36 +382,6 @@ describe("Tabs", () => {
     expect(make({ block: false }).classes()).not.toContain("block");
   });
 
-  it("dense class follows the parent's available width", async () => {
-    let parentWidth = 300;
-    const spy = vi
-      .spyOn(HTMLElement.prototype, "clientWidth", "get")
-      .mockImplementation(() => parentWidth);
-    let fire: () => void = () => {};
-    const calls: (() => void)[] = [];
-    vi.stubGlobal(
-      "ResizeObserver",
-      class {
-        constructor(callback: () => void) {
-          calls.push(callback);
-          fire = () => calls.forEach((call) => call());
-        }
-        observe() {}
-        unobserve() {}
-        disconnect() {}
-      },
-    );
-    const wrapper = make();
-    await nextTick();
-    expect(wrapper.classes()).toContain("dense");
-    parentWidth = 600;
-    fire();
-    await nextTick();
-    expect(wrapper.classes()).not.toContain("dense");
-    spy.mockRestore();
-    vi.unstubAllGlobals();
-  });
-
   it("sizes via the stylesheet grid, not per-count inline style", () => {
     // jsdom cannot lay out; real containment is covered by the browser probe. This blocks the old --tabs-count min-width formula coming back.
     const style =
@@ -531,29 +523,16 @@ describe("Tabs sliding indicator", () => {
   });
 
   it("re-measures instantly when the resize observer fires", async () => {
-    const callbacks: (() => void)[] = [];
-    const fire = () => callbacks.forEach((callback) => callback());
-    vi.stubGlobal(
-      "ResizeObserver",
-      class {
-        constructor(callback: () => void) {
-          callbacks.push(callback);
-        }
-        observe() {}
-        unobserve() {}
-        disconnect() {}
-      },
-    );
+    const { fire } = stubResizeObserver();
     const wrapper = make();
     await settle();
     fake.offsetWidth = () => 150;
-    fire();
+    fire([]);
     await settle();
     const element = indicator(wrapper);
     expect(element.attributes("style")).toContain("--indicator-width: 150px");
     expect(element.classes()).not.toContain("animate");
     fake.offsetWidth = () => 100;
-    vi.unstubAllGlobals();
   });
 
   it("stops animating when the transform transition ends", async () => {
@@ -579,5 +558,89 @@ describe("Tabs sliding indicator", () => {
     });
     await settle();
     expect(indicator(wrapper).exists()).toBe(true);
+  });
+});
+
+describe("Tabs density", () => {
+  let truncated = false;
+  beforeEach(() => {
+    truncated = false;
+    vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockImplementation(
+      function (this: HTMLElement) {
+        return truncated && this.classList.contains("tab-label") ? 120 : 0;
+      },
+    );
+    vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockImplementation(
+      function (this: HTMLElement) {
+        return this.classList.contains("tab-label") ? 100 : 0;
+      },
+    );
+  });
+
+  async function setup(props: Record<string, unknown> = {}) {
+    const { fire } = stubResizeObserver();
+    const wrapper = make(props);
+    await nextTick();
+    const parent = wrapper.element.parentElement!;
+    const deliver = async (width: number) => {
+      fire([{ target: parent, contentRect: { width } }]);
+      await nextTick();
+    };
+    return { wrapper, deliver };
+  }
+
+  it("stays normal while labels fit, even in a 0-width (display: contents) parent", async () => {
+    const { wrapper, deliver } = await setup();
+    await deliver(0);
+    await deliver(200);
+    expect(wrapper.classes()).not.toContain("dense");
+  });
+
+  it("goes dense when a label would truncate", async () => {
+    const { wrapper, deliver } = await setup();
+    truncated = true;
+    await deliver(300);
+    expect(wrapper.classes()).toContain("dense");
+  });
+
+  it("leaves dense only when the parent's content box grows past where it entered", async () => {
+    const { wrapper, deliver } = await setup();
+    truncated = true;
+    await deliver(300);
+    truncated = false; // labels fit now that it is compact
+    await deliver(300);
+    expect(wrapper.classes()).toContain("dense");
+    await deliver(250);
+    expect(wrapper.classes()).toContain("dense");
+    await deliver(301);
+    expect(wrapper.classes()).not.toContain("dense");
+  });
+
+  it("re-enters at the new width if normal density still truncates after growing", async () => {
+    const { wrapper, deliver } = await setup();
+    truncated = true;
+    await deliver(300);
+    await deliver(310); // exits, then labels still truncate at normal density
+    truncated = true;
+    await deliver(310);
+    expect(wrapper.classes()).toContain("dense");
+    await deliver(310);
+    expect(wrapper.classes()).toContain("dense");
+  });
+
+  it("dense prop: true forces compact, false never tightens", async () => {
+    expect(make({ dense: true }).classes()).toContain("dense");
+    const { wrapper, deliver } = await setup({ dense: false });
+    truncated = true;
+    await deliver(300);
+    expect(wrapper.classes()).not.toContain("dense");
+  });
+
+  it("exposes padding-x and font-size custom properties that win over density", () => {
+    // jsdom does not apply the scoped stylesheet; assert the source wiring.
+    const source = readFileSync("src/runtime/components/Tabs.vue", "utf8");
+    expect(source).toContain("var(--orio-tabs-padding-x, var(--control-px))");
+    expect(source).toContain("var(--orio-tabs-padding-x, calc(");
+    expect(source).toContain("--orio-tabs-font-size,");
   });
 });

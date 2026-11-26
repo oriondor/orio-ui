@@ -25,11 +25,14 @@ export interface TabsProps<V = string | number> {
   block?: boolean | "equal" | "content";
   disabled?: boolean;
   size?: ControlSize;
+  /** `"auto"`: tighten padding, gap and font only when labels would truncate at normal density. `true` forces compact, `false` never tightens. */
+  dense?: "auto" | boolean;
 }
 
 const props = withDefaults(defineProps<TabsProps<T>>(), {
   variant: "underline",
   role: "tablist",
+  dense: "auto",
 });
 
 const model = defineModel<T | undefined>();
@@ -89,12 +92,36 @@ interface IndicatorBox {
   height: number;
 }
 
-/** Below this available inline width (the strip's parent) padding, gap and font tighten so labels fit. The parent is observed instead of a container query: container-type on the fit-content strip itself would kill its intrinsic width, and a wrapper element would change inline layouts. */
-const DENSE_BELOW_PX = 380;
-const dense = ref(false);
-function updateDense() {
+/** Auto density: go compact only when normal density truncates a label (so a strip in a shrink-to-fit or display:contents parent, or one with room to spare, never does), and remember the parent content width it happened at. It leaves compact only once the parent's content box grows beyond that width, so it cannot oscillate. Not a container query: container-type on the fit-content strip would kill its intrinsic width, and a wrapper would change inline layouts. */
+const autoDense = ref(false);
+const isDense = computed(() =>
+  props.dense === "auto" ? autoDense.value : props.dense,
+);
+let parentWidth = 0;
+let denseEnteredAt = 0;
+
+function isStrained() {
+  const root = rootRef.value;
+  return (
+    !!root &&
+    (root.scrollWidth > root.clientWidth + 0.5 ||
+      tabButtons().some((button) => {
+        const label = button.querySelector<HTMLElement>(".tab-label");
+        return !!label && label.scrollWidth > label.clientWidth + 0.5;
+      }))
+  );
+}
+
+function updateDense(entries: readonly ResizeObserverEntry[]) {
   const parent = rootRef.value?.parentElement;
-  if (parent) dense.value = parent.clientWidth < DENSE_BELOW_PX;
+  const entry = entries.find((candidate) => candidate.target === parent);
+  if (entry) parentWidth = entry.contentRect.width;
+  if (props.dense !== "auto") return;
+  if (autoDense.value && parentWidth > denseEnteredAt) autoDense.value = false;
+  if (!autoDense.value && isStrained()) {
+    autoDense.value = true;
+    denseEnteredAt = parentWidth;
+  }
 }
 
 /** Selected item's box in the strip's padding-box coordinates; null = nothing to show (no selection, or not rendered/measurable). */
@@ -116,10 +143,7 @@ function measure() {
       : null;
 }
 
-onMounted(() => {
-  updateDense();
-  measure();
-});
+onMounted(measure);
 
 /** Last model value seen, to tell a real selection change from options being re-ordered or re-created. */
 let lastValue = model.value;
@@ -132,7 +156,6 @@ watch(
     () => props.size,
     () => props.variant,
     () => props.block,
-    dense,
   ],
   async ([current], [previous]) => {
     const glide =
@@ -150,8 +173,14 @@ watch(
 
 // ponytail: a `dir` flip alone does not resize anything, so a fit-content strip keeps its old (mirrored-wrong) box until selection, label or strip size changes; observe `dir` with useMutationObserver if that matters.
 // Items change size on their own (fonts, labels, selected weight, container width).
-useResizeObserver(() => [rootRef.value, ...buttonRefs.value], measure);
-useResizeObserver(() => rootRef.value?.parentElement, updateDense);
+// The parent is observed too, for its content box (padding excluded) and for density.
+useResizeObserver(
+  () => [rootRef.value, rootRef.value?.parentElement, ...buttonRefs.value],
+  (entries) => {
+    updateDense(entries);
+    measure();
+  },
+);
 
 function moveTo(index: number) {
   select(index);
@@ -216,7 +245,7 @@ function itemAttrs(option: TabsOption<T>, index: number) {
       {
         block: !!block,
         'fill-content': block === 'content',
-        dense,
+        dense: isDense,
         placed: !!box,
       },
     ]"
@@ -263,8 +292,8 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   /* Contains the items' z-index so they never paint over consumer elements. */
   isolation: isolate;
   --tabs-gap: var(--orio-tabs-gap, var(--control-gap));
-  --tabs-px: var(--control-px);
-  --tabs-font-size: var(--control-font-size);
+  --tabs-px: var(--orio-tabs-padding-x, var(--control-px));
+  --tabs-font-size: var(--orio-tabs-font-size, var(--control-font-size));
   --tabs-radius: var(--orio-tabs-radius, var(--control-radius));
   --tabs-track-bg: var(--orio-tabs-track-bg, var(--color-surface));
   --tabs-active-bg: var(--orio-tabs-active-bg, var(--color-accent));
@@ -282,11 +311,14 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   gap: var(--tabs-gap);
   font-size: var(--tabs-font-size);
 
-  /* Narrow parent: tighter, still derived from the size tokens; a consumer --orio-tabs-gap wins. */
+  /* Strained: tighter, still derived from the size tokens; a consumer --orio-tabs-gap wins. */
   &.dense {
     --tabs-gap: var(--orio-tabs-gap, calc(var(--control-gap) / 2));
-    --tabs-px: calc(var(--control-px) * 0.6);
-    --tabs-font-size: calc(var(--control-font-size) * 0.9);
+    --tabs-px: var(--orio-tabs-padding-x, calc(var(--control-px) * 0.6));
+    --tabs-font-size: var(
+      --orio-tabs-font-size,
+      calc(var(--control-font-size) * 0.9)
+    );
   }
 
   &.block {

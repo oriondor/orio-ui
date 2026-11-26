@@ -96,7 +96,7 @@ give your panels the matching ids.
 ### Block and long labels
 
 `block` stretches the strip to full width with equal-width items. `block="content"` sizes items by their labels and shares the spare space, so a label is never narrower than it needs while it fits. Long labels
-ellipsise inside the item. Below about 380px of available width (the strip's parent) padding, gap and font tighten automatically; `--orio-tabs-gap` still wins.
+ellipsise inside the item. When normal density would truncate a label, padding, gap and font tighten automatically (`dense="auto"`); it returns to normal only once the parent grows past the width where it tightened. Force it with `dense` (`true` compact, `false` never); `--orio-tabs-gap`, `--orio-tabs-padding-x` and `--orio-tabs-font-size` always win.
 
 <div class="demo-container">
   <orio-tabs v-model="tab" :options="tabOptions" block role="radiogroup" label="Block underline" />
@@ -194,6 +194,7 @@ Props are typed by the exported `TabsProps`; each option is a `TabsOption` (`{ v
 | `idPrefix` | `string` | - | Wires `{prefix}-tab-{value}` / `{prefix}-panel-{value}` (tablist only) |
 | `block` | `boolean \| "equal" \| "content"` | `false` | Full width. `true` / `"equal"`: equal-width items; `"content"`: items sized by their labels, spare space shared |
 | `disabled` | `boolean` | `false` | Disables the whole strip |
+| `dense` | `"auto" \| boolean` | `"auto"` | `"auto"` tightens padding, gap and font only when a label would truncate; `true` forces compact, `false` never tightens |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | inherited | Control size |
 
 ## Events
@@ -221,6 +222,8 @@ Override on the element or an ancestor:
 
 | Custom property | Default | Description |
 |-----------------|---------|-------------|
+| `--orio-tabs-padding-x` | `var(--control-px)` (tighter when dense) | Item horizontal padding |
+| `--orio-tabs-font-size` | `var(--control-font-size)` (smaller when dense) | Item font size |
 | `--orio-tabs-gap` | `var(--control-gap)` | Gap between items |
 | `--orio-tabs-radius` | `var(--control-radius)` (pill for segmented) | Item and track radius |
 | `--orio-tabs-track-bg` | `var(--color-surface)` | Segmented track background |
