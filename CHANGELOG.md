@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.40.0](https://github.com/oriondor/orio-ui/compare/v1.39.0...v1.40.0) (2026-11-26)
+
+feat(tabs): add orio-tabs component
+
+- Add `<orio-tabs>` with independent `variant` (`underline`, `segmented`) and `role` (`tablist`, `radiogroup`) props.
+- Add keyboard navigation with Home, End, and wrapping arrow keys. Navigation follows text direction and skips disabled options.
+- Add a sliding selection indicator. The selected fill glides between items and is contained within the strip.
+- Lay out the tab strip with CSS grid so items fit in any parent. Add `block="content"` for content-width fill.
+- Add a manual `dense` boolean prop, default false. Automatic density was removed because of ResizeObserver loop errors, cancelled indicator glides, and per-frame layout cost.
+- Gate the documented responsive dense recipe on `useMounted` to avoid hydration mismatch.
+- Add `--color-accent-text` token. NavButton uses it for hover and active text, with `--color-accent` as fallback.
+- Wrap built-in color rules in `:where()`. Consumer theme rules now override them regardless of load order.
+- Fix accent ink contrast for navy, teal, and forest themes to meet 4.5:1 on accent.
+- Scope the primary Button hover shade to the primary button and document it in theming.
+- Document that accent ink is set per theme, not derived. Update English and Ukrainian theme and NavButton docs.
+- Add English and Ukrainian tabs docs, an agent doc, and component routing entries.
+- Update component and test counts in README and docs index.
 ## [1.39.0](https://github.com/oriondor/orio-ui/compare/v1.38.0...v1.39.0) (2026-11-20)
 
 feat: shrinkable inputs, modal presentations, and native number input money support
