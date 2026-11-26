@@ -140,6 +140,11 @@ function onMouseleave(event: MouseEvent) {
 
   &.primary {
     --gh-color: var(--color-accent);
+    /* Ink sits on the accent fill here: dark-ink themes lighten the hover
+       (shade white) instead of darkening under the ink. */
+    --gh-mix-base: var(--color-accent-hover-shade, var(--gh-mix-default));
+    --gh-depth-start: var(--color-accent-hover-depth-start, 90%);
+    --gh-depth-end: var(--color-accent-hover-depth-end, 80%);
   }
 
   &.secondary {

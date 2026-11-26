@@ -75,6 +75,7 @@ MODES  // ['light', 'dark']
 --color-accent-border   /* Accent-tinted border */
 --color-accent-hover    /* Accent hover state */
 --color-accent-active   /* Accent active/pressed state */
+--color-accent-text     /* Акцент для тексту: >= 4.5:1 на bg і surface в кожній вбудованій темі. Виводиться з --color-accent; перевизначте у власній темі. Використовуйте var(--color-accent-text, var(--color-accent)) */
 
 /* Semantic colors */
 --color-danger          /* Error/destructive actions */
@@ -121,6 +122,7 @@ MODES  // ['light', 'dark']
   /* Dark mode also adjusts accent derivatives */
   --color-accent-soft-base: color-mix(in srgb, var(--color-accent) 12%, #0e1116);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 30%, white 70%);
+  --color-accent-active: color-mix(in srgb, var(--color-accent) 80%, white 25%);
   /* ... */
 }
 ```
@@ -154,7 +156,7 @@ MODES  // ['light', 'dark']
   --color-accent: hsl(258, 85%, 62%);
 }
 
-[data-theme="normal"] {
+:root[data-theme="normal"] {
   --color-accent: #ced1d5;
   --color-accent-ink: #2a2a2b;
 }
@@ -186,14 +188,26 @@ MODES  // ['light', 'dark']
 ```css
 /* assets/css/my-themes.css */
 
-[data-theme="coral"] {
+:root[data-theme="coral"] {
   --color-accent: hsl(16, 100%, 66%);
+  --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
 }
 
-[data-theme="lavender"] {
+:root[data-theme="lavender"] {
   --color-accent: hsl(270, 60%, 70%);
+  --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
 }
 ```
+
+::: warning
+Якщо ваша тема задає `--color-accent`, задайте також `--color-accent-ink` (текст на акцентних заливках: primary-кнопка, badge, вкладки, чекбокс). Типове значення біле, і воно не досягає 4.5:1 на середніх і світлих акцентах. Оберіть `#fff` або темний колір так, щоб пара мала контраст щонайменше 4.5:1.
+
+З темним кольором тексту задайте також `--color-accent-hover-shade: white`. Градієнт наведення primary-кнопки типово темнішає до чорного, через що темний текст опускається нижче 4.5:1 (лавандова тема нижче має 4.40:1 на кінцевій точці); з цим значенням градієнт світлішає. `--color-accent-hover-depth-start` / `-end` (типово `90%` / `80%`, менше значення дає сильніший ефект) регулюють силу. Перевірте контраст тексту з акцентом і з обома точками наведення (`accent`, змішаний із shade у відсотках глибини).
+
+Підійде будь-який селектор теми (`[data-theme="x"]`, `:root[data-theme="x"]`, ...): вбудовані кольорові правила обгорнуті в `:where()` і мають нульову специфічність, тож будь-який ваш селектор з ненульовою специфічністю перекриває їх незалежно від порядку підключення. Селектор з нульовою специфічністю (наприклад `:where(...)`) дає рівність, і тоді вирішує порядок підключення. Правила всередині `@layer` програють цим правилам поза шарами. Колір тексту на акценті однаковий в обох режимах, тому достатньо одного правила; `--color-accent-text` (акцент як текст) залежить від режиму: задайте його для світлого режиму і, якщо похідне значення не підходить, ще раз у `:root[data-theme="x"][data-mode="dark"]`. Правило без `data-mode` діє в обох режимах, тож воно замінює й похідне темне значення; щоб зберегти похідне темне значення, задайте світле у `[data-theme="x"][data-mode="light"]`.
+:::
 
 Підключіть його в `nuxt.config.ts`:
 
@@ -218,9 +232,10 @@ setTheme('coral')
 Для повного контролю перевизначте похідні акцентні змінні:
 
 ```css
-[data-theme="brand"] {
+:root[data-theme="brand"] {
   --color-accent: #ff6b00;
-  --color-accent-ink: #ffffff;
+  --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 15%, #e3e3e3);
   --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, #fde68a);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, black 15%);
@@ -228,7 +243,7 @@ setTheme('coral')
 }
 
 /* Dark mode overrides for your theme */
-[data-theme="brand"][data-mode="dark"] {
+:root[data-theme="brand"][data-mode="dark"] {
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 12%, #0e1116);
   --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, #0e1116);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 30%, white 70%);

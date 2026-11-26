@@ -272,7 +272,7 @@ const themes = [
 }
 ```
 
-`--color-accent-ink`, `--color-accent-hover` і `--color-accent-active` обчислюються автоматично через `color-mix()`.
+`--color-accent-hover` і `--color-accent-active` обчислюються з `--color-accent` через `color-mix()`. `--color-accent-ink` (текст на акцентних заливках) не обчислюється: задайте його в кожній темі так, щоб контраст з акцентом був щонайменше 4.5:1 (типове значення біле). Якщо колір тексту темний, додайте `--color-accent-hover-shade: white`, щоб градієнт наведення основної кнопки світлішав, а не темнішав під текстом (`--color-accent-hover-depth-start` / `-end`, типово `90%` / `80%`, регулюють силу ефекту). Підійде будь-який селектор: вбудовані кольорові правила мають нульову специфічність, тож ваші їх перекривають; див. [Теми](/uk/theming).
 
 ### Створення нової теми
 
@@ -282,18 +282,23 @@ const themes = [
 /* In your main CSS file or a separate theme file */
 :root[data-theme="sunset"] {
   --color-accent: hsl(16 90% 48%);
+  --color-accent-ink: #0e1116; /* 4.8:1+ ; white fails */
+  --color-accent-hover-shade: white;
   --color-accent-soft: hsl(16 100% 96%);
   --color-accent-border: hsl(16 85% 80%);
 }
 
 :root[data-theme="ocean"] {
   --color-accent: hsl(199 89% 48%);
+  --color-accent-ink: #0e1116; /* 4.8:1+ ; white fails */
+  --color-accent-hover-shade: white;
   --color-accent-soft: hsl(199 100% 96%);
   --color-accent-border: hsl(199 75% 80%);
 }
 
 :root[data-theme="lavender"] {
   --color-accent: hsl(267 65% 58%);
+  --color-accent-ink: #fff; /* 4.96:1 */
   --color-accent-soft: hsl(267 100% 97%);
   --color-accent-border: hsl(267 50% 85%);
 }
@@ -315,9 +320,10 @@ setTheme("sunset");
 Будь-яку вбудовану тему можна повністю перевизначити, задавши її змінні заново:
 
 ```css
-/* Override the "navy" theme with your brand colors */
-:root[data-theme="navy"] {
+/* Override the "royal" theme with your brand colors */
+:root[data-theme="royal"] {
   --color-accent: #0066cc; /* Your brand blue */
+  --color-accent-ink: #fff; /* white: 5.57:1 on #0066cc */
   --color-accent-soft: #e6f2ff;
   --color-accent-border: #99ccff;
 }
@@ -331,18 +337,24 @@ setTheme("sunset");
 /* bright-pink.css */
 :root[data-theme="bright-pink"] {
   --color-accent: hsl(328 100% 54%);
+  --color-accent-ink: #0e1116; /* 4.8:1+ ; white fails */
+  --color-accent-hover-shade: white;
   --color-accent-soft: hsl(328 100% 97%);
   --color-accent-border: hsl(328 73% 84%);
 }
 
 :root[data-theme="mint"] {
   --color-accent: hsl(162 63% 41%);
+  --color-accent-ink: #0e1116; /* 4.8:1+ ; white fails */
+  --color-accent-hover-shade: white;
   --color-accent-soft: hsl(162 60% 96%);
   --color-accent-border: hsl(162 40% 80%);
 }
 
 :root[data-theme="amber"] {
   --color-accent: hsl(38 92% 50%);
+  --color-accent-ink: #0e1116; /* 4.8:1+ ; white fails */
+  --color-accent-hover-shade: white;
   --color-accent-soft: hsl(38 100% 96%);
   --color-accent-border: hsl(38 100% 82%);
 }

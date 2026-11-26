@@ -75,6 +75,7 @@ These define the foundation and are always available:
 --color-accent-border   /* Accent-tinted border */
 --color-accent-hover    /* Accent hover state */
 --color-accent-active   /* Accent active/pressed state */
+--color-accent-text     /* Accent as text: >= 4.5:1 on bg and surface in every bundled theme. Derived from --color-accent; override it in your own theme. Use var(--color-accent-text, var(--color-accent)) */
 
 /* Semantic colors */
 --color-danger          /* Error/destructive actions */
@@ -121,6 +122,7 @@ Controls light/dark appearance. Set via `data-mode="light|dark"` on `<html>`:
   /* Dark mode also adjusts accent derivatives */
   --color-accent-soft-base: color-mix(in srgb, var(--color-accent) 12%, #0e1116);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 30%, white 70%);
+  --color-accent-active: color-mix(in srgb, var(--color-accent) 80%, white 25%);
   /* ... */
 }
 ```
@@ -154,7 +156,7 @@ Controls the accent color. Set via `data-theme="themename"` on `<html>`:
   --color-accent: hsl(258, 85%, 62%);
 }
 
-[data-theme="normal"] {
+:root[data-theme="normal"] {
   --color-accent: #ced1d5;
   --color-accent-ink: #2a2a2b;
 }
@@ -186,14 +188,26 @@ Create a CSS file with your theme:
 ```css
 /* assets/css/my-themes.css */
 
-[data-theme="coral"] {
+:root[data-theme="coral"] {
   --color-accent: hsl(16, 100%, 66%);
+  --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
 }
 
-[data-theme="lavender"] {
+:root[data-theme="lavender"] {
   --color-accent: hsl(270, 60%, 70%);
+  --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
 }
 ```
+
+::: warning
+When your theme sets `--color-accent`, also set `--color-accent-ink` (text on accent fills: primary button, badge, tabs, checkbox). The default is white, which fails 4.5:1 on mid and light accents. Pick `#fff` or a dark ink so the pair reaches 4.5:1.
+
+With a dark ink also set `--color-accent-hover-shade: white`. The primary Button hover gradient darkens toward black by default, which pulls a dark ink below 4.5:1 (lavender below is 4.40:1 at the end stop); with the shade it lightens instead. `--color-accent-hover-depth-start` / `-end` (default `90%` / `80%`, lower is stronger) tune its strength. Check the ink against the accent and both hover stops (`accent` mixed with the shade at the depth percentages).
+
+Any selector works for your theme (`[data-theme="x"]`, `:root[data-theme="x"]`, ...): the built-in colour rules are wrapped in `:where()` and have zero specificity, so any consumer selector with non-zero specificity overrides them regardless of load order. A zero-specificity selector (e.g. `:where(...)`) ties and falls back to load order. Rules inside `@layer` lose to these unlayered rules. Ink is the same in both modes, so one rule is enough; `--color-accent-text` (accent used as text) differs per mode, so set it for light and, if the derived value is not what you want, again in `:root[data-theme="x"][data-mode="dark"]`. A rule without a `data-mode` applies to both modes, so it also replaces the derived dark value; to keep the derived dark value, put the light value in `[data-theme="x"][data-mode="light"]`.
+:::
 
 Import in `nuxt.config.ts`:
 
@@ -218,9 +232,10 @@ setTheme('coral')
 For full control, override the derived accent variables:
 
 ```css
-[data-theme="brand"] {
+:root[data-theme="brand"] {
   --color-accent: #ff6b00;
-  --color-accent-ink: #ffffff;
+  --color-accent-ink: #0e1116;
+  --color-accent-hover-shade: white;
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 15%, #e3e3e3);
   --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, #fde68a);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, black 15%);
@@ -228,7 +243,7 @@ For full control, override the derived accent variables:
 }
 
 /* Dark mode overrides for your theme */
-[data-theme="brand"][data-mode="dark"] {
+:root[data-theme="brand"][data-mode="dark"] {
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 12%, #0e1116);
   --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, #0e1116);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 30%, white 70%);

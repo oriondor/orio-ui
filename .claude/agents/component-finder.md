@@ -88,6 +88,7 @@ not edit by hand.
 - **spinner, loading indicator, loading icon, busy indicator** → `LoadingSpinner.vue`
 - **long press, press and hold to open, haptic touch, 3d touch, force click, hold for context menu, hidden action on hold** → `LongPress.vue` (read the agent doc first)
 - **nav button, nav link, link-styled button, navigation item, sidebar item, menu link** → `NavButton.vue` (read the agent doc first)
+- **tabs, tab bar, segmented control, pill toggle group, radio group strip, period picker** → `Tabs.vue` (read the agent doc first)
 - **tag, chip, label, removable chip, category pill** → `Tag.vue` (read the agent doc first)
 
 ### Media & misc

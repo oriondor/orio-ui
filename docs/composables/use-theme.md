@@ -272,7 +272,7 @@ Themes control the accent colors used throughout the UI. The main variables you 
 }
 ```
 
-The `--color-accent-ink`, `--color-accent-hover`, and `--color-accent-active` are automatically derived using `color-mix()`.
+`--color-accent-hover` and `--color-accent-active` are derived from `--color-accent` using `color-mix()`. `--color-accent-ink` (text on accent fills) is not derived: set it per theme so it reaches 4.5:1 on your accent (the default is white). If the ink is dark, also set `--color-accent-hover-shade: white` so the primary Button hover gradient lightens instead of darkening under the ink (`--color-accent-hover-depth-start` / `-end`, default `90%` / `80%`, tune its strength). Any selector works: the built-in colour rules have zero specificity, so yours override them; see [Theming](/theming).
 
 ### Creating a New Theme
 
@@ -282,18 +282,23 @@ Define your theme in your app's CSS:
 /* In your main CSS file or a separate theme file */
 :root[data-theme="sunset"] {
   --color-accent: hsl(16 90% 48%);
+  --color-accent-ink: #0e1116; /* 4.8:1+ ; white fails */
+  --color-accent-hover-shade: white;
   --color-accent-soft: hsl(16 100% 96%);
   --color-accent-border: hsl(16 85% 80%);
 }
 
 :root[data-theme="ocean"] {
   --color-accent: hsl(199 89% 48%);
+  --color-accent-ink: #0e1116; /* 4.8:1+ ; white fails */
+  --color-accent-hover-shade: white;
   --color-accent-soft: hsl(199 100% 96%);
   --color-accent-border: hsl(199 75% 80%);
 }
 
 :root[data-theme="lavender"] {
   --color-accent: hsl(267 65% 58%);
+  --color-accent-ink: #fff; /* 4.96:1 */
   --color-accent-soft: hsl(267 100% 97%);
   --color-accent-border: hsl(267 50% 85%);
 }
@@ -315,9 +320,10 @@ setTheme("sunset");
 You can completely override any built-in theme by redefining its variables:
 
 ```css
-/* Override the "navy" theme with your brand colors */
-:root[data-theme="navy"] {
+/* Override the "royal" theme with your brand colors */
+:root[data-theme="royal"] {
   --color-accent: #0066cc; /* Your brand blue */
+  --color-accent-ink: #fff; /* white: 5.57:1 on #0066cc */
   --color-accent-soft: #e6f2ff;
   --color-accent-border: #99ccff;
 }
@@ -331,18 +337,24 @@ Here's a full example with multiple custom themes:
 /* bright-pink.css */
 :root[data-theme="bright-pink"] {
   --color-accent: hsl(328 100% 54%);
+  --color-accent-ink: #0e1116; /* 4.8:1+ ; white fails */
+  --color-accent-hover-shade: white;
   --color-accent-soft: hsl(328 100% 97%);
   --color-accent-border: hsl(328 73% 84%);
 }
 
 :root[data-theme="mint"] {
   --color-accent: hsl(162 63% 41%);
+  --color-accent-ink: #0e1116; /* 4.8:1+ ; white fails */
+  --color-accent-hover-shade: white;
   --color-accent-soft: hsl(162 60% 96%);
   --color-accent-border: hsl(162 40% 80%);
 }
 
 :root[data-theme="amber"] {
   --color-accent: hsl(38 92% 50%);
+  --color-accent-ink: #0e1116; /* 4.8:1+ ; white fails */
+  --color-accent-hover-shade: white;
   --color-accent-soft: hsl(38 100% 96%);
   --color-accent-border: hsl(38 100% 82%);
 }
