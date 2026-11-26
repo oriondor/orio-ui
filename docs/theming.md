@@ -205,7 +205,7 @@ When your theme sets `--color-accent`, also set `--color-accent-ink` (text on ac
 
 With a dark ink also set `--color-accent-hover-shade: white`. The primary Button hover gradient darkens toward black by default, which pulls a dark ink below 4.5:1 (lavender below is 4.40:1 at the end stop); with the shade it lightens instead. `--color-accent-hover-depth-start` / `-end` (default `90%` / `80%`, lower is stronger) tune its strength. Check the ink against the accent and both hover stops (`accent` mixed with the shade at the depth percentages).
 
-Write your theme selectors as `:root[data-theme="x"]`, like the built-in themes. A bare `[data-theme="x"]` has lower specificity than the built-in `:root[data-mode="dark"]` block, which would then win for `--color-accent-text`. Ink is the same in both modes, so one rule is enough; `--color-accent-text` (accent used as text) differs per mode, so set it for light and, if the derived value is not what you want, again in `:root[data-theme="x"][data-mode="dark"]`.
+Any selector works for your theme (`[data-theme="x"]`, `:root[data-theme="x"]`, ...): the built-in colour rules are wrapped in `:where()` and have zero specificity, so your rules override them whatever the specificity or load order. Ink is the same in both modes, so one rule is enough; `--color-accent-text` (accent used as text) differs per mode, so set it for light and, if the derived value is not what you want, again in `:root[data-theme="x"][data-mode="dark"]`.
 :::
 
 Import in `nuxt.config.ts`:

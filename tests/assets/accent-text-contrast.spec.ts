@@ -26,20 +26,27 @@ const hoverCss = readFileSync(
   "src/runtime/assets/css/cool-gradient-hover.css",
   "utf8",
 );
-/** Attribute selectors and :root are class-level (0,1,0) each; :not() adds only its argument. */
+/** Attribute selectors and :root are class-level (0,1,0) each; :where() contributes nothing, so
+ * the built-in blocks are all zero and only source order ranks them. */
 const specificity = (selector: string) =>
-  [...selector.matchAll(/\[|:root/g)].length;
+  [
+    ...selector
+      .replace(/:where\((?:[^()]|\([^()]*\))*\)/g, "")
+      .matchAll(/\[|:root/g),
+  ].length;
 
 type Rgb = [number, number, number];
 
-/** Cascade by specificity, then source order; `extra` blocks come last (a consumer stylesheet). */
+/** Cascade by specificity, then source order. `extra` is a consumer stylesheet: last by default,
+ * or first with `extraFirst` (loaded before orio's css). */
 function resolveTokens(
   theme: string | null,
   mode: string,
   extra: typeof blocks = [],
+  extraFirst = false,
 ) {
   const tokens: Record<string, string> = {};
-  const ordered = [...blocks, ...extra]
+  const ordered = (extraFirst ? [...extra, ...blocks] : [...blocks, ...extra])
     .map((block, order) => ({ block, order }))
     .sort(
       (a, b) =>
@@ -270,6 +277,31 @@ describe("accent color contrast", () => {
         expect(tokens["--color-accent-text"]).toBe("#ff7849");
     }),
   );
+
+  it("a consumer :root[data-theme][data-mode=dark] block loaded BEFORE orio's css still wins", () => {
+    const consumer = parseBlocks(`
+      :root[data-theme="forest"][data-mode="dark"] { --color-accent-text: #86c3a5; }
+    `);
+    const tokens = resolveTokens("forest", "dark", consumer, true);
+    expect(tokens["--color-accent-text"]).toBe("#86c3a5");
+  });
+
+  it("a bare consumer [data-theme] rule wins over every built-in block", () => {
+    const consumer = parseBlocks(`
+      [data-theme="forest"] { --color-accent-text: #86c3a5; --color-accent: #123456; }
+    `);
+    ["light", "dark"].forEach((mode) =>
+      [false, true].forEach((first) => {
+        const tokens = resolveTokens("forest", mode, consumer, first);
+        expect(tokens["--color-accent-text"]).toBe("#86c3a5");
+        expect(tokens["--color-accent"]).toBe("#123456");
+      }),
+    );
+  });
+
+  it("every built-in colour rule is zero-specificity", () => {
+    blocks.forEach((block) => expect(specificity(block.selector)).toBe(0));
+  });
 
   it("derives from --color-accent for a consumer theme setting only the accent", () => {
     const tokens = resolveTokens("custom", "light");

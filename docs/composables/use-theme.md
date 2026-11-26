@@ -272,7 +272,7 @@ Themes control the accent colors used throughout the UI. The main variables you 
 }
 ```
 
-`--color-accent-hover` and `--color-accent-active` are derived from `--color-accent` using `color-mix()`. `--color-accent-ink` (text on accent fills) is not derived: set it per theme so it reaches 4.5:1 on your accent (the default is white). If the ink is dark, also set `--color-accent-hover-shade: white` so the primary Button hover gradient lightens instead of darkening under the ink (`--color-accent-hover-depth-start` / `-end`, default `90%` / `80%`, tune its strength). Keep the `:root[data-theme="x"]` form; see [Theming](/theming) for the specificity note.
+`--color-accent-hover` and `--color-accent-active` are derived from `--color-accent` using `color-mix()`. `--color-accent-ink` (text on accent fills) is not derived: set it per theme so it reaches 4.5:1 on your accent (the default is white). If the ink is dark, also set `--color-accent-hover-shade: white` so the primary Button hover gradient lightens instead of darkening under the ink (`--color-accent-hover-depth-start` / `-end`, default `90%` / `80%`, tune its strength). Any selector works: the built-in colour rules have zero specificity, so yours override them; see [Theming](/theming).
 
 ### Creating a New Theme
 

@@ -1,5 +1,9 @@
+/* Every built-in rule below is wrapped in :where() so it has zero
+   specificity: a consumer rule (any selector, any load order) overrides it.
+   Among these rules the later one wins, so keep general blocks first. */
+
 /* 1) Role-based tokens (don't change these names in CSS) */
-:root {
+:where(:root) {
   --color-bg: #ffffff;
   --color-surface: #f7f8fa;
   --color-text: #0e1116;
@@ -54,7 +58,7 @@
 /* 2) Category themes (light vs dark) */
 
 /* Light (default, already matches your root) */
-:root[data-mode="light"] {
+:where(:root[data-mode="light"]) {
   --color-bg: #ffffff;
   --color-surface: #f7f8fa;
   --color-text: #0e1116;
@@ -63,7 +67,7 @@
 }
 
 /* Dark */
-:root[data-mode="dark"] {
+:where(:root[data-mode="dark"]) {
   --color-bg: #0e1116;
   --color-surface: #1a1d23;
   --color-text: #ffffff;
@@ -101,7 +105,7 @@
 
 /* 3) Accent themes (just accents, independent of light/dark) */
 
-:root[data-theme="normal"] {
+:where(:root[data-theme="normal"]) {
   --color-accent: #ced1d5;
   --color-accent-ink: #2a2a2b;
   --color-accent-hover: color-mix(
@@ -111,23 +115,23 @@
   );
 }
 
-:root[data-theme="normal"][data-mode="light"] {
+:where(:root[data-theme="normal"][data-mode="light"]) {
   /* near-white accent needs a much darker text tint */
   --color-accent-text: color-mix(in srgb, var(--color-accent) 40%, black);
 }
 
-:root[data-theme="inverse"][data-mode="light"] {
+:where(:root[data-theme="inverse"][data-mode="light"]) {
   --color-accent: #000;
   --color-accent-soft-darker: #fff;
 }
 
-:root[data-theme="inverse"][data-mode="dark"] {
+:where(:root[data-theme="inverse"][data-mode="dark"]) {
   --color-accent: #fff;
   --color-accent-ink: #000;
   --color-accent-hover: color-mix(in srgb, var(--color-accent), black 80%);
 }
 
-:root[data-theme="navy"] {
+:where(:root[data-theme="navy"]) {
   --color-accent-ink: #000; /* white is < 4.5:1 on this accent */
   --color-accent-hover-shade: white;
   --color-accent-hover-depth-start: 75%;
@@ -136,7 +140,7 @@
   --color-accent-soft-darker: var(--color-accent-soft);
 }
 
-:root[data-theme="teal"] {
+:where(:root[data-theme="teal"]) {
   --color-accent-ink: #0e1116; /* white is < 4.5:1 on this accent */
   --color-accent-hover-shade: white;
   --color-accent-hover-depth-start: 75%;
@@ -144,7 +148,7 @@
   --color-accent: hsl(174, 65%, 44%);
 }
 
-:root[data-theme="forest"] {
+:where(:root[data-theme="forest"]) {
   --color-accent-ink: #0e1116; /* white is < 4.5:1 on this accent */
   --color-accent-hover-shade: white;
   --color-accent-hover-depth-start: 75%;
@@ -152,53 +156,53 @@
   --color-accent: hsl(153, 35%, 53%);
 }
 
-:root[data-theme="wine"] {
+:where(:root[data-theme="wine"]) {
   --color-accent: hsl(350 55% 34%);
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 5%, #fff);
   --color-accent-soft-darker: var(--color-accent-soft);
 }
 
-:root[data-theme="royal"] {
+:where(:root[data-theme="royal"]) {
   --color-accent: hsl(230 60% 40%);
   --color-accent-soft: color-mix(in srgb, var(--color-accent) 5%, #fff);
   --color-accent-soft-darker: var(--color-accent-soft);
 }
 
-:root[data-theme="violet"] {
+:where(:root[data-theme="violet"]) {
   --color-accent: hsl(258 85% 62%);
 }
 
 /* Raw accent already >= 4.5:1 on bg and surface in these theme x mode combos:
    use it directly instead of the derived mix, which over-darkens/lightens it
    until it is indistinguishable from --color-text. Consumer themes keep the mix. */
-:root:not([data-theme])[data-mode="light"] {
+:where(:root:not([data-theme])[data-mode="light"]) {
   --color-accent-text: var(--color-accent);
 }
 
-:root[data-theme="inverse"] {
+:where(:root[data-theme="inverse"]) {
   --color-accent-text: var(--color-accent);
 }
 
-:root[data-theme="normal"][data-mode="dark"] {
+:where(:root[data-theme="normal"][data-mode="dark"]) {
   --color-accent-text: var(--color-accent);
 }
 
-:root[data-theme="teal"][data-mode="dark"] {
+:where(:root[data-theme="teal"][data-mode="dark"]) {
   --color-accent-text: var(--color-accent);
 }
 
-:root[data-theme="forest"][data-mode="dark"] {
+:where(:root[data-theme="forest"][data-mode="dark"]) {
   --color-accent-text: var(--color-accent);
 }
 
-:root[data-theme="wine"][data-mode="light"] {
+:where(:root[data-theme="wine"][data-mode="light"]) {
   --color-accent-text: var(--color-accent);
 }
 
-:root[data-theme="royal"][data-mode="light"] {
+:where(:root[data-theme="royal"][data-mode="light"]) {
   --color-accent-text: var(--color-accent);
 }
 
-:root[data-theme="violet"][data-mode="light"] {
+:where(:root[data-theme="violet"][data-mode="light"]) {
   --color-accent-text: var(--color-accent);
 }
