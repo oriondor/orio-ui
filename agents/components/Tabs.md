@@ -44,7 +44,7 @@ invariants: true
   change, and under `prefers-reduced-motion: reduce`. Absent with no selection
   or while the strip is `display:none` (re-measured when shown). Until it is
   placed (SSR) the selected item paints its own fill. Items sit above it
-  (`z-index`), so text and focus ring stay on top. Never position it yourself.
+  (`z-index`), so text and focus ring stay on top. Never position it yourself. Known ceiling: a `dir` flip alone does not re-measure a `fit-content` strip until selection, label or strip size changes.
 - Name the strip: `label` (aria-label) or consumer `aria-labelledby`.
 
 ## Gotchas

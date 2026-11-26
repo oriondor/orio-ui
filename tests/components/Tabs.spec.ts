@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, it, expect } from "vitest";
-import { nextTick } from "vue";
+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
+import { defineComponent, h, nextTick, ref } from "vue";
 import { mount } from "@vue/test-utils";
 import Tabs from "../../src/runtime/components/Tabs.vue";
 
@@ -461,6 +461,69 @@ describe("Tabs sliding indicator", () => {
     expect(indicator(wrapper).exists()).toBe(false);
     fake.offsetWidth = () => 100;
     fake.offsetHeight = () => 30;
+  });
+
+  it("glides on selection change when the parent passes a fresh equal options array each render", async () => {
+    const model = ref("a");
+    const Parent = defineComponent({
+      render: () =>
+        h(Tabs as never, {
+          // Inline literal: a new array identity on every parent render.
+          options: [...options],
+          modelValue: model.value,
+          "onUpdate:modelValue": (value: string) => (model.value = value),
+        }),
+    });
+    const wrapper = mount(Parent, {
+      attachTo: document.body,
+      global: { stubs: { "orio-icon": IconStub } },
+    });
+    mounted.push(wrapper);
+    await settle();
+    await wrapper.findAll("button")[2].trigger("click");
+    await settle();
+    expect(wrapper.find(".indicator").classes()).toContain("animate");
+    expect(wrapper.find(".indicator").attributes("style")).toContain(
+      "--indicator-x: 200px",
+    );
+  });
+
+  it("re-measures instantly when the resize observer fires", async () => {
+    let fire: () => void = () => {};
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: () => void) {
+          fire = callback;
+        }
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+      },
+    );
+    const wrapper = make();
+    await settle();
+    fake.offsetWidth = () => 150;
+    fire();
+    await settle();
+    const element = indicator(wrapper);
+    expect(element.attributes("style")).toContain("--indicator-width: 150px");
+    expect(element.classes()).not.toContain("animate");
+    fake.offsetWidth = () => 100;
+    vi.unstubAllGlobals();
+  });
+
+  it("stops animating when the transform transition ends", async () => {
+    const wrapper = make();
+    await settle();
+    await wrapper.setProps({ modelValue: "c" } as never);
+    await settle();
+    expect(indicator(wrapper).classes()).toContain("animate");
+    const event = new Event("transitionend");
+    Object.defineProperty(event, "propertyName", { value: "transform" });
+    indicator(wrapper).element.dispatchEvent(event);
+    await settle();
+    expect(indicator(wrapper).classes()).not.toContain("animate");
   });
 
   it("underline with a disabled selected item still gets an indicator", async () => {

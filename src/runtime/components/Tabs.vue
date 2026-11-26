@@ -110,41 +110,33 @@ function measure() {
 
 onMounted(measure);
 
-watch(selectedIndex, async (current, previous) => {
-  const wasShown = box.value !== null;
-  await nextTick();
-  const before = box.value;
-  animate.value = wasShown && previous >= 0 && current >= 0;
-  measure();
-  const after = box.value;
-  // No movement means no transitionend to switch animation off again.
-  if (
-    before &&
-    after &&
-    before.x === after.x &&
-    before.y === after.y &&
-    before.width === after.width &&
-    before.height === after.height
-  )
-    animate.value = false;
-});
+/** Last model value seen, to tell a real selection change from options being re-ordered or re-created. */
+let lastValue = model.value;
 
+// One watcher: a changed selected value glides even when options is replaced in the same tick (inline `:options="[...]"` parents); a re-measure caused only by options/size/variant/block stays instant.
 watch(
   [
+    selectedIndex,
     () => props.options,
     () => props.size,
     () => props.variant,
     () => props.block,
   ],
-  async () => {
+  async ([current], [previous]) => {
+    const glide =
+      box.value !== null &&
+      model.value !== lastValue &&
+      previous >= 0 &&
+      current >= 0;
+    lastValue = model.value;
     await nextTick();
-    // After the tick so it wins over a selection watcher that resumes first.
-    animate.value = false;
+    animate.value = glide;
     measure();
   },
   { deep: true },
 );
 
+// ponytail: a `dir` flip alone does not resize anything, so a fit-content strip keeps its old (mirrored-wrong) box until selection, label or strip size changes; observe `dir` with useMutationObserver if that matters.
 // Items change size on their own (fonts, labels, selected weight, container width).
 useResizeObserver(() => [rootRef.value, ...buttonRefs.value], measure);
 
@@ -246,6 +238,8 @@ function itemAttrs(option: TabsOption<T>, index: number) {
 
 <style lang="scss" scoped>
 .tabs {
+  /* Contains the items' z-index so they never paint over consumer elements. */
+  isolation: isolate;
   --tabs-gap: var(--orio-tabs-gap, var(--control-gap));
   --tabs-radius: var(--orio-tabs-radius, var(--control-radius));
   --tabs-track-bg: var(--orio-tabs-track-bg, var(--color-surface));
@@ -328,6 +322,12 @@ function itemAttrs(option: TabsOption<T>, index: number) {
       width var(--tabs-transition),
       height var(--tabs-transition);
   }
+}
+
+/* Dim like the item it follows (disabled selected item or whole strip). */
+.tabs:has(.tab.selected[aria-disabled="true"], .tab.selected:disabled)
+  .indicator {
+  opacity: 0.5;
 }
 
 @media (prefers-reduced-motion: reduce) {
