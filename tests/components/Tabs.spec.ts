@@ -348,6 +348,48 @@ describe("Tabs", () => {
     expect(make().classes()).not.toContain("block");
   });
 
+  it("block variants: true/equal share the block class, content adds fill-content", () => {
+    expect(make({ block: true }).classes()).not.toContain("fill-content");
+    const equal = make({ block: "equal" });
+    expect(equal.classes()).toContain("block");
+    expect(equal.classes()).not.toContain("fill-content");
+    const content = make({ block: "content" });
+    expect(content.classes()).toEqual(
+      expect.arrayContaining(["block", "fill-content"]),
+    );
+    expect(make({ block: false }).classes()).not.toContain("block");
+  });
+
+  it("dense class follows the parent's available width", async () => {
+    let parentWidth = 300;
+    const spy = vi
+      .spyOn(HTMLElement.prototype, "clientWidth", "get")
+      .mockImplementation(() => parentWidth);
+    let fire: () => void = () => {};
+    const calls: (() => void)[] = [];
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: () => void) {
+          calls.push(callback);
+          fire = () => calls.forEach((call) => call());
+        }
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+      },
+    );
+    const wrapper = make();
+    await nextTick();
+    expect(wrapper.classes()).toContain("dense");
+    parentWidth = 600;
+    fire();
+    await nextTick();
+    expect(wrapper.classes()).not.toContain("dense");
+    spy.mockRestore();
+    vi.unstubAllGlobals();
+  });
+
   it("sizes via the stylesheet grid, not per-count inline style", () => {
     // jsdom cannot lay out; real containment is covered by the browser probe. This blocks the old --tabs-count min-width formula coming back.
     const style =
@@ -489,12 +531,13 @@ describe("Tabs sliding indicator", () => {
   });
 
   it("re-measures instantly when the resize observer fires", async () => {
-    let fire: () => void = () => {};
+    const callbacks: (() => void)[] = [];
+    const fire = () => callbacks.forEach((callback) => callback());
     vi.stubGlobal(
       "ResizeObserver",
       class {
         constructor(callback: () => void) {
-          fire = callback;
+          callbacks.push(callback);
         }
         observe() {}
         unobserve() {}

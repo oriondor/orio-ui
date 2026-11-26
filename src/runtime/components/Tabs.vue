@@ -21,8 +21,8 @@ export interface TabsProps<V = string | number> {
   label?: string;
   /** `tablist` only: tabs get `{idPrefix}-tab-{value}` ids and `aria-controls="{idPrefix}-panel-{value}"`. */
   idPrefix?: string;
-  /** Full width with equal-width items. */
-  block?: boolean;
+  /** Full width. `true` / `"equal"`: equal-width items; `"content"`: items sized by their content, spare space shared. */
+  block?: boolean | "equal" | "content";
   disabled?: boolean;
   size?: ControlSize;
 }
@@ -89,6 +89,14 @@ interface IndicatorBox {
   height: number;
 }
 
+/** Below this available inline width (the strip's parent) padding, gap and font tighten so labels fit. The parent is observed instead of a container query: container-type on the fit-content strip itself would kill its intrinsic width, and a wrapper element would change inline layouts. */
+const DENSE_BELOW_PX = 380;
+const dense = ref(false);
+function updateDense() {
+  const parent = rootRef.value?.parentElement;
+  if (parent) dense.value = parent.clientWidth < DENSE_BELOW_PX;
+}
+
 /** Selected item's box in the strip's padding-box coordinates; null = nothing to show (no selection, or not rendered/measurable). */
 const box = ref<IndicatorBox | null>(null);
 /** True only while a selection change is gliding; every other re-measure is instant. */
@@ -108,7 +116,10 @@ function measure() {
       : null;
 }
 
-onMounted(measure);
+onMounted(() => {
+  updateDense();
+  measure();
+});
 
 /** Last model value seen, to tell a real selection change from options being re-ordered or re-created. */
 let lastValue = model.value;
@@ -121,6 +132,7 @@ watch(
     () => props.size,
     () => props.variant,
     () => props.block,
+    dense,
   ],
   async ([current], [previous]) => {
     const glide =
@@ -139,6 +151,7 @@ watch(
 // ponytail: a `dir` flip alone does not resize anything, so a fit-content strip keeps its old (mirrored-wrong) box until selection, label or strip size changes; observe `dir` with useMutationObserver if that matters.
 // Items change size on their own (fonts, labels, selected weight, container width).
 useResizeObserver(() => [rootRef.value, ...buttonRefs.value], measure);
+useResizeObserver(() => rootRef.value?.parentElement, updateDense);
 
 function moveTo(index: number) {
   select(index);
@@ -197,7 +210,16 @@ function itemAttrs(option: TabsOption<T>, index: number) {
     :role="role"
     :aria-label="label"
     :aria-disabled="disabled || undefined"
-    :class="['tabs', variant, { block, placed: !!box }]"
+    :class="[
+      'tabs',
+      variant,
+      {
+        block: !!block,
+        'fill-content': block === 'content',
+        dense,
+        placed: !!box,
+      },
+    ]"
     :style="tokens"
     @keydown="onKeydown"
   >
@@ -241,6 +263,8 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   /* Contains the items' z-index so they never paint over consumer elements. */
   isolation: isolate;
   --tabs-gap: var(--orio-tabs-gap, var(--control-gap));
+  --tabs-px: var(--control-px);
+  --tabs-font-size: var(--control-font-size);
   --tabs-radius: var(--orio-tabs-radius, var(--control-radius));
   --tabs-track-bg: var(--orio-tabs-track-bg, var(--color-surface));
   --tabs-active-bg: var(--orio-tabs-active-bg, var(--color-accent));
@@ -256,11 +280,24 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   box-sizing: border-box;
   max-width: 100%;
   gap: var(--tabs-gap);
-  font-size: var(--control-font-size);
+  font-size: var(--tabs-font-size);
+
+  /* Narrow parent: tighter, still derived from the size tokens; a consumer --orio-tabs-gap wins. */
+  &.dense {
+    --tabs-gap: var(--orio-tabs-gap, calc(var(--control-gap) / 2));
+    --tabs-px: calc(var(--control-px) * 0.6);
+    --tabs-font-size: calc(var(--control-font-size) * 0.9);
+  }
 
   &.block {
     width: 100%;
     grid-auto-columns: minmax(0, 1fr);
+  }
+
+  /* Content-sized tracks (auto) that stretch: spare space is shared, nothing is narrower than its label while it fits. */
+  &.block.fill-content {
+    grid-auto-columns: minmax(0, auto);
+    justify-content: stretch;
   }
 }
 
@@ -272,7 +309,7 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   min-width: 0;
   min-height: 24px;
   box-sizing: border-box;
-  padding: var(--control-py) var(--control-px);
+  padding: var(--control-py) var(--tabs-px);
   font: inherit;
   color: var(--color-muted);
   background: transparent;

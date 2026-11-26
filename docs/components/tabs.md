@@ -95,12 +95,13 @@ give your panels the matching ids.
 
 ### Block and long labels
 
-`block` stretches the strip to full width with equal-width items. Long labels
-ellipsise inside the item.
+`block` stretches the strip to full width with equal-width items. `block="content"` sizes items by their labels and shares the spare space, so a label is never narrower than it needs while it fits. Long labels
+ellipsise inside the item. Below about 380px of available width (the strip's parent) padding, gap and font tighten automatically; `--orio-tabs-gap` still wins.
 
 <div class="demo-container">
   <orio-tabs v-model="tab" :options="tabOptions" block role="radiogroup" label="Block underline" />
   <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block label="Block segmented" />
+  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block="content" label="Block content" />
   <orio-tabs v-model="longLabel" :options="longOptions" variant="segmented" role="radiogroup" label="Long labels" style="max-width: min(16rem, 100%)" />
 </div>
 
@@ -191,7 +192,7 @@ Props are typed by the exported `TabsProps`; each option is a `TabsOption` (`{ v
 | `role` | `'tablist' \| 'radiogroup'` | `'tablist'` | Semantics |
 | `label` | `string` | - | Accessible name (`aria-label`); use `aria-labelledby` for a visible label |
 | `idPrefix` | `string` | - | Wires `{prefix}-tab-{value}` / `{prefix}-panel-{value}` (tablist only) |
-| `block` | `boolean` | `false` | Full width, equal-width items |
+| `block` | `boolean \| "equal" \| "content"` | `false` | Full width. `true` / `"equal"`: equal-width items; `"content"`: items sized by their labels, spare space shared |
 | `disabled` | `boolean` | `false` | Disables the whole strip |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | inherited | Control size |
 

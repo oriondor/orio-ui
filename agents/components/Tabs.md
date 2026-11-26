@@ -52,7 +52,7 @@ invariants: true
 - Do not restyle with internal classes; override `--orio-tabs-gap`,
   `--orio-tabs-radius`, `--orio-tabs-track-bg`, `--orio-tabs-active-bg`,
   `--orio-tabs-active-ink`, `--orio-tabs-transition` (default `250ms ease`; `0s` disables the slide).
-- `segmented` is `width: fit-content`; add `block` for full width. Layout is a CSS grid
+- `segmented` is `width: fit-content`; add `block` for full width (`true`/`"equal"`: equal columns; `"content"`: `minmax(0, auto)` tracks + `justify-content: stretch`, so labels keep their content width while they fit and spare space is shared). **Density:** when the strip's parent is narrower than 380px (`dense` class, observed with `useResizeObserver` on the parent; a container query on the fit-content strip would kill its intrinsic width, a wrapper would change inline layouts) padding, gap and font tighten, derived from the size tokens; `--orio-tabs-gap` still wins. The indicator re-measures instantly when it flips. Layout is a CSS grid
   (`minmax(0, max-content)` columns; `block`: `minmax(0, 1fr)`): items stay inside
   the strip while it is wider than count x 2 x the control's horizontal padding
   plus the gaps (button padding is a floor, so extreme widths, e.g. 8 options in

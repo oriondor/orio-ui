@@ -95,12 +95,13 @@ const levelOptions = [
 
 ### Блок і довгі підписи
 
-`block` розтягує рядок на всю ширину з елементами однакової ширини. Довгі підписи
-обрізаються трикрапкою всередині елемента.
+`block` розтягує рядок на всю ширину з елементами однакової ширини. `block="content"` розмірює елементи за підписами й ділить вільне місце, тож підпис не вужчий за потрібне, поки вміщується. Довгі підписи
+обрізаються трикрапкою всередині елемента. Коли доступна ширина (батьківського елемента) менша за ~380px, відступи, проміжки й шрифт автоматично зменшуються; `--orio-tabs-gap` має пріоритет.
 
 <div class="demo-container">
   <orio-tabs v-model="tab" :options="tabOptions" block role="radiogroup" label="Блок: підкреслення" />
   <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block label="Блок: сегментований" />
+  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block="content" label="Блок: за вмістом" />
   <orio-tabs v-model="longLabel" :options="longOptions" variant="segmented" role="radiogroup" label="Довгі підписи" style="max-width: min(16rem, 100%)" />
 </div>
 
@@ -191,7 +192,7 @@ const tabOptions = [
 | `role` | `'tablist' \| 'radiogroup'` | `'tablist'` | Семантика |
 | `label` | `string` | - | Доступна назва (`aria-label`); для видимого підпису використовуйте `aria-labelledby` |
 | `idPrefix` | `string` | - | Задає `{prefix}-tab-{value}` / `{prefix}-panel-{value}` (лише tablist) |
-| `block` | `boolean` | `false` | Повна ширина, елементи однакової ширини |
+| `block` | `boolean \| "equal" \| "content"` | `false` | Повна ширина. `true` / `"equal"`: однакова ширина елементів; `"content"`: ширина за підписами, вільне місце ділиться |
 | `disabled` | `boolean` | `false` | Вимикає весь рядок |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | успадковується | Розмір контролу |
 
