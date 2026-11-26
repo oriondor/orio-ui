@@ -6,8 +6,10 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useMediaQuery } from '@vueuse/core'
 
 const tab = ref('overview')
+const narrow = useMediaQuery('(max-width: 400px)')
 const tabOptions = [
   { value: 'overview', label: 'Огляд', icon: 'edit' },
   { value: 'activity', label: 'Активність' },
@@ -96,13 +98,21 @@ const levelOptions = [
 ### Блок і довгі підписи
 
 `block` розтягує рядок на всю ширину з елементами однакової ширини. `block="content"` розмірює елементи за підписами й ділить вільне місце, тож підпис не вужчий за потрібне, поки вміщується. Довгі підписи
-обрізаються трикрапкою всередині елемента. Коли за звичайної щільності підпис обрізався б, відступи, проміжки й шрифт автоматично зменшуються (`dense="auto"`); звичайна щільність повертається, щойно підписи знову вміщуються. Керуйте через `dense` (`true` — компактно, `false` — ніколи); `--orio-tabs-gap`, `--orio-tabs-padding-x` і `--orio-tabs-font-size` мають пріоритет.
+обрізаються трикрапкою всередині елемента. Підписи, що все одно обрізаються у вузькому місці, можуть скористатися компактним стилем `dense` (див. «Щільний» нижче).
 
 <div class="demo-container">
   <orio-tabs v-model="tab" :options="tabOptions" block role="radiogroup" label="Блок: підкреслення" />
   <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block label="Блок: сегментований" />
   <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block="content" label="Блок: за вмістом" />
   <orio-tabs v-model="longLabel" :options="longOptions" variant="segmented" role="radiogroup" label="Довгі підписи" style="max-width: min(16rem, 100%)" />
+</div>
+
+### Щільний
+
+`dense` вмикає компактний стиль (відступи x0.6, проміжок x0.5, шрифт x0.9), щоб підписи вміщувалися у вузькому місці. Сам він не перемикається: прив'яжіть його до власної точки зламу, наприклад через VueUse. `--orio-tabs-gap`, `--orio-tabs-padding-x` і `--orio-tabs-font-size` мають над ним пріоритет.
+
+<div class="demo-container">
+  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" :dense="narrow" label="Щільний на вузьких екранах" />
 </div>
 
 ### Розміри
@@ -194,7 +204,7 @@ const tabOptions = [
 | `idPrefix` | `string` | - | Задає `{prefix}-tab-{value}` / `{prefix}-panel-{value}` (лише tablist) |
 | `block` | `boolean \| "equal" \| "content"` | `false` | Повна ширина. `true` / `"equal"`: однакова ширина елементів; `"content"`: ширина за підписами, вільне місце ділиться |
 | `disabled` | `boolean` | `false` | Вимикає весь рядок |
-| `dense` | `"auto" \| boolean` | `"auto"` | `"auto"` зменшує відступи, проміжки й шрифт, лише коли підпис обрізався б; `true` — завжди компактно, `false` — ніколи |
+| `dense` | `boolean` | `false` | Компактні відступи, проміжок і шрифт; сам не перемикається |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | успадковується | Розмір контролу |
 
 ## Події
@@ -222,8 +232,8 @@ const tabOptions = [
 
 | CSS-змінна | За замовчуванням | Опис |
 |-----------------|---------|-------------|
-| `--orio-tabs-padding-x` | `var(--control-px)` (менше при dense) | Горизонтальний відступ елемента |
-| `--orio-tabs-font-size` | `var(--control-font-size)` (менше при dense) | Розмір шрифту елемента |
+| `--orio-tabs-padding-x` | `var(--control-px)` (менше з `dense`) | Горизонтальний відступ елемента |
+| `--orio-tabs-font-size` | `var(--control-font-size)` (менше з `dense`) | Розмір шрифту елемента |
 | `--orio-tabs-gap` | `var(--control-gap)` | Відступ між елементами |
 | `--orio-tabs-radius` | `var(--control-radius)` (пілюля для segmented) | Радіус елемента й доріжки |
 | `--orio-tabs-track-bg` | `var(--color-surface)` | Фон доріжки segmented |

@@ -549,6 +549,29 @@ describe("Tabs sliding indicator", () => {
     expect(indicator(wrapper).classes()).not.toContain("animate");
   });
 
+  it("re-measures instantly, without gliding, when dense changes", async () => {
+    const wrapper = make();
+    await settle();
+    fake.offsetWidth = () => 80;
+    await wrapper.setProps({ dense: true } as never);
+    await settle();
+    const element = indicator(wrapper);
+    expect(element.attributes("style")).toContain("--indicator-width: 80px");
+    expect(element.classes()).not.toContain("animate");
+    fake.offsetWidth = () => 100;
+  });
+
+  it("stops animating when the transition is cancelled", async () => {
+    const wrapper = make();
+    await settle();
+    await wrapper.setProps({ modelValue: "c" } as never);
+    await settle();
+    expect(indicator(wrapper).classes()).toContain("animate");
+    indicator(wrapper).element.dispatchEvent(new Event("transitioncancel"));
+    await settle();
+    expect(indicator(wrapper).classes()).not.toContain("animate");
+  });
+
   it("underline with a disabled selected item still gets an indicator", async () => {
     const wrapper = make({
       modelValue: "a",
@@ -562,124 +585,14 @@ describe("Tabs sliding indicator", () => {
   });
 });
 
-describe("Tabs density", () => {
-  // Stands in for layout: labels truncate and the root overflows only at normal density, like the real thing.
-  let labelsTruncateNormally = false;
-  let rootOverflowsNormally = false;
-  let staleIndicatorOverflow = false;
-  const isNormal = (element: HTMLElement) =>
-    !(element.closest(".tabs") as HTMLElement).classList.contains("dense");
-
-  beforeEach(() => {
-    labelsTruncateNormally = false;
-    rootOverflowsNormally = false;
-    staleIndicatorOverflow = false;
-    vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockImplementation(
-      function (this: HTMLElement) {
-        if (this.classList.contains("tab-label"))
-          return labelsTruncateNormally && isNormal(this) ? 120 : 0;
-        if (this.classList.contains("tabs")) {
-          const indicatorShown =
-            (this.querySelector(".indicator") as HTMLElement | null)?.style
-              .display !== "none";
-          if (rootOverflowsNormally && isNormal(this)) return 500;
-          // The absolutely positioned indicator counts toward scrollWidth.
-          if (staleIndicatorOverflow && indicatorShown) return 500;
-        }
-        return 0;
-      },
-    );
-    vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(100);
-    vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockImplementation(
-      function (this: HTMLElement) {
-        return this.classList.contains("tab-label") ||
-          this.classList.contains("tabs")
-          ? 100
-          : 0;
-      },
-    );
-  });
-
-  async function setup(props: Record<string, unknown> = {}) {
-    const { fire } = stubResizeObserver();
-    const wrapper = make(props);
-    await settle();
-    const resize = async () => {
-      fire([]);
-      await settle();
-    };
-    return { wrapper, resize };
-  }
-
-  it("stays normal while labels fit (any parent width, incl. display: contents)", async () => {
-    const { wrapper, resize } = await setup();
-    await resize();
-    expect(wrapper.classes()).not.toContain("dense");
-  });
-
-  it("goes dense when a label would truncate at normal density", async () => {
-    const { wrapper, resize } = await setup();
-    labelsTruncateNormally = true;
-    await resize();
-    expect(wrapper.classes()).toContain("dense");
-    // Judged at normal density even while dense, and the class is put back.
-    await resize();
-    expect(wrapper.classes()).toContain("dense");
-  });
-
-  it("goes dense when the strip itself overflows at normal density", async () => {
-    const { wrapper, resize } = await setup();
-    rootOverflowsNormally = true;
-    await resize();
-    expect(wrapper.classes()).toContain("dense");
-  });
-
-  it("ignores the stale indicator overflowing the strip", async () => {
-    const { wrapper, resize } = await setup();
-    staleIndicatorOverflow = true;
-    await resize();
-    expect(wrapper.classes()).not.toContain("dense");
-    // and the indicator is shown again afterwards
-    expect(
-      (wrapper.find(".indicator").element as HTMLElement).style.display,
-    ).not.toBe("none");
-  });
-
-  it("leaves dense as soon as normal density would fit, with no parent growth", async () => {
-    const { wrapper, resize } = await setup();
-    labelsTruncateNormally = true;
-    await resize();
-    expect(wrapper.classes()).toContain("dense");
-    labelsTruncateNormally = false; // shorter labels / more room
-    await resize();
-    expect(wrapper.classes()).not.toContain("dense");
-  });
-
-  it("re-checks after options change without any resize", async () => {
-    const { wrapper } = await setup();
-    labelsTruncateNormally = true;
-    await wrapper.setProps({
-      options: [{ value: "a", label: "A much longer label" }, ...options],
-    } as never);
-    await settle();
-    expect(wrapper.classes()).toContain("dense");
-  });
-
-  it("dense prop: true forces compact, false never tightens, auto recomputes", async () => {
+describe("Tabs dense", () => {
+  it("dense prop toggles the compact class (default off)", () => {
+    expect(make().classes()).not.toContain("dense");
+    expect(make({ dense: false }).classes()).not.toContain("dense");
     expect(make({ dense: true }).classes()).toContain("dense");
-    const { wrapper, resize } = await setup({ dense: false });
-    labelsTruncateNormally = true;
-    await resize();
-    expect(wrapper.classes()).not.toContain("dense");
-    await wrapper.setProps({ dense: "auto" } as never);
-    await settle();
-    expect(wrapper.classes()).toContain("dense");
-    await wrapper.setProps({ dense: false } as never);
-    await settle();
-    expect(wrapper.classes()).not.toContain("dense");
   });
 
-  it("the dense block takes padding and font from the public custom properties", () => {
+  it("the dense block takes padding, gap and font from the public custom properties", () => {
     // jsdom does not apply the scoped stylesheet; assert the declarations in the .dense rule.
     const source = readFileSync("src/runtime/components/Tabs.vue", "utf8");
     const block = source.match(/&\.dense \{([^}]*)\}/)![1];

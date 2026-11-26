@@ -52,7 +52,7 @@ invariants: true
 - Do not restyle with internal classes; override `--orio-tabs-gap`,
   `--orio-tabs-radius`, `--orio-tabs-track-bg`, `--orio-tabs-active-bg`,
   `--orio-tabs-active-ink`, `--orio-tabs-transition` (default `250ms ease`; `0s` disables the slide).
-- `segmented` is `width: fit-content`; add `block` for full width (`true`/`"equal"`: equal columns; `"content"`: `minmax(0, auto)` tracks + `justify-content: stretch`, so labels keep their content width while they fit and spare space is shared). **Density:** `dense="auto"` (default) is stateless: on every strip/parent/button resize and on options/size/variant/block/`dense` change it removes the `dense` class for a synchronous layout read (indicator hidden, since the stale absolutely positioned indicator would count as overflow), asks "does normal density truncate a label or overflow the strip?", and puts the class back. So it goes dense exactly when normal density would not fit, leaves as soon as it would, and has no hysteresis; shrink-to-fit and `display: contents` parents behave. Padding, gap and font tighten, derived from the size tokens; `--orio-tabs-gap`, `--orio-tabs-padding-x`, `--orio-tabs-font-size` always win; `dense` `true`/`false` forces. No container query (would kill the fit-content intrinsic width) or wrapper (changes inline layouts). The indicator re-measures instantly on a flip (items resize, observer fires). Layout is a CSS grid
+- `segmented` is `width: fit-content`; add `block` for full width (`true`/`"equal"`: equal columns; `"content"`: `minmax(0, auto)` tracks + `justify-content: stretch`, so labels keep their content width while they fit and spare space is shared). **Density:** `dense` (boolean, default false) only toggles the compact style (padding x0.6, gap x0.5, font x0.9, derived from the size tokens); `--orio-tabs-gap`, `--orio-tabs-padding-x`, `--orio-tabs-font-size` win over it. It never switches by itself (automatic switching was tried and dropped: it cancelled the indicator glide, caused ResizeObserver loops and cost layout per frame); bind it to your own breakpoint (recipe below). A change re-measures the indicator instantly. Layout is a CSS grid
   (`minmax(0, max-content)` columns; `block`: `minmax(0, 1fr)`): items stay inside
   the strip while it is wider than count x 2 x the control's horizontal padding
   plus the gaps (button padding is a floor, so extreme widths, e.g. 8 options in
@@ -93,6 +93,29 @@ const tabOptions = [
   { value: 'overview', label: 'Overview', icon: 'edit' },
   { value: 'activity', label: 'Activity' },
   { value: 'settings', label: 'Settings' },
+]
+</script>
+```
+
+## Recipe: compact on narrow screens
+
+Copied from the live demo in `docs/components/tabs.md` ("Dense").
+
+```vue
+<template>
+  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" :dense="narrow" label="Dense on narrow screens" />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { useMediaQuery } from '@vueuse/core'
+
+const narrow = useMediaQuery('(max-width: 400px)')
+const period = ref('week')
+const periodOptions = [
+  { value: 'week', label: 'Week' },
+  { value: 'month', label: 'Month' },
+  { value: 'year', label: 'Year' },
 ]
 </script>
 ```

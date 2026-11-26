@@ -25,14 +25,13 @@ export interface TabsProps<V = string | number> {
   block?: boolean | "equal" | "content";
   disabled?: boolean;
   size?: ControlSize;
-  /** `"auto"`: tighten padding, gap and font only when labels would truncate at normal density. `true` forces compact, `false` never tightens. */
-  dense?: "auto" | boolean;
+  /** Compact padding, gap and font so labels fit in tight spaces. Never switches by itself; bind it to your own breakpoint. */
+  dense?: boolean;
 }
 
 const props = withDefaults(defineProps<TabsProps<T>>(), {
   variant: "underline",
   role: "tablist",
-  dense: "auto",
 });
 
 const model = defineModel<T | undefined>();
@@ -92,33 +91,6 @@ interface IndicatorBox {
   height: number;
 }
 
-/** Auto density is stateless: re-run the real check, "does normal density fit?", by trying normal density for a moment. The `dense` class is removed, layout is read synchronously (nothing paints in between), and the class is put back. The answer depends only on the space the strip really gets, so there is no hysteresis, nothing gets stuck dense, and shrink-to-fit or display:contents parents just work. Not a container query: container-type on the fit-content strip would kill its intrinsic width, and a wrapper would change inline layouts. */
-const autoDense = ref(false);
-const isDense = computed(() =>
-  props.dense === "auto" ? autoDense.value : props.dense,
-);
-
-function updateDense() {
-  const root = rootRef.value;
-  if (!root || props.dense !== "auto") return;
-  const indicatorElement = root.querySelector<HTMLElement>(
-    ":scope > .indicator",
-  );
-  const wasDense = root.classList.contains("dense");
-  root.classList.remove("dense");
-  // The stale absolutely positioned indicator would count as overflow.
-  if (indicatorElement) indicatorElement.style.display = "none";
-  const strained =
-    root.scrollWidth > root.clientWidth + 0.5 ||
-    tabButtons().some((button) => {
-      const label = button.querySelector<HTMLElement>(".tab-label");
-      return !!label && label.scrollWidth > label.clientWidth + 0.5;
-    });
-  if (indicatorElement) indicatorElement.style.display = "";
-  if (wasDense) root.classList.add("dense");
-  autoDense.value = strained;
-}
-
 /** Selected item's box in the strip's padding-box coordinates; null = nothing to show (no selection, or not rendered/measurable). */
 const box = ref<IndicatorBox | null>(null);
 /** True only while a selection change is gliding; every other re-measure is instant. */
@@ -162,7 +134,6 @@ watch(
     lastValue = model.value;
     await nextTick();
     animate.value = glide;
-    updateDense();
     measure();
   },
   { deep: true },
@@ -170,14 +141,7 @@ watch(
 
 // ponytail: a `dir` flip alone does not resize anything, so a fit-content strip keeps its old (mirrored-wrong) box until selection, label or strip size changes; observe `dir` with useMutationObserver if that matters.
 // Items change size on their own (fonts, labels, selected weight, container width).
-// The parent is observed too: a dense fit-content strip does not resize when its parent grows, but normal density may fit again.
-useResizeObserver(
-  () => [rootRef.value, rootRef.value?.parentElement, ...buttonRefs.value],
-  () => {
-    updateDense();
-    measure();
-  },
-);
+useResizeObserver(() => [rootRef.value, ...buttonRefs.value], measure);
 
 function moveTo(index: number) {
   select(index);
@@ -242,7 +206,7 @@ function itemAttrs(option: TabsOption<T>, index: number) {
       {
         block: !!block,
         'fill-content': block === 'content',
-        dense: isDense,
+        dense,
         placed: !!box,
       },
     ]"
@@ -280,6 +244,7 @@ function itemAttrs(option: TabsOption<T>, index: number) {
         (event: TransitionEvent) =>
           event.propertyName === 'transform' && (animate = false)
       "
+      @transitioncancel="animate = false"
     />
   </div>
 </template>

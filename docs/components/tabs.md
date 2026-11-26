@@ -6,8 +6,10 @@ Single-choice strip of buttons. One component, two looks (`variant`) and two sem
 
 <script setup>
 import { ref } from 'vue'
+import { useMediaQuery } from '@vueuse/core'
 
 const tab = ref('overview')
+const narrow = useMediaQuery('(max-width: 400px)')
 const tabOptions = [
   { value: 'overview', label: 'Overview', icon: 'edit' },
   { value: 'activity', label: 'Activity' },
@@ -96,13 +98,21 @@ give your panels the matching ids.
 ### Block and long labels
 
 `block` stretches the strip to full width with equal-width items. `block="content"` sizes items by their labels and shares the spare space, so a label is never narrower than it needs while it fits. Long labels
-ellipsise inside the item. When normal density would truncate a label, padding, gap and font tighten automatically (`dense="auto"`); it returns to normal as soon as normal density would fit. Force it with `dense` (`true` compact, `false` never); `--orio-tabs-gap`, `--orio-tabs-padding-x` and `--orio-tabs-font-size` always win.
+ellipsise inside the item. Labels that still truncate in a narrow space can use the compact `dense` style (see Dense below).
 
 <div class="demo-container">
   <orio-tabs v-model="tab" :options="tabOptions" block role="radiogroup" label="Block underline" />
   <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block label="Block segmented" />
   <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" block="content" label="Block content" />
   <orio-tabs v-model="longLabel" :options="longOptions" variant="segmented" role="radiogroup" label="Long labels" style="max-width: min(16rem, 100%)" />
+</div>
+
+### Dense
+
+`dense` applies a compact style (padding x0.6, gap x0.5, font x0.9) so labels fit in tight spaces. It never switches by itself: bind it to your own breakpoint, for example with VueUse. `--orio-tabs-gap`, `--orio-tabs-padding-x` and `--orio-tabs-font-size` still win over it.
+
+<div class="demo-container">
+  <orio-tabs v-model="period" :options="periodOptions" variant="segmented" role="radiogroup" :dense="narrow" label="Dense on narrow screens" />
 </div>
 
 ### Sizes
@@ -194,7 +204,7 @@ Props are typed by the exported `TabsProps`; each option is a `TabsOption` (`{ v
 | `idPrefix` | `string` | - | Wires `{prefix}-tab-{value}` / `{prefix}-panel-{value}` (tablist only) |
 | `block` | `boolean \| "equal" \| "content"` | `false` | Full width. `true` / `"equal"`: equal-width items; `"content"`: items sized by their labels, spare space shared |
 | `disabled` | `boolean` | `false` | Disables the whole strip |
-| `dense` | `"auto" \| boolean` | `"auto"` | `"auto"` tightens padding, gap and font only when a label would truncate; `true` forces compact, `false` never tightens |
+| `dense` | `boolean` | `false` | Compact padding, gap and font; never switches by itself |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | inherited | Control size |
 
 ## Events
@@ -222,8 +232,8 @@ Override on the element or an ancestor:
 
 | Custom property | Default | Description |
 |-----------------|---------|-------------|
-| `--orio-tabs-padding-x` | `var(--control-px)` (tighter when dense) | Item horizontal padding |
-| `--orio-tabs-font-size` | `var(--control-font-size)` (smaller when dense) | Item font size |
+| `--orio-tabs-padding-x` | `var(--control-px)` (tighter with `dense`) | Item horizontal padding |
+| `--orio-tabs-font-size` | `var(--control-font-size)` (smaller with `dense`) | Item font size |
 | `--orio-tabs-gap` | `var(--control-gap)` | Gap between items |
 | `--orio-tabs-radius` | `var(--control-radius)` (pill for segmented) | Item and track radius |
 | `--orio-tabs-track-bg` | `var(--color-surface)` | Segmented track background |
