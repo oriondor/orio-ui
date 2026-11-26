@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="T extends string | number">
-import { computed, ref, toRef } from "vue";
+import { computed, nextTick, onMounted, ref, toRef, watch } from "vue";
+import { useResizeObserver } from "@vueuse/core";
 import { useControlTokens } from "../composables/useControlSize";
 import type { ControlSize } from "./ControlElement.vue";
 
@@ -79,6 +80,74 @@ function tabButtons() {
   );
 }
 
+const buttonRefs = ref<HTMLElement[]>([]);
+
+interface IndicatorBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** Selected item's box in the strip's padding-box coordinates; null = nothing to show (no selection, or not rendered/measurable). */
+const box = ref<IndicatorBox | null>(null);
+/** True only while a selection change is gliding; every other re-measure is instant. */
+const animate = ref(false);
+
+function measure() {
+  const button = tabButtons()[selectedIndex.value];
+  // display:none ancestors report 0x0; the resize observer re-measures when shown.
+  box.value =
+    button && (button.offsetWidth || button.offsetHeight)
+      ? {
+          x: button.offsetLeft,
+          y: button.offsetTop,
+          width: button.offsetWidth,
+          height: button.offsetHeight,
+        }
+      : null;
+}
+
+onMounted(measure);
+
+watch(selectedIndex, async (current, previous) => {
+  const wasShown = box.value !== null;
+  await nextTick();
+  const before = box.value;
+  animate.value = wasShown && previous >= 0 && current >= 0;
+  measure();
+  const after = box.value;
+  // No movement means no transitionend to switch animation off again.
+  if (
+    before &&
+    after &&
+    before.x === after.x &&
+    before.y === after.y &&
+    before.width === after.width &&
+    before.height === after.height
+  )
+    animate.value = false;
+});
+
+watch(
+  [
+    () => props.options,
+    () => props.size,
+    () => props.variant,
+    () => props.block,
+  ],
+  async () => {
+    await nextTick();
+    // After the tick so it wins over a selection watcher that resumes first.
+    animate.value = false;
+    measure();
+  },
+  { deep: true },
+);
+
+// Items change size on their own (fonts, labels, selected weight, container width).
+useResizeObserver(() => [rootRef.value, ...buttonRefs.value], measure);
+
 function moveTo(index: number) {
   select(index);
   tabButtons()[index]?.focus();
@@ -136,13 +205,14 @@ function itemAttrs(option: TabsOption<T>, index: number) {
     :role="role"
     :aria-label="label"
     :aria-disabled="disabled || undefined"
-    :class="['tabs', variant, { block }]"
+    :class="['tabs', variant, { block, placed: !!box }]"
     :style="tokens"
     @keydown="onKeydown"
   >
     <button
       v-for="(option, index) in options"
       :key="index"
+      ref="buttonRefs"
       v-bind="itemAttrs(option, index)"
       type="button"
       :class="['tab', { selected: index === selectedIndex }]"
@@ -156,6 +226,21 @@ function itemAttrs(option: TabsOption<T>, index: number) {
         <span class="tab-label">{{ option.label }}</span>
       </slot>
     </button>
+    <span
+      v-if="box"
+      :class="['indicator', { animate }]"
+      :style="{
+        '--indicator-x': `${box.x}px`,
+        '--indicator-y': `${box.y}px`,
+        '--indicator-width': `${box.width}px`,
+        '--indicator-height': `${box.height}px`,
+      }"
+      aria-hidden="true"
+      @transitionend="
+        (event: TransitionEvent) =>
+          event.propertyName === 'transform' && (animate = false)
+      "
+    />
   </div>
 </template>
 
@@ -166,8 +251,10 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   --tabs-track-bg: var(--orio-tabs-track-bg, var(--color-surface));
   --tabs-active-bg: var(--orio-tabs-active-bg, var(--color-accent));
   --tabs-active-ink: var(--orio-tabs-active-ink, var(--color-accent-ink));
+  --tabs-transition: var(--orio-tabs-transition, 250ms ease);
 
   /* Grid, not flex: columns are sized max-content up to the strip, and when it is narrower the free space is shared equally, so a short label keeps its full width while a longer sibling absorbs the shrink. Items can never exceed the track, whatever the gap or count; only labels ellipsise. */
+  position: relative;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, max-content);
@@ -198,9 +285,10 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   border: none;
   cursor: pointer;
   user-select: none;
-  transition:
-    color 0.2s ease,
-    background-color 0.2s ease;
+  /* Above the indicator, which is a later positioned sibling. */
+  position: relative;
+  z-index: 1;
+  transition: color var(--tabs-transition);
 
   &:hover:not(.selected, [aria-disabled="true"], :disabled) {
     color: var(--color-text);
@@ -225,6 +313,30 @@ function itemAttrs(option: TabsOption<T>, index: number) {
   }
 }
 
+/* One element glides to the selected item. Until it is placed (SSR, first paint, unmeasurable) the selected item paints its own fill instead. */
+.indicator {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: var(--indicator-width);
+  height: var(--indicator-height);
+  transform: translate(var(--indicator-x), var(--indicator-y));
+  pointer-events: none;
+
+  &.animate {
+    transition:
+      transform var(--tabs-transition),
+      width var(--tabs-transition),
+      height var(--tabs-transition);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator.animate,
+  .tab {
+    transition: none;
+  }
+}
+
 .underline {
   border-bottom: 1px solid var(--color-border);
 
@@ -238,6 +350,21 @@ function itemAttrs(option: TabsOption<T>, index: number) {
       font-weight: 600;
       box-shadow: inset 0 -2px 0 var(--color-accent);
     }
+  }
+
+  &.placed .tab.selected {
+    box-shadow: none;
+  }
+
+  .indicator {
+    height: 2px;
+    background: var(--color-accent);
+    /* Sits on the item's bottom edge (items overlap the border by 1px). */
+    transform: translate(
+      var(--indicator-x),
+      calc(var(--indicator-y) + var(--indicator-height) - 2px)
+    );
+    border-radius: 1px;
   }
 }
 
@@ -261,6 +388,15 @@ function itemAttrs(option: TabsOption<T>, index: number) {
       background: var(--tabs-active-bg);
       font-weight: 600;
     }
+  }
+
+  &.placed .tab.selected {
+    background: transparent;
+  }
+
+  .indicator {
+    background: var(--tabs-active-bg);
+    border-radius: var(--tabs-radius);
   }
 }
 </style>

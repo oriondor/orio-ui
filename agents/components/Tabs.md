@@ -37,13 +37,21 @@ invariants: true
 - **Roving tabindex:** the selected item is the only tab stop, even if it
   became disabled; with no selection the first enabled item is.
 - Value `0` is a valid selection.
+- **Sliding indicator:** one `aria-hidden` `<span class="indicator">` after the
+  buttons takes the selected item's measured box (offsetLeft/Top/Width/Height
+  via `useResizeObserver` on strip and items) and glides on selection change
+  only. It is instant on first render, resize, options/size/variant/block
+  change, and under `prefers-reduced-motion: reduce`. Absent with no selection
+  or while the strip is `display:none` (re-measured when shown). Until it is
+  placed (SSR) the selected item paints its own fill. Items sit above it
+  (`z-index`), so text and focus ring stay on top. Never position it yourself.
 - Name the strip: `label` (aria-label) or consumer `aria-labelledby`.
 
 ## Gotchas
 
 - Do not restyle with internal classes; override `--orio-tabs-gap`,
   `--orio-tabs-radius`, `--orio-tabs-track-bg`, `--orio-tabs-active-bg`,
-  `--orio-tabs-active-ink`.
+  `--orio-tabs-active-ink`, `--orio-tabs-transition` (default `250ms ease`; `0s` disables the slide).
 - `segmented` is `width: fit-content`; add `block` for full width. Layout is a CSS grid
   (`minmax(0, max-content)` columns; `block`: `minmax(0, 1fr)`): items stay inside
   the strip while it is wider than count x 2 x the control's horizontal padding

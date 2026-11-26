@@ -225,3 +225,6 @@ Override on the element or an ancestor:
 | `--orio-tabs-track-bg` | `var(--color-surface)` | Segmented track background |
 | `--orio-tabs-active-bg` | `var(--color-accent)` | Segmented active pill background |
 | `--orio-tabs-active-ink` | `var(--color-accent-ink)` | Segmented active pill text |
+| `--orio-tabs-transition` | `250ms ease` | Duration and easing of the sliding selection (pill or bar) and the text colour crossfade; `0s` turns the slide off |
+
+The selected pill or underline bar glides to the new item and resizes to its width. It is placed instantly on first render, on resize and when options change, and under `prefers-reduced-motion: reduce`. With nothing selected there is no indicator.

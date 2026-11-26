@@ -1,4 +1,5 @@
-import { afterEach, describe, it, expect } from "vitest";
+import { afterEach, beforeEach, describe, it, expect } from "vitest";
+import { nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 import Tabs from "../../src/runtime/components/Tabs.vue";
 
@@ -353,5 +354,124 @@ describe("Tabs", () => {
       make({ options: [...options, ...options] }).attributes("style") ?? "";
     expect(style).not.toContain("--tabs-count");
     expect(style).not.toMatch(/width/);
+  });
+});
+
+describe("Tabs sliding indicator", () => {
+  // Watchers await a tick, then the re-render needs another.
+  const settle = async () => {
+    await nextTick();
+    await nextTick();
+  };
+  // jsdom has no layout: every button is 100x30 at index * 100.
+  const indexOf = (element: HTMLElement) =>
+    Array.from(element.parentElement!.children).indexOf(element);
+  const originals = new Map<string, PropertyDescriptor | undefined>();
+  const fake: Record<string, (element: HTMLElement) => number> = {
+    offsetLeft: (element) => indexOf(element) * 100,
+    offsetTop: () => 0,
+    offsetWidth: () => 100,
+    offsetHeight: () => 30,
+  };
+  beforeEach(() => {
+    Object.keys(fake).forEach((key) => {
+      originals.set(
+        key,
+        Object.getOwnPropertyDescriptor(HTMLElement.prototype, key),
+      );
+      Object.defineProperty(HTMLElement.prototype, key, {
+        configurable: true,
+        get(this: HTMLElement) {
+          return fake[key](this);
+        },
+      });
+    });
+  });
+  afterEach(() => {
+    originals.forEach((descriptor, key) => {
+      if (descriptor)
+        Object.defineProperty(HTMLElement.prototype, key, descriptor);
+      else delete (HTMLElement.prototype as never)[key];
+    });
+  });
+
+  const indicator = (wrapper: ReturnType<typeof make>) =>
+    wrapper.find(".indicator");
+
+  it("is aria-hidden and takes the selected item's measured box", async () => {
+    const wrapper = make({ modelValue: "b", variant: "segmented" });
+    await settle();
+    const element = indicator(wrapper);
+    expect(element.exists()).toBe(true);
+    expect(element.attributes("aria-hidden")).toBe("true");
+    const style = element.attributes("style")!;
+    expect(style).toContain("--indicator-x: 100px");
+    expect(style).toContain("--indicator-width: 100px");
+    expect(style).toContain("--indicator-height: 30px");
+    expect(wrapper.classes()).toContain("placed");
+  });
+
+  it("places on first render without animating", async () => {
+    const wrapper = make({ modelValue: "c" });
+    await settle();
+    expect(indicator(wrapper).classes()).not.toContain("animate");
+  });
+
+  it("animates a selection change to the new box", async () => {
+    const wrapper = make();
+    await settle();
+    await wrapper.setProps({ modelValue: "c" } as never);
+    await settle();
+    expect(indicator(wrapper).classes()).toContain("animate");
+    expect(indicator(wrapper).attributes("style")).toContain(
+      "--indicator-x: 200px",
+    );
+  });
+
+  it("is absent with no selection and appears without animating", async () => {
+    const wrapper = make({ modelValue: undefined });
+    await settle();
+    expect(indicator(wrapper).exists()).toBe(false);
+    expect(wrapper.classes()).not.toContain("placed");
+    await wrapper.setProps({ modelValue: "b" } as never);
+    await settle();
+    expect(indicator(wrapper).exists()).toBe(true);
+    expect(indicator(wrapper).classes()).not.toContain("animate");
+  });
+
+  it("re-measures instantly when options are replaced", async () => {
+    const wrapper = make();
+    await settle();
+    await wrapper.setProps({ modelValue: "b" } as never);
+    await settle();
+    await wrapper.setProps({
+      options: [{ value: "z", label: "Z" }, ...options],
+    } as never);
+    await settle();
+    const element = indicator(wrapper);
+    expect(element.classes()).not.toContain("animate");
+    expect(element.attributes("style")).toContain("--indicator-x: 200px");
+  });
+
+  it("stays unplaced while the strip is not rendered (0x0)", async () => {
+    fake.offsetWidth = () => 0;
+    fake.offsetHeight = () => 0;
+    const wrapper = make();
+    await settle();
+    expect(indicator(wrapper).exists()).toBe(false);
+    fake.offsetWidth = () => 100;
+    fake.offsetHeight = () => 30;
+  });
+
+  it("underline with a disabled selected item still gets an indicator", async () => {
+    const wrapper = make({
+      modelValue: "a",
+      options: [
+        { value: "a", label: "A", disabled: true },
+        ...options.slice(1),
+      ],
+    });
+    await settle();
+    expect(indicator(wrapper).exists()).toBe(true);
   });
 });

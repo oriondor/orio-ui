@@ -225,3 +225,6 @@ const tabOptions = [
 | `--orio-tabs-track-bg` | `var(--color-surface)` | Фон доріжки segmented |
 | `--orio-tabs-active-bg` | `var(--color-accent)` | Фон активної пілюлі segmented |
 | `--orio-tabs-active-ink` | `var(--color-accent-ink)` | Текст активної пілюлі segmented |
+| `--orio-tabs-transition` | `250ms ease` | Тривалість і крива ковзання вибору (пілюля або смуга) та плавної зміни кольору тексту; `0s` вимикає ковзання |
+
+Обрана пілюля або смуга плавно переїжджає до нового елемента й змінює ширину. Під час першого рендеру, зміни розміру чи options, а також за `prefers-reduced-motion: reduce` вона ставиться миттєво. Без вибору індикатора немає.
