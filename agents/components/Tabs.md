@@ -23,7 +23,7 @@ invariants: true
   `x-tab-{value}` and `aria-controls="x-panel-{value}"`; panels must be
   `role="tabpanel"` with `id="x-panel-{value}"` and `aria-labelledby="x-tab-{value}"`.
 - **`id-prefix` must be unique per page** (duplicate ids otherwise) and only
-  applies to `tablist`.
+  applies to `tablist`. Option values must be unique as strings and id-safe (no whitespace).
 - **Duplicate option values: first match wins.**
 - **Types:** `TabsProps` and `TabsOption` are exported from `Tabs.vue`.
 - **Per-option `disabled` is `aria-disabled`** (still focusable-looking, never
@@ -31,7 +31,7 @@ invariants: true
   disabled selected one, to the nearest enabled neighbour, wrapping. **The whole-component `disabled` prop sets
   native `disabled`** on every button.
 - **Selection follows focus.** Arrow keys (wrap, flipped under `dir="rtl"`),
-  Home/End move focus and select at once. There is no manual-activation mode.
+  Home/End move focus and select at once. In `radiogroup` only, ArrowDown/ArrowUp also step forward/backward (never flipped for RTL); `tablist` ignores them. There is no manual-activation mode.
 - **Emits only on change.** Re-selecting the current value does not emit;
   a model not in `options` (or `undefined`) selects nothing and never auto-emits.
 - **Roving tabindex:** the selected item is the only tab stop, even if it
@@ -61,7 +61,7 @@ invariants: true
   longer ones ellipsise (very narrow strips ellipsise every label). Constrain
   width on the parent, not the item.
 - The `option` slot replaces icon + label, so it also owns any icon.
-- Arrow keys only see the strip's own buttons; buttons inside the `option` slot are ignored.
+- The `option` slot renders inside the tab `<button>`: text, icon or badge only, never interactive elements.
 - Overflow scrolling, vertical orientation and panels are out of scope.
 
 ## Quick reference

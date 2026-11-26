@@ -75,7 +75,7 @@ function isRtl() {
   return !!root && getComputedStyle(root).direction === "rtl";
 }
 
-/** Direct children only: the option slot may contain its own buttons. */
+/** Direct children only: the strip's own buttons, not anything nested in them. */
 function tabButtons() {
   return Array.from(
     rootRef.value?.querySelectorAll<HTMLElement>(":scope > button") ?? [],
@@ -156,6 +156,7 @@ function onKeydown(event: KeyboardEvent) {
 
   const forwardKey = isRtl() ? "ArrowLeft" : "ArrowRight";
   const backwardKey = isRtl() ? "ArrowRight" : "ArrowLeft";
+  const isVertical = !isTablist.value;
   const focusedIndex = tabButtons().indexOf(
     (event.target as HTMLElement).closest("button")!,
   );
@@ -164,9 +165,13 @@ function onKeydown(event: KeyboardEvent) {
   if (event.key === "Home") next = firstEnabled;
   else if (event.key === "End")
     next = props.options.findLastIndex((option) => !option.disabled);
-  else if (event.key === forwardKey || event.key === backwardKey) {
+  else if (
+    event.key === forwardKey ||
+    event.key === backwardKey ||
+    (isVertical && (event.key === "ArrowDown" || event.key === "ArrowUp"))
+  ) {
     if (focusedIndex === -1) return;
-    const step = event.key === forwardKey ? 1 : -1;
+    const step = event.key === forwardKey || event.key === "ArrowDown" ? 1 : -1;
     // Walk from the focused item (even a disabled one) to the nearest enabled, wrapping.
     next = focusedIndex;
     do next = (next + step + count) % count;

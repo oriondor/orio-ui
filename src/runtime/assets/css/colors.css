@@ -1,6 +1,8 @@
 /* Every built-in rule below is wrapped in :where() so it has zero
-   specificity: a consumer rule (any selector, any load order) overrides it.
-   Among these rules the later one wins, so keep general blocks first. */
+   specificity: any consumer selector with non-zero specificity overrides it
+   regardless of load order. A zero-specificity selector (e.g. :where(...))
+   ties and falls back to load order. Rules inside @layer lose to these
+   unlayered rules. Among these rules the later one wins, so keep general blocks first. */
 
 /* 1) Role-based tokens (don't change these names in CSS) */
 :where(:root) {

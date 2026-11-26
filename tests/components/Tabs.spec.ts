@@ -274,19 +274,19 @@ describe("Tabs", () => {
     expect(lastEmit(wrapper)).toEqual([["a"]]);
   });
 
-  it("ignores buttons inside the option slot", async () => {
-    const wrapper = make(
-      {},
-      {},
-      {
-        option: `<template #option="{ option }"><span>{{ option.label }}</span><button type="button" class="inner">x</button></template>`,
-      },
-    );
-    await buttons(wrapper)[0].trigger("keydown", { key: "ArrowRight" });
-    expect(lastEmit(wrapper)).toEqual([["b"]]);
-    expect(document.activeElement).toBe(
-      wrapper.findAll(":scope > button")[1].element,
-    );
+  it("radiogroup: ArrowDown/ArrowUp move forward/backward", async () => {
+    const wrapper = make({ role: "radiogroup", modelValue: "b" });
+    await buttons(wrapper)[1].trigger("keydown", { key: "ArrowDown" });
+    expect(lastEmit(wrapper)).toEqual([["c"]]);
+    await buttons(wrapper)[1].trigger("keydown", { key: "ArrowUp" });
+    expect(lastEmit(wrapper)?.[1]).toEqual(["a"]);
+  });
+
+  it("tablist ignores ArrowDown/ArrowUp", async () => {
+    const wrapper = make({ modelValue: "b" });
+    await buttons(wrapper)[1].trigger("keydown", { key: "ArrowDown" });
+    await buttons(wrapper)[1].trigger("keydown", { key: "ArrowUp" });
+    expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
 
   it("duplicate values render every item (E6)", () => {

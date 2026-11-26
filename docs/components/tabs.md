@@ -191,7 +191,7 @@ const tabOptions = [
 - `variant` (`underline` | `segmented`) is look only; `role` (`tablist` | `radiogroup`) is semantics only. Any combination is valid.
 - Use `tablist` **only** when the strip switches visible panels. The consumer renders the panels (`role="tabpanel"`).
 - Use `radiogroup` for value pickers (period, filter, mode) where nothing is swapped.
-- `id-prefix` applies to `tablist` only and must be **unique per page**; two instances with the same prefix produce duplicate ids.
+- `id-prefix` applies to `tablist` only and must be **unique per page**; two instances with the same prefix produce duplicate ids. Option values must be unique as strings and id-safe (no whitespace).
 
 ## Props
 
@@ -220,12 +220,13 @@ Props are typed by the exported `TabsProps`; each option is a `TabsOption` (`{ v
 
 | Slot | Props | Description |
 |------|-------|-------------|
-| `option` | `{ option, selected }` | Replaces the item content (default: optional icon + label) |
+| `option` | `{ option, selected }` | Replaces the item content (default: optional icon + label). Rendered inside the tab `<button>`, so keep it non-interactive: text, icon or badge only |
 
 ## Keyboard Support
 
 - **Tab** - Focus the selected item (or the first enabled one when nothing is selected)
 - **ArrowRight / ArrowLeft** - Move and select the next / previous enabled item, wrapping; flipped under `dir="rtl"`
+- **ArrowDown / ArrowUp** - `radiogroup` only: next / previous, like ArrowRight / ArrowLeft but never flipped under `dir="rtl"`; ignored by `tablist`
 - **Home / End** - First / last enabled item
 - Selection follows focus; disabled options are skipped.
 

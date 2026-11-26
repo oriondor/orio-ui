@@ -122,6 +122,7 @@ Controls light/dark appearance. Set via `data-mode="light|dark"` on `<html>`:
   /* Dark mode also adjusts accent derivatives */
   --color-accent-soft-base: color-mix(in srgb, var(--color-accent) 12%, #0e1116);
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 30%, white 70%);
+  --color-accent-active: color-mix(in srgb, var(--color-accent) 80%, white 25%);
   /* ... */
 }
 ```
@@ -205,7 +206,7 @@ When your theme sets `--color-accent`, also set `--color-accent-ink` (text on ac
 
 With a dark ink also set `--color-accent-hover-shade: white`. The primary Button hover gradient darkens toward black by default, which pulls a dark ink below 4.5:1 (lavender below is 4.40:1 at the end stop); with the shade it lightens instead. `--color-accent-hover-depth-start` / `-end` (default `90%` / `80%`, lower is stronger) tune its strength. Check the ink against the accent and both hover stops (`accent` mixed with the shade at the depth percentages).
 
-Any selector works for your theme (`[data-theme="x"]`, `:root[data-theme="x"]`, ...): the built-in colour rules are wrapped in `:where()` and have zero specificity, so your rules override them whatever the specificity or load order. Ink is the same in both modes, so one rule is enough; `--color-accent-text` (accent used as text) differs per mode, so set it for light and, if the derived value is not what you want, again in `:root[data-theme="x"][data-mode="dark"]`. A rule without a `data-mode` applies to both modes, so it also replaces the derived dark value; to keep the derived dark value, put the light value in `[data-theme="x"][data-mode="light"]`.
+Any selector works for your theme (`[data-theme="x"]`, `:root[data-theme="x"]`, ...): the built-in colour rules are wrapped in `:where()` and have zero specificity, so any consumer selector with non-zero specificity overrides them regardless of load order. A zero-specificity selector (e.g. `:where(...)`) ties and falls back to load order. Rules inside `@layer` lose to these unlayered rules. Ink is the same in both modes, so one rule is enough; `--color-accent-text` (accent used as text) differs per mode, so set it for light and, if the derived value is not what you want, again in `:root[data-theme="x"][data-mode="dark"]`. A rule without a `data-mode` applies to both modes, so it also replaces the derived dark value; to keep the derived dark value, put the light value in `[data-theme="x"][data-mode="light"]`.
 :::
 
 Import in `nuxt.config.ts`:
